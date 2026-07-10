@@ -879,7 +879,10 @@ html,body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--text);
       </div>
     <div id="pd-order-actions-wrap" style="width:100%; display:flex; flex-direction:column; align-items:center;">
       <button id="pd-buy-btn" style="width:100%;max-width:320px;background:var(--gold);color:var(--g1);border:none;border-radius:13px;padding:14px;font-family:'Cairo',sans-serif;font-size:16px;font-weight:800;cursor:pointer;margin-bottom:10px;box-shadow:0 4px 15px rgba(201,168,76,0.2)" onclick="goOrd()">🛒 الشراء المباشر الآن</button>
-      <button id="pd-cart-btn" style="width:100%;max-width:320px;background:var(--g1);color:#fff;border:none;border-radius:13px;padding:13px;font-family:'Cairo',sans-serif;font-size:15px;font-weight:700;cursor:pointer;margin-bottom:10px" onclick="toast('✅ تمت الإضافة إلى سلة تسوقك','ok')">🛍️ أضف إلى السلة</button>
+      <div style="display:flex; width:100%; max-width:320px; gap:10px; margin-bottom:10px;">
+        <button id="pd-cart-btn" style="flex:2; background:var(--g1); color:#fff; border:none; border-radius:13px; padding:13px; font-family:'Cairo',sans-serif; font-size:14px; font-weight:700; cursor:pointer;" onclick="window.addToCart()">🛍️ أضف إلى السلة</button>
+        <button id="pd-fav-btn" style="flex:1; background:rgba(255,255,255,0.05); color:var(--gold); border:1px solid rgba(197,160,89,0.3); border-radius:13px; padding:13px; font-family:'Cairo',sans-serif; font-size:14px; font-weight:700; cursor:pointer;" onclick="window.toggleFavorite()">❤️ المفضلة</button>
+      </div>
     </div>
     <div id="pd-store-closed-banner" style="display:none; background:#ffebee; border:1px solid #ffcdd2; color:#c62828; border-radius:12px; padding:15px; text-align:center; font-weight:700; font-size:13px; max-width:320px; width:100%; margin-bottom:10px; box-sizing:border-box; direction:rtl;">
       ⚠️ نعتذر منكم، المتجر مغلق مؤقتاً للراحة حالياً ولا يستقبل أي طلبيات شراء في هذا الوقت وسيعود قريباً.
@@ -2969,6 +2972,66 @@ window.goOrd = goOrd;
 window.selPay = selPay;
 window.placeOrder = placeOrder;
 window.orderWA = orderWA;
+
+window.addToCart = function() {
+  if (!_prod) return;
+  const cart = JSON.parse(localStorage.getItem('zalo_cart') || '[]');
+  const item = {
+    id: _prod.id,
+    name: _prod.name,
+    price: _prod.price,
+    img: _prod.img || '',
+    emoji: _prod.emoji || '📦',
+    storeId: _store?.id || 'direct',
+    storeName: _store?.name || 'محل محلي شريك',
+    qty: _qty || 1
+  };
+  // Check if item already exists in cart
+  const existingIdx = cart.findIndex(c => c.id === item.id);
+  if (existingIdx !== -1) {
+    cart[existingIdx].qty += item.qty;
+  } else {
+    cart.push(item);
+  }
+  localStorage.setItem('zalo_cart', JSON.stringify(cart));
+  
+  if (window.toast) {
+    window.toast('✅ تمت الإضافة إلى سلة تسوقك بنجاح!', 'ok');
+  } else {
+    alert('✅ تمت الإضافة إلى سلة تسوقك بنجاح!');
+  }
+};
+
+window.toggleFavorite = function() {
+  if (!_prod) return;
+  const favs = JSON.parse(localStorage.getItem('zalo_favorites') || '[]');
+  const idx = favs.findIndex(f => f.id === _prod.id);
+  if (idx !== -1) {
+    favs.splice(idx, 1);
+    localStorage.setItem('zalo_favorites', JSON.stringify(favs));
+    if (window.toast) {
+      window.toast('❌ تم إزالة المنتج من المفضلة', 'info');
+    } else {
+      alert('❌ تم إزالة المنتج من المفضلة');
+    }
+  } else {
+    favs.push({
+      id: _prod.id,
+      name: _prod.name,
+      price: _prod.price,
+      img: _prod.img || '',
+      emoji: _prod.emoji || '📦',
+      storeId: _store?.id || 'direct',
+      storeName: _store?.name || 'محل محلي شريك'
+    });
+    localStorage.setItem('zalo_favorites', JSON.stringify(favs));
+    if (window.toast) {
+      window.toast('❤️ تم إضافة المنتج إلى المفضلة بنجاح!', 'ok');
+    } else {
+      alert('❤️ تم إضافة المنتج إلى المفضلة بنجاح!');
+    }
+  }
+};
 window.rNext = rNext;
 window.rBack = rBack;
 window.fillComm2 = fillComm2;

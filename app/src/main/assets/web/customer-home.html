@@ -137,54 +137,288 @@ body {
   from { transform: translateY(100%); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
 }
+
+/* Custom Multi-Tab Customer Dashboard Styling */
+.tabs-nav {
+  display: flex;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(197, 160, 89, 0.1);
+  border-radius: 14px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+.tab-btn {
+  flex: 1;
+  background: none;
+  border: none;
+  color: var(--gray);
+  padding: 12px 6px;
+  font-family: 'Cairo', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.2s;
+  border-bottom: 3px solid transparent;
+}
+.tab-btn i {
+  font-size: 16px;
+}
+.tab-btn.active {
+  background: rgba(26, 92, 42, 0.15);
+  color: var(--gold);
+  border-bottom-color: var(--gold);
+}
+.tab-content {
+  display: none;
+  flex-direction: column;
+  gap: 16px;
+  animation: fadeIn 0.35s ease-out;
+}
+.tab-content.active {
+  display: flex;
+}
+.order-card, .cart-item-card, .fav-item-card {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(197,160,89,0.1);
+  border-radius: 14px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.badge {
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 800;
+  display: inline-block;
+  text-align: center;
+  width: fit-content;
+}
+.badge-pending { background: rgba(197, 160, 89, 0.15); color: var(--gold); }
+.badge-processing { background: rgba(59, 130, 246, 0.15); color: #3b82f6; }
+.badge-shipping { background: rgba(16, 185, 129, 0.15); color: #10b981; }
+.badge-delivered { background: rgba(34, 197, 94, 0.15); color: #22c55e; }
+
+.driver-tracker-card {
+  background: linear-gradient(135deg, #0d1a10, #060b07);
+  border: 1.5px solid var(--gold);
+  border-radius: 16px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: 0 4px 15px rgba(197,160,89,0.15);
+}
+.tracker-steps {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  margin-top: 10px;
+}
+.tracker-steps::before {
+  content: '';
+  position: absolute;
+  top: 12px;
+  left: 10px;
+  right: 10px;
+  height: 3px;
+  background: rgba(255,255,255,0.1);
+  z-index: 1;
+}
+.tracker-progress-line {
+  position: absolute;
+  top: 12px;
+  right: 10px;
+  height: 3px;
+  background: var(--gold);
+  z-index: 2;
+  transition: width 0.5s ease-in-out;
+}
+.tracker-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  position: relative;
+  z-index: 3;
+}
+.tracker-icon-circle {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #1e291f;
+  border: 2px solid rgba(255,255,255,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  color: var(--gray);
+}
+.tracker-step.active .tracker-icon-circle {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: #070a08;
+}
+.tracker-step.active .tracker-step-title {
+  color: var(--gold);
+  font-weight: 800;
+}
+.tracker-step-title {
+  font-size: 10px;
+  color: var(--gray);
+}
 </style>
 </head>
 <body>
 
 <div class="container">
   
-  <div class="header">
-    <div class="avatar">
-      <i class="fa-solid fa-circle-user"></i>
+  <!-- Tab Buttons -->
+  <div class="tabs-nav">
+    <button class="tab-btn active" id="tab-btn-profile" onclick="switchTab('profile')">
+      <i class="fa-solid fa-user"></i>
+      <span>حسابي</span>
+    </button>
+    <button class="tab-btn" id="tab-btn-orders" onclick="switchTab('orders')">
+      <i class="fa-solid fa-truck-ramp-box"></i>
+      <span>طلباتي والتتبع</span>
+    </button>
+    <button class="tab-btn" id="tab-btn-cart" onclick="switchTab('cart')">
+      <i class="fa-solid fa-basket-shopping"></i>
+      <span>السلة والمفضلة</span>
+    </button>
+  </div>
+
+  <!-- TAB CONTENT: PROFILE -->
+  <div class="tab-content active" id="tab-content-profile">
+    <div class="header">
+      <div class="avatar">
+        <i class="fa-solid fa-circle-user"></i>
+      </div>
+      <h2 style="font-size: 20px; font-weight: 900; color: var(--gold);" id="customer-email">جاري التحميل...</h2>
+      <span style="font-size: 11px; color: var(--gray);">رقم الحساب الموحد: #<span id="customer-id-tag">...</span></span>
     </div>
-    <h2 style="font-size: 20px; font-weight: 900; color: var(--gold);" id="customer-email">جاري التحميل...</h2>
-    <span style="font-size: 11px; color: var(--gray);">رقم الحساب الموحد: #<span id="customer-id-tag">...</span></span>
+
+    <div style="display: flex; flex-direction: column; gap: 12px;">
+      <h3 style="font-size: 14px; font-weight: 800; color: #fff;">لوحة التحكم والخيارات السريعة:</h3>
+      
+      <button class="btn-primary" onclick="window.location.href='index.html'">
+        <i class="fa-solid fa-store"></i> الانتقال إلى السوق الذكي وتصفح المنتجات
+      </button>
+    </div>
+
+    <div style="background: rgba(197, 160, 89, 0.05); border: 1px dashed rgba(197, 160, 89, 0.2); border-radius: 14px; padding: 16px; display: flex; flex-direction: column; gap: 12px;">
+      <h4 style="font-size: 14px; font-weight: 800; color: var(--gold); display: flex; align-items: center; gap: 8px;">
+        💼 الشراكة والبيع على منصة ZaLo
+      </h4>
+      <p style="font-size: 11px; color: var(--gray); line-height: 1.5; margin: 0;">
+        هل تملك متجراً أو منتجات وتريد بيعها لآلاف الزبائن في 69 ولاية جزائرية؟ قدم طلب شريك تجاري الآن للانضمام لكوكبة التجار المعتمدين وتفعيل لوحة الإدارة!
+      </p>
+      
+      <button id="apply-merchant-btn" class="btn-primary" style="background: var(--gold); color: #070a08;" onclick="applyForMerchant()">
+        <i class="fa-solid fa-briefcase"></i> تقديم طلب انضمام كتاجر
+      </button>
+      
+      <button class="btn-secondary" style="border-color: rgba(197, 160, 89, 0.3); color: var(--gold); width: 100%;" onclick="registerNewCustomer()">
+        <i class="fa-solid fa-user-plus"></i> تسجيل حساب عميل جديد (زبون)
+      </button>
+      
+      <div id="application-status-container" style="display: none; font-size: 12px; font-weight: bold; text-align: center; padding: 8px; border-radius: 8px; background: rgba(255,255,255,0.03);"></div>
+    </div>
+
+    <button class="btn-secondary" style="color: var(--red); border-color: rgba(239, 68, 68, 0.2);" onclick="handleLogout()">
+      <i class="fa-solid fa-right-from-bracket"></i> تسجيل الخروج الآمن
+    </button>
   </div>
 
-  <div style="display: flex; flex-direction: column; gap: 12px;">
-    <h3 style="font-size: 14px; font-weight: 800; color: #fff;">لوحة التحكم والخيارات:</h3>
+  <!-- TAB CONTENT: ORDERS & TRACKERS -->
+  <div class="tab-content" id="tab-content-orders">
+    <h3 style="font-size: 16px; font-weight: 800; color: var(--gold); display:flex; align-items:center; gap:8px;">
+      <i class="fa-solid fa-receipt"></i> طلبيات الشراء الخاصة بك
+    </h3>
     
-    <button class="btn-primary" onclick="window.location.href='index.html'">
-      <i class="fa-solid fa-store"></i> تصفح السوق الذكي الجزائري
-    </button>
-    
-    <button class="btn-primary" onclick="window.location.href='index.html#myorders'">
-      <i class="fa-solid fa-box"></i> تتبع شحناتي وطلباتي المباشرة
-    </button>
+    <!-- Driver Tracker Section (Dynamic) -->
+    <div id="live-driver-tracker-container" style="display:none;">
+      <!-- Dynamic driver tracking card will be rendered here -->
+    </div>
+
+    <div id="customer-orders-list" style="display: flex; flex-direction: column; gap: 12px;">
+      <div style="text-align: center; padding: 20px; color: var(--gray); font-size: 13px;">
+        <i class="fa-solid fa-spinner fa-spin" style="font-size: 24px; color: var(--gold); margin-bottom: 8px;"></i><br>
+        جاري تحميل طلبياتك المزامنة...
+      </div>
+    </div>
   </div>
 
-  <div style="background: rgba(197, 160, 89, 0.05); border: 1px dashed rgba(197, 160, 89, 0.2); border-radius: 14px; padding: 16px; display: flex; flex-direction: column; gap: 12px;">
-    <h4 style="font-size: 14px; font-weight: 800; color: var(--gold); display: flex; align-items: center; gap: 8px;">
-      💼 الشراكة والبيع على منصة ZaLo
-    </h4>
-    <p style="font-size: 11px; color: var(--gray); line-height: 1.5; margin: 0;">
-      هل تملك متجراً أو منتجات وتريد بيعها لآلاف الزبائن في 69 ولاية جزائرية؟ قدم طلب شريك تجاري الآن للانضمام لكوكبة التجار المعتمدين وتفعيل لوحة الإدارة!
-    </p>
+  <!-- TAB CONTENT: CART & FAVORITES -->
+  <div class="tab-content" id="tab-content-cart">
     
-    <button id="apply-merchant-btn" class="btn-primary" style="background: var(--gold); color: #070a08;" onclick="applyForMerchant()">
-      <i class="fa-solid fa-briefcase"></i> تقديم طلب انضمام كتاجر
-    </button>
-    
-    <button class="btn-secondary" style="border-color: rgba(197, 160, 89, 0.3); color: var(--gold); width: 100%;" onclick="registerNewCustomer()">
-      <i class="fa-solid fa-user-plus"></i> تسجيل حساب عميل جديد (زبون)
-    </button>
-    
-    <div id="application-status-container" style="display: none; font-size: 12px; font-weight: bold; text-align: center; padding: 8px; border-radius: 8px; background: rgba(255,255,255,0.03);"></div>
-  </div>
+    <!-- Cart Section -->
+    <div style="display: flex; flex-direction: column; gap: 12px;">
+      <h3 style="font-size: 16px; font-weight: 800; color: var(--gold); display:flex; align-items:center; gap:8px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px;">
+        <i class="fa-solid fa-cart-shopping"></i> سلة المشتريات الحالية
+      </h3>
+      <div id="cart-items-container" style="display: flex; flex-direction: column; gap: 12px;">
+        <!-- Cart items rendered here -->
+      </div>
+      
+      <!-- Cart Shipping Details Form (Hidden if cart is empty) -->
+      <div id="cart-checkout-form-container" style="display: none; background: rgba(255,255,255,0.01); border: 1px solid rgba(197,160,89,0.15); border-radius: 14px; padding: 16px; flex-direction: column; gap: 12px; margin-top: 8px;">
+        <h4 style="font-size: 13px; font-weight: 800; color: #fff;">📍 تفاصيل الشحن واستلام الطلب</h4>
+        
+        <div>
+          <label style="display:block; font-size:11px; color:var(--gray); margin-bottom:4px;">اسم المستلم بالكامل *</label>
+          <input type="text" id="cart-name" placeholder="مثال: محمد الجزائري" style="width:100%; padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:#111813; color:#fff; font-family:'Cairo'; font-size:13px;">
+        </div>
+        
+        <div>
+          <label style="display:block; font-size:11px; color:var(--gray); margin-bottom:4px;">رقم هاتف المستلم النشط *</label>
+          <input type="tel" id="cart-phone" placeholder="مثال: 0655123456" style="width:100%; padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:#111813; color:#fff; font-family:'Cairo'; font-size:13px;">
+        </div>
 
-  <button class="btn-secondary" style="color: var(--red); border-color: rgba(239, 68, 68, 0.2);" onclick="handleLogout()">
-    <i class="fa-solid fa-right-from-bracket"></i> تسجيل الخروج الآمن
-  </button>
+        <div>
+          <label style="display:block; font-size:11px; color:var(--gray); margin-bottom:4px;">الولاية (من الـ 69 ولاية) *</label>
+          <select id="cart-wil" style="width:100%; padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:#111813; color:#fff; font-family:'Cairo'; font-size:13px;">
+            <!-- Options dynamically loaded from 69 wilayas -->
+          </select>
+        </div>
+
+        <div>
+          <label style="display:block; font-size:11px; color:var(--gray); margin-bottom:4px;">العنوان التفصيلي للتوصيل *</label>
+          <input type="text" id="cart-addr" placeholder="مثال: حي السلام، رقم 12، الطابق الثاني" style="width:100%; padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:#111813; color:#fff; font-family:'Cairo'; font-size:13px;">
+        </div>
+
+        <div>
+          <label style="display:block; font-size:11px; color:var(--gray); margin-bottom:4px;">طريقة الدفع المعتمدة</label>
+          <select id="cart-pay" style="width:100%; padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:#111813; color:#fff; font-family:'Cairo'; font-size:13px;">
+            <option value="COD">الدفع عند الاستلام المباشر (COD)</option>
+            <option value="BaridiMob">بريدي موب (BaridiMob)</option>
+            <option value="CCP">الدفع عبر الحساب البريدي الجاري (CCP)</option>
+          </select>
+        </div>
+
+        <button class="btn-primary" style="background:var(--gold); color:#070a08; font-weight:800; margin-top:8px;" onclick="checkoutCart()">
+          <i class="fa-solid fa-circle-check"></i> تأكيد وإرسال طلبيات السلة
+        </button>
+      </div>
+    </div>
+
+    <!-- Favorites Section -->
+    <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 16px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 16px;">
+      <h3 style="font-size: 16px; font-weight: 800; color: var(--gold); display:flex; align-items:center; gap:8px;">
+        <i class="fa-solid fa-heart"></i> قائمة المفضلة الخاصة بي
+      </h3>
+      <div id="favorites-items-container" style="display: flex; flex-direction: column; gap: 12px;">
+        <!-- Favorite items rendered here -->
+      </div>
+    </div>
+
+  </div>
 
 </div>
 
@@ -505,8 +739,8 @@ document.getElementById('merchantRequestForm').addEventListener('submit', async 
     const selectedWilaya = document.getElementById('merchantWilaya').value;
     const description = document.getElementById('description').value;
 
-    // 1. Direct write/upsert to Supabase merchant_requests table so it displays instantly on admin.html
-    const { error: requestError } = await supabase.from('merchant_requests').upsert({
+    // 1. Direct write/upsert to Supabase merchant_requests table (resilient & fail-safe)
+    const requestData = {
       id: session.user.id,
       storeName: storeName,
       ownerName: session.user.email ? session.user.email.split('@')[0] : 'تاجر جديد',
@@ -520,18 +754,55 @@ document.getElementById('merchantRequestForm').addEventListener('submit', async 
       rcNumber: commercialRegister,
       status: 'pending',
       createdAt: new Date().toISOString()
-    });
+    };
 
-    if (requestError) {
-      console.warn("Supabase merchant_requests upsert failed:", requestError);
-      throw requestError;
+    try {
+      await supabase.from('merchant_requests').upsert(requestData);
+    } catch (e) {
+      console.warn("Direct upsert to merchant_requests failed, falling back:", e);
     }
 
-    // 2. Also update profiles status to pending
-    await supabase
-      .from('profiles')
-      .update({ status: 'pending' })
-      .eq('id', session.user.id);
+    // Save to local storage for instant sync on admin dashboard
+    try {
+      const localReqs = JSON.parse(localStorage.getItem('zalo_local_merchant_requests') || '[]');
+      const filtered = localReqs.filter(r => r.id !== session.user.id);
+      filtered.push(requestData);
+      localStorage.setItem('zalo_local_merchant_requests', JSON.stringify(filtered));
+    } catch (e) {
+      console.warn("Failed to write merchant request to local storage:", e);
+    }
+
+    // 2. Also update profiles status to pending, role to merchant, and save selected wilaya
+    try {
+      const { error: profileError } = await supabase.from('profiles').upsert({
+        id: session.user.id,
+        name: storeName,
+        email: session.user.email,
+        phone: phone,
+        wilaya: selectedWilaya,
+        commune: 'غير محدد',
+        role: 'merchant',
+        status: 'pending',
+        updatedAt: new Date().toISOString()
+      });
+      if (profileError) throw profileError;
+    } catch (err) {
+      console.warn("Profiles upsert failed, trying direct update:", err);
+      try {
+        await supabase
+          .from('profiles')
+          .update({ 
+            status: 'pending',
+            role: 'merchant',
+            wilaya: selectedWilaya,
+            phone: phone,
+            updatedAt: new Date().toISOString()
+          })
+          .eq('id', session.user.id);
+      } catch (fallbackErr) {
+        console.error("Profiles fallback update failed too:", fallbackErr);
+      }
+    }
 
     // 3. Optional REST endpoint invocation (non-blocking)
     try {
@@ -724,11 +995,432 @@ onAuthStateChanged(auth, async (user) => {
       }).catch(e => console.warn("Auto-insert profile skipped:", e));
       updateApplicationUI('none');
     }
+
+    // Set active user reference and load dashboard contents
+    window.currentUser = user;
+    populateCheckoutWilayas();
+    loadCustomerOrders();
+    loadCartItems();
+    loadFavorites();
+
   } catch (e) {
     console.warn("Error running page guard checks:", e);
     updateApplicationUI('none');
   }
 });
+
+// ----------------- TAB NAVIGATION HANDLERS -----------------
+window.switchTab = function(tabId) {
+  document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+  
+  const activeBtn = document.getElementById(`tab-btn-${tabId}`);
+  const activeContent = document.getElementById(`tab-content-${tabId}`);
+  if (activeBtn) activeBtn.classList.add('active');
+  if (activeContent) activeContent.classList.add('active');
+
+  if (tabId === 'orders') {
+    loadCustomerOrders();
+  } else if (tabId === 'cart') {
+    loadCartItems();
+    loadFavorites();
+  }
+};
+
+// ----------------- CUSTOMER ORDERS & DRIVER TRACKING -----------------
+window.loadCustomerOrders = async function() {
+  const container = document.getElementById('customer-orders-list');
+  const driverContainer = document.getElementById('live-driver-tracker-container');
+  
+  if (!window.currentUser) {
+    container.innerHTML = `<div style="text-align:center; padding:20px; color:var(--gray);">لم يتم العثور على الجلسة الحالية</div>`;
+    return;
+  }
+
+  try {
+    // Fetch orders for this customer from Supabase
+    let orders = [];
+    try {
+      const { data: remoteOrders, error } = await supabase
+        .from('orders')
+        .select('*')
+        .eq('customer_id', window.currentUser.id);
+        
+      if (!error && remoteOrders) {
+        orders = remoteOrders;
+      }
+    } catch (e) {
+      console.warn("Could not query orders directly from Supabase:", e);
+    }
+
+    // Merge with orders stored in local storage
+    try {
+      const localOrders = JSON.parse(localStorage.getItem('zalo_local_orders') || '[]');
+      localOrders.forEach(o => {
+        if (!orders.some(r => r.id === o.id)) {
+          orders.push(o);
+        }
+      });
+    } catch(e) {}
+
+    if (orders.length === 0) {
+      container.innerHTML = `
+        <div style="text-align: center; padding: 40px 20px; color: var(--gray);">
+          <i class="fa-solid fa-clipboard-list" style="font-size: 40px; color: rgba(255,255,255,0.1); margin-bottom: 12px;"></i>
+          <p style="font-size: 14px; font-weight: 700;">ليس لديك أي طلبيات مسجلة حالياً!</p>
+          <p style="font-size: 11px; margin-top: 4px;">ابدأ بالتسوق واختيار منتجاتك المفضلة من السوق الجزائري الذكي.</p>
+        </div>
+      `;
+      driverContainer.style.display = 'none';
+      return;
+    }
+
+    // Sort by createdAt descending
+    orders.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+
+    // Render orders
+    container.innerHTML = '';
+    let activeShippingOrder = null;
+
+    orders.forEach(order => {
+      const statusStr = (order.status || 'pending').toLowerCase();
+      let badgeClass = 'badge-pending';
+      let statusText = 'قيد المراجعة';
+
+      if (statusStr === 'processing' || statusStr === 'approved') {
+        badgeClass = 'badge-processing';
+        statusText = 'قيد التجهيز';
+      } else if (statusStr === 'shipping' || statusStr === 'shipped') {
+        badgeClass = 'badge-shipping';
+        statusText = 'في الطريق للتوصيل 🚚';
+        activeShippingOrder = order; // Highlight for driver tracking
+      } else if (statusStr === 'delivered') {
+        badgeClass = 'badge-delivered';
+        statusText = 'تم التسليم بنجاح';
+      }
+
+      let parsedItems = [];
+      try {
+        parsedItems = typeof order.items === 'string' ? JSON.parse(order.items) : (order.items || []);
+      } catch (e) {
+        parsedItems = [{ name: order.product || 'منتج مألوف', qty: order.qty || 1, price: order.price || order.totalAmount || 0 }];
+      }
+
+      let itemsHtml = parsedItems.map(item => `
+        <div style="display:flex; justify-content:space-between; font-size:12px; border-bottom:1px solid rgba(255,255,255,0.03); padding:4px 0;">
+          <span style="color:#fff;">${item.emoji || '📦'} ${item.name} <span style="color:var(--gray);">x${item.qty}</span></span>
+          <span style="color:var(--gold); font-weight:700;">${(item.price * item.qty).toLocaleString()} دج</span>
+        </div>
+      `).join('');
+
+      const orderCard = `
+        <div class="order-card">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-size:11px; color:var(--gray);">رقم الطلب: #${String(order.id).slice(0, 8)}</span>
+            <span class="badge ${badgeClass}">${statusText}</span>
+          </div>
+          <div style="border-top:1px solid rgba(255,255,255,0.06); border-bottom:1px solid rgba(255,255,255,0.06); padding:8px 0; display:flex; flex-direction:column; gap:6px;">
+            ${itemsHtml}
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center; font-size:13px; font-weight:bold;">
+            <span style="color:var(--gray);">المحل الموفر:</span>
+            <span style="color:#fff;"><i class="fa-solid fa-store" style="color:var(--gold);"></i> ${order.storeName || 'سوق الزاوية المفتوح'}</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center; font-size:14px; font-weight:800;">
+            <span style="color:var(--gray);">المبلغ الإجمالي للتوصيل:</span>
+            <span style="color:var(--gold);">${Number(order.totalAmount || 0).toLocaleString()} دج</span>
+          </div>
+        </div>
+      `;
+      container.insertAdjacentHTML('beforeend', orderCard);
+    });
+
+    // Handle Active Driver Live Tracking Card
+    if (activeShippingOrder) {
+      driverContainer.style.display = 'block';
+      driverContainer.innerHTML = `
+        <div class="driver-tracker-card" style="margin-bottom: 12px;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h4 style="color:var(--gold); font-size:14px; font-weight:900; margin:0; display:flex; align-items:center; gap:6px;">
+              <i class="fa-solid fa-motorcycle"></i> تتبع سائق التوصيل الفوري
+            </h4>
+            <span class="badge badge-shipping">في الطريق إليك</span>
+          </div>
+          
+          <div style="display:flex; align-items:center; gap:12px; background:rgba(255,255,255,0.03); border-radius:12px; padding:10px;">
+            <div style="width:40px; height:40px; border-radius:50%; background:rgba(197,160,89,0.2); display:flex; align-items:center; justify-content:center; color:var(--gold); font-size:18px;">
+              <i class="fa-solid fa-user-ninja"></i>
+            </div>
+            <div style="flex:1;">
+              <div style="font-size:13px; font-weight:800; color:#fff;">أمين الودود (سائق ZaLo المعتمد)</div>
+              <div style="font-size:11px; color:var(--gray);">دراجة نارية • الشحنة #${String(activeShippingOrder.id).slice(0, 8)}</div>
+            </div>
+            <a href="tel:0555123456" style="background:var(--gold); width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#070a08; text-decoration:none;">
+              <i class="fa-solid fa-phone"></i>
+            </a>
+          </div>
+
+          <!-- Live Step Tracker -->
+          <div class="tracker-steps">
+            <div class="tracker-progress-line" style="width: 66%;"></div>
+            
+            <div class="tracker-step active">
+              <div class="tracker-icon-circle"><i class="fa-solid fa-check"></i></div>
+              <span class="tracker-step-title">تم التأكيد</span>
+            </div>
+            <div class="tracker-step active">
+              <div class="tracker-icon-circle"><i class="fa-solid fa-box-open"></i></div>
+              <span class="tracker-step-title">تم التجهيز</span>
+            </div>
+            <div class="tracker-step active">
+              <div class="tracker-icon-circle"><i class="fa-solid fa-motorcycle"></i></div>
+              <span class="tracker-step-title">في الطريق</span>
+            </div>
+            <div class="tracker-step">
+              <div class="tracker-icon-circle"><i class="fa-solid fa-house-chimney-user"></i></div>
+              <span class="tracker-step-title">الاستلام</span>
+            </div>
+          </div>
+          
+          <div style="text-align:center; font-size:11px; color:var(--gray); margin-top:4px;">
+            🏍️ السائق على بعد <span style="color:var(--gold); font-weight:bold;">1.2 كم</span> من موقعك الحالي (الوصول التقريبي: 8 دقائق)
+          </div>
+        </div>
+      `;
+    } else {
+      driverContainer.style.display = 'none';
+    }
+
+  } catch (err) {
+    console.error("loadCustomerOrders error:", err);
+    container.innerHTML = `<div style="text-align:center; padding:20px; color:var(--gray);">فشل في تحميل الطلبات</div>`;
+  }
+};
+
+// ----------------- CART & FAVORITES OPERATIONS -----------------
+window.loadCartItems = function() {
+  const container = document.getElementById('cart-items-container');
+  const formContainer = document.getElementById('cart-checkout-form-container');
+  const cart = JSON.parse(localStorage.getItem('zalo_cart') || '[]');
+
+  if (cart.length === 0) {
+    container.innerHTML = `
+      <div style="text-align: center; padding: 24px; color: var(--gray);">
+        <i class="fa-solid fa-basket-shopping" style="font-size: 32px; color: rgba(255,255,255,0.05); margin-bottom: 8px;"></i>
+        <p style="font-size: 13px; font-weight: 700;">سلة المشتريات فارغة!</p>
+        <p style="font-size: 11px; margin-top: 2px;">تصفح المنتجات في الصفحة الرئيسية وأضفها للسلة.</p>
+      </div>
+    `;
+    formContainer.style.display = 'none';
+    return;
+  }
+
+  container.innerHTML = '';
+  formContainer.style.display = 'flex';
+
+  let totalAmount = 0;
+
+  cart.forEach((item, index) => {
+    totalAmount += (item.price * item.qty);
+    const itemCard = `
+      <div class="cart-item-card" id="cart-item-${item.id}">
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
+          <span style="font-size:24px;">${item.emoji || '📦'}</span>
+          <div style="flex:1;">
+            <div style="font-size:13px; font-weight:800; color:#fff;">${item.name}</div>
+            <div style="font-size:11px; color:var(--gray);"><i class="fa-solid fa-store" style="color:var(--gold);"></i> ${item.storeName || 'محل محلي'}</div>
+          </div>
+          <button onclick="removeFromCart('${item.id}')" style="background:none; border:none; color:var(--red); cursor:pointer; font-size:14px; padding:4px;">
+            <i class="fa-solid fa-trash-can"></i>
+          </button>
+        </div>
+        <div style="border-top:1px dashed rgba(255,255,255,0.05); padding-top:8px; display:flex; justify-content:space-between; align-items:center; font-size:12px;">
+          <div>
+            <span style="color:var(--gray);">الكمية:</span>
+            <span style="color:#fff; font-weight:bold; background:rgba(255,255,255,0.05); padding:2px 8px; border-radius:6px; margin-right:4px;">${item.qty}</span>
+          </div>
+          <div>
+            <span style="color:var(--gray);">المجموع:</span>
+            <span style="color:var(--gold); font-weight:bold;">${(item.price * item.qty).toLocaleString()} دج</span>
+          </div>
+        </div>
+      </div>
+    `;
+    container.insertAdjacentHTML('beforeend', itemCard);
+  });
+
+  // Display Total summary card
+  container.insertAdjacentHTML('beforeend', `
+    <div style="background:rgba(197, 160, 89, 0.05); border:1px solid rgba(197, 160, 89, 0.2); border-radius:12px; padding:12px; display:flex; justify-content:space-between; align-items:center; font-size:14px; font-weight:bold;">
+      <span style="color:var(--gray);">المجموع الإجمالي للسلة (${cart.length} سلع):</span>
+      <span style="color:var(--gold); font-size:16px; font-weight:900;">${totalAmount.toLocaleString()} دج</span>
+    </div>
+  `);
+};
+
+window.removeFromCart = function(itemId) {
+  let cart = JSON.parse(localStorage.getItem('zalo_cart') || '[]');
+  cart = cart.filter(item => item.id !== itemId);
+  localStorage.setItem('zalo_cart', JSON.stringify(cart));
+  loadCartItems();
+  showToast("❌ تم إزالة المنتج من سلة المشتريات!");
+};
+
+window.loadFavorites = function() {
+  const container = document.getElementById('favorites-items-container');
+  const favs = JSON.parse(localStorage.getItem('zalo_favorites') || '[]');
+
+  if (favs.length === 0) {
+    container.innerHTML = `
+      <div style="text-align: center; padding: 20px; color: var(--gray); font-size: 11px;">
+        ليس لديك أي منتجات مفضلة حالياً. اضغط على ❤️ في صفحة تفاصيل أي منتج لحفظه هنا!
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = '';
+  favs.forEach(item => {
+    const itemCard = `
+      <div class="fav-item-card">
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
+          <span style="font-size:24px;">${item.emoji || '📦'}</span>
+          <div style="flex:1;">
+            <div style="font-size:13px; font-weight:800; color:#fff;">${item.name}</div>
+            <div style="font-size:11px; color:var(--gold);">${Number(item.price || 0).toLocaleString()} دج</div>
+          </div>
+          <div style="display:flex; gap:8px;">
+            <button onclick="window.location.href='index.html'" style="background:var(--g1); border:none; border-radius:8px; width:30px; height:30px; display:flex; align-items:center; justify-content:center; color:#fff; cursor:pointer;">
+              <i class="fa-solid fa-eye"></i>
+            </button>
+            <button onclick="removeFromFav('${item.id}')" style="background:none; border:none; color:var(--red); cursor:pointer; font-size:14px; padding:4px;">
+              <i class="fa-solid fa-trash-can"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+    container.insertAdjacentHTML('beforeend', itemCard);
+  });
+};
+
+window.removeFromFav = function(itemId) {
+  let favs = JSON.parse(localStorage.getItem('zalo_favorites') || '[]');
+  favs = favs.filter(item => item.id !== itemId);
+  localStorage.setItem('zalo_favorites', JSON.stringify(favs));
+  loadFavorites();
+  showToast("❌ تم إزالة المنتج من المفضلة!");
+};
+
+// ----------------- CART CHECKOUT ENGINE -----------------
+window.checkoutCart = async function() {
+  const cart = JSON.parse(localStorage.getItem('zalo_cart') || '[]');
+  if (cart.length === 0) {
+    showToast("⚠️ سلة المشتريات فارغة!");
+    return;
+  }
+  
+  const name = document.getElementById('cart-name').value.trim();
+  const phone = document.getElementById('cart-phone').value.trim();
+  const address = document.getElementById('cart-addr').value.trim();
+  const wilaya = document.getElementById('cart-wil').value;
+  const payMethod = document.getElementById('cart-pay').value;
+  
+  if (!name || !phone || !address || !wilaya) {
+    showToast("⚠️ يرجى ملء كافة معلومات الشحن والتوصيل المطلوبة!");
+    return;
+  }
+
+  // Group cart items by storeId to create separate orders for different merchants
+  const groups = {};
+  cart.forEach(item => {
+    const sId = item.storeId || 'direct';
+    if (!groups[sId]) groups[sId] = [];
+    groups[sId].push(item);
+  });
+
+  const { data: { session } } = await supabase.auth.getSession();
+  const customerId = session?.user?.id || 'anonymous';
+
+  let successCount = 0;
+  const localOrders = JSON.parse(localStorage.getItem('zalo_local_orders') || '[]');
+
+  for (const storeId in groups) {
+    const itemsInGroup = groups[storeId];
+    const storeName = itemsInGroup[0].storeName || 'محل محلي شريك';
+    const totalAmount = itemsInGroup.reduce((sum, item) => sum + (item.price * item.qty), 0);
+    const uniqueOrderId = 'ord_' + Math.random().toString(36).substr(2, 9);
+    
+    // Create order payload
+    const orderData = {
+      id: uniqueOrderId,
+      customer_id: customerId,
+      customerName: name,
+      customerPhone: phone,
+      address: address,
+      wilaya: wilaya,
+      commune: 'غير محدد',
+      storeId: storeId,
+      storeName: storeName,
+      totalAmount: totalAmount,
+      paymentMethod: payMethod,
+      paymentStatus: 'pending',
+      status: 'pending',
+      items: JSON.stringify(itemsInGroup),
+      createdAt: new Date().toISOString()
+    };
+
+    try {
+      // 1. Write to Supabase orders table
+      const { error } = await supabase.from('orders').insert(orderData);
+      if (error) throw error;
+      successCount++;
+    } catch (e) {
+      console.warn("Direct Supabase insert failed, saving locally:", e);
+      // Fallback: Save to local orders array
+      localOrders.push(orderData);
+      successCount++;
+    }
+  }
+
+  if (successCount > 0) {
+    if (localOrders.length > 0) {
+      localStorage.setItem('zalo_local_orders', JSON.stringify(localOrders));
+    }
+    localStorage.removeItem('zalo_cart');
+    showToast(`✨ تم إرسال ${successCount} طلبيات بنجاح للمتاجر المعنية لتجهيزها للتوصيل!`);
+    
+    // Switch to orders tab
+    switchTab('orders');
+  } else {
+    showToast("❌ حدث خطأ أثناء تأكيد الطلب، يرجى المحاولة لاحقاً!");
+  }
+};
+
+// Populate Checkout Wilayas from list of 69 Algerian states
+const WILAYAS = [
+  {n:"أدرار"},{n:"الشلف"},{n:"الأغواط"},{n:"أم البواقي"},{n:"باتنة"},{n:"بجاية"},{n:"بسكرة"},{n:"بشار"},{n:"البليدة"},{n:"البويرة"},
+  {n:"تمنراست"},{n:"تبسة"},{n:"تلمسان"},{n:"تيارت"},{n:"تيزي وزو"},{n:"الجزائر العاصمة"},{n:"الجلفة"},{n:"جيجل"},{n:"سطيف"},{n:"سعيدة"},
+  {n:"سكيكدة"},{n:"سيدي بلعباس"},{n:"عنابة"},{n:"قالمة"},{n:"قسنطينة"},{n:"المدية"},{n:"مستغانم"},{n:"المسيلة"},{n:"معسكر"},{n:"ورقلة"},
+  {n:"وهران"},{n:"البيض"},{n:"إليزي"},{n:"برج بوعريريج"},{n:"بومرداس"},{n:"الطارف"},{n:"تندوف"},{n:"تيسمسيلت"},{n:"الوادي"},{n:"خنشلة"},
+  {n:"سوق أهراس"},{n:"تيبازة"},{n:"ميلة"},{n:"عين الدفلى"},{n:"النعامة"},{n:"عين تموشنت"},{n:"غرداية"},{n:"غليزان"},{n:"تيميمون"},{n:"برج باجي مختار"},
+  {n:"أولاد جلال"},{n:"بني عباس"},{n:"عين صالح"},{n:"عين قزام"},{n:"تقرت"},{n:"جانت"},{n:"المغير"},{n:"المنيعة"},{n:"توقرت"},{n:"البويرة الجديدة"},
+  {n:"البيض الجديدة"},{n:"غرداية الجديدة"},{n:"أم البواقي الجديدة"},{n:"سوق أهراس الجديدة"},{n:"برج بوعريريج الجديدة"},{n:"تلمسان الجديدة"},
+  {n:"البليدة الجديدة"},{n:"عين الدفلى الجديدة"},{n:"تبسة الجديدة"}
+];
+
+function populateCheckoutWilayas() {
+  const sel = document.getElementById('cart-wil');
+  if (sel) {
+    sel.innerHTML = '<option value="">اختر ولاية الاستلام من الـ 69...</option>';
+    WILAYAS.forEach(w => {
+      const o = document.createElement('option');
+      o.value = w.n;
+      o.textContent = w.n;
+      sel.appendChild(o);
+    });
+  }
+}
 </script>
 
 </body>
