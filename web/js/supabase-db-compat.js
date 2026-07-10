@@ -202,6 +202,8 @@ const NESTJS_BASE_URL = window.location.hostname === 'localhost' || window.locat
      ? `${window.location.origin}/api`
      : 'https://zalo-smart-backend-service-api.run.app/api');
 
+window.NESTJS_BASE_URL = NESTJS_BASE_URL;
+
 console.log(`[ZaLo Compat Engine] Bridge initialized. NestJS API Endpoint: ${NESTJS_BASE_URL}`);
 
 // Helper to make fetch calls to NestJS

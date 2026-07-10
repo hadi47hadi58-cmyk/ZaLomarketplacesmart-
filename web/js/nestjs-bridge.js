@@ -10,6 +10,8 @@ const NESTJS_BASE_URL = window.location.hostname === 'localhost' || window.locat
      ? `${window.location.origin}/api`
      : 'https://zalo-smart-backend-service-api.run.app/api'); // رابط الإنتاج الافتراضي في السحابة
 
+window.NESTJS_BASE_URL = NESTJS_BASE_URL;
+
 console.log(`[ZaLo Bridge] تم إعداد جسر الاتصال بـ NestJS على المسار: ${NESTJS_BASE_URL}`);
 
 /**
