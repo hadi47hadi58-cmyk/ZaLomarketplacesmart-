@@ -10,7 +10,8 @@ export class PasswordReset {
    */
   static async requestReset(email) {
     try {
-      const response = await fetch('/api/auth/password-reset/request', {
+      const baseUrl = window.NESTJS_BASE_URL || '/api';
+      const response = await fetch(`${baseUrl}/auth/password-reset/request`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -36,7 +37,8 @@ export class PasswordReset {
    */
   static async resetPassword(token, newPassword) {
     try {
-      const response = await fetch('/api/auth/password-reset/reset', {
+      const baseUrl = window.NESTJS_BASE_URL || '/api';
+      const response = await fetch(`${baseUrl}/auth/password-reset/reset`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

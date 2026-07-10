@@ -54,7 +54,8 @@ export class TwoFactorAuth {
    */
   static async verify2FA(email, code) {
     try {
-      const response = await fetch('/api/security/2fa/verify', {
+      const baseUrl = window.NESTJS_BASE_URL || '/api';
+      const response = await fetch(`${baseUrl}/security/2fa/verify`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

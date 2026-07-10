@@ -128,7 +128,8 @@
         }
 
         try {
-          const response = await fetch('/api/merchant-requests', {
+          const baseUrl = window.NESTJS_BASE_URL || '/api';
+          const response = await fetch(`${baseUrl}/merchant-requests`, {
             headers: { 'Authorization': `Bearer ${session.token}` },
           });
           const requests = await response.json();
@@ -203,7 +204,8 @@
         }
 
         try {
-          const response = await fetch(`/api/merchant-requests/${requestId}/${action}`, {
+          const baseUrl = window.NESTJS_BASE_URL || '/api';
+          const response = await fetch(`${baseUrl}/merchant-requests/${requestId}/${action}`, {
             method: 'PATCH',
             headers: {
               'Content-Type': 'application/json',

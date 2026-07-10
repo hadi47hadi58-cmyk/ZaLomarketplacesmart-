@@ -309,7 +309,8 @@ document.getElementById('merchantRequestForm').addEventListener('submit', async 
       description: document.getElementById('description').value,
     };
 
-    const response = await fetch('/api/merchant-requests', {
+    const baseUrl = window.NESTJS_BASE_URL || '/api';
+    const response = await fetch(`${baseUrl}/merchant-requests`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -385,7 +386,8 @@ onAuthStateChanged(auth, async (user) => {
     // Check request status from backend REST API
     const { data: { session } } = await supabase.auth.getSession();
     if (session) {
-      const response = await fetch('/api/merchant-requests', {
+      const baseUrl = window.NESTJS_BASE_URL || '/api';
+      const response = await fetch(`${baseUrl}/merchant-requests`, {
         headers: {
           'Authorization': `Bearer ${session.access_token}`
         }

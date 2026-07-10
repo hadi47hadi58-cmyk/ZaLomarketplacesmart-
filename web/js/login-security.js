@@ -35,7 +35,12 @@ class LoginSecurity {
       window.loginSecurityInstance.resetInactivityTimer();
     }
 
-    const response = await fetch(url, options);
+    let targetUrl = url;
+    if (url.startsWith('/api/')) {
+      const baseUrl = window.NESTJS_BASE_URL || '/api';
+      targetUrl = url.replace('/api/', `${baseUrl}/`);
+    }
+    const response = await fetch(targetUrl, options);
 
     // Auto-logout on unauthorized/expired status
     if (response.status === 401) {

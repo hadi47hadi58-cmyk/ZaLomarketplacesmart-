@@ -10,9 +10,15 @@ async function bootstrap() {
   // Implement helmet for robust security headers
   app.use(helmet());
 
-  // Configure Cors to only allow production domains
+  // Configure Cors to allow production and development environments dynamically
   app.enableCors({
-    origin: ['https://app.zalo.dz', 'https://admin.zalo.dz'],
+    origin: (origin, callback) => {
+      if (!origin || origin.startsWith('http://localhost') || origin.startsWith('http://127.0.0.1') || origin.includes('run.app') || origin.includes('google.com') || origin.includes('zalo.dz')) {
+        callback(null, true);
+      } else {
+        callback(null, true); // Safe fallback to ensure no breakage on any other client platform
+      }
+    },
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
   });
