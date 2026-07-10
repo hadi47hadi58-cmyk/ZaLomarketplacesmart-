@@ -174,6 +174,10 @@ body {
       <i class="fa-solid fa-briefcase"></i> تقديم طلب انضمام كتاجر
     </button>
     
+    <button class="btn-secondary" style="border-color: rgba(197, 160, 89, 0.3); color: var(--gold); width: 100%;" onclick="registerNewCustomer()">
+      <i class="fa-solid fa-user-plus"></i> تسجيل حساب عميل جديد (زبون)
+    </button>
+    
     <div id="application-status-container" style="display: none; font-size: 12px; font-weight: bold; text-align: center; padding: 8px; border-radius: 8px; background: rgba(255,255,255,0.03);"></div>
   </div>
 
@@ -217,8 +221,79 @@ body {
       </div>
 
       <div>
-        <label style="display:block; margin-bottom: 6px; font-size: 13px; font-weight: 700; color: #fff;">رقم التعريف الجبائي NIF (اختياري)</label>
-        <input type="text" id="taxNumber" placeholder="مثال: 198731170012345" style="width:100%; padding:11px 14px; background: #070a08; border:1px solid rgba(197,160,89,0.2); border-radius:8px; color: #fff; font-family: 'Cairo', sans-serif; font-size: 13px; outline: none;">
+        <label style="display:block; margin-bottom: 6px; font-size: 13px; font-weight: 700; color: #fff;">الولاية (69 ولاية) *</label>
+        <select id="merchantWilaya" required style="width:100%; padding:11px 14px; background: #070a08; border:1px solid rgba(197,160,89,0.2); border-radius:8px; color: #fff; font-family: 'Cairo', sans-serif; font-size: 13px; outline: none;">
+          <option value="" disabled selected>اختر الولاية...</option>
+          <option value="01-أدرار">01-أدرار</option>
+          <option value="02-الشلف">02-الشلف</option>
+          <option value="03-الأغواط">03-الأغواط</option>
+          <option value="04-أم البواقي">04-أم البواقي</option>
+          <option value="05-باتنة">05-باتنة</option>
+          <option value="06-بجاية">06-بجاية</option>
+          <option value="07-بسكرة">07-بسكرة</option>
+          <option value="08-بشار">08-بشار</option>
+          <option value="09-البليدة">09-البليدة</option>
+          <option value="10-البويرة">10-البويرة</option>
+          <option value="11-تمنراست">11-تمنراست</option>
+          <option value="12-تبسة">12-تبسة</option>
+          <option value="13-تلمسان">13-تلمسان</option>
+          <option value="14-تيارت">14-تيارت</option>
+          <option value="15-تيزي وزو">15-تيزي وزو</option>
+          <option value="16-الجزائر">16-الجزائر</option>
+          <option value="17-الجلفة">17-الجلفة</option>
+          <option value="18-جيجل">18-جيجل</option>
+          <option value="19-سطيف">19-سطيف</option>
+          <option value="20-سعيدة">20-سعيدة</option>
+          <option value="21-سكيكدة">21-سكيكدة</option>
+          <option value="22-سيدي بلعباس">22-سيدي بلعباس</option>
+          <option value="23-عنابة">23-عنابة</option>
+          <option value="24-قالمة">24-قالمة</option>
+          <option value="25-قسنطينة">25-قسنطينة</option>
+          <option value="26-المدية">26-المدية</option>
+          <option value="27-مستغانم">27-مستغانم</option>
+          <option value="28-المسيلة">28-المسيلة</option>
+          <option value="29-معسكر">29-معسكر</option>
+          <option value="30-ورقلة">30-ورقلة</option>
+          <option value="31-وهران">31-وهران</option>
+          <option value="32-البيض">32-البيض</option>
+          <option value="33-إليزي">33-إليزي</option>
+          <option value="34-برج بوعريريج">34-برج بوعريريج</option>
+          <option value="35-بومرداس">35-بومرداس</option>
+          <option value="36-الطارف">36-الطارف</option>
+          <option value="37-تندوف">37-تندوف</option>
+          <option value="38-تيسمسيلت">38-تيسمسيلت</option>
+          <option value="39-الوادي">39-الوادي</option>
+          <option value="40-خنشلة">40-خنشلة</option>
+          <option value="41-سوق أهراس">41-سوق أهراس</option>
+          <option value="42-تيبازة">42-تيبازة</option>
+          <option value="43-ميلة">43-ميلة</option>
+          <option value="44-عين الدفلى">44-عين الدفلى</option>
+          <option value="45-النعامة">45-النعامة</option>
+          <option value="46-عين تموشنت">46-عين تموشنت</option>
+          <option value="47-غرداية">47-غرداية</option>
+          <option value="48-غليزان">48-غليزان</option>
+          <option value="49-تيميمون">49-تيميمون</option>
+          <option value="50-برج باجي مختار">50-برج باجي مختار</option>
+          <option value="51-أولاد جلال">51-أولاد جلال</option>
+          <option value="52-بني عباس">52-بني عباس</option>
+          <option value="53-عين صالح">53-عين صالح</option>
+          <option value="54-عين قزام">54-عين قزام</option>
+          <option value="55-تقرت">55-تقرت</option>
+          <option value="56-جانت">56-جانت</option>
+          <option value="57-المغير">57-المغير</option>
+          <option value="58-المنيعة">58-المنيعة</option>
+          <option value="59-بريكة">59-بريكة</option>
+          <option value="60-قصر الشلالة">60-قصر الشلالة</option>
+          <option value="61-مسعد">61-مسعد</option>
+          <option value="62-لبيض سيدي الشيخ">62-لبيض سيدي الشيخ</option>
+          <option value="63-بوسعادة">63-بوسعادة</option>
+          <option value="64-سرديانة / العلمة">64-سرديانة / العلمة</option>
+          <option value="65-سهل الرمال / فرجيوة">65-سهل الرمال / فرجيوة</option>
+          <option value="66-قصر البخاري">66-قصر البخاري</option>
+          <option value="67-عين وسارة">67-عين وسارة</option>
+          <option value="68-أفلو">68-أفلو</option>
+          <option value="69-خروبة">69-خروبة</option>
+        </select>
       </div>
       
       <div>
@@ -301,62 +376,96 @@ document.getElementById('merchantRequestForm').addEventListener('submit', async 
       return;
     }
 
-    const payload = {
-      storeName: document.getElementById('storeName').value,
-      phone: document.getElementById('phone').value,
-      commercialRegister: document.getElementById('commercialRegister').value,
-      taxNumber: document.getElementById('taxNumber').value,
-      description: document.getElementById('description').value,
-    };
+    const storeName = document.getElementById('storeName').value;
+    const phone = document.getElementById('phone').value;
+    const commercialRegister = document.getElementById('commercialRegister').value;
+    const selectedWilaya = document.getElementById('merchantWilaya').value;
+    const description = document.getElementById('description').value;
 
-    const baseUrl = window.NESTJS_BASE_URL || '/api';
-    const response = await fetch(`${baseUrl}/merchant-requests`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${session.access_token}`,
-      },
-      body: JSON.stringify(payload),
+    // 1. Direct write/upsert to Supabase merchant_requests table so it displays instantly on admin.html
+    const { error: requestError } = await supabase.from('merchant_requests').upsert({
+      id: session.user.id,
+      storeName: storeName,
+      ownerName: session.user.email ? session.user.email.split('@')[0] : 'تاجر جديد',
+      email: session.user.email,
+      phone: phone,
+      whatsapp: phone,
+      wilaya: selectedWilaya,
+      commune: 'غير محدد',
+      category: 'عام',
+      storeType: 'registered',
+      rcNumber: commercialRegister,
+      status: 'pending',
+      createdAt: new Date().toISOString()
     });
 
-    const result = await response.json();
+    if (requestError) {
+      console.warn("Supabase merchant_requests upsert failed:", requestError);
+      throw requestError;
+    }
+
+    // 2. Also update profiles status to pending
+    await supabase
+      .from('profiles')
+      .update({ status: 'pending' })
+      .eq('id', session.user.id);
+
+    // 3. Optional REST endpoint invocation (non-blocking)
+    try {
+      const payload = {
+        storeName,
+        phone,
+        commercialRegister,
+        taxNumber: selectedWilaya, // Replacing NIF
+        description,
+      };
+      const baseUrl = window.NESTJS_BASE_URL || '/api';
+      await fetch(`${baseUrl}/merchant-requests`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify(payload),
+      });
+    } catch (apiErr) {
+      console.warn("REST backend /merchant-requests skipped or failed:", apiErr);
+    }
+
     const statusDiv = document.getElementById('requestStatus');
     statusDiv.style.display = 'block';
+    statusDiv.style.background = 'rgba(34, 197, 94, 0.15)';
+    statusDiv.style.border = '1px solid #22c55e';
+    statusDiv.style.color = '#4ade80';
+    statusDiv.innerHTML = '✅ تم تقديم طلب الشراكة كتاجر بنجاح! تم تسجيل الطلب وإرساله إلى لوحة تحكم المدير ومراقبته قيد الدراسة حالياً.';
+    form.reset();
 
-    if (response.ok) {
-      statusDiv.style.background = 'rgba(34, 197, 94, 0.15)';
-      statusDiv.style.border = '1px solid #22c55e';
-      statusDiv.style.color = '#4ade80';
-      statusDiv.innerHTML = '✅ تم تقديم طلبك بنجاح! سيتم مراجعته من قبل الإدارة قريباً.';
-      form.reset();
-      
-      // Also update profiles to keep it synchronized with legacy code
-      await supabase
-        .from('profiles')
-        .update({ status: 'pending' })
-        .eq('id', session.user.id);
+    updateApplicationUI('pending');
+    
+    setTimeout(() => {
+      document.getElementById('merchantModal').style.display = 'none';
+      statusDiv.style.display = 'none';
+    }, 3500);
 
-      updateApplicationUI('pending');
-      
-      setTimeout(() => {
-        document.getElementById('merchantModal').style.display = 'none';
-        statusDiv.style.display = 'none';
-      }, 3000);
-    } else {
-      statusDiv.style.background = 'rgba(239, 68, 68, 0.15)';
-      statusDiv.style.border = '1px solid #ef4444';
-      statusDiv.style.color = '#f87171';
-      statusDiv.innerHTML = `❌ فشل الإرسال: ${result.message || 'حاول مرة أخرى'}`;
-      submitBtn.disabled = false;
-      submitBtn.textContent = 'إرسال طلب الشراكة';
-    }
   } catch (err) {
     console.error(err);
-    showToast("⚠️ حدث خطأ غير متوقع!");
+    showToast("⚠️ حدث خطأ أثناء إرسال الطلب، يرجى المحاولة لاحقاً!");
     submitBtn.disabled = false;
     submitBtn.textContent = 'إرسال طلب الشراكة';
   }
 });
+
+// Register new customer handler
+window.registerNewCustomer = async function() {
+  try {
+    await supabase.auth.signOut();
+    localStorage.removeItem('user_uid');
+    window.location.href = 'index.html#signup';
+  } catch (e) {
+    console.error(e);
+    window.location.href = 'index.html';
+  }
+};
 
 // Logout handler
 window.handleLogout = async function() {
