@@ -372,19 +372,19 @@ function initLoginPage() {
         if (user) {
             switch (role) {
                 case "customer":
-                    window.location.href = "index.html";
+                    window.location.href = "customer-home.html";
                     break;
                 case "merchant":
-                    window.location.href = "dashboard-store.html";
+                    window.location.href = "dashboard.html";
                     break;
                 case "admin":
-                    window.location.href = "dashboard-admin.html";
+                    window.location.href = "admin.html";
                     break;
                 case "manager":
-                    window.location.href = "dashboard-manager.html";
+                    window.location.href = "admin.html";
                     break;
                 default:
-                    window.location.href = "index.html";
+                    window.location.href = "customer-home.html";
             }
         }
     });

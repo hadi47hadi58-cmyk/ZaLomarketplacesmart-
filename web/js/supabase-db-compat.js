@@ -113,27 +113,27 @@ window.handleUserRedirect = async function() {
     // 5. التوجيه الذكي لمنع التكرار اللانهائي (Smart Non-Looping Redirects)
     const currentPath = window.location.pathname;
     
-    // فحص المسار الحالي للتأكد من عدم التكرار اللانهائي - مطابقة حقيقية للملفات الموجودة
-    const isAlreadyOnAdmin = currentPath.endsWith('dashboard-admin.html') || currentPath.endsWith('admin.html');
-    const isAlreadyOnDashboard = currentPath.endsWith('dashboard-store.html') || currentPath.endsWith('dashboard.html');
-    const isAlreadyOnIndex = currentPath.endsWith('index.html') || currentPath === '/' || currentPath.endsWith('/');
+    // فحص المسار الحالي للتأكد من عدم التكرار اللانهائي - مطابقة حقيقية للملفات القديمة الفعالة
+    const isAlreadyOnAdmin = currentPath.endsWith('admin.html');
+    const isAlreadyOnDashboard = currentPath.endsWith('dashboard.html');
+    const isAlreadyOnCustomer = currentPath.endsWith('customer-home.html');
 
     console.log(`[Role Routing] الدور النشط الحالي: ${role} | المسار الحالي: ${currentPath}`);
 
     if (role === 'ADMIN') {
         if (!isAlreadyOnAdmin) {
-            console.log("[Role Routing] جاري توجيه المدير إلى صفحة لوحة التحكم الإدارية (dashboard-admin.html)...");
-            window.location.replace('dashboard-admin.html');
+            console.log("[Role Routing] جاري توجيه المدير إلى صفحة لوحة التحكم الإدارية القديمة والكاملة (admin.html)...");
+            window.location.replace('admin.html');
         }
     } else if (role === 'MERCHANT') {
         if (!isAlreadyOnDashboard) {
-            console.log("[Role Routing] جاري توجيه التاجر إلى صفحة لوحة التحكم التجارية (dashboard-store.html)...");
-            window.location.replace('dashboard-store.html');
+            console.log("[Role Routing] جاري توجيه التاجر إلى صفحة لوحة التحكم التجارية القديمة والكاملة (dashboard.html)...");
+            window.location.replace('dashboard.html');
         }
     } else { // CUSTOMER
-        if (isAlreadyOnAdmin || isAlreadyOnDashboard) {
-            console.log("[Role Routing] جاري توجيه الزبون إلى الصفحة الرئيسية (index.html)...");
-            window.location.replace('index.html');
+        if (!isAlreadyOnCustomer) {
+            console.log("[Role Routing] جاري توجيه الزبون إلى لوحة وبوابة العميل (customer-home.html)...");
+            window.location.replace('customer-home.html');
         }
     }
 };
