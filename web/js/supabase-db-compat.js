@@ -501,6 +501,7 @@ export async function getDocs(queryObj) {
             return {
                 empty: docs.length === 0,
                 docs: docs,
+                size: docs.length,
                 forEach(cb) { docs.forEach(cb); }
             };
         }
@@ -535,6 +536,7 @@ export async function getDocs(queryObj) {
                 return {
                     empty: docs.length === 0,
                     docs: docs,
+                    size: docs.length,
                     forEach(cb) { docs.forEach(cb); }
                 };
             }
@@ -613,6 +615,7 @@ export async function getDocs(queryObj) {
     return {
         empty: docs.length === 0,
         docs: docs,
+        size: docs.length,
         forEach(cb) { docs.forEach(cb); }
     };
 }

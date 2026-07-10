@@ -116,21 +116,22 @@ body {
 }
 .toast {
   position: fixed;
-  bottom: 24px;
-  left: 16px;
-  right: 16px;
-  background: #1e291f;
+  bottom: 30px;
+  left: 20px;
+  right: 20px;
+  background: #111d14;
   color: #fff;
-  padding: 14px 20px;
-  border-radius: 12px;
-  border-right: 4px solid var(--gold);
+  padding: 16px 24px;
+  border-radius: 14px;
+  border: 1px solid var(--gold);
+  border-right: 6px solid var(--gold);
   font-size: 14px;
-  font-weight: bold;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  font-weight: 800;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.8), 0 0 15px rgba(197, 160, 89, 0.2);
   display: none;
   text-align: right;
-  z-index: 1000;
-  animation: slideUp 0.3s ease;
+  z-index: 100000;
+  animation: slideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 @keyframes slideUp {
   from { transform: translateY(100%); opacity: 0; }
@@ -312,6 +313,128 @@ body {
 
 <div id="toast" class="toast"></div>
 
+<!-- النافذة المنبثقة لتسجيل زبون جديد (Customer Signup Modal) -->
+<div id="customerSignupModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:9999; overflow-y:auto; backdrop-filter: blur(4px);">
+  <div style="background:var(--card-bg); max-width:480px; margin:40px auto; padding:24px; border-radius:20px; border: 1.5px solid rgba(197, 160, 89, 0.3); box-shadow:0 10px 30px rgba(0,0,0,0.6); position: relative; animation: slideUp 0.3s ease-out; text-align: right; font-family: 'Cairo', sans-serif;">
+    
+    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 12px; margin-bottom: 16px;">
+      <h3 style="color:var(--gold); font-size: 18px; font-weight: 800; display: flex; align-items: center; gap: 8px; margin: 0;">
+        <i class="fa-solid fa-user-plus"></i> تسجيل حساب عميل جديد (زبون)
+      </h3>
+      <button onclick="document.getElementById('customerSignupModal').style.display='none'" style="background: none; border: none; color: var(--gray); font-size: 18px; cursor: pointer;">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <p style="color:var(--gray); font-size:12px; line-height: 1.5; margin-bottom: 20px;">
+      أدخل معلوماتك الشخصية أدناه لإنشاء حساب زبون موحد فوراً والدخول إلى بوابة تصفح وتتبع الطلبات الخاصة بك.
+    </p>
+    
+    <form id="customerSignupForm" style="display: flex; flex-direction: column; gap: 14px;">
+      <div>
+        <label style="display:block; margin-bottom: 6px; font-size: 13px; font-weight: 700; color: #fff;">الاسم الكامل *</label>
+        <input type="text" id="custFullName" required placeholder="مثال: محمد الأمين" style="width:100%; padding:11px 14px; background: #070a08; border:1px solid rgba(197,160,89,0.2); border-radius:8px; color: #fff; font-family: 'Cairo', sans-serif; font-size: 13px; outline: none;">
+      </div>
+
+      <div>
+        <label style="display:block; margin-bottom: 6px; font-size: 13px; font-weight: 700; color: #fff;">البريد الإلكتروني *</label>
+        <input type="email" id="custEmail" required placeholder="مثال: amine@gmail.com" style="width:100%; padding:11px 14px; background: #070a08; border:1px solid rgba(197,160,89,0.2); border-radius:8px; color: #fff; font-family: 'Cairo', sans-serif; font-size: 13px; outline: none;">
+      </div>
+
+      <div>
+        <label style="display:block; margin-bottom: 6px; font-size: 13px; font-weight: 700; color: #fff;">كلمة المرور (6 أحرف فأكثر) *</label>
+        <input type="password" id="custPassword" required minlength="6" placeholder="******" style="width:100%; padding:11px 14px; background: #070a08; border:1px solid rgba(197,160,89,0.2); border-radius:8px; color: #fff; font-family: 'Cairo', sans-serif; font-size: 13px; outline: none;">
+      </div>
+      
+      <div>
+        <label style="display:block; margin-bottom: 6px; font-size: 13px; font-weight: 700; color: #fff;">رقم الهاتف *</label>
+        <input type="tel" id="custPhone" required placeholder="مثال: 0770xxxxxx" style="width:100%; padding:11px 14px; background: #070a08; border:1px solid rgba(197,160,89,0.2); border-radius:8px; color: #fff; font-family: 'Cairo', sans-serif; font-size: 13px; outline: none;">
+      </div>
+
+      <div>
+        <label style="display:block; margin-bottom: 6px; font-size: 13px; font-weight: 700; color: #fff;">الولاية (69 ولاية) *</label>
+        <select id="custWilaya" required style="width:100%; padding:11px 14px; background: #070a08; border:1px solid rgba(197,160,89,0.2); border-radius:8px; color: #fff; font-family: 'Cairo', sans-serif; font-size: 13px; outline: none;">
+          <option value="" disabled selected>اختر الولاية...</option>
+          <option value="01-أدرار">01-أدرار</option>
+          <option value="02-الشلف">02-الشلف</option>
+          <option value="03-الأغواط">03-الأغواط</option>
+          <option value="04-أم البواقي">04-أم البواقي</option>
+          <option value="05-باتنة">05-باتنة</option>
+          <option value="06-بجاية">06-بجاية</option>
+          <option value="07-بسكرة">07-بسكرة</option>
+          <option value="08-بشار">08-بشار</option>
+          <option value="09-البليدة">09-البليدة</option>
+          <option value="10-البويرة">10-البويرة</option>
+          <option value="11-تمنراست">11-تمنراست</option>
+          <option value="12-تبسة">12-تبسة</option>
+          <option value="13-تلمسان">13-تلمسان</option>
+          <option value="14-تيارت">14-تيارت</option>
+          <option value="15-تيزي وزو">15-تيزي وزو</option>
+          <option value="16-الجزائر">16-الجزائر</option>
+          <option value="17-الجلفة">17-الجلفة</option>
+          <option value="18-جيجل">18-جيجل</option>
+          <option value="19-سطيف">19-سطيف</option>
+          <option value="20-سعيدة">20-سعيدة</option>
+          <option value="21-سكيكدة">21-سكيكدة</option>
+          <option value="22-سيدي بلعباس">22-سيدي بلعباس</option>
+          <option value="23-عنابة">23-عنابة</option>
+          <option value="24-قالمة">24-قالمة</option>
+          <option value="25-قسنطينة">25-قسنطينة</option>
+          <option value="26-المدية">26-المدية</option>
+          <option value="27-مستغانم">27-مستغانم</option>
+          <option value="28-المسيلة">28-المسيلة</option>
+          <option value="29-معسكر">29-معسكر</option>
+          <option value="30-ورقلة">30-ورقلة</option>
+          <option value="31-وهران">31-وهران</option>
+          <option value="32-البيض">32-البيض</option>
+          <option value="33-إليزي">33-إليزي</option>
+          <option value="34-برج بوعريريج">34-برج بوعريريج</option>
+          <option value="35-بومرداس">35-بومرداس</option>
+          <option value="36-الطارف">36-الطارف</option>
+          <option value="37-تندوف">37-تندوف</option>
+          <option value="38-تيسمسيلت">38-تيسمسيلت</option>
+          <option value="39-الوادي">39-الوادي</option>
+          <option value="40-خنشلة">40-خنشلة</option>
+          <option value="41-سوق أهراس">41-سوق أهراس</option>
+          <option value="42-تيبازة">42-تيبازة</option>
+          <option value="43-ميلة">43-ميلة</option>
+          <option value="44-عين الدفلى">44-عين الدفلى</option>
+          <option value="45-النعامة">45-النعامة</option>
+          <option value="46-عين تموشنت">46-عين تموشنت</option>
+          <option value="47-غرداية">47-غرداية</option>
+          <option value="48-غليزان">48-غليزان</option>
+          <option value="49-تيميمون">49-تيميمون</option>
+          <option value="50-برج باجي مختار">50-برج باجي مختار</option>
+          <option value="51-أولاد جلال">51-أولاد جلال</option>
+          <option value="52-بني عباس">52-بني عباس</option>
+          <option value="53-عين صالح">53-عين صالح</option>
+          <option value="54-عين قزام">54-عين قزام</option>
+          <option value="55-تقرت">55-تقرت</option>
+          <option value="56-جانت">56-جانت</option>
+          <option value="57-المغير">57-المغير</option>
+          <option value="58-المنيعة">58-المنيعة</option>
+          <option value="59-بريكة">59-بريكة</option>
+          <option value="60-قصر الشلالة">60-قصر الشلالة</option>
+          <option value="61-مسعد">61-مسعد</option>
+          <option value="62-لبيض سيدي الشيخ">62-لبيض سيدي الشيخ</option>
+          <option value="63-بوسعادة">63-بوسعادة</option>
+          <option value="64-سرديانة / العلمة">64-سرديانة / العلمة</option>
+          <option value="65-سهل الرمال / فرجيوة">65-سهل الرمال / فرجيوة</option>
+          <option value="66-قصر البخاري">66-قصر البخاري</option>
+          <option value="67-عين وسارة">67-عين وسارة</option>
+          <option value="68-أفلو">68-أفلو</option>
+          <option value="69-خروبة">69-خروبة</option>
+        </select>
+      </div>
+
+      <div style="display:flex; gap:10px; margin-top:12px;">
+        <button type="submit" class="btn-primary" style="flex:1; background: var(--gold); color: #070a08; font-weight: 800; font-size: 14px; padding: 12px; border-radius: 8px;">إنشاء حساب ودخول</button>
+        <button type="button" onclick="document.getElementById('customerSignupModal').style.display='none'" class="btn-secondary" style="flex:1; font-weight: 600; font-size: 14px; padding: 12px; border-radius: 8px;">إلغاء</button>
+      </div>
+    </form>
+  </div>
+</div>
+
 <script type="module">
 import { onAuthStateChanged } from "./js/supabase-db-compat.js";
 import { supabase } from "./js/supabase-config.js";
@@ -432,20 +555,12 @@ document.getElementById('merchantRequestForm').addEventListener('submit', async 
       console.warn("REST backend /merchant-requests skipped or failed:", apiErr);
     }
 
-    const statusDiv = document.getElementById('requestStatus');
-    statusDiv.style.display = 'block';
-    statusDiv.style.background = 'rgba(34, 197, 94, 0.15)';
-    statusDiv.style.border = '1px solid #22c55e';
-    statusDiv.style.color = '#4ade80';
-    statusDiv.innerHTML = '✅ تم تقديم طلب الشراكة كتاجر بنجاح! تم تسجيل الطلب وإرساله إلى لوحة تحكم المدير ومراقبته قيد الدراسة حالياً.';
     form.reset();
-
     updateApplicationUI('pending');
     
-    setTimeout(() => {
-      document.getElementById('merchantModal').style.display = 'none';
-      statusDiv.style.display = 'none';
-    }, 3500);
+    // Close modal immediately so user can see background update and toast
+    document.getElementById('merchantModal').style.display = 'none';
+    showToast('✨ تم تقديم طلب الشراكة التجارية بنجاح! تم إرسال الطلب وهو قيد الدراسة والمتابعة حالياً من قبل الإدارة.');
 
   } catch (err) {
     console.error(err);
@@ -455,17 +570,83 @@ document.getElementById('merchantRequestForm').addEventListener('submit', async 
   }
 });
 
-// Register new customer handler
-window.registerNewCustomer = async function() {
+// Register new customer handler (shows modal on-screen)
+window.registerNewCustomer = function() {
+  document.getElementById('customerSignupModal').style.display = 'block';
+};
+
+// Customer signup form submission
+document.getElementById('customerSignupForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const form = document.getElementById('customerSignupForm');
+  const submitBtn = form.querySelector('button[type="submit"]');
+  submitBtn.disabled = true;
+  submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> جاري إنشاء الحساب...`;
+
   try {
+    const fullName = document.getElementById('custFullName').value;
+    const email = document.getElementById('custEmail').value.trim();
+    const password = document.getElementById('custPassword').value;
+    const phone = document.getElementById('custPhone').value;
+    const wilaya = document.getElementById('custWilaya').value;
+
+    // Sign out first to ensure a clean new session can be created
     await supabase.auth.signOut();
     localStorage.removeItem('user_uid');
-    window.location.href = 'index.html#signup';
-  } catch (e) {
-    console.error(e);
-    window.location.href = 'index.html';
+
+    // Create user in Supabase Auth
+    const { data, error: signUpError } = await supabase.auth.signUp({
+      email: email,
+      password: password,
+      options: {
+        data: {
+          full_name: fullName,
+          phone: phone,
+          wilaya: wilaya,
+          type: 'customer'
+        }
+      }
+    });
+
+    if (signUpError) throw signUpError;
+    const uid = data.user.id;
+
+    // Save profile record
+    const { error: profileError } = await supabase.from('profiles').upsert({
+      id: uid,
+      name: fullName,
+      email: email,
+      phone: phone,
+      wilaya: wilaya,
+      commune: 'غير محدد',
+      role: 'customer',
+      status: 'active',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    });
+
+    if (profileError) throw profileError;
+
+    // Save local storage flags for session routing
+    localStorage.setItem('user_uid', uid);
+    localStorage.setItem('user_email', email);
+    localStorage.setItem('zalo_user_role', 'CUSTOMER');
+    sessionStorage.setItem('user_logged_in', 'true');
+
+    document.getElementById('customerSignupModal').style.display = 'none';
+    showToast('✨ تم تسجيل حساب زبون جديد ودخولك بنجاح! جاري تحميل بوابة العميل...');
+
+    setTimeout(() => {
+      window.location.reload();
+    }, 1500);
+
+  } catch (err) {
+    console.error("Customer Registration Error:", err);
+    showToast(`❌ فشل التسجيل: ${err.message || 'يرجى التأكد من اتصالك والبيانات المكتوبة'}`);
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'إنشاء حساب ودخول';
   }
-};
+});
 
 // Logout handler
 window.handleLogout = async function() {
