@@ -6,7 +6,9 @@ import { telemetry } from './telemetry-logger.js';
 
 const NESTJS_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
   ? 'http://localhost:3000/api'
-  : 'https://zalo-smart-backend-service-api.run.app/api'; // رابط الإنتاج الافتراضي في السحابة
+  : (window.location.hostname.endsWith('run.app') || window.location.hostname.includes('google.com')
+     ? `${window.location.origin}/api`
+     : 'https://zalo-smart-backend-service-api.run.app/api'); // رابط الإنتاج الافتراضي في السحابة
 
 console.log(`[ZaLo Bridge] تم إعداد جسر الاتصال بـ NestJS على المسار: ${NESTJS_BASE_URL}`);
 

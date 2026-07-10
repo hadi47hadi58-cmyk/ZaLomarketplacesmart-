@@ -198,7 +198,9 @@ export class GoogleAuthProvider {
 // NestJS Configuration
 const NESTJS_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
   ? 'http://localhost:3000/api'
-  : 'https://zalo-smart-backend-service-api.run.app/api';
+  : (window.location.hostname.endsWith('run.app') || window.location.hostname.includes('google.com')
+     ? `${window.location.origin}/api`
+     : 'https://zalo-smart-backend-service-api.run.app/api');
 
 console.log(`[ZaLo Compat Engine] Bridge initialized. NestJS API Endpoint: ${NESTJS_BASE_URL}`);
 
