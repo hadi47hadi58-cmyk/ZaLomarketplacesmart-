@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>ZaLo - غير متصل بالإنترنت</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #1a5c2a;
+      --gold: #e8c97a;
+      --bg: #080e0a;
+      --card-bg: #101c13;
+      --text-main: #ffffff;
+      --text-muted: #a0b2a6;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Cairo', sans-serif;
+      background-color: var(--bg);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      overflow: hidden;
+    }
+
+    .container {
+      max-width: 420px;
+      width: 100%;
+      text-align: center;
+      background: var(--card-bg);
+      padding: 40px 24px;
+      border-radius: 28px;
+      border: 1px solid rgba(232, 201, 122, 0.15);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.05);
+      animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .logo-container {
+      margin-bottom: 28px;
+      position: relative;
+      display: inline-block;
+    }
+
+    .logo-glow {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 130px;
+      height: 130px;
+      background: var(--primary);
+      filter: blur(35px);
+      opacity: 0.45;
+      z-index: 1;
+      border-radius: 50%;
+    }
+
+    .logo-svg {
+      width: 110px;
+      height: 110px;
+      position: relative;
+      z-index: 2;
+      animation: pulse 3s infinite ease-in-out;
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        transform: scale(1);
+        filter: drop-shadow(0 0 5px rgba(232, 201, 122, 0.2));
+      }
+      50% {
+        transform: scale(1.04);
+        filter: drop-shadow(0 0 15px rgba(232, 201, 122, 0.4));
+      }
+    }
+
+    h1 {
+      font-size: 22px;
+      font-weight: 900;
+      color: var(--gold);
+      margin-bottom: 12px;
+      letter-spacing: -0.5px;
+    }
+
+    p {
+      font-size: 14.5px;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 32px;
+      padding: 0 10px;
+    }
+
+    .offline-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(239, 83, 80, 0.15);
+      color: #ef5350;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 24px;
+      border: 1px solid rgba(239, 83, 80, 0.25);
+    }
+
+    .btn-retry {
+      width: 100%;
+      background: linear-gradient(135deg, var(--primary) 0%, #113f1d 100%);
+      color: #ffffff;
+      border: 1px solid var(--gold);
+      border-radius: 16px;
+      padding: 15px;
+      font-family: 'Cairo', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+      transition: all 0.2s ease;
+    }
+
+    .btn-retry:active {
+      transform: scale(0.97);
+      background: var(--primary);
+    }
+
+    .btn-retry i {
+      font-size: 16px;
+      transition: transform 0.4s ease;
+    }
+
+    .btn-retry:active i {
+      transform: rotate(180deg);
+    }
+
+    .footer {
+      margin-top: 24px;
+      font-size: 11px;
+      color: var(--text-muted);
+      opacity: 0.6;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="logo-container">
+      <div class="logo-glow"></div>
+      <!-- Adaptive Vector Logo embedded -->
+      <svg class="logo-svg" viewBox="0 0 192 192">
+        <defs>
+          <linearGradient id="gBg" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#1a5c2a" />
+            <stop offset="100%" stop-color="#0e3618" />
+          </linearGradient>
+        </defs>
+        <rect width="192" height="192" rx="42" fill="url(#gBg)" stroke="#e8c97a" stroke-width="1.5"/>
+        <text x="50%" y="54%" font-family="'Cairo', sans-serif" font-weight="950" font-size="54" text-anchor="middle" dominant-baseline="middle">
+          <tspan fill="#ffffff">Za</tspan><tspan fill="#e8c97a">Lo</tspan>
+        </text>
+        <text x="50%" y="78%" font-family="'Cairo', sans-serif" font-weight="700" font-size="12" fill="#ffffff" opacity="0.8" text-anchor="middle" letter-spacing="1">OFFLINE</text>
+      </svg>
+    </div>
+
+    <div class="offline-badge">
+      <i class="fa-solid fa-wifi-slash"></i>
+      <span>منقطع عن الشبكة</span>
+    </div>
+
+    <h1>أنت غير متصل بالإنترنت حالياً</h1>
+    <p>يبدو أن هناك مشكلة في الاتصال بالشبكة حالياً. يرجى تفعيل الإنترنت أو الاتصال بشبكة Wi-Fi والمحاولة مرة أخرى للوصول إلى سوق ZaLo.</p>
+
+    <button class="btn-retry" onclick="retryConnection()">
+      <i class="fa-solid fa-rotate-right"></i>
+      <span>إعادة المحاولة الآن</span>
+    </button>
+  </div>
+
+  <div class="footer">
+    ZaLo Smart Marketplace © 2026
+  </div>
+
+  <script>
+    function retryConnection() {
+      const btn = document.querySelector('.btn-retry');
+      const icon = btn.querySelector('i');
+      
+      // Add loading state style
+      btn.style.opacity = '0.7';
+      btn.style.pointerEvents = 'none';
+      icon.classList.add('fa-spin');
+      
+      setTimeout(() => {
+        // Reload page to test connection
+        window.location.reload();
+      }, 800);
+    }
+
+    // Automatically retry once network connection is recovered
+    window.addEventListener('online', () => {
+      window.location.reload();
+    });
+  </script>
+</body>
+</html>

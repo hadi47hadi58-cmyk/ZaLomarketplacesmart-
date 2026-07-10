@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التاجر - ZaLo Market</title>
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Cairo Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- ZaLo Custom Stylesheet -->
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif !important;
+            background-color: #070a08 !important;
+            color: #f8fafc !important;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between zalo-branded-body">
+
+    <!-- Global Header -->
+    <header class="sticky top-0 z-50 bg-[#0f1c36]/90 border-b border-white/10 w-full py-4 px-6 flex justify-between items-center backdrop-blur-md zalo-branded-header">
+        <a href="index.html" class="flex items-center gap-1.5 text-xs text-[#D4AF37] hover:text-white transition">
+            <i class="fa-solid fa-house"></i>
+            <span>العودة للرئيسية</span>
+        </a>
+        <h1 class="text-base font-black text-[#D4AF37]">بوابة التاجر (متجر السلام)</h1>
+        <button onclick="logoutUser()" class="bg-red-500/10 text-red-400 border border-red-500/20 text-xs px-3.5 py-1.5 rounded-full hover:bg-red-500 hover:text-white transition">
+            <i class="fa-solid fa-power-off ml-1"></i> خروج
+        </button>
+    </header>
+
+    <main class="flex-1 w-full max-w-5xl mx-auto px-6 py-8 space-y-8">
+        
+        <div class="flex justify-between items-center bg-[#0f1c36]/50 border border-slate-700/50 p-6 rounded-[24px]">
+            <div class="text-right space-y-1">
+                <span class="text-[10px] text-slate-400 font-bold block">مرحباً بك مجدداً</span>
+                <h2 id="header-user-name" class="text-xl font-black text-white font-bold">أحمد بن زكري (تاجر)</h2>
+                <p class="text-xs text-slate-400">تابع المبيعات، أدرج منتجات ومعدلات جديدة، وتواصل مع زبائن المنيعة</p>
+            </div>
+            <div class="w-12 h-12 rounded-full bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-xl text-amber-500"><i class="fa-solid fa-store"></i></div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            
+            <!-- Left Pane: Add Product Form -->
+            <div class="md:col-span-1 bg-[#0f1c36]/40 border border-slate-700/50 rounded-3xl p-5 space-y-4 text-right">
+                <h3 class="text-base font-black text-white"><i class="fa-solid fa-plus text-sky-400 ml-1"></i> إدراج منتج جديد</h3>
+                <form id="add-product-form" class="space-y-3">
+                    <div>
+                        <label class="block text-[10px] text-slate-300 font-bold mb-1">اسم المنتج:</label>
+                        <input id="prod-name" type="text" class="w-full bg-slate-900 border border-slate-800 text-xs text-white rounded-xl py-2 px-3 focus:outline-none" placeholder="مثال: Galaxy A08" required>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] text-slate-300 font-bold mb-1">السعر (دج):</label>
+                        <input id="prod-price" type="number" class="w-full bg-slate-900 border border-slate-800 text-xs text-white rounded-xl py-2 px-3 focus:outline-none" placeholder="25000" required>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] text-slate-300 font-bold mb-1">فئة المنتج المحددة:</label>
+                        <select id="prod-category" class="w-full bg-slate-900 border border-slate-800 text-xs text-white rounded-xl py-2 px-3 focus:outline-none">
+                            <option value="cat_phones">هواتف</option>
+                            <option value="cat_electronic">إلكترونيات</option>
+                            <option value="cat_parts">قطع غيار</option>
+                            <option value="cat_food">مواد غذائية</option>
+                            <option value="cat_clothes">ملابس</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] text-slate-300 font-bold mb-1">الكمية المتوفرة (المخزون):</label>
+                        <input id="prod-stock" type="number" class="w-full bg-slate-900 border border-slate-800 text-xs text-white rounded-xl py-2 px-3 focus:outline-none" value="10" required>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] text-slate-300 font-bold mb-1">شرح ومواصفات المنتج:</label>
+                        <textarea id="prod-desc" rows="3" class="w-full bg-slate-900 border border-slate-800 text-xs text-white rounded-xl py-2 px-3 focus:outline-none" placeholder="..." required></textarea>
+                    </div>
+                    
+                    <button type="submit" class="w-full bg-gradient-to-tr from-sky-400 to-[#00AEEF] hover:to-sky-500 text-slate-950 font-black text-xs py-3 rounded-xl transition shadow-lg">حفظ وإدراج بالمتجر</button>
+                </form>
+            </div>
+
+            <!-- Right Pane: Dashboard Overview & Lists -->
+            <div class="md:col-span-2 space-y-6">
+                
+                <!-- Products catalog -->
+                <div class="bg-[#0f1c36]/40 border border-slate-700/50 rounded-3xl p-5 space-y-4">
+                    <h3 class="text-base font-black text-[#D4AF37] text-right"><i class="fa-solid fa-boxes-stacked"></i> قائمة سلع المعرض بالمنيعة</h3>
+                    <div class="overflow-x-auto w-full">
+                        <table class="w-full text-right text-xs" style="min-width: 480px;">
+                            <thead>
+                                <tr class="text-slate-400 border-b border-slate-800">
+                                    <th class="pb-2 text-right">اسم السلعة</th>
+                                    <th class="pb-2 text-right">السعر</th>
+                                    <th class="pb-2 text-right">المخزون</th>
+                                    <th class="pb-2 text-center">العمليات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="merchant-product-list">
+                                <!-- Loaded via app.js -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Orders management -->
+                <div class="space-y-4">
+                    <h3 class="text-base font-black text-white text-right"><i class="fa-solid fa-file-invoice-dollar text-emerald-400"></i> طلبات المشتريات والخدمات المستلمة</h3>
+                    <div id="merchant-orders-list" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <!-- Loaded dynamically via app.js -->
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <footer class="border-t border-slate-800/60 py-4 text-center text-xs text-slate-500 bg-slate-950/40">
+        <p>© 2026 ZaLo Market - لوحة الإدارة والتاجر.</p>
+    </footer>
+
+    <!-- Shared JS Engine -->
+    <script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الإشعارات - ZaLo Marketplace</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --g1: oklch(0.35 0.08 145);
+            --g2: oklch(0.42 0.09 145);
+            --gold: oklch(0.72 0.13 75);
+            --bg: #070a08;
+            --card-bg: #0f1811;
+            --text: #f8fafc;
+            --gray: #94a3b8;
+            --border: rgba(212, 175, 55, 0.15);
+        }
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.8;
+            padding: 40px 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 2px solid rgba(197, 160, 89, 0.2);
+            padding-bottom: 20px;
+        }
+        h1 {
+            color: var(--gold);
+            font-size: 28px;
+            font-weight: 900;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+        .notif-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .notif-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px 20px;
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            transition: all 0.2s ease;
+        }
+        .notif-card:hover {
+            border-color: var(--gold);
+            transform: translateY(-2px);
+        }
+        .notif-icon {
+            background: rgba(37, 168, 96, 0.1);
+            color: var(--gold);
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+        }
+        .notif-content {
+            flex: 1;
+        }
+        .notif-title {
+            font-weight: 700;
+            font-size: 15px;
+            color: #ffffff;
+            margin-bottom: 4px;
+        }
+        .notif-desc {
+            font-size: 13px;
+            color: var(--gray);
+            margin-bottom: 6px;
+        }
+        .notif-time {
+            font-size: 11px;
+            color: var(--gold);
+            font-weight: 600;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            color: var(--gray);
+            font-size: 13px;
+        }
+        .back-btn {
+            display: inline-block;
+            background: var(--g1);
+            color: #fff;
+            text-decoration: none;
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-weight: 700;
+            margin-top: 20px;
+            transition: 0.2s;
+            border: 1px solid var(--border);
+        }
+        .back-btn:hover {
+            background: var(--g2);
+            border-color: var(--gold);
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1><i class="fa-solid fa-bell"></i> مركز الإشعارات الفوري</h1>
+    <p>تابع آخر تحديثات طلباتك وعروضك والعمليات الجارية في متجر ZaLo</p>
+</div>
+
+<div class="notif-container">
+    <div class="notif-card">
+        <div class="notif-icon"><i class="fa-solid fa-cart-shopping"></i></div>
+        <div class="notif-content">
+            <div class="notif-title">تم استلام طلب جديد #9421</div>
+            <div class="notif-desc">قام زبون من ولاية "الجزائر العاصمة" بطلب حذاء رياضي أصلي ومستلزمات منزلية. يرجى تأكيد الطلبية.</div>
+            <div class="notif-time">منذ 5 دقائق</div>
+        </div>
+    </div>
+
+    <div class="notif-card">
+        <div class="notif-icon"><i class="fa-solid fa-truck-ramp-box"></i></div>
+        <div class="notif-content">
+            <div class="notif-title">تحديث حالة الشحن</div>
+            <div class="notif-desc">الطلب الخاص بك رقم #8912 في طريقه للتوصيل إلى ولاية "وهران" عبر شريك الشحن المعتمد لدينا.</div>
+            <div class="notif-time">منذ ساعتين</div>
+        </div>
+    </div>
+
+    <div class="notif-card">
+        <div class="notif-icon"><i class="fa-solid fa-wallet"></i></div>
+        <div class="notif-content">
+            <div class="notif-title">إيداع ناجح في محفظتك</div>
+            <div class="notif-desc">تم تأكيد استلام الدفعة الخاصة بالمبيعات رقم #7645 بقيمة 12,500 دج وإضافتها لرصيد تصفية BaridiMob.</div>
+            <div class="notif-time">منذ يوم واحد</div>
+        </div>
+    </div>
+
+    <div class="notif-card">
+        <div class="notif-icon"><i class="fa-solid fa-shield-check"></i></div>
+        <div class="notif-content">
+            <div class="notif-title">تأمين وتوثيق حساب المتجر</div>
+            <div class="notif-desc">تهانينا! تم فحص وثائق الهوية وسجلكم التجاري بنجاح. متجركم الآن حاصل على شارة "شريك موثق".</div>
+            <div class="notif-time">منذ يومين</div>
+        </div>
+    </div>
+</div>
+
+<div style="text-align: center;">
+    <a href="index.html" class="back-btn"><i class="fa-solid fa-house"></i> العودة للرئيسية</a>
+</div>
+
+<div class="footer">
+    &copy; 2026 منصة ZaLo Smart. جميع الحقوق محفوظة لجمهورية الجزائر الديمقراطية الشعبية.
+</div>
+
+</body>
+</html>

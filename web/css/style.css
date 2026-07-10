@@ -1,0 +1,265 @@
+/* ZaLo Marketplace Smart Custom Stylesheet */
+
+:root {
+    --brand-green: oklch(0.35 0.08 145); /* #1a5c2a */
+    --brand-green-hover: oklch(0.42 0.09 145); /* #237a38 */
+    --brand-gold: oklch(0.72 0.13 75);  /* #d4af37 */
+}
+
+/* Base resets & horizontal scroll prevention */
+html, body {
+    max-width: 100% !important;
+    margin: 0 !important;
+    overflow-x: hidden !important;
+    box-sizing: border-box !important;
+}
+
+*, *:before, *:after {
+    box-sizing: border-box !important;
+}
+
+/* Responsive elements - fluid widths */
+img, video, iframe {
+    max-width: 100% !important;
+    height: auto;
+}
+
+/* Fluid RTL animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.3s ease-out forwards;
+}
+
+/* Glassmorphic elements */
+.zalo-glass {
+    background: rgba(15, 28, 54, 0.45) !important;
+    backdrop-filter: blur(12px) !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.zalo-glass-card {
+    background: rgba(15, 28, 54, 0.7) !important;
+    backdrop-filter: blur(8px) !important;
+    border-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+/* Smooth lists scrolling */
+.smooth-scrolling {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* --- Professional Mobile-First Styling & Brand Consistency --- */
+
+/* All buttons are full width and have standard 12px padding */
+button, 
+.btn, 
+.btn-p, 
+.btn-s, 
+.btn-wa, 
+.btn-gm, 
+.btn-g, 
+.btn-o, 
+.btn-r {
+    width: 100% !important;
+    padding: 12px !important;
+    font-family: 'Cairo', sans-serif !important;
+    font-weight: 700 !important;
+    box-sizing: border-box !important;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border: none;
+}
+
+/* Default button styling with green branding colors */
+button:not(.btn-s):not(.btn-o):not(.btn-wa):not(.btn-r) {
+    background: var(--brand-green, #1a5c2a) !important;
+    color: #ffffff !important;
+}
+
+button:not(.btn-s):not(.btn-o):not(.btn-wa):not(.btn-r):hover {
+    background: var(--brand-green-hover, #237a38) !important;
+}
+
+button:active {
+    transform: scale(0.98);
+    opacity: 0.9;
+}
+
+/* Ensure border-radius: 8px on all interactive elements */
+button, 
+.btn, 
+.btn-p, 
+.btn-s, 
+.btn-wa, 
+.btn-gm, 
+.btn-g, 
+.btn-o, 
+.btn-r,
+input, 
+select, 
+textarea, 
+.card, 
+.acard, 
+.pcard, 
+.prod-card, 
+.tbl-wrap, 
+.nav-item,
+.detected-badge,
+.logo-inner {
+    border-radius: 8px !important;
+}
+
+/* Form inputs styling */
+input, select, textarea {
+    border: 1px solid var(--border, #cbd5e1);
+    padding: 10px;
+    font-family: 'Cairo', sans-serif;
+    box-sizing: border-box;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--brand-green, #1a5c2a) !important;
+    box-shadow: 0 0 0 3px rgba(26, 92, 42, 0.15) !important;
+}
+
+/* --- Unified Gold Border Header & Back Button System --- */
+.header-back-button {
+    background: rgba(26, 92, 42, 0.18) !important; /* Elegant light green background tint */
+    border: 2px solid var(--brand-gold, var(--gold, #d4af37)) !important; /* Golden Border */
+    border-radius: 24px !important;
+    padding: 6px 20px !important;
+    font-family: 'Cairo', sans-serif !important;
+    font-size: 13.5px !important;
+    font-weight: 800 !important;
+    color: var(--brand-gold, var(--gold, #d4af37)) !important;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    box-shadow: 0 3px 12px rgba(212, 175, 55, 0.2) !important;
+    outline: none !important;
+    text-decoration: none !important;
+    width: auto !important; /* Avoid 100% width rule override */
+    margin: 0 auto !important;
+}
+
+.header-back-button:hover, 
+.header-back-button:active {
+    background: rgba(212, 175, 55, 0.15) !important; /* Accent gold glow on action */
+    transform: scale(0.97);
+    box-shadow: 0 4px 16px rgba(212, 175, 55, 0.3) !important;
+}
+
+.topbar-standardized {
+    background: var(--brand-green, var(--g1, #1a5c2a)) !important;
+    border-bottom: 2px solid var(--brand-gold, var(--gold, #d4af37)) !important;
+    height: 56px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 100 !important;
+    padding: 0 14px !important;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.12) !important;
+}
+
+/* Positioning adjustments for dashboard/admin menu and notification buttons */
+.topbar-standardized #menuBtn, .topbar-standardized #menuToggle {
+    position: absolute !important;
+    right: 16px !important;
+    top: 11px !important;
+    color: #ffffff !important;
+    border: none !important;
+    background: transparent !important;
+    font-size: 20px !important;
+}
+
+.topbar-standardized .topbar-notif, .topbar-standardized .topbar-avatar {
+    position: absolute !important;
+    left: 16px !important;
+    top: 11px !important;
+    color: #ffffff !important;
+    border: none !important;
+    background: transparent !important;
+    font-size: 20px !important;
+}
+
+/* --- ZaLo Unified Brand Overrides for Dashboard & Catalog Pages --- */
+.zalo-branded-body {
+    font-family: 'Cairo', sans-serif !important;
+    background-color: #070a08 !important;
+    color: #f8fafc !important;
+}
+
+.zalo-branded-header {
+    background-color: rgba(15, 24, 17, 0.95) !important;
+    border-bottom: 2px solid var(--brand-gold, #d4af37) !important;
+    backdrop-filter: blur(12px) !important;
+}
+
+.zalo-branded-card, 
+.bg-\[\#0f1c36\]\/90, 
+.bg-\[\#0f1c36\]\/50, 
+.bg-\[\#0f1c36\]\/40, 
+.bg-\[\#0f1c36\]\/30 {
+    background-color: rgba(15, 24, 17, 0.6) !important;
+    border-color: rgba(212, 175, 55, 0.2) !important;
+}
+
+.zalo-branded-card-solid,
+.bg-slate-900, 
+.bg-slate-900\/60, 
+.bg-slate-950,
+.bg-slate-950\/40 {
+    background-color: #0f1811 !important;
+    border-color: rgba(212, 175, 55, 0.15) !important;
+}
+
+.border-slate-700\/50, 
+.border-slate-800, 
+.border-white\/10 {
+    border-color: rgba(212, 175, 55, 0.15) !important;
+}
+
+.text-\[\#D4AF37\],
+.text-sky-400, 
+.text-emerald-400, 
+.text-amber-500,
+.text-zalo-gold {
+    color: var(--brand-gold, #d4af37) !important;
+}
+
+.bg-emerald-500\/10, 
+.bg-amber-500\/10,
+.bg-sky-400\/10 {
+    background-color: rgba(212, 175, 55, 0.1) !important;
+    border-color: rgba(212, 175, 55, 0.3) !important;
+}
+
+/* Form input styling overrides */
+input, select, textarea {
+    background-color: #070a08 !important;
+    border: 1px solid rgba(212, 175, 55, 0.25) !important;
+    color: #ffffff !important;
+}
+input:focus, select:focus, textarea:focus {
+    border-color: var(--brand-gold, #d4af37) !important;
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2) !important;
+}
+
+
+

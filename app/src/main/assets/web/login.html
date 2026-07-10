@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<!-- ZaLo Marketplace Smart-Spark Final Version Update (Sync Trigger) -->
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>ZaLo - بوابـة الدخول الموحدة</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#1a5c2a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="#1a5c2a">
+  <link class="apple-touch-icon" href="assets/icon-192.svg">
+  <script src="js/cache-purger.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --green: #1a5c2a;
+      --green-light: #2d7a3a;
+      --green-dark: #071a0b;
+      --gold: #c9a84c;
+      --gold2: #e8c97a;
+      --bg: #080e0a;
+      --card: #111a14;
+      --border: #1e3028;
+      --text: #e8f0ea;
+      --text2: #7a9e83;
+      --red: #ff4d4d;
+    }
+
+    * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
+
+    html, body {
+      font-family: 'Cairo', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+      position: relative;
+      overflow-y: auto;
+      overflow-x: hidden;
+      width: 100%;
+      max-width: 100%;
+    }
+
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background:
+        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(26,92,42,0.22) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 80% 100%, rgba(37,168,96,0.1) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .wrapper {
+      width: 100%; max-width: 460px;
+      position: relative; z-index: 10;
+      animation: fadeUp 0.5s ease-out;
+    }
+    @keyframes fadeUp {
+      from { opacity:0; transform: translateY(24px); }
+      to { opacity:1; transform: translateY(0); }
+    }
+
+    .logo-area {
+      text-align: center; margin-bottom: 24px;
+    }
+    .logo-outer {
+      width: 100px; height: 100px;
+      margin: 0 auto 12px;
+      padding: 4px;
+      border: 2px dashed var(--gold);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(26,92,42,0.2);
+    }
+    .logo-inner {
+      width: 86px; height: 86px;
+      background: var(--green);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 8px 24px rgba(26,92,42,0.4);
+    }
+    .logo-inner img {
+      width: 50px; height: 50px;
+    }
+    .brand-title {
+      font-size: 26px; font-weight: 900; color: #fff; letter-spacing: 0.5px;
+    }
+    .brand-subtitle {
+      font-size: 13px; color: var(--gold2); font-weight: 700; margin-top: 3px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 24px 20px;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.55);
+      margin-bottom: 24px;
+    }
+
+    .card-title {
+      font-size: 18px; font-weight: 800; color: #fff; margin-bottom: 8px; text-align: center;
+    }
+    .card-desc {
+      font-size: 13px; color: var(--text2); text-align: center; margin-bottom: 18px;
+    }
+
+    /* BADGES OF ACCOUNT DETECTION */
+    .badge-container {
+      display: flex; justify-content: center; margin-bottom: 20px;
+    }
+    .detected-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 16px; border-radius: 20px;
+      font-size: 13px; font-weight: 800;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 1.5px solid transparent;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(26,92,42,0.4); }
+      70% { box-shadow: 0 0 0 8px rgba(26,92,42,0); }
+      100% { box-shadow: 0 0 0 0 rgba(26,92,42,0); }
+    }
+
+    /* Badge Themes */
+    .badge-customer {
+      background: rgba(26, 92, 42, 0.15);
+      border-color: var(--green);
+      color: #9cdcb0;
+    }
+    .badge-merchant {
+      background: rgba(201, 168, 76, 0.15);
+      border-color: var(--gold);
+      color: var(--gold2);
+    }
+    .badge-admin {
+      background: rgba(255, 77, 77, 0.15);
+      border-color: var(--red);
+      color: #ff9999;
+    }
+
+    .form-group {
+      margin-bottom: 18px; text-align: right;
+    }
+    .form-label {
+      display: block; font-size: 13px; font-weight: 700;
+      color: var(--gold2); margin-bottom: 6px;
+    }
+    .input-wrapper {
+      position: relative;
+    }
+    .input-icon {
+      position: absolute; right: 14px; top: 50%;
+      transform: translateY(-50%); color: var(--text2); font-size: 14px;
+    }
+    .form-input {
+      width: 100%;
+      background: rgba(0,0,0,0.25);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px 38px 12px 14px;
+      color: #fff; font-family: inherit; font-size: 14px;
+      transition: all 0.25s ease;
+    }
+    .form-input:focus {
+      outline: none; border-color: var(--gold);
+      box-shadow: 0 0 10px rgba(201,168,76,0.15);
+      background: rgba(0,0,0,0.4);
+    }
+
+    .submit-btn {
+      width: 100%; background: var(--green);
+      border: 1px solid var(--gold);
+      color: #fff; font-family: inherit; font-size: 15px; font-weight: 800;
+      padding: 13px; border-radius: 14px; cursor: pointer;
+      box-shadow: 0 8px 24px rgba(26,92,42,0.25);
+      transition: all 0.25s ease;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .submit-btn:hover {
+      background: var(--green-light); transform: translateY(-1px);
+    }
+    .submit-btn:active { transform: translateY(0); }
+
+    .separator {
+      display: flex; align-items: center; text-align: center;
+      margin: 20px 0; color: var(--text2); font-size: 12px;
+    }
+    .separator::before, .separator::after {
+      content: ''; flex: 1; border-bottom: 1px solid var(--border);
+    }
+    .separator:not(:empty)::before { margin-left: 10px; }
+    .separator:not(:empty)::after { margin-right: 10px; }
+
+    .google-btn {
+      width: 100%; background: #ffffff; color: #1a1a1a;
+      border: none; font-family: inherit; font-size: 14px; font-weight: 700;
+      padding: 12px; border-radius: 14px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      transition: all 0.2s;
+    }
+    .google-btn:hover { background: #f2f2f2; transform: translateY(-1px); }
+
+    .error-msg {
+      background: rgba(255, 77, 77, 0.1);
+      border: 1px solid rgba(255, 77, 77, 0.2);
+      color: var(--red); padding: 10px; border-radius: 12px;
+      font-size: 12px; margin-bottom: 16px; text-align: center;
+      display: none;
+    }
+
+    /* DEMO ACCOUNTS AREA */
+    .demo-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 10px;
+    }
+    .demo-card {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--border);
+      border-radius: 10px; padding: 10px 4px;
+      text-align: center; cursor: pointer; transition: all 0.2s;
+    }
+    .demo-card:hover {
+      background: rgba(201, 168, 76, 0.12);
+      border-color: var(--gold);
+      transform: translateY(-1px);
+    }
+    .demo-card i { font-size: 15px; margin-bottom: 4px; display: block; }
+    .demo-card .role-name { font-size: 11px; font-weight: 800; color: var(--text); }
+    .demo-card .role-email { font-size: 9px; color: var(--text2); display: block; margin-top: 2px; }
+
+    /* HOW IT WORKS TIMELINE */
+    .info-section {
+      background: rgba(255,255,255,0.01);
+      border: 1px dashed var(--border);
+      border-radius: 20px; padding: 20px; margin-top: 12px;
+    }
+    .info-title {
+      font-size: 15px; font-weight: 800; color: #fff; margin-bottom: 14px;
+      display: flex; align-items: center; gap: 8px; justify-content: center;
+    }
+    .timeline {
+      display: flex; flex-direction: column; gap: 14px;
+    }
+    .timeline-item {
+      display: flex; gap: 12px; align-items: flex-start; text-align: right;
+    }
+    .timeline-num {
+      width: 24px; height: 24px; border-radius: 6px;
+      background: var(--green); color: #fff; font-size: 12px; font-weight: 900;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+      border: 1px solid var(--gold);
+    }
+    .timeline-text h4 {
+      font-size: 13px; font-weight: 800; color: var(--gold2); margin-bottom: 2px;
+    }
+    .timeline-text p {
+      font-size: 11px; color: var(--text2); line-height: 1.5;
+    }
+
+    .back-btn {
+      position: absolute; top: 12px; right: 12px;
+      color: var(--text2); text-decoration: none; font-size: 13px; font-weight: 800;
+      display: flex; align-items: center; gap: 6px; z-index: 15;
+    }
+    .back-btn:hover { color: #fff; }
+
+    @media (max-width: 600px) {
+      html, body {
+        padding: 8px 12px !important;
+        overflow: hidden !important; /* No-Scroll policy */
+        height: 100vh !important;
+        height: 100dvh !important;
+        justify-content: center !important;
+      }
+      .wrapper {
+        max-width: 100% !important;
+      }
+      .logo-area {
+        margin-bottom: 10px !important;
+        margin-top: 4px !important;
+      }
+      .logo-area img {
+        width: 80px !important;
+        height: 80px !important;
+      }
+      .brand-subtitle {
+        font-size: 11px !important;
+        margin-top: 4px !important;
+      }
+      .card {
+        padding: 14px 16px !important;
+        margin-bottom: 8px !important;
+        border-radius: 16px !important;
+      }
+      .form-group {
+        margin-bottom: 10px !important;
+      }
+      .form-label {
+        font-size: 11px !important;
+        margin-bottom: 4px !important;
+      }
+      .form-input {
+        padding: 10px 34px 10px 12px !important;
+        font-size: 13px !important;
+      }
+      .submit-btn {
+        padding: 10px !important;
+        font-size: 13px !important;
+      }
+      .separator {
+        margin: 10px 0 !important;
+        font-size: 11px !important;
+      }
+      .google-btn {
+        padding: 10px !important;
+        font-size: 13px !important;
+      }
+      .badge-container {
+        margin-bottom: 12px !important;
+      }
+      .detected-badge {
+        padding: 6px 12px !important;
+        font-size: 11px !important;
+      }
+    }
+
+    /* Manus Styling Additions */
+    .manus-profile-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      margin-bottom: 20px;
+    }
+    .manus-profile-card:hover {
+      background: rgba(26, 92, 42, 0.15);
+      border-color: var(--gold);
+      transform: translateY(-2px);
+    }
+    .manus-profile-card .profile-details {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .manus-profile-card .profile-avatar-container {
+      position: relative;
+      width: 46px;
+      height: 46px;
+    }
+    .manus-profile-card .profile-avatar {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--gold);
+    }
+    .manus-profile-card .provider-icon {
+      position: absolute;
+      bottom: -4px;
+      left: -4px;
+      background: var(--green);
+      color: #fff;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      border: 1.5px solid var(--card);
+    }
+    .manus-profile-card .profile-text-content {
+      text-align: right;
+    }
+    .manus-profile-card .profile-title {
+      font-size: 13px;
+      color: var(--text2);
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+    .manus-profile-card .profile-email {
+      font-size: 14px;
+      color: #fff;
+      font-weight: 800;
+    }
+    .manus-profile-card .arrow-icon {
+      color: var(--text2);
+      font-size: 14px;
+      transition: transform 0.2s;
+    }
+    .manus-profile-card:hover .arrow-icon {
+      color: var(--gold);
+      transform: translateX(-4px);
+    }
+
+    /* Manus Buttons */
+    .manus-btn {
+      width: 100%;
+      padding: 14px 18px;
+      border-radius: 16px;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: all 0.25s ease;
+      margin-bottom: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.03);
+      color: #fff;
+    }
+    .manus-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    }
+    .manus-btn .btn-text-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .manus-btn .btn-icon-img {
+      width: 22px;
+      height: 22px;
+      object-fit: contain;
+    }
+    .manus-btn .btn-icon {
+      font-size: 18px;
+      width: 22px;
+      text-align: center;
+    }
+    .manus-btn .arrow-left {
+      font-size: 12px;
+      opacity: 0.5;
+      transition: transform 0.2s;
+    }
+    .manus-btn:hover .arrow-left {
+      opacity: 1;
+      transform: translateX(-3px);
+    }
+
+    /* Button Colors specifically for Manus design */
+    .manus-btn.google-btn {
+      background: #ffffff !important;
+      color: #1a1a1a !important;
+      border: none !important;
+    }
+    .manus-btn.google-btn:hover {
+      background: #f4f4f4 !important;
+    }
+    .manus-btn.facebook-btn {
+      background: rgba(255, 255, 255, 0.05) !important;
+      border-color: rgba(255, 255, 255, 0.12) !important;
+    }
+    .manus-btn.facebook-btn:hover {
+      background: rgba(255, 255, 255, 0.09) !important;
+    }
+    .manus-btn.microsoft-btn {
+      background: rgba(255, 255, 255, 0.05) !important;
+      border-color: rgba(255, 255, 255, 0.12) !important;
+    }
+    .manus-btn.microsoft-btn:hover {
+      background: rgba(255, 255, 255, 0.09) !important;
+    }
+    .manus-btn.apple-btn {
+      background: #000000 !important;
+      color: #ffffff !important;
+      border: 1px solid #222 !important;
+    }
+    .manus-btn.apple-btn:hover {
+      background: #111111 !important;
+    }
+    .manus-btn.email-btn {
+      background: var(--green) !important;
+      color: #fff !important;
+      border: 1.5px solid var(--gold) !important;
+      box-shadow: 0 8px 20px rgba(26, 92, 42, 0.25);
+    }
+    .manus-btn.email-btn:hover {
+      background: var(--green-light) !important;
+    }
+
+    /* Collapsible Form Container */
+    .collapsible-form {
+      max-height: none;
+      overflow: visible;
+      opacity: 1;
+      margin-top: 16px;
+    }
+    .collapsible-form.active {
+      max-height: none;
+      opacity: 1;
+      margin-top: 16px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="wrapper">
+
+  <!-- LOGO BRAND AREA (Manus Inspired Premium Header) -->
+  <div class="logo-area" style="margin-top: 24px; text-align: center; margin-bottom: 24px;">
+    <div class="logo-outer" style="width: 110px; height: 110px; border: 2px dashed var(--gold); border-radius: 50%; padding: 4px; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; background: rgba(26,92,42,0.15);">
+      <div class="logo-inner" style="width: 96px; height: 96px; background: var(--green); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 30px rgba(26,92,42,0.45);">
+        <img src="assets/logo.svg" alt="ZaLo" style="width: 60px; height: 60px; object-fit: contain; transform: scale(1.1);" />
+      </div>
+    </div>
+    <h1 class="brand-title" style="font-size: 26px; font-weight: 900; color: #fff; margin-bottom: 4px;">مرحبًا بك في <span style="color: var(--gold2); font-family: 'Cairo', sans-serif;">ZaLo</span></h1>
+    <p class="brand-subtitle" style="font-size: 13px; color: var(--text2); font-weight: 600;">بوابة الهوية الذكية والمصادقة الموحدة</p>
+  </div>
+
+  <div class="card" style="background: var(--card); border: 1.5px solid var(--border); border-radius: 28px; padding: 24px 20px; box-shadow: 0 32px 80px rgba(0,0,0,0.65);">
+    
+    <!-- Account Detected Badge (Dynamic Real-time Info) -->
+    <div class="badge-container" style="display: flex; justify-content: center; margin-bottom: 22px;">
+      <a href="index.html" class="detected-badge badge-customer" id="roleBadge" style="text-decoration: none; padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 800;">
+        <i class="fa-solid fa-house" id="badgeIcon"></i>
+        <span id="badgeText">الواجهة الرئيسية للتسوق</span>
+      </a>
+    </div>
+
+    <div class="error-msg" id="errorMessage" style="display:none; margin-bottom: 16px;"></div>
+
+    <!-- Manus Fast Profile Card (Smart Connection) -->
+    <div class="manus-profile-card" id="manusProfileCard">
+      <div class="profile-details">
+        <div class="profile-avatar-container">
+          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&h=100" id="manusAvatar" alt="Avatar" class="profile-avatar">
+          <span class="provider-icon" style="background: var(--green);"><i class="fa-solid fa-bolt"></i></span>
+        </div>
+        <div class="profile-text-content">
+          <div class="profile-title" id="manusProfileTitle">المتابعة باسم حسابك المكتشف</div>
+          <div class="profile-email" id="manusEmail">دخول سريع كزبون</div>
+        </div>
+      </div>
+      <i class="fa-solid fa-chevron-left arrow-icon"></i>
+    </div>
+
+    <!-- Collapsible Standard Email Form Container (Always visible now) -->
+    <div class="collapsible-form" id="collapsibleFormContainer">
+      <form id="unifiedLoginForm">
+        <!-- Email Input -->
+        <div class="form-group" style="margin-bottom: 16px;">
+          <label class="form-label" style="display: block; font-size: 13px; font-weight: 700; color: var(--gold2); margin-bottom: 6px;">البريد الإلكتروني للذكاء الموحد</label>
+          <div class="input-wrapper" style="position: relative;">
+            <i class="fa-solid fa-envelope input-icon" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: var(--text2); font-size: 14px;"></i>
+            <input type="email" class="form-input" id="loginEmail" placeholder="example@domain.com" required autocomplete="email" style="width: 100%; padding: 12px 38px 12px 14px; border-radius: 14px; border: 1px solid var(--border); background: rgba(0,0,0,0.25); color: #fff;">
+          </div>
+        </div>
+
+        <!-- Password Input -->
+        <div class="form-group" style="margin-bottom: 16px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; direction: rtl;">
+            <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--gold2);">كلمة المرور الآمنة</label>
+            <a href="#" id="forgot-password-link" style="color: var(--gold2); font-size: 11.5px; font-weight: 700; text-decoration: none;">نسيت كلمة المرور؟</a>
+          </div>
+          <div class="input-wrapper" style="position: relative;">
+            <i class="fa-solid fa-lock input-icon" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: var(--text2); font-size: 14px;"></i>
+            <input type="password" class="form-input" id="loginPass" placeholder="••••••••" required autocomplete="current-password" style="width: 100%; padding: 12px 38px 12px 14px; border-radius: 14px; border: 1px solid var(--border); background: rgba(0,0,0,0.25); color: #fff;">
+          </div>
+          <!-- Password Strength Meter -->
+          <meter id="password-strength-bar" min="0" max="4" low="2" high="3" optimum="4" style="width: 100%; height: 6px; margin-top: 8px; display: none;"></meter>
+        </div>
+
+        <!-- Remember Me Checkbox -->
+        <div class="form-group" style="margin-bottom: 20px; display: flex; align-items: center; gap: 8px; direction: rtl;">
+          <input type="checkbox" id="remember-me-checkbox" style="width: 18px; height: 18px; accent-color: var(--green); cursor: pointer; border-radius: 4px; background: rgba(0,0,0,0.25); border: 1px solid var(--border);">
+          <label for="remember-me-checkbox" style="font-size: 13px; color: var(--text2); cursor: pointer; font-weight: 700; user-select: none;">تذكرني على هذا الجهاز الآمن 🔒</label>
+        </div>
+
+        <!-- Main Submission Button -->
+        <button type="submit" class="submit-btn" id="submitBtn" style="width: 100%; background: var(--green); border: 1px solid var(--gold); color: #fff; font-size: 15px; font-weight: 800; padding: 13px; border-radius: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s;">
+          <span>تأكيد وتسجيل الدخول الموحد</span> <i class="fa-solid fa-arrow-left"></i>
+        </button>
+      </form>
+    </div>
+
+    <!-- 2FA Container -->
+    <div id="two-factor-container" style="display: none; margin-top: 16px;"></div>
+
+    <!-- Divider "أو" (Or) -->
+    <div class="separator" style="display: flex; align-items: center; text-align: center; margin: 24px 0; color: var(--text2); font-size: 13px; font-weight: 600;">أو المتابعة عبر الهوية الحيوية والاجتماعية</div>
+
+    <!-- Manus Action Buttons Stack -->
+    <div class="manus-buttons-container" style="display: flex; flex-direction: column; gap: 12px;">
+      <!-- Biometric Login Button -->
+      <button type="button" class="manus-btn biometric-btn" id="biometric-login-btn" style="width: 100%; background: rgba(26,92,42,0.1); border: 1px solid var(--border); color: #fff; font-size: 14px; font-weight: 800; padding: 12px; border-radius: 14px; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 8px; transition: all 0.2s;">
+        <div class="btn-text-wrapper" style="display: flex; align-items: center; gap: 8px;">
+          <i class="fa-solid fa-fingerprint" style="color: var(--gold); font-size: 18px;"></i>
+          <span>المتابعة عبر بصمة الأصبع الحيوية</span>
+        </div>
+        <i class="fa-solid fa-chevron-left arrow-left"></i>
+      </button>
+
+      <!-- Google Sign In Button (Fully Functional) -->
+      <button type="button" class="manus-btn google-btn" id="googleBtn" style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: #fff; font-size: 14px; font-weight: 800; padding: 12px; border-radius: 14px; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 8px; transition: all 0.2s;">
+        <div class="btn-text-wrapper" style="display: flex; align-items: center; gap: 8px;">
+          <img src="https://images.unsplash.com/photo-1573804633927-bfcbcd909acd?auto=format&fit=crop&w=32&h=32" alt="Google" class="btn-icon-img" style="width: 18px; height: 18px; border-radius: 50%;">
+          <span>المتابعة باستخدام حساب Google</span>
+        </div>
+        <i class="fa-solid fa-chevron-left arrow-left"></i>
+      </button>
+    </div>
+
+    <!-- Extra links and diagnostic session action -->
+    <div style="text-align: center; margin-top: 24px; font-size: 13px; display: flex; flex-direction: column; gap: 14px; align-items: center; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 16px;">
+      <a href="#" id="toggleModeBtn" style="color: var(--gold2); text-decoration: none; font-weight: 800;">ليس لديك حساب؟ سجل حساباً جديداً الآن ←</a>
+      <button id="clearSessionBtn" type="button" style="background: transparent; border: 1px solid rgba(255,255,255,0.15); color: #888; border-radius: 8px; font-size: 11px; padding: 6px 12px; cursor: pointer; font-family: 'Cairo', sans-serif;">🧹 تنظيف وإعادة تعيين جلسة الاتصال (Clean Auth Session)</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- Importmap Definitions for Seamless Modular Loading -->
+<script type="importmap">
+{
+  "imports": {
+    "/js/session-manager.js": "./js/session-manager.js",
+    "/js/login-handler.js": "./js/login-handler.js",
+    "/js/two-factor-auth.js": "./js/two-factor-auth.js",
+    "/js/password-validator.js": "./js/password-validator.js",
+    "/js/biometric-auth.js": "./js/biometric-auth.js",
+    "/js/oauth-handler.js": "./js/oauth-handler.js",
+    "/js/password-reset.js": "./js/password-reset.js",
+    "/js/remember-me.js": "./js/remember-me.js",
+    "/js/login-security.js": "./js/login-security.js",
+    "/js/design-system.js": "./js/design-system.js",
+    "/js/performance-animations.js": "./js/performance-animations.js",
+    "/js/permissions-manager.js": "./js/permissions-manager.js",
+    "/js/login-analytics.js": "./js/login-analytics.js",
+    "/js/telemetry-logger.js": "./js/telemetry-logger.js"
+  }
+}
+</script>
+
+<!-- Centralized Bootstrap & Orchestration System -->
+<script type="module" src="./js/main-login-bootstrap.js"></script>
+
+</body>
+</html>

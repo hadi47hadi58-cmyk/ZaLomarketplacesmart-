@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>بوابة الزبون - ZaLo</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<style>
+:root {
+  --g1: oklch(0.35 0.08 145);
+  --g2: oklch(0.42 0.09 145);
+  --gold: oklch(0.72 0.13 75);
+  --gold2: oklch(0.80 0.10 75);
+  --bg: #070a08;
+  --card-bg: #0f1811;
+  --text: #f8fafc;
+  --gray: #94a3b8;
+  --red: #ef4444;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body {
+  font-family: 'Cairo', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 16px;
+}
+.container {
+  width: 100%;
+  max-width: 500px;
+  background: var(--card-bg);
+  border: 1.5px solid rgba(197, 160, 89, 0.2);
+  border-radius: 20px;
+  padding: 32px 24px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  animation: fadeIn 0.4s ease-out;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  padding-bottom: 20px;
+}
+.avatar {
+  width: 70px;
+  height: 70px;
+  background: rgba(26, 92, 42, 0.2);
+  border: 2px solid var(--gold);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gold);
+  font-size: 32px;
+}
+.btn-primary {
+  background: var(--g1);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  padding: 14px;
+  font-family: 'Cairo', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: all 0.2s;
+  box-shadow: 0 4px 12px rgba(26,92,42,0.3);
+}
+.btn-primary:hover:not(:disabled) {
+  background: var(--g2);
+  transform: translateY(-1px);
+}
+.btn-primary:disabled {
+  background: #1e291f;
+  color: var(--gray);
+  border: 1px solid rgba(255,255,255,0.05);
+  cursor: not-allowed;
+  box-shadow: none;
+}
+.btn-secondary {
+  background: rgba(255,255,255,0.05);
+  color: var(--text);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 12px;
+  padding: 12px;
+  font-family: 'Cairo', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: all 0.2s;
+}
+.btn-secondary:hover {
+  background: rgba(255,255,255,0.1);
+}
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 16px;
+  right: 16px;
+  background: #1e291f;
+  color: #fff;
+  padding: 14px 20px;
+  border-radius: 12px;
+  border-right: 4px solid var(--gold);
+  font-size: 14px;
+  font-weight: bold;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  display: none;
+  text-align: right;
+  z-index: 1000;
+  animation: slideUp 0.3s ease;
+}
+@keyframes slideUp {
+  from { transform: translateY(100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  
+  <div class="header">
+    <div class="avatar">
+      <i class="fa-solid fa-circle-user"></i>
+    </div>
+    <h2 style="font-size: 20px; font-weight: 900; color: var(--gold);" id="customer-email">جاري التحميل...</h2>
+    <span style="font-size: 11px; color: var(--gray);">رقم الحساب الموحد: #<span id="customer-id-tag">...</span></span>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 12px;">
+    <h3 style="font-size: 14px; font-weight: 800; color: #fff;">لوحة التحكم والخيارات:</h3>
+    
+    <button class="btn-primary" onclick="window.location.href='index.html'">
+      <i class="fa-solid fa-store"></i> تصفح السوق الذكي الجزائري
+    </button>
+    
+    <button class="btn-primary" onclick="window.location.href='index.html#myorders'">
+      <i class="fa-solid fa-box"></i> تتبع شحناتي وطلباتي المباشرة
+    </button>
+  </div>
+
+  <div style="background: rgba(197, 160, 89, 0.05); border: 1px dashed rgba(197, 160, 89, 0.2); border-radius: 14px; padding: 16px; display: flex; flex-direction: column; gap: 12px;">
+    <h4 style="font-size: 14px; font-weight: 800; color: var(--gold); display: flex; align-items: center; gap: 8px;">
+      💼 الشراكة والبيع على منصة ZaLo
+    </h4>
+    <p style="font-size: 11px; color: var(--gray); line-height: 1.5; margin: 0;">
+      هل تملك متجراً أو منتجات وتريد بيعها لآلاف الزبائن في 69 ولاية جزائرية؟ قدم طلب شريك تجاري الآن للانضمام لكوكبة التجار المعتمدين وتفعيل لوحة الإدارة!
+    </p>
+    
+    <button id="apply-merchant-btn" class="btn-primary" style="background: var(--gold); color: #070a08;" onclick="applyForMerchant()">
+      <i class="fa-solid fa-briefcase"></i> تقديم طلب انضمام كتاجر
+    </button>
+    
+    <div id="application-status-container" style="display: none; font-size: 12px; font-weight: bold; text-align: center; padding: 8px; border-radius: 8px; background: rgba(255,255,255,0.03);"></div>
+  </div>
+
+  <button class="btn-secondary" style="color: var(--red); border-color: rgba(239, 68, 68, 0.2);" onclick="handleLogout()">
+    <i class="fa-solid fa-right-from-bracket"></i> تسجيل الخروج الآمن
+  </button>
+
+</div>
+
+<!-- النافذة المنبثقة لطلب الشراكة (Modal) -->
+<div id="merchantModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:9999; overflow-y:auto; backdrop-filter: blur(4px);">
+  <div style="background:var(--card-bg); max-width:480px; margin:40px auto; padding:24px; border-radius:20px; border: 1.5px solid rgba(197, 160, 89, 0.3); box-shadow:0 10px 30px rgba(0,0,0,0.6); position: relative; animation: slideUp 0.3s ease-out; text-align: right; font-family: 'Cairo', sans-serif;">
+    
+    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 12px; margin-bottom: 16px;">
+      <h3 style="color:var(--gold); font-size: 18px; font-weight: 800; display: flex; align-items: center; gap: 8px; margin: 0;">
+        <i class="fa-solid fa-file-signature"></i> تقديم طلب الشراكة التجارية
+      </h3>
+      <button onclick="document.getElementById('merchantModal').style.display='none'" style="background: none; border: none; color: var(--gray); font-size: 18px; cursor: pointer;">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <p style="color:var(--gray); font-size:12px; line-height: 1.5; margin-bottom: 20px;">
+      يرجى ملء البيانات التالية بدقة. سيتم مراجعة طلبك وتفعيل متجرك من قبل فريق الإدارة في غضون 24 ساعة.
+    </p>
+    
+    <form id="merchantRequestForm" style="display: flex; flex-direction: column; gap: 14px;">
+      <div>
+        <label style="display:block; margin-bottom: 6px; font-size: 13px; font-weight: 700; color: #fff;">اسم المتجر التجاري *</label>
+        <input type="text" id="storeName" required placeholder="مثال: متجر الأناقة الوهراني" style="width:100%; padding:11px 14px; background: #070a08; border:1px solid rgba(197,160,89,0.2); border-radius:8px; color: #fff; font-family: 'Cairo', sans-serif; font-size: 13px; outline: none;">
+      </div>
+      
+      <div>
+        <label style="display:block; margin-bottom: 6px; font-size: 13px; font-weight: 700; color: #fff;">رقم الهاتف للتواصل *</label>
+        <input type="tel" id="phone" required placeholder="مثال: 0655xxxxxx" style="width:100%; padding:11px 14px; background: #070a08; border:1px solid rgba(197,160,89,0.2); border-radius:8px; color: #fff; font-family: 'Cairo', sans-serif; font-size: 13px; outline: none;">
+      </div>
+      
+      <div>
+        <label style="display:block; margin-bottom: 6px; font-size: 13px; font-weight: 700; color: #fff;">رقم السجل التجاري (اختياري)</label>
+        <input type="text" id="commercialRegister" placeholder="مثال: 23/00-1234567A20" style="width:100%; padding:11px 14px; background: #070a08; border:1px solid rgba(197,160,89,0.2); border-radius:8px; color: #fff; font-family: 'Cairo', sans-serif; font-size: 13px; outline: none;">
+      </div>
+
+      <div>
+        <label style="display:block; margin-bottom: 6px; font-size: 13px; font-weight: 700; color: #fff;">رقم التعريف الجبائي NIF (اختياري)</label>
+        <input type="text" id="taxNumber" placeholder="مثال: 198731170012345" style="width:100%; padding:11px 14px; background: #070a08; border:1px solid rgba(197,160,89,0.2); border-radius:8px; color: #fff; font-family: 'Cairo', sans-serif; font-size: 13px; outline: none;">
+      </div>
+      
+      <div>
+        <label style="display:block; margin-bottom: 6px; font-size: 13px; font-weight: 700; color: #fff;">نبذة عن المنتجات والنشاط (اختياري)</label>
+        <textarea id="description" rows="3" placeholder="اكتب هنا فكرة عامة عن المنتجات التي تود عرضها وشحنها..." style="width:100%; padding:11px 14px; background: #070a08; border:1px solid rgba(197,160,89,0.2); border-radius:8px; color: #fff; font-family: 'Cairo', sans-serif; font-size: 13px; resize: none; outline: none;"></textarea>
+      </div>
+
+      <div style="display:flex; gap:10px; margin-top:12px;">
+        <button type="submit" class="btn-primary" style="flex:1; background: var(--gold); color: #070a08; font-weight: 800; font-size: 14px; padding: 12px; border-radius: 8px;">إرسال طلب الشراكة</button>
+        <button type="button" onclick="document.getElementById('merchantModal').style.display='none'" class="btn-secondary" style="flex:1; font-weight: 600; font-size: 14px; padding: 12px; border-radius: 8px;">إلغاء</button>
+      </div>
+    </form>
+    <div id="requestStatus" style="margin-top:15px; display:none; padding:12px; border-radius:8px; font-size: 12px; font-weight: 700; text-align: center;"></div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script type="module">
+import { onAuthStateChanged } from "./js/supabase-db-compat.js";
+import { supabase } from "./js/supabase-config.js";
+
+const auth = { currentUser: null };
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.display = 'block';
+  setTimeout(() => { t.style.display = 'none'; }, 4000);
+}
+
+// Update UI based on Application status
+function updateApplicationUI(status) {
+  const btn = document.getElementById('apply-merchant-btn');
+  const container = document.getElementById('application-status-container');
+  
+  if (status === 'pending') {
+    btn.disabled = true;
+    btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> قيد المراجعة حالياً...`;
+    container.style.display = 'block';
+    container.style.color = 'var(--gold)';
+    container.innerHTML = '⏳ تم إيداع طلب الشراكة بنجاح وهو قيد الدراسة من قبل الإدارة العليا.';
+  } else if (status === 'active' || status === 'approved') {
+    btn.disabled = true;
+    btn.innerHTML = `<i class="fa-solid fa-circle-check"></i> شريك نشط`;
+    container.style.display = 'block';
+    container.style.color = '#4ade80';
+    container.innerHTML = `
+      <div style="margin-bottom: 12px; line-height: 1.5;">✅ حسابك شريك معتمد ونشط بالمنصة! يمكنك الدخول كتاجر.</div>
+      <button onclick="window.location.href='dashboard.html'" class="btn-primary" style="background: #22c55e; color: #fff; width: 100%; border: none; font-weight: bold; padding: 12px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 15px rgba(34,197,94,0.3);">
+        <i class="fa-solid fa-gauge-high"></i> الدخول إلى لوحة تحكم متجري 📦
+      </button>
+    `;
+  } else {
+    btn.disabled = false;
+    btn.innerHTML = `<i class="fa-solid fa-briefcase"></i> تقديم طلب انضمام كتاجر`;
+    container.style.display = 'none';
+  }
+}
+
+// Open the partnership request modal
+window.applyForMerchant = function() {
+  document.getElementById('merchantModal').style.display = 'block';
+};
+
+// Form submission handler
+document.getElementById('merchantRequestForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const form = document.getElementById('merchantRequestForm');
+  const submitBtn = form.querySelector('button[type="submit"]');
+  submitBtn.disabled = true;
+  submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> جاري الإرسال...`;
+
+  try {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session || !session.user) {
+      showToast("⚠️ لم يتم العثور على جلسة مستخدم نشطة!");
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'إرسال طلب الشراكة';
+      return;
+    }
+
+    const payload = {
+      storeName: document.getElementById('storeName').value,
+      phone: document.getElementById('phone').value,
+      commercialRegister: document.getElementById('commercialRegister').value,
+      taxNumber: document.getElementById('taxNumber').value,
+      description: document.getElementById('description').value,
+    };
+
+    const response = await fetch('/api/merchant-requests', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${session.access_token}`,
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const result = await response.json();
+    const statusDiv = document.getElementById('requestStatus');
+    statusDiv.style.display = 'block';
+
+    if (response.ok) {
+      statusDiv.style.background = 'rgba(34, 197, 94, 0.15)';
+      statusDiv.style.border = '1px solid #22c55e';
+      statusDiv.style.color = '#4ade80';
+      statusDiv.innerHTML = '✅ تم تقديم طلبك بنجاح! سيتم مراجعته من قبل الإدارة قريباً.';
+      form.reset();
+      
+      // Also update profiles to keep it synchronized with legacy code
+      await supabase
+        .from('profiles')
+        .update({ status: 'pending' })
+        .eq('id', session.user.id);
+
+      updateApplicationUI('pending');
+      
+      setTimeout(() => {
+        document.getElementById('merchantModal').style.display = 'none';
+        statusDiv.style.display = 'none';
+      }, 3000);
+    } else {
+      statusDiv.style.background = 'rgba(239, 68, 68, 0.15)';
+      statusDiv.style.border = '1px solid #ef4444';
+      statusDiv.style.color = '#f87171';
+      statusDiv.innerHTML = `❌ فشل الإرسال: ${result.message || 'حاول مرة أخرى'}`;
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'إرسال طلب الشراكة';
+    }
+  } catch (err) {
+    console.error(err);
+    showToast("⚠️ حدث خطأ غير متوقع!");
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'إرسال طلب الشراكة';
+  }
+});
+
+// Logout handler
+window.handleLogout = async function() {
+  try {
+    await supabase.auth.signOut();
+    window.location.href = 'index.html';
+  } catch (e) {
+    console.error(e);
+    window.location.href = 'index.html';
+  }
+};
+
+// Page Guard & Request Status syncing
+onAuthStateChanged(auth, async (user) => {
+  if (!user) {
+    console.log("PageGuard: No active session. Redirecting to gateway...");
+    window.location.href = 'index.html';
+    return;
+  }
+  
+  // Set customer info immediately to remove the infinite loading state
+  document.getElementById('customer-email').textContent = user.email || 'مستخدم ZaLo';
+  document.getElementById('customer-id-tag').textContent = user.id.slice(0, 8);
+  updateApplicationUI('none');
+  
+  try {
+    // Check request status from backend REST API
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session) {
+      const response = await fetch('/api/merchant-requests', {
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`
+        }
+      });
+      if (response.ok) {
+        const requests = await response.json();
+        const pendingRequest = requests.find(r => r.status === 'pending');
+        const approvedRequest = requests.find(r => r.status === 'approved');
+        
+        if (approvedRequest) {
+          updateApplicationUI('active');
+          return;
+        } else if (pendingRequest) {
+          updateApplicationUI('pending');
+          return;
+        }
+      }
+    }
+
+    // Fallback to legacy profiles check
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', user.id)
+      .maybeSingle();
+      
+    if (profile && profile.role && profile.role !== 'customer') {
+      console.log("PageGuard: Access restricted for non-customer:", profile.role);
+      if (profile.role === 'admin') window.location.href = 'admin.html';
+      else if (profile.role === 'merchant') window.location.href = 'dashboard.html';
+      else window.location.href = 'index.html';
+      return;
+    }
+    
+    if (profile) {
+      updateApplicationUI(profile.status);
+    } else {
+      // Auto-insert profile for consistency if missing
+      supabase.from('profiles').upsert({
+        id: user.id,
+        email: user.email,
+        role: 'customer',
+        status: 'active'
+      }).catch(e => console.warn("Auto-insert profile skipped:", e));
+      updateApplicationUI('none');
+    }
+  } catch (e) {
+    console.warn("Error running page guard checks:", e);
+    updateApplicationUI('none');
+  }
+});
+</script>
+
+</body>
+</html>

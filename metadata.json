@@ -1,0 +1,8 @@
+{
+  "name": "ZaLo Smart",
+  "description": "سوق الجزائر الذكي - نسخة الويب المتقدمة المتنقلة مع مستعرض الأكواد التفاعلي وتكامل الذكاء الاصطناعي",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

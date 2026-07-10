@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>تسجيل جديد - الخطوة 3</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --green: #1a5c2a;
+      --green-light: #2d7a3a;
+      --gold: #c9a84c;
+      --gold-light: #e8c97a;
+      --red: #e53935;
+      --gray: #666;
+      --bg: #f5f5f5;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      font-family: 'Cairo', sans-serif;
+      background: linear-gradient(135deg, #f5f5f5, #e8f0ea);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+      overflow-x: hidden;
+      width: 100%;
+      max-width: 100%;
+    }
+    .container {
+      width: 100%;
+      max-width: 450px;
+      background: white;
+      border-radius: 16px;
+      padding: 32px 24px;
+      box-shadow: 0 10px 40px rgba(26,92,42,0.15);
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .logo-large { font-size: 50px; margin-bottom: 12px; }
+    .title {
+      font-size: 24px;
+      font-weight: 900;
+      color: #1a5c2a;
+    }
+    .progress-bar {
+      display: flex;
+      gap: 8px;
+      margin: 20px 0;
+      justify-content: center;
+    }
+    .progress-step {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: #e0e0e0;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 12px;
+    }
+    .progress-step.active {
+      background: #1a5c2a;
+    }
+    .form-group {
+      margin-bottom: 16px;
+    }
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin-bottom: 8px;
+    }
+    input {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-family: 'Cairo', sans-serif;
+      font-size: 14px;
+      outline: none;
+      transition: all 0.2s;
+    }
+    input:focus {
+      border-color: #1a5c2a;
+      box-shadow: 0 0 0 3px rgba(26,92,42,0.1);
+    }
+    .error-msg {
+      background: #ffebee;
+      color: #c0392b;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      font-size: 12px;
+      display: none;
+    }
+    .error-msg.show { display: block; }
+    .buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .btn {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-family: 'Cairo', sans-serif;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-submit {
+      background: linear-gradient(135deg, #1a5c2a, #2d7a3a);
+      color: white;
+    }
+    .btn-submit:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(26,92,42,0.3);
+    }
+    .btn-submit:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .btn-back {
+      background: #e0e0e0;
+      color: #1a1a1a;
+    }
+    .loading { display: none; text-align: center; font-size: 12px; color: #666; margin-top: 10px; }
+    .loading.show { display: block; }
+
+    /* Merchant Styles */
+    .merchant-section {
+      border-top: 1.5px dashed #1a5c2a;
+      padding-top: 16px;
+      margin-top: 16px;
+    }
+    .type-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .tbtn {
+      flex: 1;
+      padding: 10px 6px;
+      border-radius: 8px;
+      border: 2px solid #e0e0e0;
+      background: #fff;
+      font-family: 'Cairo', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      text-align: center;
+      line-height: 1.5;
+      transition: all .2s;
+    }
+    .tbtn.on {
+      border-color: #1a5c2a;
+      background: #f0f8f0;
+      color: #1a5c2a;
+    }
+    .file-box {
+      border: 2px dashed #e0e0e0;
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+      background: #fafafa;
+      cursor: pointer;
+      transition: all .2s;
+      position: relative;
+      margin-bottom: 12px;
+    }
+    .file-box input[type="file"] {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+      font-size: 0;
+    }
+    .file-box.has {
+      border-color: #2d7a3a;
+      background: #f0fff4;
+    }
+    .fbi {
+      font-size: 26px;
+      margin-bottom: 4px;
+      pointer-events: none;
+    }
+    .fbl {
+      font-size: 11px;
+      color: #666;
+      pointer-events: none;
+    }
+    .fbh {
+      font-size: 9px;
+      color: #bbb;
+      margin-top: 2px;
+      pointer-events: none;
+    }
+    .file-box.has .fbl {
+      color: #1a5c2a;
+      font-weight: 700;
+    }
+    .ibox {
+      background: #fffbeb;
+      border: 1.5px solid #fde68a;
+      border-radius: 9px;
+      padding: 9px 11px;
+      font-size: 11px;
+      color: #92400e;
+      line-height: 1.6;
+      margin-bottom: 12px;
+    }
+    .fsel {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-family: 'Cairo', sans-serif;
+      font-size: 14px;
+      outline: none;
+      background: #fff;
+    }
+    .fsel:focus {
+      border-color: #1a5c2a;
+    }
+    @media (max-width: 600px) {
+      html, body {
+        padding: 8px 12px !important;
+        overflow-y: auto !important;
+        height: auto !important;
+        min-height: 100vh !important;
+        min-height: 100dvh !important;
+        justify-content: flex-start !important;
+      }
+      .container {
+        padding: 16px 14px !important;
+        border-radius: 12px !important;
+      }
+      .header {
+        margin-bottom: 12px !important;
+      }
+      .logo-large {
+        font-size: 32px !important;
+        margin-bottom: 4px !important;
+      }
+      .title {
+        font-size: 18px !important;
+      }
+      .progress-bar {
+        margin: 10px 0 !important;
+      }
+      .progress-step {
+        width: 24px !important;
+        height: 24px !important;
+        font-size: 11px !important;
+      }
+      .form-group {
+        margin-bottom: 10px !important;
+      }
+      label {
+        font-size: 11px !important;
+        margin-bottom: 4px !important;
+      }
+      input, select, .fsel {
+        padding: 10px !important;
+        font-size: 13px !important;
+        min-height: 40px !important;
+      }
+      .buttons {
+        margin-top: 12px !important;
+      }
+      .btn {
+        padding: 10px !important;
+        font-size: 13px !important;
+        min-height: 40px !important;
+      }
+      .alert-box {
+        padding: 8px !important;
+        font-size: 11px !important;
+        margin-bottom: 8px !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <div class="logo-large">🏛️</div>
+    <div class="title">الخطوة 3: البيانات والمستندات</div>
+  </div>
+
+  <div class="progress-bar">
+    <div class="progress-step active">1</div>
+    <div class="progress-step active">2</div>
+    <div class="progress-step active">3</div>
+  </div>
+
+  <div class="error-msg" id="errorMsg"></div>
+
+  <form onsubmit="completeRegistration(event)" id="step3Form">
+    <div class="form-group">
+      <label for="email">البريد الإلكتروني حساب الدخول *</label>
+      <input 
+        type="email" 
+        id="email" 
+        placeholder="example@gmail.com"
+        required
+      >
+    </div>
+
+    <div class="form-group">
+      <label for="password">كلمة المرور *</label>
+      <input 
+        type="password" 
+        id="password" 
+        placeholder="••••••••"
+        minlength="8"
+        required
+      >
+    </div>
+
+    <div class="form-group">
+      <label for="confirmPassword">تأكيد كلمة المرور *</label>
+      <input 
+        type="password" 
+        id="confirmPassword" 
+        placeholder="••••••••"
+        required
+      >
+    </div>
+
+    <!-- Merchant documents and credentials segment -->
+    <div id="merchantSection" class="merchant-section" style="display: none;">
+      <h3 style="font-size: 14px; font-weight: 800; color: #1a5c2a; margin-bottom: 12px; border-bottom: 2px solid #1a5c2a; padding-bottom: 4px; display: inline-flex; align-items: center; gap: 4px;">🏪 تفعيل المتجر والمستندات الأمنية</h3>
+      
+      <div class="form-group">
+        <label for="storeName">🏪 الاسم التجاري للمحل / العلامة التجارية *</label>
+        <input type="text" id="storeName" placeholder="مثال: ميكرو تك باتنة">
+      </div>
+
+      <div class="form-group">
+        <label for="category">📁 تخصص فئة النشاط التجاري *</label>
+        <select class="fsel" id="category">
+          <option value="">اختر التخصص...</option>
+          <option>هواتف وإلكترونيات</option>
+          <option>أثاث ومنزل</option>
+          <option>ملابس وأزياء</option>
+          <option>أحذية وحقائب</option>
+          <option>مواد غذائية</option>
+          <option>ألعاب وهدايا</option>
+          <option>سيارات وقطع غيار</option>
+          <option>رياضية ولياقة</option>
+          <option>عقارات كراء وبيع</option>
+          <option>صحة ومكملات غذائية</option>
+          <option>خردوات ومواد بناء</option>
+          <option>أدوات ومعدات</option>
+          <option>تجميل وعناية</option>
+          <option>كتب وقرطاسية</option>
+          <option>خدمات ومهن حرة</option>
+          <option>أخرى</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label style="margin-bottom: 6px; display: block;">🏷️ فئة التسجيل المطلوبة *</label>
+        <div class="type-row">
+          <button type="button" class="tbtn on" id="tb-r" onclick="setType('registered',this)">🏢 متجر قانوني مرخص<br><small style="font-weight:400;font-size:10px">بحوزة سجل تجاري رسمي</small></button>
+          <button type="button" class="tbtn" id="tb-f" onclick="setType('free',this)">🆓 صانع حر وعائلي<br><small style="font-weight:400;font-size:10px">تعهد وتصريح شرفي</small></button>
+        </div>
+      </div>
+
+      <!-- Docs for registered merchant -->
+      <div id="docs-r">
+        <div class="ibox">📋 <strong>الملف الرسمي للتاجر المرخص:</strong> يرجى رفع سجل الهيئة مع بطاقة التعريف الوطنية وشعار متجرك المعتمد.</div>
+        
+        <div class="form-group">
+          <label>📄 نسخة السجل التجاري * (PDF أو صورة واضحة)</label>
+          <div class="file-box" id="fb-rc">
+            <input type="file" id="f-rc" accept=".pdf,image/*" onchange="filePick(this,'fb-rc','fl-rc')">
+            <div class="fbi">📄</div>
+            <div class="fbl" id="fl-rc">اضغط هنا لرفع مستند السجل</div>
+            <div class="fbh">PDF أو صورة واضحة</div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>🪪 بطاقة الهوية الوطنية * (الوجه الأمامي)</label>
+          <div class="file-box" id="fb-idfront">
+            <input type="file" id="f-idfront" accept="image/*" onchange="filePick(this,'fb-idfront','fl-idfront')">
+            <div class="fbi">🪪</div>
+            <div class="fbl" id="fl-idfront">الوجه الأمامي للبطاقة</div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>🔢 رقم وتاريخ قيد السجل التجاري رسمي *</label>
+          <input type="text" id="rcNumber" placeholder="مثال: 00-12345678">
+        </div>
+      </div>
+
+      <!-- Docs for free merchant -->
+      <div id="docs-f" style="display: none;">
+        <div class="ibox">🪪 <strong>تاجر المهن الحرة والعائلية:</strong> مستند بطاقة الهوية الوطنية مع رفع تصريح شرفي لممارسة نشاط تجاري.</div>
+        
+        <div class="form-group">
+          <label>✍️ تصريح شرفي لممارسة نشاط تجاري * (صورة أو PDF)</label>
+          <div class="file-box" id="fb-honor">
+            <input type="file" id="f-honor" accept=".pdf,image/*" onchange="filePick(this,'fb-honor','fl-honor')">
+            <div class="fbi">✍️</div>
+            <div class="fbl" id="fl-honor">اضغط هنا لرفع التصريح الشرفي للنشاط الجاري</div>
+            <div class="fbh">تعهد خطي أو تصريح بممارسة نشاط بالتوقيع</div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>🪪 بطاقة الهوية الوطنية * (الوجه الأمامي)</label>
+          <div class="file-box" id="fb-idf">
+            <input type="file" id="f-idf" accept="image/*" onchange="filePick(this,'fb-idf','fl-idf')">
+            <div class="fbi">🪪</div>
+            <div class="fbl" id="fl-idf">رفع الوجه الأمامي للبطاقة الوطنية</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Common Assets -->
+      <div class="form-group" style="margin-top: 12px;">
+        <label>🖼️ الشعار التجاري لمتجرك الخاص * (مهم جداً)</label>
+        <div class="file-box" id="fb-logo">
+          <input type="file" id="f-logo" accept="image/*" onchange="filePick(this,'fb-logo','fl-logo')">
+          <div class="fbi">🖼️</div>
+          <div class="fbl" id="fl-logo">اضغط لاختيار صورة الشعار</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>📸 صورة واجهة المحل أو ورشة الانتاج (اختياري)</label>
+        <div class="file-box" id="fb-front">
+          <input type="file" id="f-front" accept="image/*" onchange="filePick(this,'fb-front','fl-front')">
+          <div class="fbi">📸</div>
+          <div class="fbl" id="fl-front">صورة تميز واجهة متجرك</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="buttons">
+      <button type="button" class="btn btn-back" onclick="goToStep2()">← رجوع</button>
+      <button type="submit" class="btn btn-submit" id="submitBtn">✅ إنشاء الحساب</button>
+    </div>
+    <div style="margin-top: 20px; font-size: 11px; text-align: center; color: var(--text-muted); display: flex; justify-content: center; gap: 8px; width: 100%;">
+      <a href="privacy.html" style="color: var(--primary); text-decoration: none;">سياسة الخصوصية</a>
+      <span>|</span>
+      <a href="terms.html" style="color: var(--primary); text-decoration: none;">شروط الخدمة</a>
+    </div>
+    <div class="loading" id="loading">⏳ جاري إنشاء الحساب...</div>
+  </form>
+</div>
+
+<!-- Supabase Integration -->
+<script type="module">
+  import { supabase } from './js/supabase-config.js';
+
+  const userType = sessionStorage.getItem('reg_userType') || 'customer';
+  const fullName = sessionStorage.getItem('reg_fullName') || '';
+  const phone = sessionStorage.getItem('reg_phone') || '';
+  const wilaya = sessionStorage.getItem('reg_wilaya') || '';
+  const commune = sessionStorage.getItem('reg_commune') || '';
+
+  // Handle showing additional merchant fields
+  if (userType === 'merchant') {
+    const sect = document.getElementById('merchantSection');
+    if (sect) sect.style.display = 'block';
+  }
+
+  window.goToStep2 = function() {
+    window.location.href = 'register-step2.html';
+  };
+
+  window._stype = 'registered';
+  
+  window.setType = function(type, el) {
+    window._stype = type;
+    document.getElementById('tb-r').classList.toggle('on', type === 'registered');
+    document.getElementById('tb-f').classList.toggle('on', type === 'free');
+    document.getElementById('docs-r').style.display = type === 'registered' ? 'block' : 'none';
+    document.getElementById('docs-f').style.display = type === 'free' ? 'block' : 'none';
+  };
+
+  window.filePick = function(input, boxId, labelId) {
+    const f = input.files[0];
+    if(!f) return;
+    if(labelId) document.getElementById(labelId).textContent = '⏳ جاري التحميل...';
+    const reader = new FileReader();
+    reader.onload = function(e){
+      input.dataset.base64 = e.target.result;
+      if(labelId) document.getElementById(labelId).textContent = '✅ ' + f.name;
+      if(boxId) document.getElementById(boxId)?.classList.add('has');
+    };
+    reader.onerror = function(){
+      if(labelId) document.getElementById(labelId).textContent = '❌ خطأ في القراءة';
+    };
+    reader.readAsDataURL(f);
+  };
+
+  window.completeRegistration = async function(e) {
+    e.preventDefault();
+
+    const email = document.getElementById('email').value.trim().toLowerCase();
+    const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+    const errorMsg = document.getElementById('errorMsg');
+    const submitBtn = document.getElementById('submitBtn');
+    const loading = document.getElementById('loading');
+
+    // Validation
+    if (password !== confirmPassword) {
+      errorMsg.textContent = 'كلمات المرور غير متطابقة';
+      errorMsg.classList.add('show');
+      return;
+    }
+
+    if (password.length < 8) {
+      errorMsg.textContent = 'كلمة المرور يجب أن تكون 8 أحرف على الأقل';
+      errorMsg.classList.add('show');
+      return;
+    }
+
+    let storeName = '';
+    let category = '';
+    let storeType = 'registered';
+    let getB64 = id => document.getElementById(id)?.dataset?.base64 || '';
+    
+    let logoB64 = '';
+    let frontFile = '';
+    let rcFile = '';
+    let idFront = '';
+    let idBack = '';
+    let rcnum = '';
+
+    if (userType === 'merchant') {
+      storeName = document.getElementById('storeName').value.trim();
+      category = document.getElementById('category').value;
+      storeType = window._stype || 'registered';
+      
+      logoB64 = getB64('f-logo');
+      frontFile = getB64('f-front');
+      rcFile = storeType === 'registered' ? getB64('f-rc') : '';
+      idFront = storeType === 'registered' ? getB64('f-idfront') : getB64('f-idf');
+      idBack = storeType === 'free' ? getB64('f-honor') : ''; // honorary declaration for free merchants
+      rcnum = storeType === 'registered' ? document.getElementById('rcNumber').value.trim() : '';
+
+      if (!storeName || !category) {
+        errorMsg.textContent = 'الرجاء كتابة الاسم التجاري وتحديد فئة النشاط أولاً';
+        errorMsg.classList.add('show');
+        return;
+      }
+
+      if (!logoB64) {
+        errorMsg.textContent = 'شعار المتجر مطلوب لتهيئته للزبائن';
+        errorMsg.classList.add('show');
+        return;
+      }
+
+      if (storeType === 'registered' && (!rcFile || !idFront || !rcnum)) {
+        errorMsg.textContent = 'يرجى تقديم السجل التجاري، الوجه الأمامي للهوية، ورقم القيد للتاجر المرخص';
+        errorMsg.classList.add('show');
+        return;
+      }
+
+      if (storeType === 'free' && (!idFront || !idBack)) {
+        errorMsg.textContent = 'يرجى تقديم نسخة التصريح الشرفي وصورة الهوية كتاجر حر';
+        errorMsg.classList.add('show');
+        return;
+      }
+    }
+
+    submitBtn.disabled = true;
+    loading.classList.add('show');
+    errorMsg.classList.remove('show');
+
+    try {
+      // Create user in Supabase Auth with metadata so the trigger can deduce their role
+      const { data, error: signUpError } = await supabase.auth.signUp({
+        email: email,
+        password: password,
+        options: {
+          data: {
+            full_name: fullName,
+            phone: phone,
+            wilaya: wilaya,
+            commune: commune,
+            type: userType
+          }
+        }
+      });
+      if (signUpError) throw signUpError;
+      const uid = data.user.id;
+
+      // Save user data in Supabase Profiles table
+      const { error: profileError } = await supabase.from('profiles').upsert({
+        id: uid,
+        name: fullName,
+        email: email,
+        phone: phone,
+        wilaya: wilaya,
+        commune: commune,
+        role: userType,
+        status: 'active',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      });
+      if (profileError) throw profileError;
+
+      // If merchant, create shop request and shop document
+      if (userType === 'merchant') {
+        const rnum = 'REG-' + Date.now().toString().slice(-6);
+
+        // Save shop profile
+        const { error: shopError } = await supabase.from('shops').upsert({
+          id: uid,
+          storeName: storeName,
+          ownerName: fullName,
+          email: email,
+          phone: phone,
+          whatsapp: phone,
+          wilaya: wilaya,
+          commune: commune,
+          address: commune + ' - ' + wilaya,
+          category: category,
+          workHours: '08:00 - 20:00',
+          description: 'شريك شبكة ZaLo المعتمد والموثق جغرافياً لخدمة زبائن ولاية ' + wilaya,
+          rcNumber: rcnum,
+          storeType: storeType,
+          logoURL: logoB64 || '',
+          frontURL: frontFile || '',
+          status: 'active',
+          subscription: 'basic',
+          createdAt: new Date().toISOString()
+        });
+        if (shopError) throw shopError;
+
+        // Save request logs for control panel
+        const { error: requestError } = await supabase.from('merchant_requests').upsert({
+          id: uid,
+          regNumber: rnum,
+          storeName: storeName,
+          ownerName: fullName,
+          email: email,
+          phone: phone,
+          whatsapp: phone,
+          wilaya: wilaya,
+          commune: commune,
+          category: category,
+          storeType: storeType,
+          rcNumber: rcnum,
+          logoURL: logoB64,
+          frontFile: frontFile,
+          rcFile: rcFile,
+          idFront: idFront,
+          idBack: idBack, // Storing Honorary declaration under idBack safely
+          status: 'approved',
+          createdAt: new Date().toISOString()
+        });
+        if (requestError) throw requestError;
+      }
+
+      // Save session and redirect
+      localStorage.setItem('user_uid', uid);
+      localStorage.setItem('user_email', email);
+      localStorage.setItem('user_role', userType);
+      sessionStorage.setItem('user_logged_in', 'true');
+
+      // Clear registration data
+      sessionStorage.removeItem('reg_userType');
+      sessionStorage.removeItem('reg_fullName');
+      sessionStorage.removeItem('reg_phone');
+      sessionStorage.removeItem('reg_wilaya');
+      sessionStorage.removeItem('reg_commune');
+
+      // Redirect
+      const redirectUrl = userType === 'merchant' ? 'dashboard.html' : 'index.html';
+      window.location.href = redirectUrl;
+
+    } catch (err) {
+      console.error(err);
+      errorMsg.textContent = 'حدث خطأ أثناء إنشاء الحساب: ' + (err.message || err);
+      errorMsg.classList.add('show');
+    } finally {
+      submitBtn.disabled = false;
+      loading.classList.remove('show');
+    }
+  };
+</script>
+
+</body>
+</html>

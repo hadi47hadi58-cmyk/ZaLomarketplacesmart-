@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة الإشعارات - ZaLo Marketplace</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --g1: oklch(0.35 0.08 145);
+            --g2: oklch(0.42 0.09 145);
+            --gold: oklch(0.72 0.13 75);
+            --bg: #070a08;
+            --card-bg: #0f1811;
+            --text: #f8fafc;
+            --gray: #94a3b8;
+            --border: rgba(212, 175, 55, 0.15);
+        }
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.8;
+            padding: 40px 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 2px solid rgba(197, 160, 89, 0.2);
+            padding-bottom: 20px;
+        }
+        h1 {
+            color: var(--gold);
+            font-size: 28px;
+            font-weight: 900;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+        .settings-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 25px;
+        }
+        .settings-group {
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 18px;
+            margin-bottom: 18px;
+        }
+        .settings-group:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+            margin-bottom: 0;
+        }
+        .setting-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+        .setting-info {
+            flex: 1;
+        }
+        .setting-title {
+            font-weight: 700;
+            font-size: 15px;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+        .setting-desc {
+            font-size: 12px;
+            color: var(--gray);
+        }
+        /* Switch styling */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 26px;
+            flex-shrink: 0;
+        }
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            inset: 0;
+            background-color: #334155;
+            transition: .3s;
+            border-radius: 34px;
+            border: 1px solid var(--border);
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            right: 4px;
+            bottom: 3px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background-color: var(--g1);
+            border-color: var(--gold);
+        }
+        input:checked + .slider:before {
+            transform: translateX(-22px);
+        }
+        .btn-save {
+            width: 100%;
+            background: var(--gold);
+            color: #000;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-family: 'Cairo', sans-serif;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-save:hover {
+            opacity: 0.9;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            color: var(--gray);
+            font-size: 13px;
+        }
+        .back-btn {
+            display: inline-block;
+            background: var(--g1);
+            color: #fff;
+            text-decoration: none;
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-weight: 700;
+            margin-top: 20px;
+            transition: 0.2s;
+            border: 1px solid var(--border);
+        }
+        .back-btn:hover {
+            background: var(--g2);
+            border-color: var(--gold);
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1><i class="fa-solid fa-sliders"></i> لوحة إدارة وتفضيلات الإشعارات</h1>
+    <p>حدد القنوات وطريقة استلام تنبيهات الطلبيات والمبيعات الخاصة بك</p>
+</div>
+
+<div class="settings-card">
+    <div class="settings-group">
+        <div class="setting-row">
+            <div class="setting-info">
+                <div class="setting-title">إشعارات البريد الإلكتروني (Email)</div>
+                <div class="setting-desc">استلام تقرير مبيعات يومي وفواتير ورخص الشركاء على بريدك المعتمد.</div>
+            </div>
+            <label class="switch">
+                <input type="checkbox" checked>
+                <span class="slider"></span>
+            </label>
+        </div>
+    </div>
+
+    <div class="settings-group">
+        <div class="setting-row">
+            <div class="setting-info">
+                <div class="setting-title">تنبيهات الرسائل القصيرة (SMS Alert)</div>
+                <div class="setting-desc">إشعار فوري عبر شريحة الهاتف (Mobilis, Djezzy, Ooredoo) فور تأكيد الشحنة.</div>
+            </div>
+            <label class="switch">
+                <input type="checkbox" checked>
+                <span class="slider"></span>
+            </label>
+        </div>
+    </div>
+
+    <div class="settings-group">
+        <div class="setting-row">
+            <div class="setting-info">
+                <div class="setting-title">إشعارات التصفية المالية (BaridiMob)</div>
+                <div class="setting-desc">إرسال تنبيه في اللحظة التي يتم فيها إيداع مبالغ مبيعاتك في CCP.</div>
+            </div>
+            <label class="switch">
+                <input type="checkbox" checked>
+                <span class="slider"></span>
+            </label>
+        </div>
+    </div>
+
+    <div class="settings-group">
+        <div class="setting-row">
+            <div class="setting-info">
+                <div class="setting-title">إشعارات تطبيق الهاتف والويب (Web Push)</div>
+                <div class="setting-desc">تلقي تنبيهات منبثقة فورية عبر المتصفح وجهاز الأندرويد لرسائل الدعم الفني.</div>
+            </div>
+            <label class="switch">
+                <input type="checkbox">
+                <span class="slider"></span>
+            </label>
+        </div>
+    </div>
+
+    <div style="margin-top: 25px;">
+        <button class="btn-save" onclick="alert('تم حفظ الإعدادات بنجاح في ملفك الشخصي الموحد!')">حفظ تفضيلات الإشعارات <i class="fa-solid fa-save"></i></button>
+    </div>
+</div>
+
+<div style="text-align: center;">
+    <a href="index.html" class="back-btn"><i class="fa-solid fa-house"></i> العودة للرئيسية</a>
+</div>
+
+<div class="footer">
+    &copy; 2026 منصة ZaLo Smart. جميع الحقوق محفوظة لجمهورية الجزائر الديمقراطية الشعبية.
+</div>
+
+</body>
+</html>

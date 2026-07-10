@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">ZaLo Smart</string>
+    <!-- معرف العميل الويب الخاص بجوجل من منصة Firebase Console لتشغيل الدخول بجوجل برمجياً -->
+    <string name="google_web_client_id">926781287387-mgsdq7b6gcus6uplmlavg24mahulh3h1.apps.googleusercontent.com</string>
+</resources>

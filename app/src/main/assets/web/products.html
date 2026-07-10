@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>المنتجات - ZaLo Market</title>
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Cairo Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- ZaLo Custom Stylesheet -->
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif !important;
+            background-color: #070a08 !important;
+            color: #f8fafc !important;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between zalo-branded-body">
+
+    <!-- Global Header -->
+    <header class="sticky top-0 z-50 bg-[#0f1c36]/90 border-b border-white/10 w-full py-4 px-6 flex justify-between items-center backdrop-blur-md zalo-branded-header">
+        <a href="index.html" class="flex items-center gap-2 text-sm text-[#D4AF37] hover:text-white transition">
+            <i class="fa-solid fa-arrow-right"></i>
+            <span>العودة للمتجر</span>
+        </a>
+        <h1 id="category-header-title" class="text-lg font-black text-white font-bold">تصفح التصنيف</h1>
+        <div class="flex items-center gap-2">
+            <div class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-[#D4AF37]"><i class="fa-solid fa-tags"></i></div>
+        </div>
+    </header>
+
+    <main class="flex-1 w-full max-w-5xl mx-auto px-6 py-8">
+        
+        <div class="text-right space-y-1 mb-8">
+            <h2 class="text-xl font-black text-white font-bold">المنتجات والسلع المتوفرة</h2>
+            <p class="text-xs text-slate-400">جميع الأسعار بعملة الدينار الجزائري (دج) وتشمل الاستلام الآمن والفحص من طرف الزبون</p>
+        </div>
+
+        <!-- Products Grid List -->
+        <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            <!-- Rendered Dynamically via app.js -->
+        </div>
+
+    </main>
+
+    <footer class="border-t border-slate-800/60 py-4 text-center text-xs text-slate-500 bg-slate-950/40">
+        <p>© 2026 ZaLo Market - جميع الحقوق محفوظة.</p>
+    </footer>
+
+    <!-- Shared JS Engine -->
+    <script src="js/app.js"></script>
+</body>
+</html>

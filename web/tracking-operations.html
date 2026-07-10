@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>عمليات التتبع - ZaLo Marketplace</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --g1: oklch(0.35 0.08 145);
+            --g2: oklch(0.42 0.09 145);
+            --gold: oklch(0.72 0.13 75);
+            --bg: #070a08;
+            --card-bg: #0f1811;
+            --text: #f8fafc;
+            --gray: #94a3b8;
+            --border: rgba(212, 175, 55, 0.15);
+        }
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.8;
+            padding: 40px 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 2px solid rgba(197, 160, 89, 0.2);
+            padding-bottom: 20px;
+        }
+        h1 {
+            color: var(--gold);
+            font-size: 28px;
+            font-weight: 900;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+        .stat-val {
+            font-size: 28px;
+            font-weight: 900;
+            color: var(--gold);
+            margin-bottom: 5px;
+        }
+        .stat-lbl {
+            font-size: 13px;
+            color: var(--gray);
+        }
+        .operations-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .op-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+        }
+        .op-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 8px;
+        }
+        .op-badge {
+            background: rgba(37, 168, 96, 0.15);
+            color: #82e3a1;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+        .op-badge.transit {
+            background: rgba(240,165,0,0.15);
+            color: var(--gold);
+        }
+        .op-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            font-size: 13px;
+        }
+        .op-lbl {
+            color: var(--gray);
+        }
+        .op-val {
+            font-weight: 700;
+            color: #fff;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            color: var(--gray);
+            font-size: 13px;
+        }
+        .back-btn {
+            display: inline-block;
+            background: var(--g1);
+            color: #fff;
+            text-decoration: none;
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-weight: 700;
+            margin-top: 20px;
+            transition: 0.2s;
+            border: 1px solid var(--border);
+        }
+        .back-btn:hover {
+            background: var(--g2);
+            border-color: var(--gold);
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1><i class="fa-solid fa-route"></i> لوحة عمليات تتبع الشحنات واللوجستيات</h1>
+    <p>نظرة عامة على حالة الشحن الجاري توزيعه عبر كافة الولايات الجزائرية</p>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-val">342</div>
+        <div class="stat-lbl">شحنة في طريقها للتوصيل</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-val">1,894</div>
+        <div class="stat-lbl">شحنة تم تسليمها بنجاح</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-val">97.8%</div>
+        <div class="stat-lbl">نسبة نجاح التوصيل والتسليم المالي</div>
+    </div>
+</div>
+
+<div class="operations-list">
+    <div class="op-card">
+        <div class="op-head">
+            <strong style="font-size: 15px; color: var(--gold);">العملية #Z-9382</strong>
+            <span class="op-badge">تم التسليم ✓</span>
+        </div>
+        <div class="op-details">
+            <div><span class="op-lbl">الولاية:</span> <span class="op-val">سيدي بلعباس (22)</span></div>
+            <div><span class="op-lbl">شريك الشحن:</span> <span class="op-val">ياليدين اكسبريس (Yalidine)</span></div>
+            <div><span class="op-lbl">قيمة التحصيل (COD):</span> <span class="op-val">8,500 دج</span></div>
+            <div><span class="op-lbl">النوع:</span> <span class="op-val">توصيل للبيت</span></div>
+        </div>
+    </div>
+
+    <div class="op-card">
+        <div class="op-head">
+            <strong style="font-size: 15px; color: var(--gold);">العملية #Z-9381</strong>
+            <span class="op-badge transit">في الطريق للولاية 🚛</span>
+        </div>
+        <div class="op-details">
+            <div><span class="op-lbl">الولاية:</span> <span class="op-val">حاسي مسعود (ورقلة 30)</span></div>
+            <div><span class="op-lbl">شريك الشحن:</span> <span class="op-val">المنارة لوجستيك</span></div>
+            <div><span class="op-lbl">قيمة التحصيل (COD):</span> <span class="op-val">14,200 دج</span></div>
+            <div><span class="op-lbl">النوع:</span> <span class="op-val">استلام من المكتب</span></div>
+        </div>
+    </div>
+</div>
+
+<div style="text-align: center;">
+    <a href="index.html" class="back-btn"><i class="fa-solid fa-house"></i> العودة للرئيسية</a>
+</div>
+
+<div class="footer">
+    &copy; 2026 منصة ZaLo Smart. جميع الحقوق محفوظة لجمهورية الجزائر الديمقراطية الشعبية.
+</div>
+
+</body>
+</html>

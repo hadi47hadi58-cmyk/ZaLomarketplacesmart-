@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تفاصيل السلعة - ZaLo Market</title>
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Cairo Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- ZaLo Custom Stylesheet -->
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif !important;
+            background-color: #070a08 !important;
+            color: #f8fafc !important;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between zalo-branded-body">
+
+    <!-- Global Header -->
+    <header class="sticky top-0 z-50 bg-[#0f1c36]/90 border-b border-white/10 w-full py-4 px-6 flex justify-between items-center backdrop-blur-md zalo-branded-header">
+        <a href="index.html" class="flex items-center gap-1.5 text-xs text-[#D4AF37] hover:text-white transition">
+            <i class="fa-solid fa-arrow-right"></i>
+            <span>رجوع للمتجر</span>
+        </a>
+        <h1 class="text-base font-black text-white font-bold">معلومات وتفاصيل السلعة</h1>
+        <div class="flex items-center gap-2">
+            <div id="product-detail-store-badge" class="bg-slate-800 text-[#D4AF37] text-[10px] font-bold px-2.5 py-1 rounded-full border border-slate-700">
+                <i class="fa-solid fa-store ml-1"></i> <span id="product-detail-store-name">...</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-1 w-full max-w-4xl mx-auto px-6 py-8">
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-right bg-[#0f1c36]/50 border border-slate-700/50 rounded-[32px] p-6 shadow-2xl">
+            
+            <!-- Left Pane: Product Media Gallery -->
+            <div class="space-y-4">
+                <img id="product-detail-image" src="" class="w-full h-80 object-cover rounded-2xl animate-fade-in border border-slate-700/50 shadow-inner" alt="">
+                <!-- Carousel Thumbnails -->
+                <div id="product-detail-thumbs" class="flex gap-3 justify-center">
+                    <!-- Loaded dynamically via app.js -->
+                </div>
+            </div>
+
+            <!-- Right Pane: Details & Configuration -->
+            <div class="flex flex-col justify-between space-y-6">
+                <div class="space-y-3">
+                    <h2 id="product-detail-name" class="text-2xl font-black text-white font-bold">Galaxy A07</h2>
+                    <p id="product-detail-price" class="text-3xl font-black text-[#D4AF37] font-bold">22,000 دج</p>
+                    <hr class="border-slate-700/50">
+                    <p class="text-xs text-slate-400 font-bold">الوصف والتفاصيل المعتمدة:</p>
+                    <p id="product-detail-desc" class="text-sm text-slate-300 leading-relaxed font-semibold">...</p>
+                </div>
+
+                <!-- Call to action shortcuts -->
+                <div class="grid grid-cols-2 gap-3">
+                    <a id="btn-call-merchant" href="" class="bg-gradient-to-tr from-sky-400 to-[#00AEEF] hover:scale-105 active:scale-95 text-slate-950 font-black text-xs py-3 rounded-full text-center shadow-lg transition">
+                        <i class="fa-solid fa-phone-flip ml-1"></i> اتصال مباشر
+                    </a>
+                    <a id="btn-whatsapp-merchant" href="" target="_blank" class="bg-[#25D366] hover:bg-[#20ba5a] hover:scale-105 active:scale-95 text-white font-black text-xs py-3 rounded-full text-center shadow-lg transition">
+                        <i class="fa-brands fa-whatsapp ml-1"></i> واتساب التاجر
+                    </a>
+                </div>
+
+                <!-- Dynamic Order Configuration Section -->
+                <div class="bg-slate-900/60 border border-slate-700/40 rounded-2xl p-4 space-y-4">
+                    <h3 class="text-xs font-black text-white"><i class="fa-solid fa-truck-fast text-[#D4AF37]"></i> تأكيد وحجز الطلبية للمنطقة</h3>
+                    
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-[10px] text-slate-300 font-bold mb-1">طريقة الدفع المناسبة:</label>
+                            <select id="order-payment-method" class="w-full bg-slate-950 border border-slate-800 text-xs text-white rounded-xl py-2 px-3 focus:outline-none" onchange="toggleOrderReceiptField(this.value)">
+                                <option value="COD">الدفع عند الاستلام (COD)</option>
+                                <option value="BaridiMob">عبر بريدي موب (BaridiMob) / CCP</option>
+                            </select>
+                        </div>
+
+                        <!-- Optional CCP receipt upload simulation -->
+                        <div id="receipt-upload-group" class="p-3 bg-amber-500/5 border border-amber-500/20 rounded-xl space-y-2" style="display: none;">
+                            <p class="text-[10px] text-amber-500 leading-tight">يرجى تحويل المبلغ للحساب الجاري (المركب في البريد) وإرفاق نسخة إلكترونية لوثيقة المعاملة:</p>
+                            <input id="order-receipt" type="file" class="w-full text-[10px] text-slate-300 bg-slate-950 p-2 rounded-lg border border-slate-800">
+                        </div>
+
+                        <div>
+                            <label class="block text-[10px] text-slate-300 font-bold mb-1">عنوان وتفصيل التوصيل الجغرافي:</label>
+                            <input id="order-address" type="text" class="w-full bg-slate-950 border border-slate-800 text-xs text-white rounded-xl py-2.5 px-3 focus:outline-none" placeholder="مثال: حي ميعاد، المنيعة (بالقرب من الثانوية)">
+                        </div>
+                    </div>
+
+                    <button id="btn-submit-order" class="w-full bg-gradient-to-tr from-amber-500 to-[#D4AF37] hover:scale-105 active:scale-95 text-slate-950 font-black text-sm py-3.5 rounded-xl text-center shadow-2xl font-bold transition">
+                        تأكيد طلب المنتج الآن <i class="fa-solid fa-cart-shopping mr-1"></i>
+                    </button>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Reviews Section -->
+        <div class="mt-12 bg-[#0f1c36]/50 border border-slate-700/50 rounded-[32px] p-6 shadow-2xl text-right">
+            <h3 class="text-xl font-black text-white font-bold mb-6 border-b border-slate-700/50 pb-3 flex items-center gap-2">
+                <i class="fa-solid fa-comments text-[#D4AF37]"></i>
+                <span>آراء وتقييمات زبائن ZaLo</span>
+            </h3>
+
+            <!-- Existing reviews list container -->
+            <div id="reviews-list" class="space-y-4 mb-8">
+                <p class="text-slate-400 text-sm text-center py-4" id="reviews-loading-msg font-semibold">⏳ جاري تحميل تقييمات المشترين...</p>
+            </div>
+
+            <!-- Add reference review form -->
+            <div class="bg-slate-900/60 border border-slate-700/40 rounded-2xl p-4 space-y-4">
+                <h4 class="text-sm font-black text-white flex items-center gap-2">
+                    <i class="fa-solid fa-star-half-stroke text-[#D4AF37]"></i>
+                    <span>أضف تقييمك للسلعة:</span>
+                </h4>
+                
+                <div class="space-y-3">
+                    <!-- Name Input -->
+                    <div>
+                        <label class="block text-[11px] text-slate-300 font-bold mb-1">اسمك الكامل:</label>
+                        <input id="review-username" type="text" class="w-full bg-slate-950 border border-slate-800 text-xs text-white rounded-xl py-2.5 px-3 focus:outline-none" placeholder="مثال: صالح المنيعة">
+                    </div>
+
+                    <!-- Stars input -->
+                    <div>
+                        <label class="block text-[11px] text-slate-300 font-bold mb-1">تقييمك بالنجوم:</label>
+                        <div class="flex gap-2 text-[#D4AF37] text-xl" id="stars-selector" style="direction: ltr;">
+                            <span class="cursor-pointer hover:scale-120 star-item text-slate-600" data-value="1" onclick="selectStar(1)"><i class="fa-solid fa-star"></i></span>
+                            <span class="cursor-pointer hover:scale-120 star-item text-slate-600" data-value="2" onclick="selectStar(2)"><i class="fa-solid fa-star"></i></span>
+                            <span class="cursor-pointer hover:scale-120 star-item text-slate-600" data-value="3" onclick="selectStar(3)"><i class="fa-solid fa-star"></i></span>
+                            <span class="cursor-pointer hover:scale-120 star-item text-slate-600" data-value="4" onclick="selectStar(4)"><i class="fa-solid fa-star"></i></span>
+                            <span class="cursor-pointer hover:scale-120 star-item text-slate-600" data-value="5" onclick="selectStar(5)"><i class="fa-solid fa-star"></i></span>
+                        </div>
+                    </div>
+
+                    <!-- Comment Input -->
+                    <div>
+                        <label class="block text-[11px] text-slate-300 font-bold mb-1">تعليقك ورأيك الصادق:</label>
+                        <textarea id="review-comment" rows="3" class="w-full bg-slate-950 border border-slate-800 text-xs text-white rounded-xl py-2 px-3 focus:outline-none" placeholder="اكتب رأيك وتجربتك بالتفصيل لمساعدة زملائك المشترين..."></textarea>
+                    </div>
+                </div>
+
+                <button id="btn-submit-review" onclick="submitReview()" class="w-full bg-gradient-to-tr from-green-700 to-green-600 hover:scale-105 active:scale-95 text-white font-black text-xs py-3 rounded-xl text-center shadow-lg transition">
+                    حفظ ونشر التقييم فورا <i class="fa-solid fa-circle-check mr-1"></i>
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Supabase Integration for Reviews -->
+    <script type="module">
+        import { supabase } from './js/supabase-config.js';
+
+        let selectedRating = 0;
+        let currentProductId = new URLSearchParams(window.location.search).get("productId") || "default_prod";
+
+        window.selectStar = function(val) {
+            selectedRating = val;
+            const starItems = document.querySelectorAll("#stars-selector .star-item");
+            starItems.forEach(item => {
+                const itemVal = parseInt(item.getAttribute("data-value"));
+                if (itemVal <= val) {
+                    item.classList.remove("text-slate-600");
+                    item.classList.add("text-[#D4AF37]");
+                } else {
+                    item.classList.remove("text-[#D4AF37]");
+                    item.classList.add("text-slate-600");
+                }
+            });
+        };
+
+        async function loadProductReviews() {
+            const listContainer = document.getElementById("reviews-list");
+            if (!listContainer) return;
+            try {
+                const { data: reviews, error } = await supabase
+                    .from('reviews')
+                    .select('*')
+                    .eq('productId', currentProductId)
+                    .order('createdAt', { ascending: false });
+                
+                if (error) throw error;
+                
+                if (!reviews || reviews.length === 0) {
+                    listContainer.innerHTML = '<p class="text-slate-500 text-xs text-center py-4">📦 لا توجد تقييمات منشورة لهذه السلعة بعد. كن أول من يضيف تقييمه!</p>';
+                    return;
+                }
+
+                let html = "";
+                reviews.forEach(r => {
+                    let starsHtml = "";
+                    for (let i = 1; i <= 5; i++) {
+                        if (i <= (r.rating || 5)) {
+                            starsHtml += '<i class="fa-solid fa-star text-[#D4AF37]"></i>';
+                        } else {
+                            starsHtml += '<i class="fa-solid fa-star text-slate-600"></i>';
+                        }
+                    }
+
+                    html += `
+                        <div class="p-4 bg-slate-900/40 border border-slate-800 rounded-2xl space-y-2 text-right">
+                            <div class="flex justify-between items-center">
+                                <span class="font-bold text-xs text-white">${r.userName || 'مشتري مجهول'}</span>
+                                <div class="flex gap-0.5 text-xs">${starsHtml}</div>
+                            </div>
+                            <p class="text-xs text-slate-300 leading-relaxed font-semibold">${r.comment || ''}</p>
+                        </div>
+                    `;
+                });
+
+                listContainer.innerHTML = html;
+            } catch(e) {
+                console.error("Load reviews error:", e);
+                listContainer.innerHTML = '<p class="text-xs text-red-500 text-center py-4">❌ فشل تحميل تقييمات السلعة. يرجى التحقق من اتصالك بالإنترنت.</p>';
+            }
+        }
+
+        window.submitReview = async function() {
+            const reviewUser = document.getElementById("review-username").value.trim();
+            const reviewComment = document.getElementById("review-comment").value.trim();
+            const submitBtn = document.getElementById("btn-submit-review");
+
+            if (!reviewUser) {
+                alert("⚠️ يرجى إدخال اسمك أولاً لحفظ التقييم.");
+                return;
+            }
+            if (selectedRating === 0) {
+                alert("⚠️ يرجى اختيار تقييم بالنجوم.");
+                return;
+            }
+            if (!reviewComment) {
+                alert("⚠️ يرجى كتابة تعليقك ورأيك.");
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = "⏳ جاري الحفظ والتأمين...";
+
+            try {
+                const { error } = await supabase.from('reviews').insert({
+                    productId: currentProductId,
+                    rating: selectedRating,
+                    comment: reviewComment,
+                    userName: reviewUser,
+                    createdAt: new Date().toISOString()
+                });
+
+                if (error) throw error;
+
+                alert("✅ تم حفظ تقييمك ورأيك بنجاح بالمنصة الشاملة!");
+                
+                // Clear inputs
+                document.getElementById("review-username").value = "";
+                document.getElementById("review-comment").value = "";
+                window.selectStar(0);
+
+                // Reload reviews list immediately
+                await loadProductReviews();
+            } catch(e) {
+                alert("❌ حدث خطأ غير متوقع أثناء حفظ تقييمك: " + e.message);
+                console.error(e);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = 'حفظ ونشر التقييم فورا <i class="fa-solid fa-circle-check mr-1"></i>';
+            }
+        };
+
+        // Initialize reviews loading
+        loadProductReviews();
+    </script>
+
+    <footer class="border-t border-slate-800/60 py-4 text-center text-xs text-slate-500 bg-slate-950/40">
+        <p>© 2026 ZaLo Market - السوق الذكي متعدد البائعين.</p>
+    </footer>
+
+    <!-- Shared JS Engine -->
+    <script src="js/app.js"></script>
+    <script>
+        function toggleOrderReceiptField(val) {
+            let el = document.getElementById("receipt-upload-group");
+            if (val === "BaridiMob") {
+                el.style.display = "block";
+            } else {
+                el.style.display = "none";
+            }
+        }
+    </script>
+</body>
+</html>

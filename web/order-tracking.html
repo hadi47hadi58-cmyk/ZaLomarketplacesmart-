@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تتبع الطلبات - ZaLo Marketplace</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --g1: oklch(0.35 0.08 145);
+            --g2: oklch(0.42 0.09 145);
+            --gold: oklch(0.72 0.13 75);
+            --bg: #070a08;
+            --card-bg: #0f1811;
+            --text: #f8fafc;
+            --gray: #94a3b8;
+            --border: rgba(212, 175, 55, 0.15);
+        }
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.8;
+            padding: 40px 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 2px solid rgba(197, 160, 89, 0.2);
+            padding-bottom: 20px;
+        }
+        h1 {
+            color: var(--gold);
+            font-size: 28px;
+            font-weight: 900;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+        .search-box {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        input {
+            flex: 1;
+            background: #070a08;
+            border: 1.5px solid var(--border);
+            border-radius: 8px;
+            padding: 12px 16px;
+            color: #fff;
+            font-family: 'Cairo', sans-serif;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.2s;
+        }
+        input:focus {
+            border-color: var(--gold);
+        }
+        .btn-track {
+            background: var(--gold);
+            color: #000;
+            border: none;
+            padding: 0 24px;
+            border-radius: 8px;
+            font-family: 'Cairo', sans-serif;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-track:hover {
+            opacity: 0.9;
+        }
+        .tracking-status {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            display: none;
+        }
+        .tracking-status.active {
+            display: block;
+        }
+        .status-header {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 12px;
+            margin-bottom: 20px;
+        }
+        .status-timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            position: relative;
+        }
+        .status-timeline::before {
+            content: '';
+            position: absolute;
+            top: 10px;
+            bottom: 10px;
+            right: 15px;
+            width: 2px;
+            background: var(--border);
+        }
+        .timeline-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+            position: relative;
+        }
+        .timeline-dot {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #070a08;
+            border: 2px solid var(--border);
+            color: var(--gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            z-index: 2;
+            flex-shrink: 0;
+        }
+        .timeline-item.completed .timeline-dot {
+            border-color: var(--gold);
+            color: var(--gold);
+            background: rgba(37, 168, 96, 0.1);
+        }
+        .timeline-content {
+            flex: 1;
+        }
+        .timeline-title {
+            font-weight: 700;
+            font-size: 15px;
+            color: #fff;
+        }
+        .timeline-desc {
+            font-size: 12px;
+            color: var(--gray);
+        }
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            color: var(--gray);
+            font-size: 13px;
+        }
+        .back-btn {
+            display: inline-block;
+            background: var(--g1);
+            color: #fff;
+            text-decoration: none;
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-weight: 700;
+            margin-top: 20px;
+            transition: 0.2s;
+            border: 1px solid var(--border);
+        }
+        .back-btn:hover {
+            background: var(--g2);
+            border-color: var(--gold);
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1><i class="fa-solid fa-truck-fast"></i> نظام تتبع الشحنات الموحد (69 ولاية)</h1>
+    <p>تتبع شحنتك لحظة بلحظة مع شركاء التوصيل الوطني لـ ZaLo</p>
+</div>
+
+<div class="search-box">
+    <label style="font-weight: 700; font-size: 15px;">أدخل رقم الطلب أو رقم الهاتف لتتبع الشحنة:</label>
+    <div class="input-group">
+        <input type="text" id="trackInput" placeholder="مثال: #9421 أو 0655xxxxxx">
+        <button class="btn-track" onclick="performTracking()">تتبع الآن <i class="fa-solid fa-search"></i></button>
+    </div>
+</div>
+
+<div class="tracking-status" id="trackingResult">
+    <div class="status-header">
+        <div>
+            <strong>رقم الشحنة:</strong> <span id="resOrderId">#9421</span>
+        </div>
+        <div>
+            <strong>الولاية المستهدفة:</strong> <span id="resWilaya" style="color: var(--gold);">غرداية (47)</span>
+        </div>
+    </div>
+
+    <div class="status-timeline">
+        <div class="timeline-item completed">
+            <div class="timeline-dot"><i class="fa-solid fa-check"></i></div>
+            <div class="timeline-content">
+                <div class="timeline-title">تم استلام وتأكيد الطلبية في المتجر</div>
+                <div class="timeline-desc">تم التثبيت الهاتفي والتحقق من العنوان وتجهيز المنتجات للفرز الجغرافي.</div>
+            </div>
+        </div>
+
+        <div class="timeline-item completed">
+            <div class="timeline-dot"><i class="fa-solid fa-box"></i></div>
+            <div class="timeline-content">
+                <div class="timeline-title">تم التسليم لشركة الشحن الشريكة</div>
+                <div class="timeline-desc">خرج الطرد من مركز التجميع لـ ZaLo نحو مركز التوزيع المركزي بولاية الجزائر.</div>
+            </div>
+        </div>
+
+        <div class="timeline-item completed">
+            <div class="timeline-dot"><i class="fa-solid fa-truck"></i></div>
+            <div class="timeline-content">
+                <div class="timeline-title">جاري التوصيل نحو الولاية المستهدفة</div>
+                <div class="timeline-desc">الطرد حالياً على متن شاحنة النقل اللوجستي المتجهة لفرع الاستلام بغرداية.</div>
+            </div>
+        </div>
+
+        <div class="timeline-item">
+            <div class="timeline-dot"><i class="fa-solid fa-handshake"></i></div>
+            <div class="timeline-content">
+                <div class="timeline-title">قيد التسليم والتحصيل الدفع عند الاستلام (COD)</div>
+                <div class="timeline-desc">سيقوم الموزع المحلي بالاتصال بكم هاتفياً لتسليم الطرد وتحصيل القيمة.</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div style="text-align: center;">
+    <a href="index.html" class="back-btn"><i class="fa-solid fa-house"></i> العودة للرئيسية</a>
+</div>
+
+<script>
+    function performTracking() {
+        const input = document.getElementById('trackInput').value.trim();
+        if (!input) {
+            alert('يرجى إدخال رقم الطلب أو الهاتف');
+            return;
+        }
+        
+        // Populate tracking text for visual satisfaction
+        if (input.startsWith('#') || input.length > 2) {
+            document.getElementById('resOrderId').textContent = input.startsWith('#') ? input : '#' + input;
+        } else {
+            document.getElementById('resOrderId').textContent = '#' + input;
+        }
+        
+        const wilayas = ["غرداية (47)", "الجزائر العاصمة (16)", "وهران (31)", "قسنطينة (25)", "سطيف (19)", "تلمسان (13)", "بشار (08)"];
+        const randomWilaya = wilayas[Math.floor(Math.random() * wilayas.length)];
+        document.getElementById('resWilaya').textContent = randomWilaya;
+        
+        document.getElementById('trackingResult').classList.add('active');
+    }
+</script>
+
+<div class="footer">
+    &copy; 2026 منصة ZaLo Smart. جميع الحقوق محفوظة لجمهورية الجزائر الديمقراطية الشعبية.
+</div>
+
+</body>
+</html>

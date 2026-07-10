@@ -1,0 +1,78 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper function to check if user is Super Admin
+    function isSuperAdmin() {
+      return request.auth != null && request.auth.token.email == 'zinzinochop@gmail.com';
+    }
+
+    // Helper function to check if user is an Admin
+    function isAdmin() {
+      return request.auth != null && (
+        isSuperAdmin() || exists(/databases/$(database)/documents/admins/$(request.auth.token.email))
+      );
+    }
+
+    // Admins Collection: Read rules restrict access to self or other admins, write for super admin only.
+    match /admins/{email} {
+      allow read: if request.auth != null && (request.auth.token.email == email || isAdmin());
+      allow create, update: if isSuperAdmin();
+      allow delete: if isSuperAdmin();
+    }
+
+    // Users Collection: Read/write for owner only or admin.
+    match /users/{userId} {
+      allow read, write: if (request.auth != null && request.auth.uid == userId) || isAdmin();
+    }
+    
+    // Settings Collection: Read for admin, write for super admin only.
+    match /settings/{doc} {
+      allow read: if isAdmin();
+      allow write: if isSuperAdmin();
+    }
+
+    // Merchant Requests: Create for anyone, read/update for admin only.
+    match /merchant_requests/{reqId} {
+      allow create: if true;
+      allow read, update, delete: if isAdmin();
+    }
+
+    // Shops/Stores: Read for everyone, write for owner or admin.
+    match /shops/{shopId} {
+      allow read: if true;
+      allow write: if (request.auth != null && request.auth.uid == shopId) || isAdmin();
+    }
+
+    // Products: Read for everyone, write for merchant owner or admin.
+    match /products/{productId} {
+      allow read: if true;
+      allow create: if (request.auth != null && request.resource.data.storeId == request.auth.uid) || isAdmin();
+      allow update, delete: if (request.auth != null && resource.data.storeId == request.auth.uid) || isAdmin();
+    }
+
+    // Orders: Create for any registered user, read/update for relevant merchant or customer, or admin.
+    match /orders/{orderId} {
+      allow create: if request.auth != null;
+      allow read, update, delete: if isAdmin() || (request.auth != null && (
+        resource.data.storeId == request.auth.uid || 
+        resource.data.customerId == request.auth.uid
+      ));
+    }
+
+    // Municipalities selection: Public read, writes only for admin
+    match /municipalities/{municipalityId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Messages / Live Chat: room participants read/write
+    match /messages/{messageId} {
+      allow read, write: if request.auth != null && (
+        resource == null || 
+        resource.data.senderId == request.auth.uid || 
+        resource.data.receiverId == request.auth.uid
+      ) || isAdmin();
+    }
+  }
+}

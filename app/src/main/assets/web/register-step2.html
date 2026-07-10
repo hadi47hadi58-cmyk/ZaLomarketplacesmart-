@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>تسجيل جديد - الخطوة 2</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      font-family: 'Cairo', sans-serif;
+      background: linear-gradient(135deg, #f5f5f5, #e8f0ea);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+      overflow-x: hidden;
+      width: 100%;
+      max-width: 100%;
+    }
+    .container {
+      width: 100%;
+      max-width: 450px;
+      background: white;
+      border-radius: 16px;
+      padding: 32px 24px;
+      box-shadow: 0 10px 40px rgba(26,92,42,0.15);
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .logo-large { font-size: 50px; margin-bottom: 12px; }
+    .title {
+      font-size: 24px;
+      font-weight: 900;
+      color: #1a5c2a;
+      margin-bottom: 4px;
+    }
+    .progress-bar {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+      justify-content: center;
+    }
+    .progress-step {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: #e0e0e0;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 12px;
+    }
+    .progress-step.active {
+      background: #1a5c2a;
+    }
+    .form-group {
+      margin-bottom: 16px;
+    }
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin-bottom: 8px;
+    }
+    input, select {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-family: 'Cairo', sans-serif;
+      font-size: 14px;
+      outline: none;
+    }
+    input:focus, select:focus {
+      border-color: #1a5c2a;
+      box-shadow: 0 0 0 3px rgba(26,92,42,0.1);
+    }
+    .buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .btn {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-family: 'Cairo', sans-serif;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .btn-next {
+      background: linear-gradient(135deg, #1a5c2a, #2d7a3a);
+      color: white;
+    }
+    .btn-next:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .btn-back {
+      background: #e0e0e0;
+    }
+    @media (max-width: 600px) {
+      html, body {
+        padding: 8px 12px !important;
+        overflow: hidden !important; /* No-Scroll policy */
+        height: 100vh !important;
+        height: 100dvh !important;
+        justify-content: center !important;
+      }
+      .container {
+        padding: 16px 14px !important;
+        border-radius: 12px !important;
+      }
+      .header {
+        margin-bottom: 12px !important;
+      }
+      .logo-large {
+        font-size: 32px !important;
+        margin-bottom: 4px !important;
+      }
+      .title {
+        font-size: 18px !important;
+      }
+      .progress-bar {
+        margin-bottom: 12px !important;
+      }
+      .progress-step {
+        width: 24px !important;
+        height: 24px !important;
+        font-size: 11px !important;
+      }
+      .form-group {
+        margin-bottom: 10px !important;
+      }
+      label {
+        font-size: 11px !important;
+        margin-bottom: 4px !important;
+      }
+      input, select {
+        padding: 10px !important;
+        font-size: 13px !important;
+        min-height: 40px !important;
+      }
+      .buttons {
+        margin-top: 12px !important;
+      }
+      .btn {
+        padding: 10px !important;
+        font-size: 13px !important;
+        min-height: 40px !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <div class="logo-large">🏛️</div>
+    <div class="title">الخطوة 2: البيانات الأساسية</div>
+  </div>
+
+  <div class="progress-bar">
+    <div class="progress-step active">1</div>
+    <div class="progress-step active">2</div>
+    <div class="progress-step">3</div>
+  </div>
+
+  <form onsubmit="goToStep3(event)" id="step2Form">
+    <div class="form-group">
+      <label for="phone">رقم الهاتف</label>
+      <input 
+        type="tel" 
+        id="phone" 
+        placeholder="0698694010"
+        required
+      >
+    </div>
+
+    <!-- Since we unified, customer might also select Wilaya if they want local storefront access -->
+    <div class="form-group">
+      <label for="wilaya">الولاية الجغرافية</label>
+      <select id="wilaya" required>
+        <option value="">اختر الولاية...</option>
+        <option value="أدرار">01 - أدرار</option>
+        <option value="الشلف">02 - الشلف</option>
+        <option value="الأغواط">03 - الأغواط</option>
+        <option value="أم البواقي">04 - أم البواقي</option>
+        <option value="باتنة">05 - باتنة</option>
+        <option value="بجاية">06 - بجاية</option>
+        <option value="بسكرة">07 - بسكرة</option>
+        <option value="بشار">08 - بشار</option>
+        <option value="البليدة">09 - البليدة</option>
+        <option value="البويرة">10 - البويرة</option>
+        <option value="تمنراست">11 - تمنراست</option>
+        <option value="تبسة">12 - تبسة</option>
+        <option value="تلمسان">13 - تلمسان</option>
+        <option value="تيارت">14 - تيارت</option>
+        <option value="تيزي وزو">15 - تيزي وزو</option>
+        <option value="الجزائر">16 - الجزائر العاصمة</option>
+        <option value="الجلفة">17 - الجلفة</option>
+        <option value="جيجل">18 - جيجل</option>
+        <option value="سطيف">19 - سطيف</option>
+        <option value="سعيدة">20 - سعيدة</option>
+        <option value="سكيكدة">21 - سكيكدة</option>
+        <option value="سيدي بلعباس">22 - سيدي بلعباس</option>
+        <option value="عنابة">23 - عنابة</option>
+        <option value="قالمة">24 - قالمة</option>
+        <option value="قسنطينة">25 - قسنطينة</option>
+        <option value="المدية">26 - المدية</option>
+        <option value="مستغانم">27 - مستغانم</option>
+        <option value="المسيلة">28 - المسيلة</option>
+        <option value="معسكر">29 - معسكر</option>
+        <option value="ورقلة">30 - ورقلة</option>
+        <option value="وهران">31 - وهران</option>
+        <option value="البيض">32 - البيض</option>
+        <option value="إليزي">33 - إليزي</option>
+        <option value="برج بوعريريج">34 - برج بوعريريج</option>
+        <option value="بومرداس">35 - بومرداس</option>
+        <option value="الطارف">36 - الطارف</option>
+        <option value="تندوف">37 - تندوف</option>
+        <option value="تيسمسيلت">38 - تيسمسيلت</option>
+        <option value="الوادي">39 - الوادي</option>
+        <option value="خنشلة">40 - خنشلة</option>
+        <option value="سوق أهراس">41 - سوق أهراس</option>
+        <option value="تيبازة">42 - تيبازة</option>
+        <option value="ميلة">43 - ميلة</option>
+        <option value="عين الدفلى">44 - عين الدفلى</option>
+        <option value="النعامة">45 - النعامة</option>
+        <option value="عين تموشنت">46 - عين تموشنت</option>
+        <option value="غرداية">47 - غرداية</option>
+        <option value="غليزان">48 - غليزان</option>
+        <option value="تيميمون">49 - تيميمون</option>
+        <option value="برج باجي مختار">50 - برج باجي مختار</option>
+        <option value="أولاد جلال">51 - أولاد جلال</option>
+        <option value="بني عباس">52 - بني عباس</option>
+        <option value="عين صالح">53 - عين صالح</option>
+        <option value="عين قزام">54 - عين قزام</option>
+        <option value="تقرت">55 - تقرت</option>
+        <option value="جانت">56 - جانت</option>
+        <option value="المغير">57 - المغير</option>
+        <option value="المنيعة">58 - المنيعة</option>
+      </select>
+    </div>
+
+    <div class="form-group" id="communeGroup">
+      <label for="commune">البلدية</label>
+      <input 
+        type="text" 
+        id="commune" 
+        placeholder="مثال: بلدية حاسي الفحل"
+        required
+      >
+    </div>
+
+    <div class="buttons">
+      <button type="button" class="btn btn-back" onclick="goToStep1()">← رجوع</button>
+      <button type="submit" class="btn btn-next" id="nextBtn">التالي →</button>
+    </div>
+    <div style="margin-top: 20px; font-size: 11px; text-align: center; color: var(--text-muted); display: flex; justify-content: center; gap: 8px; width: 100%;">
+      <a href="privacy.html" style="color: var(--primary); text-decoration: none;">سياسة الخصوصية</a>
+      <span>|</span>
+      <a href="terms.html" style="color: var(--primary); text-decoration: none;">شروط الخدمة</a>
+    </div>
+  </form>
+</div>
+
+<script>
+  const userType = sessionStorage.getItem('reg_userType');
+  const fullName = sessionStorage.getItem('reg_fullName');
+
+  function goToStep1() {
+    window.location.href = 'register-step1.html';
+  }
+
+  function goToStep3(e) {
+    e.preventDefault();
+    const phone = document.getElementById('phone').value;
+    const wilaya = document.getElementById('wilaya').value;
+    const commune = document.getElementById('commune').value;
+
+    if (!phone || !wilaya || !commune) {
+      alert('يرجى ملء جميع الحقول المطلوبة');
+      return;
+    }
+
+    sessionStorage.setItem('reg_phone', phone);
+    sessionStorage.setItem('reg_wilaya', wilaya);
+    sessionStorage.setItem('reg_commune', commune);
+
+    window.location.href = 'register-step3.html';
+  }
+</script>
+
+</body>
+</html>

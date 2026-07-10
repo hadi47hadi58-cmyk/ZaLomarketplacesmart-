@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة الإدارة - ZaLo Market</title>
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Cairo Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- ZaLo Custom Stylesheet -->
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif !important;
+            background-color: #070a08 !important;
+            color: #f8fafc !important;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between zalo-branded-body" onload="initAdminDashboardPage()">
+
+    <!-- Global Header -->
+    <header class="sticky top-0 z-50 bg-[#0f1c36]/90 border-b border-white/10 w-full py-4 px-6 flex justify-between items-center backdrop-blur-md zalo-branded-header">
+        <a href="index.html" class="flex items-center gap-1.5 text-xs text-[#D4AF37] hover:text-white transition">
+            <i class="fa-solid fa-house"></i>
+            <span>الرئيسية</span>
+        </a>
+        <h1 class="text-base font-black text-[#D4AF37]">بوابة مسؤول التدقيق والمراقبة</h1>
+        <button onclick="logoutUser()" class="bg-red-500/10 text-red-400 border border-red-500/20 text-xs px-3.5 py-1.5 rounded-full hover:bg-red-500 hover:text-white transition">
+            <i class="fa-solid fa-power-off ml-1"></i> خروج
+        </button>
+    </header>
+
+    <main class="flex-1 w-full max-w-5xl mx-auto px-6 py-8 space-y-8">
+        
+        <div class="flex justify-between items-center bg-[#0f1c36]/50 border border-slate-700/50 p-6 rounded-[24px]">
+            <div class="text-right space-y-1">
+                <span class="text-[10px] text-slate-400 font-bold block">مرحباً بالمسؤول التدقيقي</span>
+                <h2 id="header-user-name" class="text-xl font-black text-white font-bold">بوابة الرقابة العامة</h2>
+                <p class="text-xs text-slate-400">تابع نشاط المحلات والتحقق من التراخيص التجارية وإثباتات دفع بريدي موب</p>
+            </div>
+            <div class="w-12 h-12 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-xl text-emerald-400"><i class="fa-solid fa-user-shield"></i></div>
+        </div>
+
+        <div class="grid grid-cols-1 gap-8">
+            
+            <!-- Store verification section -->
+            <div class="bg-[#0f1c36]/40 border border-slate-700/50 rounded-3xl p-6 space-y-4">
+                <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                    <span class="text-[10px] bg-slate-800 text-slate-400 px-3 py-1 rounded-full font-bold">تحديث فوري</span>
+                    <h3 class="text-base font-black text-white text-right"><i class="fa-solid fa-hotel text-emerald-400 ml-1"></i> مراجعة طلبات الانضمام والمحلات النشطة</h3>
+                </div>
+
+                <div class="overflow-x-auto w-full">
+                    <table class="w-full text-right text-xs" style="min-width: 600px;">
+                        <thead>
+                            <tr class="text-slate-400 border-b border-slate-800">
+                                <th class="pb-3 text-right">المتجر / الشرح والموقع</th>
+                                <th class="pb-3 text-right">المالك المسؤول</th>
+                                <th class="pb-3 text-right">رقم الهاتف</th>
+                                <th class="pb-3 text-right">الحالة الحالية</th>
+                                <th class="pb-3 text-center">الإجراء المتاح</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-stores-list">
+                            <!-- Populated via app.js -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- قسم إدارة طلبات الشراكة التجارية والترقية -->
+            <div class="bg-[#0f1c36]/40 border border-slate-700/50 rounded-3xl p-6 space-y-4 text-right">
+                <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                    <span class="text-[10px] bg-slate-800 text-amber-400 px-3 py-1 rounded-full font-bold border border-amber-500/10">طلبات جديدة</span>
+                    <h3 class="text-base font-black text-white text-right"><i class="fa-solid fa-file-signature text-amber-500 ml-1"></i> طلبات الشراكة والترقية إلى تاجر</h3>
+                </div>
+
+                <div class="overflow-x-auto w-full" id="requestsContainer">
+                    <p class="text-xs text-slate-400">جاري تحميل طلبات الشركاء والتحقق من التراخيص...</p>
+                </div>
+            </div>
+
+            <!-- CCP / BaridiMob Receipt Verifier Simulator -->
+            <div class="p-6 bg-[#0f1c36]/30 border border-slate-700/40 rounded-3xl space-y-4 text-right">
+                <h3 class="text-base font-black text-white"><i class="fa-solid fa-receipt text-amber-500 ml-1"></i> تتبع فواتير CCP وبريديموب النشطة</h3>
+                <p class="text-xs text-slate-400">في حالة اختيار الدفع الإلكتروني، يقوم المدقق هنا بمطابقة الصورة المرسومة لوصل بريدي موب مع حساب منصة بريد الجزائر الرسمي.</p>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="bg-slate-900/60 p-4 rounded-2xl border border-slate-800 space-y-2">
+                        <div class="flex justify-between text-[10px]">
+                            <span class="text-amber-500 font-bold">تحتاج لمراجعة الوصل</span>
+                            <span class="text-slate-400 font-bold">ID: #ord_1002</span>
+                        </div>
+                        <p class="text-sm font-bold text-white font-bold">المرسل: الزبون هادي نجم الدين</p>
+                        <p class="text-xs text-slate-400">إثبات المعاملة: <span class="text-blue-400 cursor-pointer underline">رؤية إيصال بارديموب.png</span></p>
+                        <hr class="border-slate-800">
+                        <div class="flex gap-2 justify-end">
+                            <button class="bg-emerald-500 text-white text-[10px] px-3 py-1 rounded-lg font-bold" onclick="alert('تم تفعيل وتوثيق وصل المشتري بنجاح!')">توثيق الدفع ✅</button>
+                            <button class="bg-red-500 text-white text-[10px] px-3 py-1 rounded-lg font-bold" onclick="alert('تم إلغاء الوثيقة لعدم مطابقتها.')">رفض</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <footer class="border-t border-slate-800/60 py-4 text-center text-xs text-slate-500 bg-slate-950/40">
+        <p>© 2026 ZaLo Market - لوحة التدقيق.</p>
+    </footer>
+
+    <!-- Shared JS Engine -->
+    <script src="js/app.js"></script>
+
+    <script type="module">
+      import sessionManager from './js/session-manager.js';
+
+      async function loadRequests() {
+        const session = sessionManager.getSession();
+        if (!session || session.role !== 'admin') {
+          document.getElementById('requestsContainer').innerHTML = '<p class="text-xs text-red-400">⛔ غير مصرح لك برؤية هذه الصفحة</p>';
+          return;
+        }
+
+        try {
+          const response = await fetch('/api/merchant-requests', {
+            headers: { 'Authorization': `Bearer ${session.token}` },
+          });
+          const requests = await response.json();
+
+          if (!response.ok || !requests || !requests.length) {
+            document.getElementById('requestsContainer').innerHTML = '<p class="text-xs text-slate-400 py-4 text-center">📭 لا توجد طلبات شراكة حالياً</p>';
+            return;
+          }
+
+          let html = '<table class="w-full text-right text-xs" style="min-width: 600px;">';
+          html += `<thead>
+                    <tr class="text-slate-400 border-b border-slate-800">
+                      <th class="pb-3 text-right">المستفيد / البريد</th>
+                      <th class="pb-3 text-right">اسم المتجر المقترح</th>
+                      <th class="pb-3 text-right">رقم الهاتف</th>
+                      <th class="pb-3 text-right">السجل / التعريف المالي</th>
+                      <th class="pb-3 text-right">الحالة الحالية</th>
+                      <th class="pb-3 class="text-center" style="text-align: center;">الإجراءات المتاحة</th>
+                    </tr>
+                  </thead>
+                  <tbody>`;
+          
+          for (const req of requests) {
+            const statusColor = req.status === 'pending' ? 'text-amber-400 bg-amber-500/10 border-amber-500/30' : req.status === 'approved' ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/30' : 'text-red-400 bg-red-500/10 border-red-500/30';
+            const statusText = req.status === 'pending' ? '⏳ قيد المراجعة' : req.status === 'approved' ? '✅ مقبول ومعتمد' : '❌ مرفوض';
+            const registerInfo = (req.commercial_register || req.tax_number) ? `${req.commercial_register || 'بدون سجل'} / ${req.tax_number || 'بدون تعريف'}` : 'غير مدخل';
+            const descriptionSnippet = req.description ? `<p class="text-[10px] text-slate-400 mt-1 max-w-xs">${req.description}</p>` : '';
+            
+            html += `<tr class="border-t border-slate-700/50 text-white font-semibold">`;
+            html += `<td class="p-3 text-right">
+                      <p class="font-bold text-white">${req.users?.email || 'مستخدم مجهول'}</p>
+                      <p class="text-[10px] text-slate-400">${req.users?.name || 'الاسم غير متوفر'}</p>
+                     </td>`;
+            html += `<td class="p-3 text-right">
+                      <p class="text-sm font-bold text-emerald-400">${req.store_name}</p>
+                      ${descriptionSnippet}
+                     </td>`;
+            html += `<td class="p-3 text-right font-mono">${req.phone}</td>`;
+            html += `<td class="p-3 text-right text-slate-300 font-mono">${registerInfo}</td>`;
+            html += `<td class="p-3 text-right">
+                      <span class="text-[10px] px-2.5 py-1 rounded-full border ${statusColor} font-bold">${statusText}</span>
+                     </td>`;
+            html += `<td class="p-3 text-center">`;
+            
+            if (req.status === 'pending') {
+              html += `<div class="flex gap-2 justify-center">
+                        <button onclick="handleRequest('${req.id}', 'approve')" class="bg-emerald-500 hover:bg-emerald-600 text-white text-[10px] px-2.5 py-1.5 rounded-lg font-bold transition">✅ تفعيل وترقية</button>
+                        <button onclick="handleRequest('${req.id}', 'reject')" class="bg-red-500 hover:bg-red-600 text-white text-[10px] px-2.5 py-1.5 rounded-lg font-bold transition">❌ رفض الطلب</button>
+                       </div>`;
+            } else {
+              html += `<span class="text-slate-500 text-[11px] font-normal">تمت المعالجة: <br><span class="text-[10px] text-slate-400">${req.admin_notes || ''}</span></span>`;
+            }
+            html += `</td></tr>`;
+          }
+          html += '</tbody></table>';
+          document.getElementById('requestsContainer').innerHTML = html;
+        } catch (err) {
+          console.error(err);
+          document.getElementById('requestsContainer').innerHTML = '<p class="text-xs text-red-400 py-4 text-center">❌ تعذر الاتصال بالخادم لجلب طلبات الشراكة التجارية.</p>';
+        }
+      }
+
+      // دالة عالمية لمعالجة الطلب
+      window.handleRequest = async (requestId, action) => {
+        const session = sessionManager.getSession();
+        if (!confirm(`هل أنت متأكد من ${action === 'approve' ? 'تفعيل وترقية' : 'رفض'} هذا الطلب؟`)) return;
+
+        let adminNotes = '';
+        if (action === 'reject') {
+          adminNotes = prompt('✏️ اكتب سبب الرفض (سيظهر للمستخدم):');
+          if (adminNotes === null) return;
+        }
+
+        try {
+          const response = await fetch(`/api/merchant-requests/${requestId}/${action}`, {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${session.token}`,
+            },
+            body: JSON.stringify({ adminNotes }),
+          });
+
+          if (response.ok) {
+            alert(`✅ تم ${action === 'approve' ? 'تفعيل' : 'رفض'} الطلب بنجاح!`);
+            loadRequests(); // تحديث القائمة
+          } else {
+            const err = await response.json();
+            alert(`❌ فشل: ${err.message || 'حدث خطأ غير متوقع'}`);
+          }
+        } catch (err) {
+          console.error(err);
+          alert('❌ فشل الاتصال بالخادم لمعالجة الطلب.');
+        }
+      };
+
+      // تحميل الطلبات عند فتح الصفحة
+      document.addEventListener('DOMContentLoaded', loadRequests);
+    </script>
+</body>
+</html>

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة المدير العام - ZaLo Market</title>
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Cairo Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- ZaLo Custom Stylesheet -->
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif !important;
+            background-color: #070a08 !important;
+            color: #f8fafc !important;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between zalo-branded-body" onload="initManagerDashboardPage()">
+
+    <!-- Global Header -->
+    <header class="sticky top-0 z-50 bg-[#0f1c36]/90 border-b border-white/10 w-full py-4 px-6 flex justify-between items-center backdrop-blur-md zalo-branded-header">
+        <a href="index.html" class="flex items-center gap-1.5 text-xs text-[#D4AF37] hover:text-white transition">
+            <i class="fa-solid fa-house"></i>
+            <span>الرئيسية</span>
+        </a>
+        <h1 class="text-base font-black text-[#D4AF37]">اللوحة التنفيذية لمدير النظام</h1>
+        <button onclick="logoutUser()" class="bg-red-500/10 text-red-400 border border-red-500/20 text-xs px-3.5 py-1.5 rounded-full hover:bg-red-500 hover:text-white transition">
+            <i class="fa-solid fa-power-off ml-1"></i> خروج
+        </button>
+    </header>
+
+    <main class="flex-1 w-full max-w-5xl mx-auto px-6 py-8 space-y-8">
+        
+        <!-- Welcome Card -->
+        <div class="flex justify-between items-center bg-[#0f1c36]/50 border border-slate-700/50 p-6 rounded-[24px]">
+            <div class="text-right space-y-1">
+                <span class="text-[10px] text-slate-400 font-bold block">مرحباً بالمدير العام للنظام</span>
+                <h2 id="header-user-name" class="text-xl font-black text-white font-bold">بوابة التحكم والرقابة الشاملة</h2>
+                <p class="text-xs text-slate-400">تابع العمليات في ولاية المنيعة والجزائر ككل، وقارن إحصائيات المبيعات النشطة</p>
+            </div>
+            <div class="w-12 h-12 rounded-full bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-xl text-amber-500"><i class="fa-solid fa-crown"></i></div>
+        </div>
+
+        <!-- Analytical Mini-Widgets -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-right">
+            
+            <div class="bg-[#0f1c36]/30 border border-slate-700/40 p-4 rounded-2xl">
+                <p class="text-[10px] text-slate-400 font-bold">المستخدمين بالمنصة</p>
+                <p class="text-xl font-black text-white font-bold">1,250</p>
+                <span class="text-[9px] text-[#00AEEF]"><i class="fa-solid fa-caret-up"></i> +12% هذا الأسبوع</span>
+            </div>
+
+            <div class="bg-[#0f1c36]/30 border border-slate-700/40 p-4 rounded-2xl">
+                <p class="text-[10px] text-slate-400 font-bold">إجمالي المبيعات النشطة</p>
+                <p class="text-xl font-black text-zalo-gold font-bold">3,540,000 دج</p>
+                <span class="text-[9px] text-emerald-400"><i class="fa-solid fa-caret-up"></i> +8% نمو ثابت</span>
+            </div>
+
+            <div class="bg-[#0f1c36]/30 border border-slate-700/40 p-4 rounded-2xl">
+                <p class="text-[10px] text-slate-400 font-bold">المحلات والوكالات المعتمدة</p>
+                <p class="text-xl font-black text-white font-bold">48 متجر</p>
+                <span class="text-[9px] text-sky-400"><i class="fa-solid fa-house-circle-check"></i> 100% موثقة</span>
+            </div>
+
+            <div class="bg-[#0f1c36]/30 border border-slate-700/40 p-4 rounded-2xl">
+                <p class="text-[10px] text-slate-400 font-bold">طلبات التوصيل المنجزة</p>
+                <p class="text-xl font-black text-white">430 طلبية</p>
+                <span class="text-[9px] text-green-400"><i class="fa-regular fa-square-check"></i> معدل إتمام 98%</span>
+            </div>
+
+        </div>
+
+        <!-- Managed Lists -->
+        <div class="grid grid-cols-1 gap-8">
+            
+            <!-- Live Order Tracker Section ("واجهة التتبع لـ 69 ولاية") -->
+            <div class="bg-[#0f1c36]/40 border border-[#D4AF37]/30 rounded-3xl p-6 space-y-4">
+                <div class="flex items-center gap-2">
+                    <span class="text-xl">📍</span>
+                    <h3 class="text-base font-black text-[#D4AF37] text-right"><span class="text-white font-bold">نظام تتبع الشحنات</span> (69 ولاية)</h3>
+                </div>
+                <p class="text-xs text-slate-400 text-right">أدخل رقم الهاتف، اسم الزبون، أو معرف الشحنة المالي لتتبع خط سير البضاعة محلياً.</p>
+                <div class="flex gap-2">
+                    <input id="managerSearchInput" class="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-[#D4AF37] text-right" placeholder="مثال: 0698694010...">
+                    <button class="bg-[#D4AF37] text-[#0b1528] font-bold text-xs px-5 py-2.5 rounded-xl hover:bg-white transition" onclick="managerTrackOrders()">بحث 🔍</button>
+                </div>
+                <div id="manager-tracking-result" class="space-y-3"></div>
+            </div>
+
+            <!-- Users list -->
+            <div class="bg-[#0f1c36]/40 border border-slate-700/50 rounded-3xl p-6 space-y-4">
+                <h3 class="text-base font-black text-white text-right"><i class="fa-solid fa-users text-[#00AEEF] ml-1"></i> إدارة المستخدمين وصلاحيات الحسابات بالمنصة</h3>
+                <div class="overflow-x-auto w-full">
+                    <table class="w-full text-right text-xs" style="min-width: 600px;">
+                        <thead>
+                            <tr class="text-slate-400 border-b border-slate-800">
+                                <th class="pb-3 text-right">المسخدم / البريد</th>
+                                <th class="pb-3 text-right">رقم الهاتف</th>
+                                <th class="pb-3 text-right">الرتبة</th>
+                                <th class="pb-3 text-right">الحالة</th>
+                                <th class="pb-3 text-center">التحكم المتاح</th>
+                            </tr>
+                        </thead>
+                        <tbody id="manager-users-tbody">
+                            <!-- Populated dynamically via app.js -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Complaints management -->
+            <div class="p-6 bg-[#0f1c36]/30 border border-slate-700/40 rounded-3xl space-y-4 text-right">
+                <h3 class="text-base font-black text-white"><i class="fa-solid fa-triangle-exclamation text-red-400 ml-1"></i> مركز الشكاوى والبلاغات الجارية</h3>
+                <p class="text-xs text-slate-400">في حالة حدوث نزاع بين الزبون والتاجر، ينظر المدير العام هنا لوثائق الدفع ويتخذ القرار النهائي لتعويض المتضررين.</p>
+                
+                <div class="bg-slate-900/60 p-4 rounded-2xl border border-slate-800 space-y-2">
+                    <div class="flex justify-between text-[10px]">
+                        <span class="text-red-400 font-bold">بانتظار التحكيم ⚠️</span>
+                        <span class="text-slate-400">تاريخ: اليوم</span>
+                    </div>
+                    <p class="text-sm font-bold text-white font-bold">تأخر الموصل قليلاً بالرغم من اتصالي به، أرجو تبليغه ليكون أسرع في أحياء المرسى.</p>
+                    <p class="text-xs text-slate-400">مقدم الشكوى: عبد الهادي نجم الدين</p>
+                    <hr class="border-slate-800">
+                    <div class="flex gap-2 justify-end">
+                        <button class="bg-slate-800 border border-slate-700 text-white text-[10px] px-3.5 py-1.5 rounded-lg font-bold" onclick="alert('تم تحذير المتجر وتدارك التوصيل.')">حل النزاع وإصلاح المشكلة 🤝</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <footer class="border-t border-slate-800/60 py-4 text-center text-xs text-slate-500 bg-slate-950/40">
+        <p>© 2026 ZaLo Market - لوحة المدير العام للجمهورية الجزائرية.</p>
+    </footer>
+
+    <!-- Shared JS Engine -->
+    <script src="js/app.js"></script>
+    <script>
+        function managerTrackOrders() {
+            const val = document.getElementById('managerSearchInput').value.trim().toLowerCase();
+            const res = document.getElementById('manager-tracking-result');
+            if (!val) {
+                res.innerHTML = '';
+                return;
+            }
+            // Search in local storage DB falls
+            let orders = [];
+            try {
+                orders = JSON.parse(localStorage.getItem('DB_orders') || '[]');
+            } catch(e) {}
+            
+            // Filter
+            const filtered = orders.filter(o => {
+                const id = (o.id || o.orderId || '').toLowerCase();
+                const name = (o.customer || o.customerName || '').toLowerCase();
+                const phone = o.phone || '';
+                return id.includes(val) || name.includes(val) || phone.includes(val);
+            });
+            
+            if (filtered.length > 0) {
+                res.innerHTML = filtered.map(o => `
+                    <div class="bg-slate-900/60 p-4 rounded-2xl border border-slate-800 space-y-1 text-right">
+                        <div class="flex justify-between text-[11px]">
+                            <span class="text-[#D4AF37] font-bold">رقم الشحنة: #${(o.id || o.orderId || '').substring(0,8)}</span>
+                            <span class="text-slate-400">الولاية: ${o.wilaya || '69 الجزائر'}</span>
+                        </div>
+                        <p class="text-xs text-white"><strong>الزبون:</strong> ${o.customer || o.customerName || 'مشتري وفير'}</p>
+                        <p class="text-xs text-slate-400"><strong>حالة الشحنة:</strong> ${o.status === 'delivered' ? '📦 تم التسليم كلياً' : '⏳ قيد الشحن والتوصيل المباشر'}</p>
+                    </div>
+                `).join('');
+            } else {
+                res.innerHTML = `
+                    <div class="bg-red-500/10 border border-red-500/20 text-red-400 p-4 rounded-2xl text-center text-xs">
+                        ⚠️ لا توجد شحنة مسجلة تطابق مدخلات البحث حالياً في سجلات المنصة.
+                    </div>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>

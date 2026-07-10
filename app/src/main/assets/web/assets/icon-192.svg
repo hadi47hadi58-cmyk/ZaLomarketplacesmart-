@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192">
+  <defs>
+    <linearGradient id="greenBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1a5c2a" />
+      <stop offset="100%" stop-color="#0e3618" />
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="6" stdDeviation="4" flood-color="#000000" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  <rect width="192" height="192" rx="42" fill="url(#greenBg)"/>
+  <rect x="8" y="8" width="176" height="176" rx="34" fill="none" stroke="#e8c97a" stroke-width="2" opacity="0.75" stroke-dasharray="6 3"/>
+  <text x="50%" y="56%" font-family="'Cairo', system-ui, -apple-system, sans-serif" font-weight="900" font-size="52" text-anchor="middle" dominant-baseline="middle" filter="url(#shadow)">
+    <tspan fill="#ffffff">Za</tspan><tspan fill="#e8c97a">Lo</tspan>
+  </text>
+  <text x="50%" y="78%" font-family="'Cairo', system-ui, -apple-system, sans-serif" font-weight="700" font-size="14" fill="#ffffff" opacity="0.8" text-anchor="middle" letter-spacing="1">SMART</text>
+</svg>
