@@ -76,16 +76,29 @@
   </div>
   <div class="subtitle">جاري التحضير...</div>
 
-  <script>
-    sessionStorage.clear();
-    localStorage.removeItem('user_logged_in');
-    localStorage.removeItem('user_role');
-    localStorage.removeItem('user_uid');
-    localStorage.removeItem('user_email');
+  <script type="module">
+    // قراءة التوكن والدور لتوجيه المستخدم بشكل صحيح ومنع حلقة التكرار اللانهائي
+    const token = localStorage.getItem('zalo_session_jwt') || localStorage.getItem('zalo_token');
+    const rawRole = localStorage.getItem('zalo_user_role') || localStorage.getItem('zalo_role') || 'customer';
+    const role = rawRole.toLowerCase().trim();
 
     setTimeout(() => {
-      window.location.href = 'index.html';
-    }, 2000);
+      if (!token) {
+        // لا يوجد توكن نشط -> التوجيه إلى صفحة تسجيل الدخول
+        console.log("[Splash Router] No active token found. Redirecting to login...");
+        window.location.href = 'login.html';
+      } else {
+        // يوجد توكن نشط -> التوجيه الذكي إلى اللوحة المناسبة حسب الصلاحية والدور
+        console.log(`[Splash Router] Active token detected. Role: ${role}. Redirecting...`);
+        if (role === 'merchant') {
+          window.location.href = 'dashboard-store.html';
+        } else if (role === 'admin') {
+          window.location.href = 'dashboard-admin.html';
+        } else {
+          window.location.href = 'customer-home.html';
+        }
+      }
+    }, 2000); // الانتظار ثانيتين لتهيئة وعرض الشعار الجمالي للمنصة
   </script>
 </body>
 </html>
