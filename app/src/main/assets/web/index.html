@@ -2877,16 +2877,26 @@ window.doSearch = async (q) => {
   
   try {
     const qLower = q.toLowerCase().trim();
-    const snap = await window._ff.getDocs(window._ff.collection(window._db, 'products'));
     let matches = [];
-    snap.forEach(d => {
-      const p = d.data();
-      const pName = (p.name || '').toLowerCase();
-      const pCat = (p.category || '').toLowerCase();
-      if (pName.includes(qLower) || pCat.includes(qLower)) {
-        matches.push({ id: d.id, ...p });
+
+    if (window._ff && window._db) {
+      try {
+        const snap = await window._ff.getDocs(window._ff.collection(window._db, 'products'));
+        snap.forEach(d => {
+          const p = d.data();
+          const pName = (p.name || '').toLowerCase();
+          const pCat = (p.category || '').toLowerCase();
+          if (pName.includes(qLower) || pCat.includes(qLower)) {
+            matches.push({ id: d.id, ...p });
+          }
+        });
+      } catch (fbErr) {
+        console.warn("[Search Fallover] Firebase search failed, switching to Local DB:", fbErr);
+        throw fbErr;
       }
-    });
+    } else {
+      throw new Error("No Firestore available");
+    }
 
     if (matches.length === 0) {
       grid.innerHTML = '<div style="grid-column:span 2;text-align:center;padding:20px;color:var(--gray)">❌ لا توجد منتجات مطابقة في المعروضات</div>';
@@ -2903,8 +2913,55 @@ window.doSearch = async (q) => {
         </div>
       </div>`;
     });
+
   } catch(e) {
-    grid.innerHTML = '<div style="grid-column:span 2;text-align:center;padding:20px;color:var(--red)">⚠️ حدث خطأ أثناء عملية البحث الفوري</div>';
+    // Elegant client-side fallback query engine
+    console.log("[Search Fallover] Running offline-first local search query...");
+    const qLower = q.toLowerCase().trim();
+    const localProds = JSON.parse(localStorage.getItem("zalo_products") || "[]");
+    
+    // Seed list for local query in case cache is empty
+    const seedProds = [
+        { productId: "prod_galaxy_a07", productName: "Galaxy A07", price: 22000, description: "هاتف ذكي ببطارية قوية 6000 مللي أمبير، شاشة قياس 6.5 بوصة، مع سعة تخزين 64 جيجابايت وكاميرا خلفية مزدوجة بدقة 50 ميجابكسل للتقاط أهم تفاصيل يومك الصيفي ببلدية المنيعة." },
+        { productId: "prod_honor_x6c", productName: "Honor X6C", price: 29000, description: "تصميم عصري رياضي بملمس ناعم، يدعم اتصال فائق الجودة وقوة تحمل ضد السقوط، مثالي للاستخدام الشاق ومكالمات البائعين والبريد الإلكتروني للعمل اليومي بالجزائر." },
+        { productId: "prod_battery_pack", productName: "بنك طاقة شاحن أنكر 20K", price: 6500, description: "شاحن لاسلكي سريع بسعة 20,000 مللي أمبير مع منافذ شحن سريعة متعددة لتغذية هاتفك في الحالات الاستثنائية." },
+        { productId: "prod_brakes", productName: "فحمات فرامل سيارة بوش", price: 4500, description: "فرامل سيارة أصلية مصنوعة خصيصاً لتحمل الاحتكاك الشديد والحرارة العالية لضمان سلامتك وسلامة عائلتك على الطريق." },
+        { productId: "prod_dates", productName: "علبة تمور دقلة نور تولقة", price: 1500, description: "تمور طبيعية بكر ممتازة تم قطفها وتغليفها محلياً بعناية فائقة لتنير مائدتك الجزائرية بصحة وعافية تامة." },
+        { productId: "prod_jacket", productName: "سترة صوفية شتوية صحراوية", price: 5500, description: "جاكيت من الصوف الحر الفاخر يوفر الدفء المثالي لليالي الصحراء الباردة في ولايات الجنوب وكل بلديات المنيعة." }
+    ];
+
+    const products = localProds.length > 0 ? localProds : seedProds;
+    let matches = [];
+
+    products.forEach(p => {
+        const pName = (p.productName || p.name || '').toLowerCase();
+        const pDesc = (p.description || '').toLowerCase();
+        if (pName.includes(qLower) || pDesc.includes(qLower)) {
+            matches.push({
+                id: p.productId || p.id,
+                name: p.productName || p.name,
+                price: p.price,
+                image: p.images ? p.images[0] : (p.image || p.imageURL || ''),
+                emoji: '📦'
+            });
+        }
+    });
+
+    if (matches.length === 0) {
+        grid.innerHTML = '<div style="grid-column:span 2;text-align:center;padding:20px;color:var(--gray)">❌ لا توجد منتجات مطابقة في المعروضات المحلية</div>';
+        return;
+    }
+
+    grid.innerHTML = '';
+    matches.forEach(p => {
+        grid.innerHTML += `<div class="pcard" onclick="window.location.href='product-details.html?productId=${p.id}'">
+            <div class="pcard-img">${p.image ? `<img src="${p.image}" alt="">` : `<span>${p.emoji}</span>`}</div>
+            <div class="pcard-body">
+                <div class="pcard-name">${p.name || ''}</div>
+                <div class="pcard-price">${(p.price || 0).toLocaleString()} <span>دج</span></div>
+            </div>
+        </div>`;
+    });
   }
 };
 

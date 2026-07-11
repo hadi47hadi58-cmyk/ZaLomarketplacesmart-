@@ -41,6 +41,13 @@
             justify-content: center;
             gap: 12px;
         }
+        .notif-actions {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
         .notif-container {
             display: flex;
             flex-direction: column;
@@ -55,6 +62,12 @@
             align-items: flex-start;
             gap: 15px;
             transition: all 0.2s ease;
+            position: relative;
+        }
+        .notif-card.unread {
+            border-color: var(--gold);
+            background: rgba(212, 175, 55, 0.03);
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.05);
         }
         .notif-card:hover {
             border-color: var(--gold);
@@ -87,10 +100,45 @@
             color: var(--gray);
             margin-bottom: 6px;
         }
+        .notif-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 8px;
+        }
         .notif-time {
             font-size: 11px;
             color: var(--gold);
             font-weight: 600;
+        }
+        .card-actions {
+            display: flex;
+            gap: 8px;
+        }
+        .btn-action {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 700;
+            font-family: 'Cairo', sans-serif;
+            padding: 4px 8px;
+            border-radius: 6px;
+            transition: 0.15s;
+        }
+        .btn-read {
+            color: #82e3a1;
+            background: rgba(37, 168, 96, 0.1);
+        }
+        .btn-read:hover {
+            background: rgba(37, 168, 96, 0.2);
+        }
+        .btn-delete {
+            color: #ff4d4d;
+            background: rgba(255, 77, 77, 0.1);
+        }
+        .btn-delete:hover {
+            background: rgba(255, 77, 77, 0.2);
         }
         .footer {
             text-align: center;
@@ -106,9 +154,9 @@
             padding: 10px 24px;
             border-radius: 8px;
             font-weight: 700;
-            margin-top: 20px;
             transition: 0.2s;
             border: 1px solid var(--border);
+            cursor: pointer;
         }
         .back-btn:hover {
             background: var(--g2);
@@ -123,47 +171,141 @@
     <p>تابع آخر تحديثات طلباتك وعروضك والعمليات الجارية في متجر ZaLo</p>
 </div>
 
-<div class="notif-container">
-    <div class="notif-card">
-        <div class="notif-icon"><i class="fa-solid fa-cart-shopping"></i></div>
-        <div class="notif-content">
-            <div class="notif-title">تم استلام طلب جديد #9421</div>
-            <div class="notif-desc">قام زبون من ولاية "الجزائر العاصمة" بطلب حذاء رياضي أصلي ومستلزمات منزلية. يرجى تأكيد الطلبية.</div>
-            <div class="notif-time">منذ 5 دقائق</div>
-        </div>
-    </div>
-
-    <div class="notif-card">
-        <div class="notif-icon"><i class="fa-solid fa-truck-ramp-box"></i></div>
-        <div class="notif-content">
-            <div class="notif-title">تحديث حالة الشحن</div>
-            <div class="notif-desc">الطلب الخاص بك رقم #8912 في طريقه للتوصيل إلى ولاية "وهران" عبر شريك الشحن المعتمد لدينا.</div>
-            <div class="notif-time">منذ ساعتين</div>
-        </div>
-    </div>
-
-    <div class="notif-card">
-        <div class="notif-icon"><i class="fa-solid fa-wallet"></i></div>
-        <div class="notif-content">
-            <div class="notif-title">إيداع ناجح في محفظتك</div>
-            <div class="notif-desc">تم تأكيد استلام الدفعة الخاصة بالمبيعات رقم #7645 بقيمة 12,500 دج وإضافتها لرصيد تصفية BaridiMob.</div>
-            <div class="notif-time">منذ يوم واحد</div>
-        </div>
-    </div>
-
-    <div class="notif-card">
-        <div class="notif-icon"><i class="fa-solid fa-shield-check"></i></div>
-        <div class="notif-content">
-            <div class="notif-title">تأمين وتوثيق حساب المتجر</div>
-            <div class="notif-desc">تهانينا! تم فحص وثائق الهوية وسجلكم التجاري بنجاح. متجركم الآن حاصل على شارة "شريك موثق".</div>
-            <div class="notif-time">منذ يومين</div>
-        </div>
-    </div>
+<div class="notif-actions">
+    <button onclick="markAllRead()" class="back-btn" style="background: rgba(37, 168, 96, 0.15); border-color: rgba(37, 168, 96, 0.3); color: #82e3a1;"><i class="fa-solid fa-check-double"></i> قراءة الكل</button>
+    <button onclick="clearAllNotifications()" class="back-btn" style="background: rgba(255, 77, 77, 0.15); border-color: rgba(255, 77, 77, 0.3); color: #ff4d4d;"><i class="fa-solid fa-trash"></i> مسح الجميع</button>
 </div>
 
-<div style="text-align: center;">
+<div id="empty-state" style="display: none; text-align: center; padding: 40px; background: var(--card-bg); border: 1px dashed var(--border); border-radius: 12px; margin-bottom: 25px;">
+    <i class="fa-solid fa-bell-slash" style="font-size: 40px; color: var(--gold); margin-bottom: 15px;"></i>
+    <div style="font-size: 15px; font-weight: 700; color: #fff;">لا توجد إشعارات حالياً</div>
+    <div style="font-size: 12px; color: var(--gray); margin-top: 5px;">سيتم تنبيهك هنا فور حدوث أي تحديثات جديدة.</div>
+</div>
+
+<div class="notif-container" id="notif-container">
+    <!-- Will be populated dynamically -->
+</div>
+
+<div style="text-align: center; margin-top: 30px;">
     <a href="index.html" class="back-btn"><i class="fa-solid fa-house"></i> العودة للرئيسية</a>
 </div>
+
+<script>
+    function getNotifications() {
+        const data = localStorage.getItem('zalo_notifications_list_v2');
+        if (data) {
+            try {
+                return JSON.parse(data);
+            } catch(e) {
+                return [];
+            }
+        }
+        // Fallback to onboarding notifications if empty
+        const onboarding = [
+            {
+                id: "init_1",
+                title: "مرحباً بك في ZaLo! 🏛️",
+                text: "أهلاً بك في أكبر سوق ذكي دائم ومجاني لخدمة المتاجر والسائقين وتوصيل الشحنات عبر 69 ولاية جزائرية.",
+                icon: "🎉",
+                read: false,
+                timestamp: Date.now() - 600000
+            },
+            {
+                id: "init_2",
+                title: "تتبع شحنتك بثوانٍ 📦",
+                text: "أدخل رقم هاتفك في صفحة 'طلباتي' لمتابعة حالة شاحنتك بنظام التنبيه والرنين المباشر فور تغيرها من تاجر أو سائق.",
+                icon: "🔔",
+                read: false,
+                timestamp: Date.now() - 3600000
+            }
+        ];
+        localStorage.setItem('zalo_notifications_list_v2', JSON.stringify(onboarding));
+        return onboarding;
+    }
+
+    function saveNotifications(list) {
+        localStorage.setItem('zalo_notifications_list_v2', JSON.stringify(list));
+        renderNotifications();
+    }
+
+    function formatArabicTime(timestamp) {
+        const diff = Date.now() - timestamp;
+        if (diff < 60000) return 'منذ ثوانٍ';
+        const mins = Math.floor(diff / 60000);
+        if (mins < 60) return `منذ ${mins} دقيقة`;
+        const hours = Math.floor(diff / 3600000);
+        if (hours < 24) return `منذ ${hours} ساعة`;
+        const days = Math.floor(diff / 86400000);
+        return `منذ ${days} يوم`;
+    }
+
+    function renderNotifications() {
+        const list = getNotifications();
+        const container = document.getElementById('notif-container');
+        const emptyState = document.getElementById('empty-state');
+
+        if (list.length === 0) {
+            container.innerHTML = '';
+            emptyState.style.display = 'block';
+            return;
+        }
+
+        emptyState.style.display = 'none';
+        container.innerHTML = list.map(n => {
+            const timeStr = formatArabicTime(n.timestamp);
+            const isUnread = !n.read;
+            const iconHtml = n.icon && n.icon.length > 2 && n.icon.startsWith('fa-') 
+                ? `<i class="fa-solid ${n.icon}"></i>` 
+                : (n.icon || '🔔');
+
+            return `
+                <div class="notif-card ${isUnread ? 'unread' : ''}" id="card_${n.id}">
+                    <div class="notif-icon">${iconHtml}</div>
+                    <div class="notif-content">
+                        <div class="notif-title">${n.title}</div>
+                        <div class="notif-desc">${n.text}</div>
+                        <div class="notif-footer">
+                            <div class="notif-time">🕒 ${timeStr}</div>
+                            <div class="card-actions">
+                                ${isUnread ? `<button onclick="markRead('${n.id}')" class="btn-action btn-read"><i class="fa-solid fa-check"></i> مقروء</button>` : ''}
+                                <button onclick="deleteNotif('${n.id}')" class="btn-action btn-delete"><i class="fa-solid fa-trash"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function markRead(id) {
+        const list = getNotifications();
+        const notif = list.find(n => n.id === id);
+        if (notif) {
+            notif.read = true;
+            saveNotifications(list);
+        }
+    }
+
+    function markAllRead() {
+        const list = getNotifications();
+        list.forEach(n => n.read = true);
+        saveNotifications(list);
+    }
+
+    function deleteNotif(id) {
+        const list = getNotifications().filter(n => n.id !== id);
+        saveNotifications(list);
+    }
+
+    function clearAllNotifications() {
+        if (confirm('هل أنت متأكد من مسح جميع الإشعارات؟')) {
+            saveNotifications([]);
+        }
+    }
+
+    // Initial render
+    document.addEventListener('DOMContentLoaded', renderNotifications);
+</script>
 
 <div class="footer">
     &copy; 2026 منصة ZaLo Smart. جميع الحقوق محفوظة لجمهورية الجزائر الديمقراطية الشعبية.

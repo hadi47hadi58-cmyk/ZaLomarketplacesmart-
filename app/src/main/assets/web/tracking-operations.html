@@ -139,52 +139,108 @@
     <p>نظرة عامة على حالة الشحن الجاري توزيعه عبر كافة الولايات الجزائرية</p>
 </div>
 
-<div class="stats-grid">
-    <div class="stat-card">
-        <div class="stat-val">342</div>
-        <div class="stat-lbl">شحنة في طريقها للتوصيل</div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-val">1,894</div>
-        <div class="stat-lbl">شحنة تم تسليمها بنجاح</div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-val">97.8%</div>
-        <div class="stat-lbl">نسبة نجاح التوصيل والتسليم المالي</div>
-    </div>
+<div class="stats-grid" id="statsGrid">
+    <!-- Populated dynamically -->
 </div>
 
-<div class="operations-list">
-    <div class="op-card">
-        <div class="op-head">
-            <strong style="font-size: 15px; color: var(--gold);">العملية #Z-9382</strong>
-            <span class="op-badge">تم التسليم ✓</span>
-        </div>
-        <div class="op-details">
-            <div><span class="op-lbl">الولاية:</span> <span class="op-val">سيدي بلعباس (22)</span></div>
-            <div><span class="op-lbl">شريك الشحن:</span> <span class="op-val">ياليدين اكسبريس (Yalidine)</span></div>
-            <div><span class="op-lbl">قيمة التحصيل (COD):</span> <span class="op-val">8,500 دج</span></div>
-            <div><span class="op-lbl">النوع:</span> <span class="op-val">توصيل للبيت</span></div>
-        </div>
-    </div>
-
-    <div class="op-card">
-        <div class="op-head">
-            <strong style="font-size: 15px; color: var(--gold);">العملية #Z-9381</strong>
-            <span class="op-badge transit">في الطريق للولاية 🚛</span>
-        </div>
-        <div class="op-details">
-            <div><span class="op-lbl">الولاية:</span> <span class="op-val">حاسي مسعود (ورقلة 30)</span></div>
-            <div><span class="op-lbl">شريك الشحن:</span> <span class="op-val">المنارة لوجستيك</span></div>
-            <div><span class="op-lbl">قيمة التحصيل (COD):</span> <span class="op-val">14,200 دج</span></div>
-            <div><span class="op-lbl">النوع:</span> <span class="op-val">استلام من المكتب</span></div>
-        </div>
-    </div>
+<div class="operations-list" id="operationsList">
+    <!-- Populated dynamically -->
 </div>
 
 <div style="text-align: center;">
     <a href="index.html" class="back-btn"><i class="fa-solid fa-house"></i> العودة للرئيسية</a>
 </div>
+
+<script>
+    const SEED_ORDERS = [
+        { orderId: "ord_1001", userId: "user_hadi", storeId: "store_salam", productId: "prod_galaxy_a07", status: "قيد المراجعة", total: 22000, qty: 1, paymentMethod: "COD", address: "حي ميعاد، المنيعة (غرداية 47)", phone: "0666112233", trackingNumber: "DZ-COD-1001-ZALO", timestamp: Date.now() - 3600000 * 2 },
+        { orderId: "ord_1002", userId: "user_hadi", storeId: "store_salam", productId: "prod_honor_x6c", status: "تم التسليم", total: 29000, qty: 1, paymentMethod: "BaridiMob", address: "بلدية حاسي الفحل (غرداية 47)", phone: "0666112233", trackingNumber: "DZ-BMOB-1002-ZALO", timestamp: Date.now() - 86400000 }
+    ];
+
+    function getLocalOrders() {
+        try {
+            const zaloOrders = localStorage.getItem('zalo_orders');
+            if (zaloOrders) {
+                return JSON.parse(zaloOrders);
+            }
+        } catch (e) {
+            console.error(e);
+        }
+        return SEED_ORDERS;
+    }
+
+    function renderOperations() {
+        const orders = getLocalOrders();
+
+        // Calculate stats
+        const activeShipments = orders.filter(o => {
+            const status = (o.status || '').toUpperCase();
+            return status !== 'تم التسليم' && status !== 'DELIVERED' && status !== 'CANCELLED' && status !== 'تم الإلغاء';
+        }).length;
+
+        const deliveredShipments = orders.filter(o => {
+            const status = (o.status || '').toUpperCase();
+            return status === 'تم التسليم' || status === 'DELIVERED';
+        }).length;
+
+        const successRate = orders.length > 0 
+            ? ((deliveredShipments / orders.length) * 100).toFixed(1) 
+            : '100.0';
+
+        // Render Stats Grid
+        const statsGrid = document.getElementById('statsGrid');
+        statsGrid.innerHTML = `
+            <div class="stat-card">
+                <div class="stat-val" id="stat-active">${activeShipments}</div>
+                <div class="stat-lbl">شحنة في طريقها للتوصيل</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-val" id="stat-delivered">${deliveredShipments}</div>
+                <div class="stat-lbl">شحنة تم تسليمها بنجاح</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-val" id="stat-rate">${successRate}%</div>
+                <div class="stat-lbl">نسبة نجاح التوصيل والتسليم المالي</div>
+            </div>
+        `;
+
+        // Render Operations List
+        const list = document.getElementById('operationsList');
+        if (orders.length === 0) {
+            list.innerHTML = `
+                <div style="text-align: center; padding: 30px; color: var(--gray); background: var(--card-bg); border-radius: 12px; border: 1px dashed var(--border);">
+                    <i class="fa-solid fa-route" style="font-size: 32px; color: var(--gold); margin-bottom: 10px;"></i>
+                    <p>لا توجد عمليات شحن نشطة في النظام حالياً.</p>
+                </div>
+            `;
+            return;
+        }
+
+        list.innerHTML = orders.map(o => {
+            const isDelivered = o.status === 'تم التسليم' || o.status === 'DELIVERED';
+            const badgeClass = isDelivered ? '' : 'transit';
+            const badgeText = isDelivered ? 'تم التسليم ✓' : 'في الطريق للولاية 🚛';
+            const partner = o.paymentMethod === 'BaridiMob' ? 'المنارة لوجستيك' : 'ياليدين اكسبريس (Yalidine)';
+
+            return `
+                <div class="op-card">
+                    <div class="op-head">
+                        <strong style="font-size: 15px; color: var(--gold);">العملية #${o.trackingNumber || o.orderId || o.id}</strong>
+                        <span class="op-badge ${badgeClass}">${badgeText}</span>
+                    </div>
+                    <div class="op-details">
+                        <div><span class="op-lbl">العنوان / الولاية:</span> <span class="op-val">${o.address || 'غرداية'}</span></div>
+                        <div><span class="op-lbl">شريك الشحن:</span> <span class="op-val">${partner}</span></div>
+                        <div><span class="op-lbl">قيمة التحصيل (COD):</span> <span class="op-val">${o.total || o.totalAmount || 0} دج</span></div>
+                        <div><span class="op-lbl">طريقة الدفع:</span> <span class="op-val">${o.paymentMethod || 'الدفع عند الاستلام'}</span></div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    document.addEventListener('DOMContentLoaded', renderOperations);
+</script>
 
 <div class="footer">
     &copy; 2026 منصة ZaLo Smart. جميع الحقوق محفوظة لجمهورية الجزائر الديمقراطية الشعبية.

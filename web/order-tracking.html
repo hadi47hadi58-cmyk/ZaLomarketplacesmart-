@@ -89,6 +89,7 @@
             border-radius: 12px;
             padding: 24px;
             display: none;
+            margin-bottom: 20px;
         }
         .tracking-status.active {
             display: block;
@@ -99,6 +100,8 @@
             border-bottom: 1px solid var(--border);
             padding-bottom: 12px;
             margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
         }
         .status-timeline {
             display: flex;
@@ -152,6 +155,33 @@
             font-size: 12px;
             color: var(--gray);
         }
+        .multiple-results {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            display: none;
+            margin-bottom: 20px;
+        }
+        .multiple-results.active {
+            display: block;
+        }
+        .order-option-card {
+            background: #070a08;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: 0.15s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .order-option-card:hover {
+            border-color: var(--gold);
+            background: rgba(212, 175, 55, 0.02);
+        }
         .footer {
             text-align: center;
             margin-top: 50px;
@@ -169,6 +199,7 @@
             margin-top: 20px;
             transition: 0.2s;
             border: 1px solid var(--border);
+            cursor: pointer;
         }
         .back-btn:hover {
             background: var(--g2);
@@ -184,11 +215,16 @@
 </div>
 
 <div class="search-box">
-    <label style="font-weight: 700; font-size: 15px;">أدخل رقم الطلب أو رقم الهاتف لتتبع الشحنة:</label>
+    <label style="font-weight: 700; font-size: 15px;">أدخل رقم الطلب، الهاتف، أو رقم التتبع لتتبع الشحنة:</label>
     <div class="input-group">
-        <input type="text" id="trackInput" placeholder="مثال: #9421 أو 0655xxxxxx">
+        <input type="text" id="trackInput" placeholder="مثال: ord_1001 أو 0666112233">
         <button class="btn-track" onclick="performTracking()">تتبع الآن <i class="fa-solid fa-search"></i></button>
     </div>
+</div>
+
+<div class="multiple-results" id="multipleResults">
+    <h3 style="font-size: 16px; color: var(--gold); margin-bottom: 15px;"><i class="fa-solid fa-list"></i> تم العثور على طلبيات متعددة مرتبطة برقمك:</h3>
+    <div id="multipleList"></div>
 </div>
 
 <div class="tracking-status" id="trackingResult">
@@ -199,40 +235,13 @@
         <div>
             <strong>الولاية المستهدفة:</strong> <span id="resWilaya" style="color: var(--gold);">غرداية (47)</span>
         </div>
+        <div>
+            <strong>الحالة الحالية:</strong> <span id="resStatus" style="font-weight: bold; color: #82e3a1;">قيد المراجعة</span>
+        </div>
     </div>
 
-    <div class="status-timeline">
-        <div class="timeline-item completed">
-            <div class="timeline-dot"><i class="fa-solid fa-check"></i></div>
-            <div class="timeline-content">
-                <div class="timeline-title">تم استلام وتأكيد الطلبية في المتجر</div>
-                <div class="timeline-desc">تم التثبيت الهاتفي والتحقق من العنوان وتجهيز المنتجات للفرز الجغرافي.</div>
-            </div>
-        </div>
-
-        <div class="timeline-item completed">
-            <div class="timeline-dot"><i class="fa-solid fa-box"></i></div>
-            <div class="timeline-content">
-                <div class="timeline-title">تم التسليم لشركة الشحن الشريكة</div>
-                <div class="timeline-desc">خرج الطرد من مركز التجميع لـ ZaLo نحو مركز التوزيع المركزي بولاية الجزائر.</div>
-            </div>
-        </div>
-
-        <div class="timeline-item completed">
-            <div class="timeline-dot"><i class="fa-solid fa-truck"></i></div>
-            <div class="timeline-content">
-                <div class="timeline-title">جاري التوصيل نحو الولاية المستهدفة</div>
-                <div class="timeline-desc">الطرد حالياً على متن شاحنة النقل اللوجستي المتجهة لفرع الاستلام بغرداية.</div>
-            </div>
-        </div>
-
-        <div class="timeline-item">
-            <div class="timeline-dot"><i class="fa-solid fa-handshake"></i></div>
-            <div class="timeline-content">
-                <div class="timeline-title">قيد التسليم والتحصيل الدفع عند الاستلام (COD)</div>
-                <div class="timeline-desc">سيقوم الموزع المحلي بالاتصال بكم هاتفياً لتسليم الطرد وتحصيل القيمة.</div>
-            </div>
-        </div>
+    <div class="status-timeline" id="timelineContainer">
+        <!-- Will be populated dynamically -->
     </div>
 </div>
 
@@ -241,24 +250,139 @@
 </div>
 
 <script>
+    // Load local seed orders if none exist
+    const SEED_ORDERS = [
+        { orderId: "ord_1001", userId: "user_hadi", storeId: "store_salam", productId: "prod_galaxy_a07", status: "قيد المراجعة", total: 22000, qty: 1, paymentMethod: "COD", address: "حي ميعاد، المنيعة", phone: "0666112233", trackingNumber: "DZ-COD-1001-ZALO", timestamp: Date.now() - 3600000 * 2 },
+        { orderId: "ord_1002", userId: "user_hadi", storeId: "store_salam", productId: "prod_honor_x6c", status: "تم التسليم", total: 29000, qty: 1, paymentMethod: "BaridiMob", address: "بلدية حاسي الفحل", phone: "0666112233", trackingNumber: "DZ-BMOB-1002-ZALO", timestamp: Date.now() - 86400000 }
+    ];
+
+    function getLocalOrders() {
+        try {
+            const zaloOrders = localStorage.getItem('zalo_orders');
+            if (zaloOrders) {
+                return JSON.parse(zaloOrders);
+            }
+        } catch (e) {
+            console.error(e);
+        }
+        return SEED_ORDERS;
+    }
+
     function performTracking() {
-        const input = document.getElementById('trackInput').value.trim();
+        const input = document.getElementById('trackInput').value.trim().toLowerCase();
         if (!input) {
-            alert('يرجى إدخال رقم الطلب أو الهاتف');
+            alert('يرجى إدخال رقم الطلب، الهاتف، أو رقم التتبع');
             return;
         }
-        
-        // Populate tracking text for visual satisfaction
-        if (input.startsWith('#') || input.length > 2) {
-            document.getElementById('resOrderId').textContent = input.startsWith('#') ? input : '#' + input;
-        } else {
-            document.getElementById('resOrderId').textContent = '#' + input;
+
+        const orders = getLocalOrders();
+        const results = orders.filter(o => {
+            const idMatch = o.orderId && o.orderId.toLowerCase().includes(input);
+            const numMatch = o.id && String(o.id).includes(input);
+            const phoneMatch = o.phone && o.phone.replace(/[\s\-\(\)]/g, '').includes(input.replace(/[\s\-\(\)]/g, ''));
+            const trackingMatch = o.trackingNumber && o.trackingNumber.toLowerCase().includes(input);
+            return idMatch || numMatch || phoneMatch || trackingMatch;
+        });
+
+        const multipleBox = document.getElementById('multipleResults');
+        const trackingBox = document.getElementById('trackingResult');
+
+        multipleBox.classList.remove('active');
+        trackingBox.classList.remove('active');
+
+        if (results.length === 0) {
+            alert('لم نجد أي طلبات مطابقة لبيانات البحث المدخلة. يرجى التحقق وإعادة المحاولة.');
+            return;
         }
-        
-        const wilayas = ["غرداية (47)", "الجزائر العاصمة (16)", "وهران (31)", "قسنطينة (25)", "سطيف (19)", "تلمسان (13)", "بشار (08)"];
-        const randomWilaya = wilayas[Math.floor(Math.random() * wilayas.length)];
-        document.getElementById('resWilaya').textContent = randomWilaya;
-        
+
+        if (results.length > 1) {
+            // Display selection list
+            const listContainer = document.getElementById('multipleList');
+            listContainer.innerHTML = results.map(o => `
+                <div class="order-option-card" onclick="displayTrackingDetail('${o.orderId || o.id}')">
+                    <div>
+                        <strong style="color: var(--gold);">طلب #${o.orderId || o.id}</strong>
+                        <div style="font-size: 11px; color: var(--gray); margin-top: 3px;">العنوان: ${o.address || 'غير محدد'}</div>
+                    </div>
+                    <div style="text-align: left;">
+                        <span style="font-size: 12px; font-weight: bold; color: #82e3a1;">${o.status}</span>
+                        <div style="font-size: 11px; color: var(--gray); margin-top: 3px;">بقيمة: ${o.total || o.totalAmount || 0} دج</div>
+                    </div>
+                </div>
+            `).join('');
+            multipleBox.classList.add('active');
+        } else {
+            // Display directly
+            displayTrackingDetail(results[0].orderId || results[0].id);
+        }
+    }
+
+    function displayTrackingDetail(orderId) {
+        const orders = getLocalOrders();
+        const order = orders.find(o => String(o.orderId || o.id) === String(orderId));
+        if (!order) return;
+
+        // Hide list if visible
+        document.getElementById('multipleResults').classList.remove('active');
+
+        document.getElementById('resOrderId').textContent = '#' + (order.orderId || order.id);
+        document.getElementById('resWilaya').textContent = order.address || 'المنيعة';
+        document.getElementById('resStatus').textContent = order.status;
+
+        const timelineContainer = document.getElementById('timelineContainer');
+        const status = (order.status || '').toUpperCase();
+
+        // Check timeline completion level
+        let step1 = true; // Received in store is always true
+        let step2 = false;
+        let step3 = false;
+        let step4 = false;
+
+        if (status === 'تم التسليم' || status === 'DELIVERED') {
+            step2 = true;
+            step3 = true;
+            step4 = true;
+        } else if (status === 'SHIPPING' || status === 'جاري التوصيل' || status === 'في الطريق للولاية' || status === 'في الطريق للولاية 🚛') {
+            step2 = true;
+            step3 = true;
+        } else if (status === 'CONFIRMED' || status === 'قيد التجهيز' || status === 'تم التأكيد') {
+            step2 = true;
+        }
+
+        timelineContainer.innerHTML = `
+            <div class="timeline-item ${step1 ? 'completed' : ''}">
+                <div class="timeline-dot"><i class="fa-solid fa-check"></i></div>
+                <div class="timeline-content">
+                    <div class="timeline-title">تم استلام وتأكيد الطلبية في المتجر</div>
+                    <div class="timeline-desc">تم التثبيت الهاتفي والتحقق من العنوان وتجهيز المنتجات للفرز الجغرافي.</div>
+                </div>
+            </div>
+
+            <div class="timeline-item ${step2 ? 'completed' : ''}">
+                <div class="timeline-dot"><i class="fa-solid fa-box"></i></div>
+                <div class="timeline-content">
+                    <div class="timeline-title">تم التسليم لشركة الشحن الشريكة</div>
+                    <div class="timeline-desc">خرج الطرد من مركز التجميع لـ ZaLo نحو مركز التوزيع المركزي بولاية الجزائر.</div>
+                </div>
+            </div>
+
+            <div class="timeline-item ${step3 ? 'completed' : ''}">
+                <div class="timeline-dot"><i class="fa-solid fa-truck"></i></div>
+                <div class="timeline-content">
+                    <div class="timeline-title">جاري التوصيل نحو الولاية المستهدفة</div>
+                    <div class="timeline-desc">الطرد حالياً على متن شاحنة النقل اللوجستي المتجهة لفرع الاستلام والتوزيع.</div>
+                </div>
+            </div>
+
+            <div class="timeline-item ${step4 ? 'completed' : ''}">
+                <div class="timeline-dot"><i class="fa-solid fa-handshake"></i></div>
+                <div class="timeline-content">
+                    <div class="timeline-title">تم التسليم والتحصيل الدفع عند الاستلام (COD)</div>
+                    <div class="timeline-desc">يقوم الموزع المحلي بتسليم الطرد للزبون والتحقق من تحصيل القيمة كاملة.</div>
+                </div>
+            </div>
+        `;
+
         document.getElementById('trackingResult').classList.add('active');
     }
 </script>

@@ -395,8 +395,6 @@ function initProductsPage() {
     let headerTitle = document.getElementById("category-header-title");
     if (!productsGrid) return;
 
-    productsGrid.innerHTML = "";
-
     let params = new URLSearchParams(window.location.search);
     let storeId = params.get("storeId");
     let catId = params.get("categoryId");
@@ -407,40 +405,80 @@ function initProductsPage() {
         headerTitle.innerText = chosenCat.categoryName;
     }
 
-    let products = DB.get("products", SEED_PRODUCTS).filter(p => p.storeId === storeId && p.categoryId === catId);
+    const baseProducts = DB.get("products", SEED_PRODUCTS).filter(p => p.storeId === storeId && p.categoryId === catId);
 
-    if (products.length === 0) {
-        productsGrid.innerHTML = `
-            <div class="col-span-full p-12 text-center text-slate-400 bg-slate-800/30 rounded-3xl border border-slate-700">
-                <i class="fa-solid fa-boxes-packing text-5xl text-slate-600 mb-3 block animate-bounce"></i>
-                <p class="font-bold">لا توجد منتجات متوفرة حالياً في هذا التصنيف.</p>
-                <a href="index.html" class="mt-4 inline-block bg-zalo-gold text-slate-900 px-4 py-2 rounded-full text-xs font-bold font-bold">العودة للمتجر الرئيسي</a>
-            </div>
-        `;
-        return;
+    function renderFilteredProducts() {
+        productsGrid.innerHTML = "";
+
+        const searchQuery = (document.getElementById("productSearchInp")?.value || "").trim().toLowerCase();
+        const sortValue = document.getElementById("productSortSel")?.value || "default";
+        const stockValue = document.getElementById("productStockSel")?.value || "all";
+
+        let filtered = [...baseProducts];
+
+        // 1. Search filter
+        if (searchQuery) {
+            filtered = filtered.filter(p => 
+                (p.productName || "").toLowerCase().includes(searchQuery) || 
+                (p.description || "").toLowerCase().includes(searchQuery)
+            );
+        }
+
+        // 2. Stock filter
+        if (stockValue === "instock") {
+            filtered = filtered.filter(p => (p.stock === undefined || p.stock > 0));
+        }
+
+        // 3. Sorting
+        if (sortValue === "price-asc") {
+            filtered.sort((a, b) => a.price - b.price);
+        } else if (sortValue === "price-desc") {
+            filtered.sort((a, b) => b.price - a.price);
+        } else if (sortValue === "name-asc") {
+            filtered.sort((a, b) => (a.productName || "").localeCompare(b.productName || "", "ar"));
+        }
+
+        if (filtered.length === 0) {
+            productsGrid.innerHTML = `
+                <div class="col-span-full p-12 text-center text-slate-400 bg-slate-800/30 rounded-3xl border border-slate-700">
+                    <i class="fa-solid fa-boxes-packing text-5xl text-slate-600 mb-3 block animate-bounce"></i>
+                    <p class="font-bold">لا توجد منتجات مطابقة لخيارات الفلترة الحالية.</p>
+                </div>
+            `;
+            return;
+        }
+
+        filtered.forEach(p => {
+            let card = document.createElement("div");
+            card.className = "zalo-card bg-slate-800/50 border border-slate-700 rounded-3xl overflow-hidden p-4 shadow-xl flex flex-col h-full";
+            card.innerHTML = `
+                <img src="${p.images ? p.images[0] : 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=300&q=80'}" class="w-full h-44 object-cover rounded-2xl shrink-0" alt="${p.productName}">
+                <div class="py-3 flex-1 text-right flex flex-col justify-between">
+                    <div>
+                        <h5 class="text-base font-black text-white font-bold">${p.productName}</h5>
+                        <p class="text-xs text-slate-400 mt-1 line-clamp-2">${p.description}</p>
+                        ${p.stock !== undefined ? `<span class="text-[11px] font-bold mt-1 inline-block ${p.stock > 0 ? 'text-[#82e3a1]' : 'text-[#ff4d4d]'}">المخزون: ${p.stock} قطعة</span>` : ''}
+                    </div>
+                    <div class="mt-4 flex items-center justify-between border-t border-slate-700/50 pt-3">
+                        <span class="text-base font-black text-zalo-gold font-bold">${p.price.toLocaleString()} دج</span>
+                        <button class="bg-gradient-to-tr from-sky-400 to-sky-600 text-white font-bold text-xs px-4 py-2 rounded-full hover:from-sky-500 transition font-bold shadow-md">شراء المنتج</button>
+                    </div>
+                </div>
+            `;
+            card.querySelector("button").addEventListener("click", () => {
+                window.location.href = `product-details.html?productId=${p.productId}`;
+            });
+            productsGrid.appendChild(card);
+        });
     }
 
-    products.forEach(p => {
-        let card = document.createElement("div");
-        card.className = "zalo-card bg-slate-800/50 border border-slate-700 rounded-3xl overflow-hidden p-4 shadow-xl flex flex-col h-full";
-        card.innerHTML = `
-            <img src="${p.images ? p.images[0] : 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=300&q=80'}" class="w-full h-44 object-cover rounded-2xl shrink-0" alt="${p.productName}">
-            <div class="py-3 flex-1 text-right flex flex-col justify-between">
-                <div>
-                    <h5 class="text-base font-black text-white font-bold">${p.productName}</h5>
-                    <p class="text-xs text-slate-400 mt-1 line-clamp-2">${p.description}</p>
-                </div>
-                <div class="mt-4 flex items-center justify-between border-t border-slate-700/50 pt-3">
-                    <span class="text-base font-black text-zalo-gold font-bold">${p.price.toLocaleString()} دج</span>
-                    <button class="bg-gradient-to-tr from-sky-400 to-sky-600 text-white font-bold text-xs px-4 py-2 rounded-full hover:from-sky-500 transition font-bold shadow-md">شراء المنتج</button>
-                </div>
-            </div>
-        `;
-        card.querySelector("button").addEventListener("click", () => {
-            window.location.href = `product-details.html?productId=${p.productId}`;
-        });
-        productsGrid.appendChild(card);
-    });
+    // Attach listeners
+    document.getElementById("productSearchInp")?.addEventListener("input", renderFilteredProducts);
+    document.getElementById("productSortSel")?.addEventListener("change", renderFilteredProducts);
+    document.getElementById("productStockSel")?.addEventListener("change", renderFilteredProducts);
+
+    // Initial render
+    renderFilteredProducts();
 }
 
 function initProductDetailsPage() {

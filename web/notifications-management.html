@@ -172,7 +172,7 @@
                 <div class="setting-desc">استلام تقرير مبيعات يومي وفواتير ورخص الشركاء على بريدك المعتمد.</div>
             </div>
             <label class="switch">
-                <input type="checkbox" checked>
+                <input type="checkbox" id="pref-email" checked>
                 <span class="slider"></span>
             </label>
         </div>
@@ -185,7 +185,7 @@
                 <div class="setting-desc">إشعار فوري عبر شريحة الهاتف (Mobilis, Djezzy, Ooredoo) فور تأكيد الشحنة.</div>
             </div>
             <label class="switch">
-                <input type="checkbox" checked>
+                <input type="checkbox" id="pref-sms" checked>
                 <span class="slider"></span>
             </label>
         </div>
@@ -198,7 +198,7 @@
                 <div class="setting-desc">إرسال تنبيه في اللحظة التي يتم فيها إيداع مبالغ مبيعاتك في CCP.</div>
             </div>
             <label class="switch">
-                <input type="checkbox" checked>
+                <input type="checkbox" id="pref-baridi" checked>
                 <span class="slider"></span>
             </label>
         </div>
@@ -211,20 +211,51 @@
                 <div class="setting-desc">تلقي تنبيهات منبثقة فورية عبر المتصفح وجهاز الأندرويد لرسائل الدعم الفني.</div>
             </div>
             <label class="switch">
-                <input type="checkbox">
+                <input type="checkbox" id="pref-push">
                 <span class="slider"></span>
             </label>
         </div>
     </div>
 
     <div style="margin-top: 25px;">
-        <button class="btn-save" onclick="alert('تم حفظ الإعدادات بنجاح في ملفك الشخصي الموحد!')">حفظ تفضيلات الإشعارات <i class="fa-solid fa-save"></i></button>
+        <button class="btn-save" onclick="savePreferences()">حفظ تفضيلات الإشعارات <i class="fa-solid fa-save"></i></button>
     </div>
 </div>
 
 <div style="text-align: center;">
     <a href="index.html" class="back-btn"><i class="fa-solid fa-house"></i> العودة للرئيسية</a>
 </div>
+
+<script>
+    function loadPreferences() {
+        const defaultPrefs = {
+            email: true,
+            sms: true,
+            baridi: true,
+            push: false
+        };
+        const saved = localStorage.getItem('zalo_notification_preferences');
+        const prefs = saved ? JSON.parse(saved) : defaultPrefs;
+
+        document.getElementById('pref-email').checked = prefs.email;
+        document.getElementById('pref-sms').checked = prefs.sms;
+        document.getElementById('pref-baridi').checked = prefs.baridi;
+        document.getElementById('pref-push').checked = prefs.push;
+    }
+
+    function savePreferences() {
+        const prefs = {
+            email: document.getElementById('pref-email').checked,
+            sms: document.getElementById('pref-sms').checked,
+            baridi: document.getElementById('pref-baridi').checked,
+            push: document.getElementById('pref-push').checked
+        };
+        localStorage.setItem('zalo_notification_preferences', JSON.stringify(prefs));
+        alert('تم حفظ تفضيلات الإشعارات بنجاح في ملفك الشخصي الموحد! ✨');
+    }
+
+    document.addEventListener('DOMContentLoaded', loadPreferences);
+</script>
 
 <div class="footer">
     &copy; 2026 منصة ZaLo Smart. جميع الحقوق محفوظة لجمهورية الجزائر الديمقراطية الشعبية.
