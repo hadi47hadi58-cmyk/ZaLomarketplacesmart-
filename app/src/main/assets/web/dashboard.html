@@ -977,7 +977,7 @@
 
 <div id="toast">✅ تم حفظ الإجراء بالنجاح المعتمد</div>
 
-<!-- Firebase scripts with fix -->
+<!-- Compatibility scripts with fix -->
 <script type="module">
 import {
   initializeApp,
@@ -1742,7 +1742,7 @@ window.saveProduct = async function() {
   }
 
   if (window.editingProductId) {
-    // 1. Update in Firebase Firestore
+    // 1. Update in database
     try {
       const updateData = {
         name, 
@@ -1766,13 +1766,13 @@ window.saveProduct = async function() {
       await updateDoc(doc(db, 'products', window.editingProductId), updateData);
       showToast('✅ تم تحديث بيانات المعروض بنجاح!');
     } catch(e) {
-      console.error("Firestore update error:", e);
+      console.error("Database update error:", e);
       showToast('⚠️ حدث خطأ في النظام أثناء محاولة الحفظ');
     }
 
     window.editingProductId = null;
   } else {
-    // 1. Save to Firebase Firestore
+    // 1. Save to database
     try {
       await addDoc(collection(db, 'products'), {
         name, 

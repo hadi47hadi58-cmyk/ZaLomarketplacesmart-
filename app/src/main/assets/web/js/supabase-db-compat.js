@@ -1,5 +1,5 @@
 // ZaLo Smart Marketplace - Supabase & NestJS Unified Compatibility Layer
-// This file acts as a drop-in replacement for the Firebase modular SDK,
+// This file acts as a drop-in compatibility replacement module,
 // routing all operations completely and cleanly through Supabase AND our NestJS + PostgreSQL Backend.
 
 import { supabase } from './supabase-config.js';
@@ -181,7 +181,10 @@ export function initializeApp() {
 }
 
 export function getAuth() {
-    return { name: "ZaLo-Unified-Auth-Compat" };
+    return { 
+        name: "ZaLo-Unified-Auth-Compat",
+        signOut: async () => { return await signOut(); }
+    };
 }
 
 export function getFirestore() {
@@ -269,6 +272,27 @@ export function onAuthStateChanged(auth, callback) {
         } catch (e) {
             console.warn("Patient session check error:", e);
         }
+
+        // Fallback for local session / NestJS token
+        const localToken = localStorage.getItem('zalo_session_jwt') || localStorage.getItem('nestjs_token');
+        const localEmail = localStorage.getItem('zalo_user_email') || localStorage.getItem('loggedInAdminEmail');
+        if (localToken && localEmail) {
+            console.log("[ZaLo Compat Engine] Local/NestJS session fallback detected for:", localEmail);
+            if (timeoutId) clearTimeout(timeoutId);
+            isSetted = true;
+            const fallbackUser = {
+                uid: localStorage.getItem('zalo_uid') || 'local-user-id-' + localEmail.split('@')[0],
+                id: localStorage.getItem('zalo_uid') || 'local-user-id-' + localEmail.split('@')[0],
+                email: localEmail,
+                email_confirmed_at: new Date().toISOString(),
+                user_metadata: {
+                    full_name: localStorage.getItem('zalo_user_name') || localStorage.getItem('loggedInAdminName') || localEmail.split('@')[0],
+                    role: localStorage.getItem('zalo_user_role') || localStorage.getItem('zalo_role') || 'CUSTOMER'
+                }
+            };
+            triggerCallback(fallbackUser);
+            return true;
+        }
         return false;
     };
 
@@ -301,7 +325,22 @@ export function onAuthStateChanged(auth, callback) {
             };
             triggerCallback(user);
         } else {
-            if (isSetted) {
+            // Check if local token/session is still active before declaring null
+            const localToken = localStorage.getItem('zalo_session_jwt') || localStorage.getItem('nestjs_token');
+            const localEmail = localStorage.getItem('zalo_user_email') || localStorage.getItem('loggedInAdminEmail');
+            if (localToken && localEmail) {
+                const fallbackUser = {
+                    uid: localStorage.getItem('zalo_uid') || 'local-user-id-' + localEmail.split('@')[0],
+                    id: localStorage.getItem('zalo_uid') || 'local-user-id-' + localEmail.split('@')[0],
+                    email: localEmail,
+                    email_confirmed_at: new Date().toISOString(),
+                    user_metadata: {
+                        full_name: localStorage.getItem('zalo_user_name') || localStorage.getItem('loggedInAdminName') || localEmail.split('@')[0],
+                        role: localStorage.getItem('zalo_user_role') || localStorage.getItem('zalo_role') || 'CUSTOMER'
+                    }
+                };
+                triggerCallback(fallbackUser);
+            } else if (isSetted) {
                 triggerCallback(null);
             }
         }
@@ -309,9 +348,26 @@ export function onAuthStateChanged(auth, callback) {
 
     timeoutId = setTimeout(() => {
         if (!isSetted) {
-            console.log("onAuthStateChanged: Settle timeout reached, fallback to null.");
-            isSetted = true;
-            triggerCallback(null);
+            console.log("onAuthStateChanged: Settle timeout reached, checking local fallback.");
+            const localToken = localStorage.getItem('zalo_session_jwt') || localStorage.getItem('nestjs_token');
+            const localEmail = localStorage.getItem('zalo_user_email') || localStorage.getItem('loggedInAdminEmail');
+            if (localToken && localEmail) {
+                isSetted = true;
+                const fallbackUser = {
+                    uid: localStorage.getItem('zalo_uid') || 'local-user-id-' + localEmail.split('@')[0],
+                    id: localStorage.getItem('zalo_uid') || 'local-user-id-' + localEmail.split('@')[0],
+                    email: localEmail,
+                    email_confirmed_at: new Date().toISOString(),
+                    user_metadata: {
+                        full_name: localStorage.getItem('zalo_user_name') || localStorage.getItem('loggedInAdminName') || localEmail.split('@')[0],
+                        role: localStorage.getItem('zalo_user_role') || localStorage.getItem('zalo_role') || 'CUSTOMER'
+                    }
+                };
+                triggerCallback(fallbackUser);
+            } else {
+                isSetted = true;
+                triggerCallback(null);
+            }
         }
     }, maxWaitMs);
 
@@ -322,9 +378,32 @@ export function onAuthStateChanged(auth, callback) {
 }
 
 export async function signOut() {
-    localStorage.removeItem('nestjs_token');
-    localStorage.removeItem('nestjs_user');
-    return await supabase.auth.signOut();
+    console.log("[ZaLo Compat Engine] Comprehensive signOut triggered. Clearing all session data...");
+    
+    // Clear all LocalStorage session-related keys
+    const keysToRemove = [
+        'nestjs_token', 'nestjs_user',
+        'zalo_session_jwt', 'zalo_token',
+        'zalo_user_role', 'zalo_role',
+        'zalo_user_email', 'zalo_user_name',
+        'zalo_active_session', 'user_email',
+        'loggedInAdminEmail', 'loggedInAdminName'
+    ];
+    keysToRemove.forEach(k => localStorage.removeItem(k));
+
+    // Clear all SessionStorage keys
+    const sessionKeysToRemove = [
+        'admin_logged_in_session', 'admin_security_unlocked',
+        'zalo_admin_role', 'user_logged_in'
+    ];
+    sessionKeysToRemove.forEach(k => sessionStorage.removeItem(k));
+
+    try {
+        await supabase.auth.signOut();
+    } catch (e) {
+        console.warn("[ZaLo Compat Engine] Supabase signOut error (ignoring):", e.message);
+    }
+    return { success: true };
 }
 
 export async function signInWithEmailAndPassword(auth, email, password) {

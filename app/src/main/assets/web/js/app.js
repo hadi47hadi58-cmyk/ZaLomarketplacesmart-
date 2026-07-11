@@ -106,7 +106,31 @@ function loginUser(email, password, role) {
 }
 
 function logoutUser() {
-    DB.set("active_session", null);
+    console.log("[ZaLo App] Logging out user and clearing all local/session storage...");
+    
+    // Clear all LocalStorage session-related keys
+    const keysToRemove = [
+        'zalo_session_jwt', 'zalo_token',
+        'zalo_user_role', 'zalo_role',
+        'zalo_user_email', 'zalo_user_name',
+        'zalo_active_session', 'user_email',
+        'loggedInAdminEmail', 'loggedInAdminName',
+        'nestjs_token', 'nestjs_user'
+    ];
+    keysToRemove.forEach(k => localStorage.removeItem(k));
+
+    // Clear all SessionStorage keys
+    const sessionKeysToRemove = [
+        'admin_logged_in_session', 'admin_security_unlocked',
+        'zalo_admin_role', 'user_logged_in'
+    ];
+    sessionKeysToRemove.forEach(k => sessionStorage.removeItem(k));
+
+    // Also clear our DB cache for active session
+    if (typeof DB !== 'undefined' && DB.set) {
+        DB.set("active_session", null);
+    }
+    
     window.location.href = "login.html";
 }
 

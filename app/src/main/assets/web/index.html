@@ -2205,7 +2205,7 @@ window.submitMerchant=async()=>{
     
     let finalUid = 'REG-' + Date.now().toString().slice(-6);
 
-    // Automatically provision user credentials directly to Firebase Auth & users/shops collections
+    // Automatically provision user credentials directly to Auth & users/shops collections
     try {
       const cred = await cue(window._auth, email, pass);
       const user = cred.user;
@@ -2245,7 +2245,7 @@ window.submitMerchant=async()=>{
         subscription: 'basic',
         createdAt: sts()
       });
-      console.log('Firebase Auth & Firestore Merchant documents successfully auto-created.');
+      console.log('Auth & Database Merchant documents successfully auto-created.');
     } catch (authErr) {
       console.warn("Auto-provision of Auth profile skipped (might already exist in Auth database):", authErr);
     }
@@ -2890,12 +2890,12 @@ window.doSearch = async (q) => {
             matches.push({ id: d.id, ...p });
           }
         });
-      } catch (fbErr) {
-        console.warn("[Search Fallover] Firebase search failed, switching to Local DB:", fbErr);
-        throw fbErr;
+      } catch (dbErr) {
+        console.warn("[Search Fallover] Remote database search failed, switching to Local DB:", dbErr);
+        throw dbErr;
       }
     } else {
-      throw new Error("No Firestore available");
+      throw new Error("No database available");
     }
 
     if (matches.length === 0) {
