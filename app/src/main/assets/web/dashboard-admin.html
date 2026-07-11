@@ -228,7 +228,30 @@
       };
 
       // تحميل الطلبات عند فتح الصفحة
-      document.addEventListener('DOMContentLoaded', loadRequests);
+      document.addEventListener('DOMContentLoaded', () => {
+        loadRequests();
+        
+        // Handle all buttons with close-btn class or modal-close class
+        const closeButtons = document.querySelectorAll('.close-btn, .modal-close');
+        closeButtons.forEach(btn => {
+          btn.addEventListener('click', function() {
+            const modal = this.closest('.modal') || this.closest('[id$="Modal"]');
+            if (modal) {
+              modal.style.display = 'none';
+              modal.classList.remove('open');
+            }
+          });
+        });
+      });
+
+      // دالة عالمية لإغلاق النوافذ المنبثقة
+      window.closeModal = function(id) {
+        const modal = document.getElementById(id);
+        if (modal) {
+          modal.style.display = 'none';
+          modal.classList.remove('open');
+        }
+      };
     </script>
 </body>
 </html>

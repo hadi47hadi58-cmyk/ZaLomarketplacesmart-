@@ -2435,8 +2435,26 @@ window.showPage = function(page) {
 };
 
 window.closeModal = function(id) {
-  document.getElementById(id).classList.remove('open');
+  const modal = document.getElementById(id);
+  if (modal) {
+    modal.classList.remove('open');
+    modal.style.display = 'none';
+  }
 };
+
+// Add DOMContentLoaded or general event handler for closing modals in admin.html
+document.addEventListener('DOMContentLoaded', function() {
+  const closeButtons = document.querySelectorAll('.modal-close, .close-btn');
+  closeButtons.forEach(btn => {
+    btn.addEventListener('click', function() {
+      const modal = this.closest('.modal-overlay') || this.closest('.modal') || this.closest('[id$="Modal"]');
+      if (modal) {
+        modal.classList.remove('open');
+        modal.style.display = 'none';
+      }
+    });
+  });
+});
 
 window.viewDoc = function(base64Data, title) {
   const titleEl = document.getElementById('docViewerTitle');
