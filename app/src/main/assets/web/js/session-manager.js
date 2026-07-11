@@ -47,7 +47,7 @@ export class SessionManager {
     const path = window.location.pathname;
 
     const isGuestPage = path.includes('login.html') || path.includes('register-step1.html') || path.includes('register-step2.html') || path.includes('register-step3.html');
-    const isProtectedPage = path.includes('dashboard') || path.includes('admin.html') || path.includes('customer-home.html');
+    const isProtectedPage = path.includes('dashboard') || path.includes('customer-home.html');
 
     if (isAuth && isGuestPage) {
       console.log(`[SessionManager] Authenticated user on guest page. Redirecting to appropriate home.`);
@@ -68,11 +68,11 @@ export class SessionManager {
     const currentPath = window.location.pathname;
 
     if (cleanRole === 'ADMIN') {
-      if (!currentPath.includes('admin.html')) {
-        window.location.href = 'admin.html';
+      if (!currentPath.includes('dashboard-admin.html')) {
+        window.location.href = 'dashboard-admin.html';
       }
     } else if (cleanRole === 'MERCHANT') {
-      if (!currentPath.includes('dashboard.html') && !currentPath.includes('dashboard-store.html')) {
+      if (!currentPath.includes('dashboard-store.html')) {
         window.location.href = 'dashboard-store.html';
       }
     } else {

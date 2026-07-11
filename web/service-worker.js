@@ -2,12 +2,14 @@
 // Version: zalo-v8
 // Manages offline assets caching, dynamic routing, and strict cache-invalidation / update propagation.
 
-const CACHE_NAME = 'zalo-v8';
+const CACHE_NAME = 'zalo-v9';
 const ASSETS = [
   './',
   './index.html',
   './login.html',
-  './dashboard.html',
+  './dashboard-store.html',
+  './dashboard-admin.html',
+  './customer-home.html',
   './assets/logo.svg',
   './css/style.css',
   './assets/icon-192.svg',

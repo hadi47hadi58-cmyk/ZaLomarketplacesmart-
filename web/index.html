@@ -1840,17 +1840,17 @@ onAuthStateChanged(auth, async (u) => {
         closeSide();
         // Redirect to dashboard based on role
         if (AD_LIST.includes(userEmail.toLowerCase().trim())) {
-          window.location.href = 'admin.html';
+          window.location.href = 'dashboard-admin.html';
         } else {
           supabase.from('profiles').select('*').eq('id', u.uid).maybeSingle().then(({ data: profile }) => {
             if (profile && profile.role === 'merchant') {
-              window.location.href = 'dashboard.html';
+              window.location.href = 'dashboard-store.html';
             } else if (profile && profile.role === 'admin') {
-              window.location.href = 'admin.html';
+              window.location.href = 'dashboard-admin.html';
             } else {
               supabase.from('shops').select('*').eq('id', u.uid).maybeSingle().then(({ data: shop }) => {
                 if (shop) {
-                  window.location.href = 'dashboard.html';
+                  window.location.href = 'dashboard-store.html';
                 } else {
                   window.location.href = 'customer-home.html';
                 }
@@ -1890,17 +1890,17 @@ onAuthStateChanged(auth, async (u) => {
       `;
       bottomLoginBtn.onclick = () => {
         if (AD_LIST.includes(userEmail.toLowerCase().trim())) {
-          window.location.href = 'admin.html';
+          window.location.href = 'dashboard-admin.html';
         } else {
           supabase.from('profiles').select('*').eq('id', u.uid).maybeSingle().then(({ data: profile }) => {
             if (profile && profile.role === 'merchant') {
-              window.location.href = 'dashboard.html';
+              window.location.href = 'dashboard-store.html';
             } else if (profile && profile.role === 'admin') {
-              window.location.href = 'admin.html';
+              window.location.href = 'dashboard-admin.html';
             } else {
               supabase.from('shops').select('*').eq('id', u.uid).maybeSingle().then(({ data: shop }) => {
                 if (shop) {
-                  window.location.href = 'dashboard.html';
+                  window.location.href = 'dashboard-store.html';
                 } else {
                   window.location.href = 'customer-home.html';
                 }
@@ -1952,11 +1952,39 @@ onAuthStateChanged(auth, async (u) => {
 window.logoutCustomerAccount = async function() {
   if (confirm('هل تود بالتأكيد الخروج من حسابك المنظم؟')) {
     try {
+      // Clear all Supabase related keys in localStorage (starting with sb-)
+      try {
+          for (let i = localStorage.length - 1; i >= 0; i--) {
+              const key = localStorage.key(i);
+              if (key && (key.startsWith('sb-') || key.includes('supabase'))) {
+                  localStorage.removeItem(key);
+              }
+          }
+      } catch (e) {
+          console.warn("Error clearing Supabase local storage keys:", e);
+      }
+
       await auth.signOut();
-      localStorage.removeItem('user_uid');
-      localStorage.removeItem('user_email');
-      localStorage.removeItem('user_role');
-      sessionStorage.removeItem('user_logged_in');
+
+      // Clear all LocalStorage session-related keys
+      const keysToRemove = [
+          'user_uid', 'user_email', 'user_role',
+          'zalo_session_jwt', 'zalo_token',
+          'zalo_user_role', 'zalo_role',
+          'zalo_user_email', 'zalo_user_name',
+          'zalo_active_session',
+          'loggedInAdminEmail', 'loggedInAdminName',
+          'nestjs_token', 'nestjs_user'
+      ];
+      keysToRemove.forEach(k => localStorage.removeItem(k));
+
+      // Clear all SessionStorage keys
+      const sessionKeysToRemove = [
+          'user_logged_in',
+          'admin_logged_in_session', 'admin_security_unlocked',
+          'zalo_admin_role'
+      ];
+      sessionKeysToRemove.forEach(k => sessionStorage.removeItem(k));
       
       // Clear customer session
       if (window.clearCustomerSession) window.clearCustomerSession();

@@ -1130,9 +1130,9 @@
 
       const email = currentUser.email ? currentUser.email.toLowerCase().trim() : "";
       if (AD_LIST.includes(email)) {
-        console.log("Admin user detected. Redirecting to admin.html...");
+        console.log("Admin user detected. Redirecting to dashboard-admin.html...");
         sessionStorage.setItem('admin_logged_in_session', 'true');
-        window.location.href = "admin.html";
+        window.location.href = "dashboard-admin.html";
         return;
       }
       
@@ -1218,9 +1218,9 @@
 
         const email = currentUser.email ? currentUser.email.toLowerCase().trim() : "";
         if (AD_LIST.includes(email)) {
-          console.log("Admin user detected in auth change. Redirecting to admin.html...");
+          console.log("Admin user detected in auth change. Redirecting to dashboard-admin.html...");
           sessionStorage.setItem('admin_logged_in_session', 'true');
-          window.location.href = "admin.html";
+          window.location.href = "dashboard-admin.html";
           return;
         }
         

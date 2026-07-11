@@ -114,7 +114,7 @@ window.handleUserRedirect = async function() {
     const currentPath = window.location.pathname;
     
     // فحص المسار الحالي للتأكد من عدم التكرار اللانهائي - مطابقة حقيقية للملفات القديمة الفعالة
-    const isAlreadyOnAdmin = currentPath.endsWith('admin.html');
+    const isAlreadyOnAdmin = currentPath.endsWith('dashboard-admin.html');
     const isAlreadyOnDashboard = currentPath.endsWith('dashboard.html') || currentPath.endsWith('dashboard-store.html');
     const isAlreadyOnCustomer = currentPath.endsWith('customer-home.html');
 
@@ -122,8 +122,8 @@ window.handleUserRedirect = async function() {
 
     if (role === 'ADMIN') {
         if (!isAlreadyOnAdmin) {
-            console.log("[Role Routing] جاري توجيه المدير إلى صفحة لوحة التحكم الإدارية القديمة والكاملة (admin.html)...");
-            window.location.replace('admin.html');
+            console.log("[Role Routing] جاري توجيه المدير إلى صفحة لوحة التحكم الإدارية النهائية (dashboard-admin.html)...");
+            window.location.replace('dashboard-admin.html');
         }
     } else if (role === 'MERCHANT') {
         if (!isAlreadyOnDashboard) {

@@ -104,7 +104,7 @@ export class LoginHandler {
     // Store in SessionStorage for fallback compatibility
     if (cleanRole === 'ADMIN') {
       sessionStorage.setItem('admin_logged_in_session', 'true');
-      window.location.href = 'admin.html';
+      window.location.href = 'dashboard-admin.html';
     } else if (cleanRole === 'MERCHANT') {
       window.location.href = 'dashboard-store.html';
     } else {
@@ -136,7 +136,7 @@ export class LoginHandler {
           role: role,
           email: response.user?.email || email,
           name: response.user?.name || '',
-          redirectUrl: role.toUpperCase() === 'ADMIN' ? 'admin.html' : (role.toUpperCase() === 'MERCHANT' ? 'dashboard-store.html' : 'customer-home.html')
+          redirectUrl: role.toUpperCase() === 'ADMIN' ? 'dashboard-admin.html' : (role.toUpperCase() === 'MERCHANT' ? 'dashboard-store.html' : 'customer-home.html')
         };
       }
       return { success: false, message: 'لم يتم استلام توكن أمني صالح من الخادم.' };
@@ -164,7 +164,7 @@ export class LoginHandler {
             role: role,
             email: user?.email || email,
             name: user?.user_metadata?.full_name || '',
-            redirectUrl: role.toUpperCase() === 'ADMIN' ? 'admin.html' : (role.toUpperCase() === 'MERCHANT' ? 'dashboard-store.html' : 'customer-home.html')
+            redirectUrl: role.toUpperCase() === 'ADMIN' ? 'dashboard-admin.html' : (role.toUpperCase() === 'MERCHANT' ? 'dashboard-store.html' : 'customer-home.html')
           };
         }
         return { success: false, message: res.error?.message || err.message || 'البريد الإلكتروني أو كلمة المرور غير صحيحة.' };

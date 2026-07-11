@@ -108,6 +108,23 @@ function loginUser(email, password, role) {
 function logoutUser() {
     console.log("[ZaLo App] Logging out user and clearing all local/session storage...");
     
+    // Clear all Supabase related keys in localStorage (starting with sb-)
+    try {
+        for (let i = localStorage.length - 1; i >= 0; i--) {
+            const key = localStorage.key(i);
+            if (key && (key.startsWith('sb-') || key.includes('supabase'))) {
+                localStorage.removeItem(key);
+            }
+        }
+    } catch (e) {
+        console.warn("Error clearing Supabase local storage keys:", e);
+    }
+
+    // Call Supabase signOut if available
+    if (window.supabase && window.supabase.auth && typeof window.supabase.auth.signOut === 'function') {
+        window.supabase.auth.signOut().catch(err => console.warn("Supabase signOut error:", err));
+    }
+
     // Clear all LocalStorage session-related keys
     const keysToRemove = [
         'zalo_session_jwt', 'zalo_token',
@@ -399,13 +416,13 @@ function initLoginPage() {
                     window.location.href = "customer-home.html";
                     break;
                 case "merchant":
-                    window.location.href = "dashboard.html";
+                    window.location.href = "dashboard-store.html";
                     break;
                 case "admin":
-                    window.location.href = "admin.html";
+                    window.location.href = "dashboard-admin.html";
                     break;
                 case "manager":
-                    window.location.href = "admin.html";
+                    window.location.href = "dashboard-admin.html";
                     break;
                 default:
                     window.location.href = "customer-home.html";

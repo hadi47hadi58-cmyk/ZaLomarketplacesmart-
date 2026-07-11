@@ -700,7 +700,7 @@ function updateApplicationUI(status) {
     container.style.color = '#4ade80';
     container.innerHTML = `
       <div style="margin-bottom: 12px; line-height: 1.5;">✅ حسابك شريك معتمد ونشط بالمنصة! يمكنك الدخول كتاجر.</div>
-      <button onclick="window.location.href='dashboard.html'" class="btn-primary" style="background: #22c55e; color: #fff; width: 100%; border: none; font-weight: bold; padding: 12px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 15px rgba(34,197,94,0.3);">
+      <button onclick="window.location.href='dashboard-store.html'" class="btn-primary" style="background: #22c55e; color: #fff; width: 100%; border: none; font-weight: bold; padding: 12px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 15px rgba(34,197,94,0.3);">
         <i class="fa-solid fa-gauge-high"></i> الدخول إلى لوحة تحكم متجري 📦
       </button>
     `;
@@ -977,8 +977,8 @@ onAuthStateChanged(auth, async (user) => {
       
     if (profile && profile.role && profile.role !== 'customer') {
       console.log("PageGuard: Access restricted for non-customer:", profile.role);
-      if (profile.role === 'admin') window.location.href = 'admin.html';
-      else if (profile.role === 'merchant') window.location.href = 'dashboard.html';
+      if (profile.role === 'admin') window.location.href = 'dashboard-admin.html';
+      else if (profile.role === 'merchant') window.location.href = 'dashboard-store.html';
       else window.location.href = 'index.html';
       return;
     }
