@@ -76,7 +76,9 @@ export class LoginHandler {
         if (response && response.access_token) {
           // Store securely
           localStorage.setItem('zalo_session_jwt', response.access_token);
+          localStorage.setItem('zalo_token', response.access_token);
           localStorage.setItem('zalo_user_role', response.user.role);
+          localStorage.setItem('zalo_role', response.user.role);
           localStorage.setItem('zalo_user_email', response.user.email);
           localStorage.setItem('zalo_user_name', response.user.name);
           localStorage.setItem('zalo_device_fingerprint', fingerprint);
@@ -104,7 +106,7 @@ export class LoginHandler {
       sessionStorage.setItem('admin_logged_in_session', 'true');
       window.location.href = 'admin.html';
     } else if (cleanRole === 'MERCHANT') {
-      window.location.href = 'dashboard.html';
+      window.location.href = 'dashboard-store.html';
     } else {
       window.location.href = 'customer-home.html';
     }
@@ -118,13 +120,23 @@ export class LoginHandler {
       const { nestjsLogin } = await import('./nestjs-bridge.js');
       const response = await nestjsLogin(email, password);
       if (response && response.access_token) {
+        const role = response.user?.role || 'CUSTOMER';
+        
+        // Save the updated token and role to localStorage
+        localStorage.setItem('zalo_session_jwt', response.access_token);
+        localStorage.setItem('zalo_token', response.access_token);
+        localStorage.setItem('zalo_user_role', role);
+        localStorage.setItem('zalo_role', role);
+        localStorage.setItem('zalo_user_email', response.user?.email || email);
+        localStorage.setItem('zalo_user_name', response.user?.name || '');
+
         return {
           success: true,
           token: response.access_token,
-          role: response.user?.role || 'CUSTOMER',
+          role: role,
           email: response.user?.email || email,
           name: response.user?.name || '',
-          redirectUrl: (response.user?.role || 'CUSTOMER').toUpperCase() === 'ADMIN' ? 'admin.html' : ((response.user?.role || 'CUSTOMER').toUpperCase() === 'MERCHANT' ? 'dashboard.html' : 'customer-home.html')
+          redirectUrl: role.toUpperCase() === 'ADMIN' ? 'admin.html' : (role.toUpperCase() === 'MERCHANT' ? 'dashboard-store.html' : 'customer-home.html')
         };
       }
       return { success: false, message: 'لم يتم استلام توكن أمني صالح من الخادم.' };
@@ -137,13 +149,22 @@ export class LoginHandler {
           const user = res.data.user;
           const session = res.data.session;
           const role = user?.user_metadata?.role || localStorage.getItem('zalo_user_role') || 'CUSTOMER';
+          
+          // Save the updated token and role to localStorage
+          localStorage.setItem('zalo_session_jwt', session?.access_token || 'mock-token');
+          localStorage.setItem('zalo_token', session?.access_token || 'mock-token');
+          localStorage.setItem('zalo_user_role', role);
+          localStorage.setItem('zalo_role', role);
+          localStorage.setItem('zalo_user_email', user?.email || email);
+          localStorage.setItem('zalo_user_name', user?.user_metadata?.full_name || '');
+
           return {
             success: true,
             token: session?.access_token || 'mock-token',
             role: role,
             email: user?.email || email,
             name: user?.user_metadata?.full_name || '',
-            redirectUrl: role.toUpperCase() === 'ADMIN' ? 'admin.html' : (role.toUpperCase() === 'MERCHANT' ? 'dashboard.html' : 'customer-home.html')
+            redirectUrl: role.toUpperCase() === 'ADMIN' ? 'admin.html' : (role.toUpperCase() === 'MERCHANT' ? 'dashboard-store.html' : 'customer-home.html')
           };
         }
         return { success: false, message: res.error?.message || err.message || 'البريد الإلكتروني أو كلمة المرور غير صحيحة.' };

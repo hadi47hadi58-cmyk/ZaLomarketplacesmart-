@@ -19,6 +19,20 @@
             color: #f8fafc !important;
         }
     </style>
+    
+    <!-- Strict Authorization & Session Checking -->
+    <script type="module">
+        import sessionManager from './js/session-manager.js';
+
+        const session = sessionManager.getSession();
+        // Strict merchant verification: if not merchant, redirect to login
+        if (!session.token || session.role !== 'merchant') {
+            console.warn('🚨 Access Denied: User role is not merchant. Redirecting to login...');
+            window.location.href = 'login.html';
+        } else {
+            console.log('✅ Welcome Merchant! Your dashboard is authorized and ready.');
+        }
+    </script>
 </head>
 <body class="min-h-screen flex flex-col justify-between zalo-branded-body">
 

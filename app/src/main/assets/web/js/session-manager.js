@@ -73,7 +73,7 @@ export class SessionManager {
       }
     } else if (cleanRole === 'MERCHANT') {
       if (!currentPath.includes('dashboard.html') && !currentPath.includes('dashboard-store.html')) {
-        window.location.href = 'dashboard.html';
+        window.location.href = 'dashboard-store.html';
       }
     } else {
       if (!currentPath.includes('customer-home.html')) {

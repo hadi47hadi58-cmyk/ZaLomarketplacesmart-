@@ -115,7 +115,7 @@ window.handleUserRedirect = async function() {
     
     // فحص المسار الحالي للتأكد من عدم التكرار اللانهائي - مطابقة حقيقية للملفات القديمة الفعالة
     const isAlreadyOnAdmin = currentPath.endsWith('admin.html');
-    const isAlreadyOnDashboard = currentPath.endsWith('dashboard.html');
+    const isAlreadyOnDashboard = currentPath.endsWith('dashboard.html') || currentPath.endsWith('dashboard-store.html');
     const isAlreadyOnCustomer = currentPath.endsWith('customer-home.html');
 
     console.log(`[Role Routing] الدور النشط الحالي: ${role} | المسار الحالي: ${currentPath}`);
@@ -127,8 +127,8 @@ window.handleUserRedirect = async function() {
         }
     } else if (role === 'MERCHANT') {
         if (!isAlreadyOnDashboard) {
-            console.log("[Role Routing] جاري توجيه التاجر إلى صفحة لوحة التحكم التجارية القديمة والكاملة (dashboard.html)...");
-            window.location.replace('dashboard.html');
+            console.log("[Role Routing] جاري توجيه التاجر إلى صفحة لوحة التحكم التجارية (dashboard-store.html)...");
+            window.location.replace('dashboard-store.html');
         }
     } else { // CUSTOMER
         if (!isAlreadyOnCustomer) {
