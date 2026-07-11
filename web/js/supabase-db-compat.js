@@ -908,6 +908,50 @@ export async function setDoc(docRef, data, options) {
 
     const payload = { id: docRef.id, ...data };
 
+    // Resilient fallback for shops
+    if (docRef.table === 'shops') {
+        try {
+            const fallbackShops = JSON.parse(localStorage.getItem('zalo_fallback_shops') || '[]');
+            const idx = fallbackShops.findIndex(s => s.id === docRef.id);
+            if (idx === -1) {
+                fallbackShops.push(payload);
+            } else {
+                fallbackShops[idx] = { ...fallbackShops[idx], ...payload };
+            }
+            localStorage.setItem('zalo_fallback_shops', JSON.stringify(fallbackShops));
+        } catch (e) {
+            console.warn("Failed to update shops in local storage:", e);
+        }
+
+        // Keep PostgreSQL stores table in sync
+        try {
+            const { data: dbUser } = await supabase.from('users').select('id').eq('supabase_uid', docRef.id).maybeSingle();
+            if (dbUser) {
+                const storePayload = {
+                    merchant_id: dbUser.id,
+                    name: data.storeName || '',
+                    description: data.description || '',
+                    phone: data.phone || '',
+                    whatsapp: data.whatsapp || '',
+                    wilaya: data.wilaya || '',
+                    commune: data.commune || '',
+                    category: data.category || 'عام',
+                    status: 'APPROVED'
+                };
+                const { data: existingStore } = await supabase.from('stores').select('id').eq('merchant_id', dbUser.id).maybeSingle();
+                if (existingStore) {
+                    await supabase.from('stores').update(storePayload).eq('id', existingStore.id);
+                } else {
+                    await supabase.from('stores').insert(storePayload);
+                }
+            }
+        } catch (e) {
+            console.warn("Failed to sync stores table in setDoc:", e);
+        }
+
+        return; // Return early for nonexistent table
+    }
+
     // Resilient fallback for merchant_requests
     if (docRef.table === 'merchant_requests') {
         try {
@@ -962,6 +1006,42 @@ export async function updateDoc(docRef, data) {
         return;
     }
 
+    // Resilient fallback for shops
+    if (docRef.table === 'shops') {
+        try {
+            const fallbackShops = JSON.parse(localStorage.getItem('zalo_fallback_shops') || '[]');
+            const idx = fallbackShops.findIndex(s => s.id === docRef.id);
+            if (idx !== -1) {
+                fallbackShops[idx] = { ...fallbackShops[idx], ...data };
+                localStorage.setItem('zalo_fallback_shops', JSON.stringify(fallbackShops));
+            }
+        } catch (e) {
+            console.warn("Failed to update shops in local storage:", e);
+        }
+
+        // Keep PostgreSQL stores table in sync
+        try {
+            const { data: dbUser } = await supabase.from('users').select('id').eq('supabase_uid', docRef.id).maybeSingle();
+            if (dbUser) {
+                const storeUpdate = {};
+                if (data.storeName) storeUpdate.name = data.storeName;
+                if (data.description) storeUpdate.description = data.description;
+                if (data.phone) storeUpdate.phone = data.phone;
+                if (data.whatsapp) storeUpdate.whatsapp = data.whatsapp;
+                if (data.wilaya) storeUpdate.wilaya = data.wilaya;
+                if (data.commune) storeUpdate.commune = data.commune;
+                if (data.category) storeUpdate.category = data.category;
+                if (data.status) storeUpdate.status = data.status === 'active' ? 'APPROVED' : 'PENDING_APPROVAL';
+                
+                await supabase.from('stores').update(storeUpdate).eq('merchant_id', dbUser.id);
+            }
+        } catch (e) {
+            console.warn("Failed to sync stores table in updateDoc:", e);
+        }
+
+        return; // Return early for nonexistent table
+    }
+
     // Resilient fallback for merchant_requests
     if (docRef.table === 'merchant_requests') {
         try {
@@ -972,6 +1052,20 @@ export async function updateDoc(docRef, data) {
                 localStorage.setItem('zalo_local_merchant_requests', JSON.stringify(localReqs));
             }
         } catch (e) {}
+
+        // Call NestJS backend for approval if status is 'approved'
+        if (data.status === 'approved') {
+            try {
+                const { data: { session } } = await supabase.auth.getSession();
+                const token = session ? session.access_token : null;
+                const res = await callNestApi(`merchant-requests/${docRef.id}/approve`, 'PATCH', {}, token);
+                if (res) {
+                    console.log("[ZaLo Compat Engine] Successfully processed merchant approval through NestJS backend:", res);
+                }
+            } catch (e) {
+                console.warn("[ZaLo Compat Engine] Failed to invoke NestJS backend for approval, falling back to direct db update:", e);
+            }
+        }
 
         // Also update profiles status and role
         try {
@@ -1011,6 +1105,25 @@ export async function deleteDoc(docRef) {
     if (!navigator.onLine) {
         queueOfflineMutation('DELETE', docRef.table, null, docRef.id);
         return;
+    }
+
+    // Resilient fallback for shops
+    if (docRef.table === 'shops') {
+        try {
+            const fallbackShops = JSON.parse(localStorage.getItem('zalo_fallback_shops') || '[]');
+            const filtered = fallbackShops.filter(s => s.id !== docRef.id);
+            localStorage.setItem('zalo_fallback_shops', JSON.stringify(filtered));
+        } catch (e) {}
+
+        // Keep PostgreSQL stores table in sync
+        try {
+            const { data: dbUser } = await supabase.from('users').select('id').eq('supabase_uid', docRef.id).maybeSingle();
+            if (dbUser) {
+                await supabase.from('stores').delete().eq('merchant_id', dbUser.id);
+            }
+        } catch (e) {}
+
+        return; // Return early
     }
 
     const { error } = await supabase

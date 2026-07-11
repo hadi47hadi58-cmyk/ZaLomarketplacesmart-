@@ -621,14 +621,16 @@
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       });
-      if (profileError) throw profileError;
+      if (profileError) {
+        console.warn("Profiles upsert warning:", profileError.message);
+      }
 
       // If merchant, create shop request and shop document
       if (userType === 'merchant') {
         const rnum = 'REG-' + Date.now().toString().slice(-6);
 
-        // Save shop profile
-        const { error: shopError } = await supabase.from('shops').upsert({
+        // 1. Save to local storage fallback for legacy frontend compatibility (shops)
+        const shopPayload = {
           id: uid,
           storeName: storeName,
           ownerName: fullName,
@@ -648,11 +650,54 @@
           status: 'active',
           subscription: 'basic',
           createdAt: new Date().toISOString()
-        });
-        if (shopError) throw shopError;
+        };
 
-        // Save request logs for control panel
-        const { error: requestError } = await supabase.from('merchant_requests').upsert({
+        try {
+          const fallbackShops = JSON.parse(localStorage.getItem('zalo_fallback_shops') || '[]');
+          const idx = fallbackShops.findIndex(s => s.id === uid);
+          if (idx === -1) {
+            fallbackShops.push(shopPayload);
+          } else {
+            fallbackShops[idx] = shopPayload;
+          }
+          localStorage.setItem('zalo_fallback_shops', JSON.stringify(fallbackShops));
+        } catch (e) {
+          console.warn("Failed to write to local storage for shops:", e);
+        }
+
+        // 2. Map and upsert to the real stores table (PostgreSQL)
+        try {
+          // Wait a tiny moment for trigger to complete replicating auth.users -> public.users
+          let dbUser = null;
+          for (let i = 0; i < 5; i++) {
+            const { data: u } = await supabase.from('users').select('id').eq('supabase_uid', uid).maybeSingle();
+            if (u) {
+              dbUser = u;
+              break;
+            }
+            await new Promise(r => setTimeout(r, 200));
+          }
+          
+          if (dbUser) {
+            const { error: storeError } = await supabase.from('stores').upsert({
+              merchant_id: dbUser.id,
+              name: storeName,
+              description: 'شريك شبكة ZaLo المعتمد والموثق جغرافياً لخدمة زبائن ولاية ' + wilaya,
+              phone: phone,
+              whatsapp: phone,
+              wilaya: wilaya,
+              commune: commune,
+              category: category,
+              status: 'PENDING_APPROVAL'
+            });
+            if (storeError) console.warn("Postgres stores insert warning:", storeError.message);
+          }
+        } catch (e) {
+          console.warn("Failed to synchronize Postgres stores table:", e);
+        }
+
+        // 3. Save request logs to local storage fallback for legacy frontend compatibility (merchant_requests)
+        const reqPayload = {
           id: uid,
           regNumber: rnum,
           storeName: storeName,
@@ -669,11 +714,39 @@
           frontFile: frontFile,
           rcFile: rcFile,
           idFront: idFront,
-          idBack: idBack, // Storing Honorary declaration under idBack safely
-          status: 'approved',
+          idBack: idBack,
+          status: 'pending', // Set status to pending for admin review
           createdAt: new Date().toISOString()
-        });
-        if (requestError) throw requestError;
+        };
+
+        try {
+          const localReqs = JSON.parse(localStorage.getItem('zalo_local_merchant_requests') || '[]');
+          const idx = localReqs.findIndex(r => r.id === uid);
+          if (idx === -1) {
+            localReqs.push(reqPayload);
+          } else {
+            localReqs[idx] = reqPayload;
+          }
+          localStorage.setItem('zalo_local_merchant_requests', JSON.stringify(localReqs));
+        } catch (e) {
+          console.warn("Failed to write to local storage for merchant_requests:", e);
+        }
+
+        // 4. Insert to the real merchant_requests table (PostgreSQL)
+        try {
+          const { error: reqError } = await supabase.from('merchant_requests').insert({
+            user_id: uid,
+            store_name: storeName,
+            phone: phone,
+            commercial_register: rcFile || null,
+            tax_number: rcnum || null,
+            description: 'طلب ترقية متجر جديد للتاجر: ' + fullName,
+            status: 'pending'
+          });
+          if (reqError) console.warn("Postgres merchant_requests insert warning:", reqError.message);
+        } catch (e) {
+          console.warn("Failed to synchronize Postgres merchant_requests table:", e);
+        }
       }
 
       // Save session and redirect

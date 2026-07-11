@@ -846,19 +846,37 @@ CREATE TRIGGER on_auth_user_created
 -- 6. MAINTENANCE & STALE SESSION CLEANUP (مهام الصيانة الدورية وتنظيف الجلسات)
 -- ==========================================
 
--- دالة إزالة الجلسات منتهية الصلاحية والقديمة تلقائيًا لرفع سرعة النظام
+-- دالة إزالة الجلسات والبيانات الوهمية والقديمة تلقائيًا لرفع كفاءة وسرعة النظام
 CREATE OR REPLACE FUNCTION public.cleanup_stale_sessions()
 RETURNS void AS $$
 DECLARE
-    deleted_count INTEGER;
+    deleted_sessions INTEGER;
+    deleted_notifications INTEGER;
+    deleted_stale_stores INTEGER;
 BEGIN
+    -- 1. تنظيف الجلسات منتهية الصلاحية أو غير النشطة لرفع سرعة النظام
     DELETE FROM public.sessions
     WHERE is_active = FALSE 
        OR expires_at < NOW()
        OR (created_at < NOW() - INTERVAL '24 hours' AND is_active = FALSE);
+    GET DIAGNOSTICS deleted_sessions = ROW_COUNT;
 
-    GET DIAGNOSTICS deleted_count = ROW_COUNT;
-    RAISE NOTICE '🧹 [Session Cleanup] Completed. Purged % expired/ghost sessions.', deleted_count;
+    -- 2. تنظيف الإشعارات المقروءة والقديمة (أكثر من 7 أيام) لتجنب تراكم البيانات
+    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'notifications') THEN
+        DELETE FROM public.notifications
+        WHERE is_read = TRUE AND created_at < NOW() - INTERVAL '7 days';
+        GET DIAGNOSTICS deleted_notifications = ROW_COUNT;
+    ELSE
+        deleted_notifications := 0;
+    END IF;
+
+    -- 3. تنظيف سجلات المتاجر الوهمية أو المعلقة والقديمة (أكثر من 30 يوماً)
+    DELETE FROM public.stores
+    WHERE status = 'PENDING_APPROVAL' AND created_at < NOW() - INTERVAL '30 days';
+    GET DIAGNOSTICS deleted_stale_stores = ROW_COUNT;
+
+    RAISE NOTICE '🧹 [System Cleanup] Completed. Purged % sessions, % notifications, and % stale store entries.', 
+        deleted_sessions, deleted_notifications, deleted_stale_stores;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 

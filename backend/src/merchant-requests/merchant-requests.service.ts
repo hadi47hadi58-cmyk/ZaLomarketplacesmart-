@@ -122,6 +122,30 @@ export class MerchantRequestsService {
       // تجاهل الفشل إذا لم تكن صلاحيات أدمن الـ auth متوفرة محلياً بالكامل
     });
 
+    // 2b. إبطال الجلسات وإجبار التاجر على إعادة تسجيل الدخول لتحديث التوكن الأمني JWT بالصلاحيات الجديدة
+    try {
+      // أ: حذف جميع الجلسات من جدول الجلسات المخصص في قاعدة البيانات PostgreSQL
+      const { data: dbUser } = await supabase
+        .from('users')
+        .select('id')
+        .eq('supabase_uid', request.user_id)
+        .maybeSingle();
+
+      if (dbUser) {
+        await supabase
+          .from('sessions')
+          .delete()
+          .eq('user_id', dbUser.id);
+        console.log(`[Session Invalidation] Purged active sessions from PostgreSQL for user: ${dbUser.id}`);
+      }
+
+      // ب: تسجيل الخروج الموحد من نظام Supabase Auth الرئيسي عالمياً
+      await supabase.auth.admin.signOut(request.user_id, 'global');
+      console.log(`[Session Invalidation] Revoked active Supabase Auth sessions globally for user: ${request.user_id}`);
+    } catch (e) {
+      console.warn('[Session Invalidation] Warning while revoking active user sessions:', e.message);
+    }
+
     // 3. تحديث حالة الطلب إلى مقبول
     const { data: updatedRequest, error: updateError } = await supabase
       .from('merchant_requests')
