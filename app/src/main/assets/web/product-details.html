@@ -18,6 +18,13 @@
             background-color: #070a08 !important;
             color: #f8fafc !important;
         }
+        @keyframes slideDown {
+            0% { transform: translate(-50%, -50px); opacity: 0; }
+            100% { transform: translate(-50%, 0); opacity: 1; }
+        }
+        .toast-shown {
+            animation: slideDown 0.3s ease-out;
+        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between zalo-branded-body">
@@ -94,9 +101,19 @@
                         </div>
                     </div>
 
-                    <button id="btn-submit-order" class="w-full bg-gradient-to-tr from-amber-500 to-[#D4AF37] hover:scale-105 active:scale-95 text-slate-950 font-black text-sm py-3.5 rounded-xl text-center shadow-2xl font-bold transition">
-                        تأكيد طلب المنتج الآن <i class="fa-solid fa-cart-shopping mr-1"></i>
-                    </button>
+                    <div class="space-y-2">
+                        <button id="btn-submit-order" class="w-full bg-gradient-to-tr from-amber-500 to-[#D4AF37] hover:scale-105 active:scale-95 text-slate-950 font-black text-sm py-3.5 rounded-xl text-center shadow-2xl font-bold transition">
+                            تأكيد طلب المنتج الآن <i class="fa-solid fa-cart-shopping mr-1"></i>
+                        </button>
+                        <button id="btn-add-to-cart" onclick="addToCartFromDetails()" class="w-full bg-slate-800 hover:bg-slate-700 hover:scale-105 active:scale-95 text-white font-black text-xs py-3 rounded-xl text-center border border-slate-700 transition">
+                            أضف إلى السلة <i class="fa-solid fa-basket-shopping mr-1"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Beautiful Toast Container -->
+                <div id="toast-message" style="display: none; position: fixed; top: 80px; left: 50%; transform: translateX(-50%); background: #22c55e; color: #fff; padding: 12px 24px; border-radius: 12px; font-weight: 800; font-family: 'Cairo'; font-size: 13px; box-shadow: 0 10px 25px rgba(34, 197, 94, 0.4); z-index: 10000; border: 1.5px solid rgba(255,255,255,0.2);" class="toast-shown">
+                    <span>✨ تم إضافة المنتج إلى سلة تسوقك بنجاح!</span>
                 </div>
 
             </div>
@@ -272,6 +289,51 @@
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = 'حفظ ونشر التقييم فورا <i class="fa-solid fa-circle-check mr-1"></i>';
             }
+        };
+
+        window.showToastMessage = function(msg) {
+            const toast = document.getElementById("toast-message");
+            if (toast) {
+                toast.querySelector("span").textContent = msg;
+                toast.style.display = "block";
+                setTimeout(() => {
+                    toast.style.display = "none";
+                }, 3000);
+            }
+        };
+
+        window.addToCartFromDetails = function() {
+            const name = document.getElementById("product-detail-name").textContent.trim();
+            const priceText = document.getElementById("product-detail-price").textContent.trim();
+            const price = parseInt(priceText.replace(/[^0-9]/g, '')) || 0;
+            const storeName = document.getElementById("product-detail-store-name").textContent.trim();
+
+            let cart = [];
+            try {
+                cart = JSON.parse(localStorage.getItem('zalo_cart') || '[]');
+            } catch (e) {
+                cart = [];
+            }
+
+            const cartItem = {
+                id: currentProductId,
+                name: name,
+                price: price,
+                storeName: storeName,
+                qty: 1,
+                emoji: "🎁",
+                storeId: "store_dynamic"
+            };
+
+            const existingIdx = cart.findIndex(c => String(c.id) === String(currentProductId));
+            if (existingIdx !== -1) {
+                cart[existingIdx].qty += 1;
+            } else {
+                cart.push(cartItem);
+            }
+
+            localStorage.setItem('zalo_cart', JSON.stringify(cart));
+            window.showToastMessage("✨ تم إضافة المنتج إلى سلة تسوقك بنجاح!");
         };
 
         // Initialize reviews loading

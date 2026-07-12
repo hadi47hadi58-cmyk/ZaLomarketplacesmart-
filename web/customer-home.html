@@ -304,11 +304,22 @@ body {
       <span style="font-size: 11px; color: var(--gray);">رقم الحساب الموحد: #<span id="customer-id-tag">...</span></span>
     </div>
 
+    <!-- Product Search Box -->
+    <div style="position: relative; width: 100%; margin-top: 4px; margin-bottom: 8px;">
+      <input type="text" id="customerSearchInp" placeholder="ابحث باسم السلعة في السوق الذكي..." style="width: 100%; padding: 14px 44px 14px 16px; border-radius: 12px; border: 1.5px solid rgba(197, 160, 89, 0.3); background: #111813; color: #fff; font-family: 'Cairo'; font-size: 13px; text-align: right; outline: none; transition: border-color 0.2s;" onkeypress="handleCustomerSearch(event)">
+      <i class="fa-solid fa-magnifying-glass" style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: var(--gold); font-size: 15px; cursor: pointer;" onclick="executeCustomerSearch()"></i>
+    </div>
+
     <div style="display: flex; flex-direction: column; gap: 12px;">
       <h3 style="font-size: 14px; font-weight: 800; color: #fff;">لوحة التحكم والخيارات السريعة:</h3>
       
       <button class="btn-primary" onclick="window.location.href='index.html'">
         <i class="fa-solid fa-store"></i> الانتقال إلى السوق الذكي وتصفح المنتجات
+      </button>
+
+      <button class="btn-primary" onclick="window.location.href='notifications.html'" style="position: relative; background: rgba(197, 160, 89, 0.1); border: 1.5px solid var(--gold); color: var(--gold);">
+        <i class="fa-solid fa-bell"></i> مركز الإشعارات الفوري
+        <span id="notif-badge-count" style="display: none; position: absolute; left: 16px; top: 50%; transform: translateY(-50%); background: var(--red); color: #fff; font-size: 11px; font-weight: 900; padding: 2px 8px; border-radius: 10px;">0</span>
       </button>
     </div>
 
@@ -1002,12 +1013,53 @@ onAuthStateChanged(auth, async (user) => {
     loadCustomerOrders();
     loadCartItems();
     loadFavorites();
+    updateNotificationBadge();
 
   } catch (e) {
     console.warn("Error running page guard checks:", e);
     updateApplicationUI('none');
   }
 });
+
+window.handleCustomerSearch = function(e) {
+  if (e.key === 'Enter') {
+    executeCustomerSearch();
+  }
+};
+
+window.executeCustomerSearch = function() {
+  const q = document.getElementById('customerSearchInp').value.trim();
+  if (q) {
+    window.location.href = `products.html?q=${encodeURIComponent(q)}`;
+  } else {
+    window.location.href = `products.html`;
+  }
+};
+
+window.updateNotificationBadge = function() {
+  const data = localStorage.getItem('zalo_notifications_list_v2');
+  let list = [];
+  if (data) {
+    try {
+      list = JSON.parse(data);
+    } catch(e) {}
+  } else {
+    list = [
+      { id: "init_1", read: false },
+      { id: "init_2", read: false }
+    ];
+  }
+  const unreadCount = list.filter(n => !n.read).length;
+  const badge = document.getElementById('notif-badge-count');
+  if (badge) {
+    if (unreadCount > 0) {
+      badge.textContent = unreadCount;
+      badge.style.display = 'block';
+    } else {
+      badge.style.display = 'none';
+    }
+  }
+};
 
 // ----------------- TAB NAVIGATION HANDLERS -----------------
 window.switchTab = function(tabId) {

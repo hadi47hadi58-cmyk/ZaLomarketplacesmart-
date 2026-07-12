@@ -84,9 +84,9 @@
 
     async function checkTokenAndRedirect() {
       if (!token) {
-        // لا يوجد توكن نشط -> التوجيه إلى صفحة تسجيل الدخول
-        console.log("[Splash Router] No active token found. Redirecting to login...");
-        window.location.href = 'login.html';
+        // لا يوجد توكن نشط -> التوجيه إلى الصفحة الرئيسية العامة (index.html)
+        console.log("[Splash Router] No active token found. Redirecting to index.html...");
+        window.location.href = 'index.html';
         return;
       }
 

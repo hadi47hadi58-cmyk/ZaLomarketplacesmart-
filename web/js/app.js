@@ -439,14 +439,33 @@ function initProductsPage() {
     let params = new URLSearchParams(window.location.search);
     let storeId = params.get("storeId");
     let catId = params.get("categoryId");
+    let urlQuery = params.get("q");
 
     let cats = DB.get("categories", SEED_CATEGORIES);
     let chosenCat = cats.find(c => c.categoryId === catId);
-    if (headerTitle && chosenCat) {
-        headerTitle.innerText = chosenCat.categoryName;
+    if (headerTitle) {
+        if (chosenCat) {
+            headerTitle.innerText = chosenCat.categoryName;
+        } else if (urlQuery) {
+            headerTitle.innerText = "نتائج البحث عن: " + urlQuery;
+        } else {
+            headerTitle.innerText = "كل المنتجات المتوفرة";
+        }
     }
 
-    const baseProducts = DB.get("products", SEED_PRODUCTS).filter(p => p.storeId === storeId && p.categoryId === catId);
+    // Pre-populate search query if passed from home screen
+    const searchInp = document.getElementById("productSearchInp");
+    if (searchInp && urlQuery) {
+        searchInp.value = urlQuery;
+    }
+
+    let baseProducts = DB.get("products", SEED_PRODUCTS);
+    if (storeId) {
+        baseProducts = baseProducts.filter(p => p.storeId === storeId);
+    }
+    if (catId) {
+        baseProducts = baseProducts.filter(p => p.categoryId === catId);
+    }
 
     function renderFilteredProducts() {
         productsGrid.innerHTML = "";
@@ -477,6 +496,14 @@ function initProductsPage() {
             filtered.sort((a, b) => b.price - a.price);
         } else if (sortValue === "name-asc") {
             filtered.sort((a, b) => (a.productName || "").localeCompare(b.productName || "", "ar"));
+        } else if (sortValue === "rating-desc") {
+            filtered.sort((a, b) => (b.rating || 4.5) - (a.rating || 4.5));
+        } else if (sortValue === "date-desc") {
+            filtered.sort((a, b) => {
+                const timeA = a.createdAt ? new Date(a.createdAt).getTime() : (parseInt((a.productId || "").split('_')[1]) || 0);
+                const timeB = b.createdAt ? new Date(b.createdAt).getTime() : (parseInt((b.productId || "").split('_')[1]) || 0);
+                return timeB - timeA;
+            });
         }
 
         if (filtered.length === 0) {

@@ -222,11 +222,30 @@
     </div>
 </div>
 
+<div class="settings-card" style="border-color: rgba(255, 77, 77, 0.15);">
+    <h3 style="color: #ff4d4d; font-size: 16px; font-weight: 800; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+        <i class="fa-solid fa-trash-can-arrow-up"></i> عمليات الصيانة والتحكم السريع بالإشعارات
+    </h3>
+    <p style="font-size: 11px; color: var(--gray); line-height: 1.5; margin-bottom: 20px;">
+        قم بتنظيف صندوق الإشعارات الخاص بك أو تعيين كافة التنبيهات كمقروءة لتصفير العداد والبادج بنقرة واحدة.
+    </p>
+    <div style="display: flex; flex-direction: column; gap: 12px;">
+        <button class="btn-save" onclick="managementMarkAllRead()" style="background: rgba(34, 197, 94, 0.15); border: 1.5px solid rgba(34, 197, 94, 0.4); color: #4ade80;">
+            تحديد كل الإشعارات كمقروءة <i class="fa-solid fa-check-double"></i>
+        </button>
+        <button class="btn-save" onclick="managementDeleteOld()" style="background: rgba(239, 68, 68, 0.15); border: 1.5px solid rgba(239, 68, 68, 0.4); color: #f87171;">
+            حذف الإشعارات القديمة (أقدم من 7 أيام) <i class="fa-solid fa-calendar-minus"></i>
+        </button>
+    </div>
+</div>
+
 <div style="text-align: center;">
     <a href="index.html" class="back-btn"><i class="fa-solid fa-house"></i> العودة للرئيسية</a>
 </div>
 
-<script>
+<script type="module">
+    import { supabase } from "./js/supabase-config.js";
+
     function loadPreferences() {
         const defaultPrefs = {
             email: true,
@@ -253,6 +272,68 @@
         localStorage.setItem('zalo_notification_preferences', JSON.stringify(prefs));
         alert('تم حفظ تفضيلات الإشعارات بنجاح في ملفك الشخصي الموحد! ✨');
     }
+
+    async function managementMarkAllRead() {
+        try {
+            // Update local storage notifications
+            let localList = [];
+            const localData = localStorage.getItem('zalo_notifications_list_v2');
+            if (localData) {
+                localList = JSON.parse(localData);
+            }
+            localList.forEach(n => n.read = true);
+            localStorage.setItem('zalo_notifications_list_v2', JSON.stringify(localList));
+
+            // Update Supabase notifications
+            const { data: { session } } = await supabase.auth.getSession();
+            if (session && session.user) {
+                await supabase.from('notifications')
+                    .update({ is_read: true })
+                    .eq('user_id', session.user.id);
+            }
+            alert('تم تحديد جميع الإشعارات كمقروءة بنجاح! ✔️');
+        } catch (e) {
+            console.error(e);
+            alert('حدث خطأ أثناء تحديث الإشعارات.');
+        }
+    }
+
+    async function managementDeleteOld() {
+        if (!confirm('هل أنت متأكد من حذف الإشعارات التي مر عليها أكثر من 7 أيام؟')) return;
+        
+        try {
+            const threshold = Date.now() - (7 * 24 * 60 * 60 * 1000);
+
+            // Filter local storage notifications
+            let localList = [];
+            const localData = localStorage.getItem('zalo_notifications_list_v2');
+            if (localData) {
+                localList = JSON.parse(localData);
+            }
+            const remainingLocal = localList.filter(n => n.timestamp >= threshold);
+            localStorage.setItem('zalo_notifications_list_v2', JSON.stringify(remainingLocal));
+
+            // Delete from Supabase
+            const { data: { session } } = await supabase.auth.getSession();
+            if (session && session.user) {
+                const dateStr = new Date(threshold).toISOString();
+                await supabase.from('notifications')
+                    .delete()
+                    .eq('user_id', session.user.id)
+                    .lt('created_at', dateStr);
+            }
+            alert('تم حذف وتطهير الإشعارات القديمة بنجاح! 🧹');
+        } catch (e) {
+            console.error(e);
+            alert('حدث خطأ أثناء تطهير الإشعارات القديمة.');
+        }
+    }
+
+    // Expose functions to window
+    window.loadPreferences = loadPreferences;
+    window.savePreferences = savePreferences;
+    window.managementMarkAllRead = managementMarkAllRead;
+    window.managementDeleteOld = managementDeleteOld;
 
     document.addEventListener('DOMContentLoaded', loadPreferences);
 </script>

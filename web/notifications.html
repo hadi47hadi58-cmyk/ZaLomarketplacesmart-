@@ -190,41 +190,76 @@
     <a href="index.html" class="back-btn"><i class="fa-solid fa-house"></i> العودة للرئيسية</a>
 </div>
 
-<script>
-    function getNotifications() {
-        const data = localStorage.getItem('zalo_notifications_list_v2');
-        if (data) {
-            try {
-                return JSON.parse(data);
-            } catch(e) {
-                return [];
-            }
-        }
-        // Fallback to onboarding notifications if empty
-        const onboarding = [
-            {
-                id: "init_1",
-                title: "مرحباً بك في ZaLo! 🏛️",
-                text: "أهلاً بك في أكبر سوق ذكي دائم ومجاني لخدمة المتاجر والسائقين وتوصيل الشحنات عبر 69 ولاية جزائرية.",
-                icon: "🎉",
-                read: false,
-                timestamp: Date.now() - 600000
-            },
-            {
-                id: "init_2",
-                title: "تتبع شحنتك بثوانٍ 📦",
-                text: "أدخل رقم هاتفك في صفحة 'طلباتي' لمتابعة حالة شاحنتك بنظام التنبيه والرنين المباشر فور تغيرها من تاجر أو سائق.",
-                icon: "🔔",
-                read: false,
-                timestamp: Date.now() - 3600000
-            }
-        ];
-        localStorage.setItem('zalo_notifications_list_v2', JSON.stringify(onboarding));
-        return onboarding;
-    }
+<script type="module">
+    import { supabase } from "./js/supabase-config.js";
 
-    function saveNotifications(list) {
-        localStorage.setItem('zalo_notifications_list_v2', JSON.stringify(list));
+    let cachedNotifications = [];
+
+    const onboarding = [
+        {
+            id: "init_1",
+            title: "مرحباً بك في ZaLo! 🏛️",
+            text: "أهلاً بك في أكبر سوق ذكي دائم ومجاني لخدمة المتاجر والسائقين وتوصيل الشحنات عبر 69 ولاية جزائرية.",
+            icon: "🎉",
+            read: false,
+            timestamp: Date.now() - 600000
+        },
+        {
+            id: "init_2",
+            title: "تتبع شحنتك بثوانٍ 📦",
+            text: "أدخل رقم هاتفك في صفحة 'طلباتي' لمتابعة حالة شاحنتك بنظام التنبيه والرنين المباشر فور تغيرها من تاجر أو سائق.",
+            icon: "🔔",
+            read: false,
+            timestamp: Date.now() - 3600000
+        }
+    ];
+
+    async function loadNotifications() {
+        let localList = [];
+        try {
+            const localData = localStorage.getItem('zalo_notifications_list_v2');
+            if (localData) {
+                localList = JSON.parse(localData);
+            } else {
+                localList = [...onboarding];
+                localStorage.setItem('zalo_notifications_list_v2', JSON.stringify(localList));
+            }
+        } catch (e) {
+            localList = [...onboarding];
+        }
+
+        let merged = [...localList];
+
+        try {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (session && session.user) {
+                const { data: remoteNotifs, error } = await supabase
+                    .from('notifications')
+                    .select('*')
+                    .eq('user_id', session.user.id);
+                    
+                if (!error && remoteNotifs) {
+                    remoteNotifs.forEach(rn => {
+                        if (!merged.some(m => String(m.id) === String(rn.id))) {
+                            merged.push({
+                                id: rn.id,
+                                title: rn.title,
+                                text: rn.message,
+                                icon: "🔔",
+                                read: rn.is_read,
+                                timestamp: new Date(rn.created_at).getTime(),
+                                isRemote: true
+                            });
+                        }
+                    });
+                }
+            }
+        } catch (e) {
+            console.warn("Could not load notifications from Supabase:", e);
+        }
+
+        merged.sort((a, b) => b.timestamp - a.timestamp);
+        cachedNotifications = merged;
         renderNotifications();
     }
 
@@ -240,7 +275,7 @@
     }
 
     function renderNotifications() {
-        const list = getNotifications();
+        const list = cachedNotifications;
         const container = document.getElementById('notif-container');
         const emptyState = document.getElementById('empty-state');
 
@@ -277,34 +312,81 @@
         }).join('');
     }
 
-    function markRead(id) {
-        const list = getNotifications();
-        const notif = list.find(n => n.id === id);
+    async function markRead(id) {
+        const notif = cachedNotifications.find(n => String(n.id) === String(id));
         if (notif) {
             notif.read = true;
-            saveNotifications(list);
+            if (notif.isRemote) {
+                try {
+                    await supabase.from('notifications').update({ is_read: true }).eq('id', id);
+                } catch(e) {
+                    console.error(e);
+                }
+            } else {
+                const localOnly = cachedNotifications.filter(n => !n.isRemote);
+                localStorage.setItem('zalo_notifications_list_v2', JSON.stringify(localOnly));
+            }
+            renderNotifications();
         }
     }
 
-    function markAllRead() {
-        const list = getNotifications();
-        list.forEach(n => n.read = true);
-        saveNotifications(list);
+    async function markAllRead() {
+        cachedNotifications.forEach(n => n.read = true);
+        const localOnly = cachedNotifications.filter(n => !n.isRemote);
+        localStorage.setItem('zalo_notifications_list_v2', JSON.stringify(localOnly));
+        
+        try {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (session && session.user) {
+                await supabase.from('notifications').update({ is_read: true }).eq('user_id', session.user.id);
+            }
+        } catch (e) {
+            console.error(e);
+        }
+        renderNotifications();
     }
 
-    function deleteNotif(id) {
-        const list = getNotifications().filter(n => n.id !== id);
-        saveNotifications(list);
+    async function deleteNotif(id) {
+        const notif = cachedNotifications.find(n => String(n.id) === String(id));
+        if (notif) {
+            if (notif.isRemote) {
+                try {
+                    await supabase.from('notifications').delete().eq('id', id);
+                } catch (e) {
+                    console.error(e);
+                }
+            }
+            cachedNotifications = cachedNotifications.filter(n => String(n.id) !== String(id));
+            const localOnly = cachedNotifications.filter(n => !n.isRemote);
+            localStorage.setItem('zalo_notifications_list_v2', JSON.stringify(localOnly));
+            renderNotifications();
+        }
     }
 
-    function clearAllNotifications() {
+    async function clearAllNotifications() {
         if (confirm('هل أنت متأكد من مسح جميع الإشعارات؟')) {
-            saveNotifications([]);
+            localStorage.setItem('zalo_notifications_list_v2', JSON.stringify([]));
+            try {
+                const { data: { session } } = await supabase.auth.getSession();
+                if (session && session.user) {
+                    await supabase.from('notifications').delete().eq('user_id', session.user.id);
+                }
+            } catch(e) {
+                console.error(e);
+            }
+            cachedNotifications = [];
+            renderNotifications();
         }
     }
+
+    // Expose functions to window
+    window.markRead = markRead;
+    window.markAllRead = markAllRead;
+    window.deleteNotif = deleteNotif;
+    window.clearAllNotifications = clearAllNotifications;
 
     // Initial render
-    document.addEventListener('DOMContentLoaded', renderNotifications);
+    document.addEventListener('DOMContentLoaded', loadNotifications);
 </script>
 
 <div class="footer">

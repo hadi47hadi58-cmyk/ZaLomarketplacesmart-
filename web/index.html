@@ -563,6 +563,9 @@ html,body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--text);
   </div>
   <div class="sm-sec">القائمة الرئيسيّة</div>
   <div class="smi" onclick="closeSide();G('home')"><span class="si" style="color:var(--g1)"><i class="fa-solid fa-house"></i></span><div><div class="sn">الرئيسية</div></div></div>
+  <div class="smi" id="sm-auth-login" style="display: none;" onclick="closeSide();window.location.href='login.html'"><span class="si" style="color:var(--gold)"><i class="fa-solid fa-right-to-bracket"></i></span><div><div class="sn">تسجيل الدخول</div><div class="sd">الولوج لحسابك الشخصي ومتابعة سلتك</div></div></div>
+  <div class="smi" id="sm-auth-register" style="display: none;" onclick="closeSide();window.location.href='register.html'"><span class="si" style="color:var(--gold)"><i class="fa-solid fa-user-plus"></i></span><div><div class="sn">إنشاء حساب جديد</div><div class="sd">تسجيل حساب عميل جديد مجاناً للطلب المباشر</div></div></div>
+  <div class="smi" id="sm-auth-dashboard" style="display: none;" onclick="closeSide();window.location.href='customer-home.html'"><span class="si" style="color:var(--g1)"><i class="fa-solid fa-gauge"></i></span><div><div class="sn">حسابي الشخصي 👤</div><div class="sd">إدارة طلباتك وتتبع شحناتك الحالية</div></div></div>
   <div class="smi" onclick="closeSide();G('wilayas')"><span class="si" style="color:var(--g1)"><i class="fa-solid fa-location-dot"></i></span><div><div class="sn">الولايات</div></div></div>
   <div class="smi" onclick="closeSide();G('cats')"><span class="si" style="color:var(--g1)"><i class="fa-solid fa-folder-open"></i></span><div><div class="sn">جميع الأقسام</div></div></div>
   <div class="smi" onclick="closeSide();G('all-prods')"><span class="si" style="color:var(--g1)"><i class="fa-solid fa-box"></i></span><div><div class="sn">جميع المنتجات</div></div></div>
@@ -4156,7 +4159,27 @@ window.driverUpdateStatus = driverUpdateStatus;
 window.searchCustomerOrders = searchCustomerOrders;
 window.clearCustomerSession = clearCustomerSession;
 
+window.openUserDashboard = function() {
+  window.location.href = 'customer-home.html';
+};
+
 document.addEventListener('DOMContentLoaded',()=>{
+  // Initialize visitor/member views and actions
+  try {
+    const hasToken = localStorage.getItem('zalo_token') || localStorage.getItem('zalo_session_jwt');
+    const smLogin = document.getElementById('sm-auth-login');
+    const smRegister = document.getElementById('sm-auth-register');
+    const smDashboard = document.getElementById('sm-auth-dashboard');
+
+    if (!hasToken) {
+      if (smLogin) smLogin.style.display = 'flex';
+      if (smRegister) smRegister.style.display = 'flex';
+    } else {
+      if (smDashboard) smDashboard.style.display = 'flex';
+    }
+  } catch(e) {
+    console.error('Error initializing guest/member layout:', e);
+  }
   renderW();
   initSecurityLock();
   try {
