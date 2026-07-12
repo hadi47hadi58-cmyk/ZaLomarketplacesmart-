@@ -512,107 +512,24 @@
 </head>
 <body>
 
-<div class="wrapper">
-
-  <!-- LOGO BRAND AREA (Manus Inspired Premium Header) -->
-  <div class="logo-area" style="margin-top: 24px; text-align: center; margin-bottom: 24px;">
+<div class="wrapper" style="text-align: center; margin-top: 50px;">
+  <div class="logo-area">
     <div class="logo-outer" style="width: 110px; height: 110px; border: 2px dashed var(--gold); border-radius: 50%; padding: 4px; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; background: rgba(26,92,42,0.15);">
       <div class="logo-inner" style="width: 96px; height: 96px; background: var(--green); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 30px rgba(26,92,42,0.45);">
         <img src="assets/logo.svg" alt="ZaLo" style="width: 60px; height: 60px; object-fit: contain; transform: scale(1.1);" />
       </div>
     </div>
-    <h1 class="brand-title" style="font-size: 26px; font-weight: 900; color: #fff; margin-bottom: 4px;">مرحبًا بك في <span style="color: var(--gold2); font-family: 'Cairo', sans-serif;">ZaLo</span></h1>
-    <p class="brand-subtitle" style="font-size: 13px; color: var(--text2); font-weight: 600;">بوابة الهوية الذكية والمصادقة الموحدة</p>
+    <h1 class="brand-title" style="font-size: 26px; font-weight: 900; color: #fff; margin-bottom: 4px;">منصة <span style="color: var(--gold2); font-family: 'Cairo', sans-serif;">ZaLo</span></h1>
+    <p class="brand-subtitle" style="font-size: 14px; color: var(--text2); font-weight: 600; margin-top: 10px;">جاري الانتقال الآمن إلى الواجهة الرئيسية للتسوق...</p>
   </div>
-
-  <div class="card" style="background: var(--card); border: 1.5px solid var(--border); border-radius: 28px; padding: 24px 20px; box-shadow: 0 32px 80px rgba(0,0,0,0.65);">
-    
-    <!-- Account Detected Badge (Dynamic Real-time Info) -->
-    <div class="badge-container" style="display: flex; justify-content: center; margin-bottom: 22px;">
-      <a href="index.html" class="detected-badge badge-customer" id="roleBadge" style="text-decoration: none; padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 800;">
-        <i class="fa-solid fa-house" id="badgeIcon"></i>
-        <span id="badgeText">الواجهة الرئيسية للتسوق</span>
-      </a>
-    </div>
-
-    <div class="error-msg" id="errorMessage" style="display:none; margin-bottom: 16px;"></div>
-
-
-
-    <!-- Collapsible Standard Email Form Container (Always visible now) -->
-    <div class="collapsible-form" id="collapsibleFormContainer">
-      <form id="unifiedLoginForm">
-        <!-- Email Input -->
-        <div class="form-group" style="margin-bottom: 16px;">
-          <label class="form-label" style="display: block; font-size: 13px; font-weight: 700; color: var(--gold2); margin-bottom: 6px;">البريد الإلكتروني للذكاء الموحد</label>
-          <div class="input-wrapper" style="position: relative;">
-            <i class="fa-solid fa-envelope input-icon" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: var(--text2); font-size: 14px;"></i>
-            <input type="email" class="form-input" id="loginEmail" placeholder="example@domain.com" required autocomplete="email" style="width: 100%; padding: 12px 38px 12px 14px; border-radius: 14px; border: 1px solid var(--border); background: rgba(0,0,0,0.25); color: #fff;">
-          </div>
-        </div>
-
-        <!-- Password Input -->
-        <div class="form-group" style="margin-bottom: 16px;">
-          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 6px; direction: rtl;">
-            <label class="form-label" style="font-size: 13px; font-weight: 700; color: var(--gold2); margin-bottom: 0;">كلمة المرور الآمنة</label>
-            <a href="#" id="forgot-password-link" style="color: var(--gold2); font-size: 11.5px; font-weight: 700; text-decoration: none; white-space: nowrap;">نسيت كلمة المرور؟</a>
-          </div>
-          <div class="input-wrapper" style="position: relative;">
-            <i class="fa-solid fa-lock input-icon" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: var(--text2); font-size: 14px;"></i>
-            <input type="password" class="form-input" id="loginPass" placeholder="••••••••" required autocomplete="current-password" style="width: 100%; padding: 12px 38px 12px 14px; border-radius: 14px; border: 1px solid var(--border); background: rgba(0,0,0,0.25); color: #fff;">
-          </div>
-          <!-- Password Strength Meter -->
-          <meter id="password-strength-bar" min="0" max="4" low="2" high="3" optimum="4" style="width: 100%; height: 6px; margin-top: 8px; display: none;"></meter>
-        </div>
-
-        <!-- Remember Me Checkbox -->
-        <div class="form-group" style="margin-bottom: 20px; display: flex; align-items: center; gap: 8px; direction: rtl;">
-          <input type="checkbox" id="remember-me-checkbox" style="width: 18px; height: 18px; accent-color: var(--green); cursor: pointer; border-radius: 4px; background: rgba(0,0,0,0.25); border: 1px solid var(--border);">
-          <label for="remember-me-checkbox" style="font-size: 13px; color: var(--text2); cursor: pointer; font-weight: 700; user-select: none;">تذكرني على هذا الجهاز الآمن 🔒</label>
-        </div>
-
-        <!-- Main Submission Button -->
-        <button type="submit" class="submit-btn" id="submitBtn" style="width: 100%; background: var(--green); border: 1px solid var(--gold); color: #fff; font-size: 15px; font-weight: 800; padding: 13px; border-radius: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s;">
-          <span>تأكيد وتسجيل الدخول الموحد</span> <i class="fa-solid fa-arrow-left"></i>
-        </button>
-      </form>
-    </div>
-
-    <!-- 2FA Container -->
-    <div id="two-factor-container" style="display: none; margin-top: 16px;"></div>
-
-    <!-- Divider "أو" (Or) -->
-    <div class="separator" style="display: flex; align-items: center; text-align: center; margin: 24px 0; color: var(--text2); font-size: 13px; font-weight: 600;">أو المتابعة عبر الهوية الحيوية والاجتماعية</div>
-
-    <!-- Manus Action Buttons Stack -->
-    <div class="manus-buttons-container" style="display: flex; flex-direction: column; gap: 12px;">
-      <!-- Biometric Login Button -->
-      <button type="button" class="manus-btn biometric-btn" id="biometric-login-btn" style="width: 100%; background: rgba(26,92,42,0.1); border: 1px solid var(--border); color: #fff; font-size: 14px; font-weight: 800; padding: 12px; border-radius: 14px; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 8px; transition: all 0.2s;">
-        <div class="btn-text-wrapper" style="display: flex; align-items: center; gap: 8px;">
-          <i class="fa-solid fa-fingerprint" style="color: var(--gold); font-size: 18px;"></i>
-          <span>المتابعة عبر بصمة الأصبع الحيوية</span>
-        </div>
-        <i class="fa-solid fa-chevron-left arrow-left"></i>
-      </button>
-
-      <!-- Google Sign In Button (Fully Functional) -->
-      <button type="button" class="manus-btn google-btn" id="googleBtn" style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: #fff; font-size: 14px; font-weight: 800; padding: 12px; border-radius: 14px; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 8px; transition: all 0.2s;">
-        <div class="btn-text-wrapper" style="display: flex; align-items: center; gap: 8px;">
-          <img src="https://images.unsplash.com/photo-1573804633927-bfcbcd909acd?auto=format&fit=crop&w=32&h=32" alt="Google" class="btn-icon-img" style="width: 18px; height: 18px; border-radius: 50%;">
-          <span>المتابعة باستخدام حساب Google</span>
-        </div>
-        <i class="fa-solid fa-chevron-left arrow-left"></i>
-      </button>
-    </div>
-
-    <!-- Extra links and diagnostic session action -->
-    <div style="text-align: center; margin-top: 24px; font-size: 13px; display: flex; flex-direction: column; gap: 14px; align-items: center; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 16px;">
-      <a href="#" id="toggleModeBtn" style="color: var(--gold2); text-decoration: none; font-weight: 800;">ليس لديك حساب؟ سجل حساباً جديداً الآن ←</a>
-      <button id="clearSessionBtn" type="button" style="background: transparent; border: 1px solid rgba(255,255,255,0.15); color: #888; border-radius: 8px; font-size: 11px; padding: 6px 12px; cursor: pointer; font-family: 'Cairo', sans-serif;">🧹 تنظيف وإعادة تعيين جلسة الاتصال (Clean Auth Session)</button>
-    </div>
-  </div>
-
 </div>
+
+<script>
+  // إعادة التوجيه الفوري والآمن لمنع أي واجهة دخول من الظهور
+  setTimeout(function() {
+    window.location.href = 'index.html';
+  }, 500);
+</script>
 
 <!-- Importmap Definitions for Seamless Modular Loading -->
 <script type="importmap">

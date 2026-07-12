@@ -567,7 +567,6 @@ html,body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--text);
   <div class="smi" onclick="closeSide();G('cats')"><span class="si" style="color:var(--g1)"><i class="fa-solid fa-folder-open"></i></span><div><div class="sn">جميع الأقسام</div></div></div>
   <div class="smi" onclick="closeSide();G('all-prods')"><span class="si" style="color:var(--g1)"><i class="fa-solid fa-box"></i></span><div><div class="sn">جميع المنتجات</div></div></div>
   <div class="sm-sec" id="sm-driver-sec">للتجار والسائقين</div>
-  <div class="smi" id="sm-unified-login-item" onclick="closeSide();G('login')"><span class="si" style="color:var(--gold)"><i class="fa-solid fa-lock"></i></span><div><div class="sn">تسجيل دخول موحد ZaLo</div></div></div>
   <div class="smi" id="sm-driver-portal-item" onclick="closeSide();G('driver-portal')"><span class="si" style="color:var(--g1)"><i class="fa-solid fa-motorcycle"></i></span><div><div class="sn">بوابة السائقين والمندوبين</div><div class="sd">تتبع وتسليم طلبيات الولايات الـ69</div></div></div>
   <div class="sm-sec">تواصل معنا وإدارة</div>
   <div class="smi" onclick="closeSide();openLink('notifications.html')"><span class="si" style="color:var(--gold)"><i class="fa-solid fa-bell"></i></span><div><div class="sn">مركز الإشعارات</div><div class="sd">تنبيهات الطلبات والعمليات</div></div></div>
@@ -661,84 +660,8 @@ html,body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--text);
     <div class="bn" onclick="G('myorders')"><div class="bni"><i class="fa-solid fa-bag-shopping"></i></div><div class="bnl">طلباتي</div></div>
     <div class="bn" onclick="G('wilayas')"><div class="bni"><i class="fa-solid fa-location-dot"></i></div><div class="bnl">الولايات</div></div>
     <div class="bn" onclick="G('search')"><div class="bni"><i class="fa-solid fa-magnifying-glass"></i></div><div class="bnl">البحث</div></div>
-    <div class="bn" id="bottom-nav-login-btn" onclick="G('login')"><div class="bni"><i class="fa-solid fa-circle-user"></i></div><div class="bnl">الدخول</div></div>
   </div>
 </div>
-
-<!-- UNIFIED SMART LOGIN HUB -->
-<div id="s-login" class="screen" style="background: #080d09; color: #f8fafc; padding: 24px 16px; align-items: center; justify-content: center; min-height: 100dvh;">
-  <div style="width: 100%; max-width: 440px; background: #0f1811; border: 1.5px solid rgba(197, 160, 89, 0.2); border-radius: 20px; padding: 32px 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: flex; flex-direction: column; gap: 20px; margin: auto;">
-    
-    <!-- Header Emblem -->
-    <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; margin-bottom: 8px;">
-      <div style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center;">
-        <img src="assets/icon-192.svg" alt="ZaLo Logo" style="width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 2px 8px rgba(197,160,89,0.4));" onerror="this.src='https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?auto=format&fit=crop&q=80&w=100'">
-      </div>
-      <h2 style="font-size: 18px; font-weight: 900; color: #c5a059; text-align: center; margin: 0;">نظام تسجيل الدخول الذكي الموحد</h2>
-    </div>
-
-    <!-- Home Button -->
-    <button onclick="G('home')" style="background: rgba(26, 92, 42, 0.2); color: #4ade80; border: 1px solid #1a5c2a; border-radius: 30px; padding: 8px 16px; font-family: 'Cairo', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; align-self: center; margin-bottom: 8px;">
-      <i class="fa-solid fa-house"></i> الواجهة الرئيسية
-    </button>
-
-    <!-- Error container -->
-    <div id="unified-login-error" style="background: rgba(239, 68, 68, 0.15); border: 1px solid #ef4444; color: #fca5a5; border-radius: 12px; padding: 12px; font-size: 13px; text-align: center; display: none; font-weight: bold;"></div>
-
-    <!-- Traditional Login Form -->
-    <form id="unified-login-form" style="display: flex; flex-direction: column; gap: 16px;">
-      
-      <!-- Email Field -->
-      <div style="display: flex; flex-direction: column; gap: 6px;">
-        <label style="font-size: 13px; font-weight: bold; color: #e2e8f0; display: flex; align-items: center; gap: 6px;">
-          البريد الإلكتروني للذكاء الموحد
-        </label>
-        <div style="position: relative; display: flex; align-items: center;">
-          <input type="email" id="unified-email" required placeholder="example@domain.com" style="width: 100%; background: #070a08; border: 1.5px solid rgba(26, 92, 42, 0.3); border-radius: 12px; padding: 14px 16px 14px 44px; color: #fff; font-family: 'Cairo', sans-serif; font-size: 14px; outline: none; transition: all 0.2s; direction: ltr; text-align: left;" onfocus="this.style.borderColor='#4ade80'; this.style.boxShadow='0 0 0 3px rgba(74,222,128,0.15)'" onblur="this.style.borderColor='rgba(26, 92, 42, 0.3)'; this.style.boxShadow='none'">
-          <i class="fa-solid fa-envelope" style="position: absolute; left: 16px; color: #64748b; font-size: 16px;"></i>
-        </div>
-      </div>
-
-      <!-- Password Field -->
-      <div style="display: flex; flex-direction: column; gap: 6px;">
-        <label style="font-size: 13px; font-weight: bold; color: #e2e8f0; display: flex; align-items: center; gap: 6px;">
-          كلمة المرور الآمنة
-        </label>
-        <div style="position: relative; display: flex; align-items: center;">
-          <input type="password" id="unified-password" required placeholder="••••••••" style="width: 100%; background: #070a08; border: 1.5px solid rgba(26, 92, 42, 0.3); border-radius: 12px; padding: 14px 16px 14px 44px; color: #fff; font-family: 'Cairo', sans-serif; font-size: 14px; outline: none; transition: all 0.2s;" onfocus="this.style.borderColor='#4ade80'; this.style.boxShadow='0 0 0 3px rgba(74,222,128,0.15)'" onblur="this.style.borderColor='rgba(26, 92, 42, 0.3)'; this.style.boxShadow='none'">
-          <i class="fa-solid fa-lock" style="position: absolute; left: 16px; color: #64748b; font-size: 16px;"></i>
-        </div>
-      </div>
-
-      <!-- Submit Button -->
-      <button type="submit" id="unified-submit-btn" style="background: #1a5c2a; color: #ffffff; border: none; border-radius: 12px; padding: 14px; font-family: 'Cairo', sans-serif; font-size: 15px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.2s; margin-top: 6px; box-shadow: 0 4px 12px rgba(26,92,42,0.3);" onmouseover="this.style.background='#1e6b31'" onmouseout="this.style.background='#1a5c2a'">
-        تأكيد وتسجيل الدخول الموحد <i class="fa-solid fa-arrow-left"></i>
-      </button>
-    </form>
-
-    <!-- Google Button Divider -->
-    <div style="display: flex; align-items: center; text-align: center; margin: 10px 0; color: #64748b; font-size: 12px; font-weight: bold;">
-      <div style="flex: 1; height: 1px; background: rgba(255,255,255,0.08);"></div>
-      <span style="padding: 0 10px;">أو الدخول الآمن عبر Google</span>
-      <div style="flex: 1; height: 1px; background: rgba(255,255,255,0.08);"></div>
-    </div>
-
-    <!-- Google Sign-in Button -->
-    <button id="unified-google-btn" style="background: #ffffff; color: #0f172a; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px; font-family: 'Cairo', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.2s; box-shadow: 0 2px 6px rgba(0,0,0,0.05);" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='#ffffff'">
-      <img src="https://images.unsplash.com/photo-1573804633927-bfcbcd909acd?auto=format&fit=crop&q=80&w=40" style="width: 20px; height: 20px; border-radius: 50%; object-fit: cover;" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' width=\'24\' height=\'24\'><path fill=\'%23EA4335\' d=\'M5.266 9.765A7.077 7.077 0 0 1 12 4.909c1.69 0 3.218.6 4.418 1.582L19.91 3C17.782 1.145 15.055 0 12 0 7.27 0 3.23 2.66 1.14 6.574l4.126 3.191z\'/><path fill=\'%234285F4\' d=\'M23.49 12.275c0-.825-.075-1.615-.213-2.38H12v4.512h6.446c-.275 1.488-1.114 2.748-2.38 3.593v2.986h3.854c2.254-2.074 3.57-5.122 3.57-8.711z\'/><path fill=\'%23FBBC05\' d=\'M5.266 14.235A7.16 7.16 0 0 1 4.909 12c0-.783.128-1.537.357-2.235L1.14 6.574A11.93 11.93 0 0 0 0 12c0 1.92.459 3.736 1.272 5.353l3.994-3.118z\'/><path fill=\'%2334A853\' d=\'M16.066 20.932A7.18 7.18 0 0 1 12 19.091c-3.11 0-5.74-2.091-6.734-4.856L1.272 17.353A11.97 11.97 0 0 0 12 24c3.218 0 6.13-.1 8.354-2.218l-4.288-2.85z\'/></svg>'">
-      الدخول السريع عبر Google
-    </button>
-
-    <!-- Toggle Mode Link -->
-    <a href="#" id="unified-toggle-mode-btn" style="color: var(--gold); text-decoration: none; font-weight: 800; text-align: center; font-size: 13px; margin: 12px 0 6px 0; display: block;">ليس لديك حساب؟ سجل حساباً جديداً الآن ←</a>
-
-    <!-- Session Clean Button -->
-    <button id="unified-clean-session-btn" style="background: rgba(255, 255, 255, 0.05); color: #94a3b8; border: 1px dashed rgba(255, 255, 255, 0.15); border-radius: 12px; padding: 12px; font-family: 'Cairo', sans-serif; font-size: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'">
-      🧹 تنظيف وإعادة تعيين جلسة الاتصال (Session)
-    </button>
-  </div>
-</div>
-
 
 <!-- WILAYAS -->
 <div id="s-wilayas" class="screen">

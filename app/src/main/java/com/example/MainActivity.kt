@@ -242,6 +242,14 @@ fun PureWebContainerScreen(
                         }
                     }
                     clearCache(true)
+                    try {
+                        val wasmDir = java.io.File(activity.cacheDir, "WebView/Default/HTTP Cache/Code Cache/wasm")
+                        if (!wasmDir.exists()) {
+                            wasmDir.mkdirs()
+                        }
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
                     settings.apply {
                         javaScriptEnabled = true
                         domStorageEnabled = true
