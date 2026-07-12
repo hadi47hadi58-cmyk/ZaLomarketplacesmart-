@@ -241,6 +241,7 @@ fun PureWebContainerScreen(
                             return true
                         }
                     }
+                    clearCache(true)
                     settings.apply {
                         javaScriptEnabled = true
                         domStorageEnabled = true
@@ -250,6 +251,7 @@ fun PureWebContainerScreen(
                         loadWithOverviewMode = true
                         useWideViewPort = true
                         mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
+                        cacheMode = WebSettings.LOAD_NO_CACHE
                     }
                     addJavascriptInterface(WebAppInterface(activity, this), "AndroidInterface")
                     loadUrl("file:///android_asset/web/splash.html")

@@ -150,33 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Manus Card fast click to focus and autofill
-  const lastEmail = localStorage.getItem('user_email');
-  const manusCard = document.getElementById('manusProfileCard');
-  const manusAvatar = document.getElementById('manusAvatar');
-  const manusEmail = document.getElementById('manusEmail');
-  const manusProfileTitle = document.getElementById('manusProfileTitle');
 
-  if (manusCard && manusAvatar && manusEmail && manusProfileTitle) {
-    if (lastEmail) {
-      manusEmail.textContent = lastEmail;
-      manusProfileTitle.textContent = 'المتابعة كحسابك النشط المعتمد';
-      const cleanName = lastEmail.split('@')[0].toUpperCase();
-      manusAvatar.src = `https://ui-avatars.com/api/?name=${cleanName}&background=1a5c2a&color=fff&bold=true`;
-    } else {
-      manusEmail.textContent = 'تسجيل دخول سريع كمشتري زائر';
-      manusProfileTitle.textContent = 'المتابعة كزبون جديد';
-      manusAvatar.src = `https://ui-avatars.com/api/?name=ZaLo&background=c9a84c&color=071a0b&bold=true`;
-    }
-
-    manusCard.addEventListener('click', () => {
-      if (lastEmail && emailInput) {
-        emailInput.value = lastEmail;
-        performDetection(lastEmail);
-      }
-      if (emailInput) emailInput.focus();
-    });
-  }
 
   // Session Cleanup action
   const clearBtn = document.getElementById('clearSessionBtn');
