@@ -5,7 +5,7 @@
 import { supabase } from './supabase-config.js';
 import { telemetry } from './telemetry-logger.js';
 
-export { supabase, telemetry };
+export { supabase, supabase as supabaseClient, telemetry };
 
 // --- Automated Role-Based Routing & Session Integration ---
 // دالة التحقق والتوجيه التلقائي للمستخدم بناءً على رتبته (ADMIN, MERCHANT, CUSTOMER)
