@@ -1481,61 +1481,101 @@ if (initialSession) {
 // 2. Auto-seed Algerian Marketplace Data if empty to ensure the platform is never blank
 const SEED_SHOPS = [
   {
-    id: "shop_seed_1",
-    storeName: "مجوهرات ومجوهرات القصبة العريقة",
-    ownerName: "الحاج سعيد البهجة",
-    email: "said@zalo.com",
-    phone: "0698694010",
-    whatsapp: "0698694010",
-    wilaya: "الجزائر",
-    commune: "الجزائر الوسطى",
-    address: "باب الواد - الجزائر الوسطى",
-    category: "مجوهرات وهدايا",
-    workHours: "09:00 - 19:00",
-    description: "أرقى الحلي والمجوهرات التقليدية المصنوعة يدوياً بجودة عالية وضمان حقيقي.",
-    rcNumber: "RC-778899",
+    id: "store_salam",
+    storeName: "متجر السلام",
+    ownerName: "أحمد بن زكري",
+    email: "salam@zalo.com",
+    phone: "0666112233",
+    whatsapp: "0666112233",
+    wilaya: "58 المنيعة",
+    commune: "المنيعة",
+    address: "وسط المدينة، المنيعة (بالقرب من البريد القديم)",
+    category: "هواتف وإلكترونيات",
+    workHours: "08:00 - 22:00",
+    description: "أفضل الهواتف الذكية والأجهزة الإلكترونية الحديثة بأسعار تنافسية وضمان حقيقي.",
+    rcNumber: "RC-556677",
     storeType: "registered",
-    logoURL: "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&q=80&w=200",
+    logoURL: "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?auto=format&fit=crop&q=80&w=200",
     status: "active",
     subscription: "premium",
     createdAt: new Date().toISOString()
   },
   {
-    id: "shop_seed_2",
-    storeName: "ملابس وبدلات الفخامة والجمال",
-    ownerName: "عبد الوهاب القسنطيني",
-    email: "wahab@zalo.com",
-    phone: "0770112233",
-    whatsapp: "0770112233",
-    wilaya: "قسنطينة",
-    commune: "قسنطينة",
-    address: "وسط المدينة - قسنطينة",
-    category: "ملابس وأزياء",
-    workHours: "08:30 - 20:30",
-    description: "أحدث صيحات الموضة للرجال والنساء وبدلات الزفاف التقليدية القسنطينية الأصيلة.",
-    rcNumber: "RC-445566",
+    id: "store_noor",
+    storeName: "متجر النور",
+    ownerName: "سعيد بن عمر",
+    email: "noor@zalo.com",
+    phone: "0555998877",
+    whatsapp: "0555998877",
+    wilaya: "58 المنيعة",
+    commune: "المنيعة",
+    address: "شارع المجاهدين المقابل لبلدية المنيعة",
+    category: "هواتف وإلكترونيات",
+    workHours: "08:30 - 21:30",
+    description: "بيع وصيانة الأجهزة الإلكترونية والهواتف النقالة ولوازمها مع خدمة ممتازة.",
+    rcNumber: "RC-889900",
     storeType: "registered",
-    logoURL: "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&q=80&w=200",
+    logoURL: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=200",
     status: "active",
     subscription: "premium",
     createdAt: new Date().toISOString()
   },
   {
-    id: "shop_seed_3",
-    storeName: "أواني ومنزل المطبخ الجزائري",
-    ownerName: "أمينة الوهرانية",
-    email: "amina@zalo.com",
-    phone: "0550998877",
-    whatsapp: "0550998877",
-    wilaya: "وهران",
-    commune: "وهران",
-    address: "حي الحمري - وهران",
-    category: "أواني ومنزلية",
+    id: "store_oasis",
+    storeName: "متجر الواحة",
+    ownerName: "عمر المنيعي",
+    email: "oasis@zalo.com",
+    phone: "0770454545",
+    whatsapp: "0770454545",
+    wilaya: "58 المنيعة",
+    commune: "المنيعة",
+    address: "حي البساتين الشمالي، المنيعة",
+    category: "مواد غذائية",
+    workHours: "07:00 - 23:00",
+    description: "أجود التمور والمواد الغذائية الطازجة والمحلية من بساتين المنيعة الخضراء.",
+    rcNumber: "RC-112244",
+    storeType: "registered",
+    logoURL: "https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=200",
+    status: "active",
+    subscription: "basic",
+    createdAt: new Date().toISOString()
+  },
+  {
+    id: "store_sahara",
+    storeName: "متجر الصحراء",
+    ownerName: "بشير الصحراوي",
+    email: "sahara@zalo.com",
+    phone: "0662334455",
+    whatsapp: "0662334455",
+    wilaya: "58 المنيعة",
+    commune: "المنيعة",
+    address: "المخرج الجغرافي باتجاه عين صالح",
+    category: "أخرى",
+    workHours: "08:00 - 20:00",
+    description: "بيع التمور الفاخرة، المنتجات التقليدية والألبسة الصحراوية العريقة بأسعار رائعة.",
+    rcNumber: "RC-334455",
+    storeType: "free",
+    logoURL: "https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&q=80&w=200",
+    status: "active",
+    subscription: "basic",
+    createdAt: new Date().toISOString()
+  },
+  {
+    id: "store_fhal_tech",
+    storeName: "تقنية الفحل للإلكترونيات",
+    ownerName: "إبراهيم الهاشمي",
+    phone: "0661122334",
+    whatsapp: "0661122334",
+    email: "fhal@zalo.com",
+    wilaya: "58 المنيعة",
+    commune: "حاسي الفحل",
+    address: "الشارع الرئيسي، بلدة حاسي الفحل",
+    category: "هواتف وإلكترونيات",
     workHours: "09:00 - 21:00",
-    description: "كل ما تحتاجه المرأة الجزائرية لمطبخها من أواني راقية، ديكورات منزلية عصرية.",
-    rcNumber: "RC-112233",
+    description: "مركز معتمد لبيع وصيانة الأجهزة الإلكترونية والهواتف الذكية بحاسي الفحل.",
+    rcNumber: "RC-553311",
     storeType: "registered",
-    logoURL: "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&q=80&w=200",
+    logoURL: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&q=80&w=200",
     status: "active",
     subscription: "basic",
     createdAt: new Date().toISOString()
@@ -1544,57 +1584,68 @@ const SEED_SHOPS = [
 
 const SEED_PRODUCTS = [
   {
-    id: "prod_seed_1",
-    storeId: "shop_seed_1",
-    name: "سوار ذهبي عيار 18 قيراط تصميم تركي",
-    price: 85000,
-    image: "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&q=80&w=400",
-    emoji: "👑",
-    category: "مجوهرات وهدايا",
+    id: "prod_galaxy_a07",
+    storeId: "store_salam",
+    name: "Galaxy A07",
+    price: 22000,
+    image: "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?auto=format&fit=crop&w=400&q=80",
+    emoji: "📱",
+    category: "هواتف وإلكترونيات",
     status: "active",
     deleted: false
   },
   {
-    id: "prod_seed_2",
-    storeId: "shop_seed_1",
-    name: "خاتم فضي عيار 925 مرصع بالياقوت الأزرق",
-    price: 12500,
-    image: "https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&q=80&w=400",
-    emoji: "💍",
-    category: "مجوهرات وهدايا",
+    id: "prod_honor_x6c",
+    storeId: "store_salam",
+    name: "Honor X6C",
+    price: 29000,
+    image: "https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=400&q=80",
+    emoji: "📱",
+    category: "هواتف وإلكترونيات",
     status: "active",
     deleted: false
   },
   {
-    id: "prod_seed_3",
-    storeId: "shop_seed_2",
-    name: "طقم بدلة كلاسيكية رجالي تركي فخم 3 قطع",
-    price: 34000,
-    image: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&q=80&w=400",
-    emoji: "👔",
+    id: "prod_battery_pack",
+    storeId: "store_salam",
+    name: "بنك طاقة شاحن أنكر 20K",
+    price: 6500,
+    image: "https://images.unsplash.com/photo-1583863788434-e58a36330cf0?auto=format&fit=crop&w=400&q=80",
+    emoji: "⚡",
+    category: "هواتف وإلكترونيات",
+    status: "active",
+    deleted: false
+  },
+  {
+    id: "prod_brakes",
+    storeId: "store_salam",
+    name: "فحمات فرامل سيارة بوش",
+    price: 4500,
+    image: "https://images.unsplash.com/photo-1486006920555-c77dce18193b?auto=format&fit=crop&w=400&q=80",
+    emoji: "🔧",
+    category: "سيارات وقطع غيار",
+    status: "active",
+    deleted: false
+  },
+  {
+    id: "prod_dates",
+    storeId: "store_oasis",
+    name: "علبة تمور دقلة نور تولقة",
+    price: 1500,
+    image: "https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=400&q=80",
+    emoji: "🌴",
+    category: "مواد غذائية",
+    status: "active",
+    deleted: false
+  },
+  {
+    id: "prod_jacket",
+    storeId: "store_sahara",
+    name: "سترة صوفية شتوية صحراوية",
+    price: 5500,
+    image: "https://images.unsplash.com/photo-1544022613-e87ca75a784a?auto=format&fit=crop&w=400&q=80",
+    emoji: "🧥",
     category: "ملابس وأزياء",
-    status: "active",
-    deleted: false
-  },
-  {
-    id: "prod_seed_4",
-    storeId: "shop_seed_2",
-    name: "فستان قفطان قطيفة قسنطيني مطرز بالخيط الذهبي",
-    price: 48000,
-    image: "https://images.unsplash.com/photo-1566174053879-31528523f8ae?auto=format&fit=crop&q=80&w=400",
-    emoji: "👗",
-    category: "ملابس وأزياء",
-    status: "active",
-    deleted: false
-  },
-  {
-    id: "prod_seed_5",
-    storeId: "shop_seed_3",
-    name: "طقم حلل جرانيت فاخر مقاوم للالتصاق 10 قطع",
-    price: 19500,
-    image: "https://images.unsplash.com/photo-1584269600464-37b1b58a9fe7?auto=format&fit=crop&q=80&w=400",
-    emoji: "🍳",
-    category: "أواني ومنزلية",
     status: "active",
     deleted: false
   }
@@ -2086,9 +2137,11 @@ window.loadProducts=async(sid)=>{
       const p=d.data();
       if(p.deleted === true || p.status === 'deleted') return;
       count++;
-      grid.innerHTML+=`<div class="pcard" onclick="openProd('${d.id}','${(p.name||'').replace(/'/g,"\'")}',${p.price||0},'${p.image||p.imageURL||''}','${p.emoji||'📦'}')">
-        <div class="pcard-img">${(p.image||p.imageURL)?`<img src="${p.image||p.imageURL}" alt="">`:`<span>${p.emoji||'📦'}</span>`}</div>
-        <div class="pcard-body"><div class="pcard-name">${p.name||''}</div><div class="pcard-price">${(p.price||0).toLocaleString()} <span>دج</span></div></div>
+      const pName = p.name || p.productName || '';
+      const imgUrl = p.image || p.imageURL || p.imageUrl || p.image_url || p.url || (p.images && p.images[0]) || (p.images && p.images.length ? p.images[0] : '');
+      grid.innerHTML+=`<div class="pcard" onclick="openProd('${d.id}','${(pName).replace(/'/g,"\'")}',${p.price||0},'${imgUrl}','${p.emoji||'📦'}')">
+        <div class="pcard-img">${imgUrl?`<img src="${imgUrl}" alt="">`:`<span>${p.emoji||'📦'}</span>`}</div>
+        <div class="pcard-body"><div class="pcard-name">${pName}</div><div class="pcard-price">${(p.price||0).toLocaleString()} <span>دج</span></div></div>
       </div>`;
     });
     if(count === 0){grid.innerHTML='<div style="grid-column:span 2" class="empty"><div class="ei">📦</div><p>لا توجد منتجات معروضة للبيع حالياً</p></div>';}
@@ -2107,9 +2160,11 @@ window.loadAllProds=async()=>{
       const p=d.data();
       if(p.deleted === true || p.status === 'deleted') return;
       count++;
-      grid.innerHTML+=`<div class="pcard" onclick="openProd('${d.id}','${(p.name||'').replace(/'/g,"\'")}',${p.price||0},'${p.image||p.imageURL||''}','${p.emoji||'📦'}')">
-        <div class="pcard-img">${(p.image||p.imageURL)?`<img src="${p.image||p.imageURL}" alt="">`:`<span>${p.emoji||'📦'}</span>`}</div>
-        <div class="pcard-body"><div class="pcard-name">${p.name||''}</div><div class="pcard-price">${(p.price||0).toLocaleString()} <span>دج</span></div></div>
+      const pName = p.name || p.productName || '';
+      const imgUrl = p.image || p.imageURL || p.imageUrl || p.image_url || p.url || (p.images && p.images[0]) || (p.images && p.images.length ? p.images[0] : '');
+      grid.innerHTML+=`<div class="pcard" onclick="openProd('${d.id}','${(pName).replace(/'/g,"\'")}',${p.price||0},'${imgUrl}','${p.emoji||'📦'}')">
+        <div class="pcard-img">${imgUrl?`<img src="${imgUrl}" alt="">`:`<span>${p.emoji||'📦'}</span>`}</div>
+        <div class="pcard-body"><div class="pcard-name">${pName}</div><div class="pcard-price">${(p.price||0).toLocaleString()} <span>دج</span></div></div>
       </div>`;
     });
     if(count === 0){grid.innerHTML='<div style="grid-column:span 2" class="empty"><div class="ei">📦</div><p>لا توجد منتجات عامة معروضة بعد</p></div>';}
@@ -2606,6 +2661,7 @@ window.renderLandingPageLayout = function(p) {
   const wrObj = document.getElementById('prod-detail-wrapper');
   if (!wrObj) return;
 
+  const lpImg = p.image || p.imageURL || p.imageUrl || p.image_url || p.url || (p.images && p.images[0]) || 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=600&q=80';
   wrObj.innerHTML = `
 <div style="background:#fff; color:#333; direction:rtl; text-align:right; font-family:'Cairo', sans-serif;">
   <div style="background:#fff9db; border:1px solid #ffe3e3; border-radius:10px; padding:8px 12px; font-weight:700; color:#e03131; font-size:13px; text-align:center; margin-bottom:12px; display:flex; align-items:center; justify-content:center; gap:6px;">
@@ -2617,7 +2673,7 @@ window.renderLandingPageLayout = function(p) {
   </h1>
 
   <div style="width:100%; border-radius:14px; overflow:hidden; box-shadow:0 4px 15px rgba(0,0,0,0.1); margin-bottom:15px; background:#f8f9fa;">
-    <img src="${p.imageURL || p.image || 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=600&q=80'}" style="width:100%; height:auto; display:block; object-fit:contain; max-height:300px;" alt="" />
+    <img src="${lpImg}" style="width:100%; height:auto; display:block; object-fit:contain; max-height:300px;" alt="" />
   </div>
 
   <div style="background:#f8f9fa; border-radius:12px; padding:15px; display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; border:1.5px solid #e9ecef;">
@@ -2856,10 +2912,12 @@ window.doSearch = async (q) => {
 
     grid.innerHTML = '';
     matches.forEach(p => {
-      grid.innerHTML += `<div class="pcard" onclick="openProd('${p.id}','${(p.name || '').replace(/'/g, "\\'")}',${p.price || 0},'${p.image || p.imageURL || ''}','${p.emoji || '📦'}')">
-        <div class="pcard-img">${(p.image || p.imageURL) ? `<img src="${p.image || p.imageURL}" alt="">` : `<span>${p.emoji || '📦'}</span>`}</div>
+      const pName = p.name || p.productName || '';
+      const imgUrl = p.image || p.imageURL || p.imageUrl || p.image_url || p.url || (p.images && p.images[0]) || (p.images && p.images.length ? p.images[0] : '');
+      grid.innerHTML += `<div class="pcard" onclick="openProd('${p.id}','${(pName).replace(/'/g, "\\'")}',${p.price || 0},'${imgUrl}','${p.emoji || '📦'}')">
+        <div class="pcard-img">${imgUrl ? `<img src="${imgUrl}" alt="">` : `<span>${p.emoji || '📦'}</span>`}</div>
         <div class="pcard-body">
-          <div class="pcard-name">${p.name || ''}</div>
+          <div class="pcard-name">${pName}</div>
           <div class="pcard-price">${(p.price || 0).toLocaleString()} <span>دج</span></div>
         </div>
       </div>`;

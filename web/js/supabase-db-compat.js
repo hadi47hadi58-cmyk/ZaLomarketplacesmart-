@@ -741,9 +741,30 @@ export async function getDocs(queryObj) {
             if (fallbackKey) {
                 const raw = localStorage.getItem(fallbackKey);
                 if (raw) {
-                    data = JSON.parse(raw);
+                    let parsedData = JSON.parse(raw);
+                    if (queryObj.filters && queryObj.filters.length > 0) {
+                        parsedData = parsedData.filter(item => {
+                            for (const filter of queryObj.filters) {
+                                const { field, op, val } = filter;
+                                const itemVal = item[field];
+                                if (op === '==') {
+                                    if (itemVal !== val) return false;
+                                } else if (op === '>=') {
+                                    if (itemVal < val) return false;
+                                } else if (op === '<=') {
+                                    if (itemVal > val) return false;
+                                } else if (op === '!=') {
+                                    if (itemVal === val) return false;
+                                } else if (op === 'in') {
+                                    if (!Array.isArray(val) || !val.includes(itemVal)) return false;
+                                }
+                            }
+                            return true;
+                        });
+                    }
+                    data = parsedData;
                     error = null;
-                    console.log(`[ZaLo Compat Engine] Used local storage fallback for ${table} after error/empty response.`);
+                    console.log(`[ZaLo Compat Engine] Used local storage fallback for ${table} after error/empty response with active filters.`, data);
                 }
             }
         }
@@ -753,7 +774,28 @@ export async function getDocs(queryObj) {
         if (fallbackKey) {
             const raw = localStorage.getItem(fallbackKey);
             if (raw) {
-                data = JSON.parse(raw);
+                let parsedData = JSON.parse(raw);
+                if (queryObj.filters && queryObj.filters.length > 0) {
+                    parsedData = parsedData.filter(item => {
+                        for (const filter of queryObj.filters) {
+                            const { field, op, val } = filter;
+                            const itemVal = item[field];
+                            if (op === '==') {
+                                if (itemVal !== val) return false;
+                            } else if (op === '>=') {
+                                if (itemVal < val) return false;
+                            } else if (op === '<=') {
+                                if (itemVal > val) return false;
+                            } else if (op === '!=') {
+                                if (itemVal === val) return false;
+                            } else if (op === 'in') {
+                                if (!Array.isArray(val) || !val.includes(itemVal)) return false;
+                            }
+                        }
+                        return true;
+                    });
+                }
+                data = parsedData;
                 error = null;
             }
         }
