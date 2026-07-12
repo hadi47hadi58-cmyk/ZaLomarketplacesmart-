@@ -146,11 +146,10 @@ val localAdminFile = file("${projectDirFile}/src/main/assets/web/admin.html")
 val localEnvFile = file("${rootDirFile}/.env")
 
 // Automatically copy master web assets from root ./web directory to app/src/main/assets/web on every build
-val copyWebAssets by tasks.registering(Copy::class) {
+val copyWebAssets by tasks.registering(Sync::class) {
     notCompatibleWithConfigurationCache("Custom task uses dynamic script execution to inject secrets.")
     from(file("${rootDirFile}/web"))
     into(file("${projectDirFile}/src/main/assets/web"))
-    duplicatesStrategy = DuplicatesStrategy.INCLUDE
 
     doLast {
         var supabaseUrl = ""
@@ -203,7 +202,7 @@ tasks.matching { it.name.startsWith("preBuild") }.configureEach {
     dependsOn(copyWebAssets)
 }
 
-tasks.register<Copy>("syncWebAssets") {
+tasks.register<Sync>("syncWebAssets") {
     from("$projectDir/../web/")
     into("$projectDir/src/main/assets/web/")
     include("**/*.html", "**/*.js", "**/*.css", "**/*.json")

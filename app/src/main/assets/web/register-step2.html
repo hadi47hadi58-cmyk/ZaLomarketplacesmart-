@@ -110,10 +110,11 @@
     @media (max-width: 600px) {
       html, body {
         padding: 8px 12px !important;
-        overflow: hidden !important; /* No-Scroll policy */
-        height: 100vh !important;
-        height: 100dvh !important;
-        justify-content: center !important;
+        overflow-y: auto !important; /* Enable scrolling for small viewports */
+        height: auto !important;
+        min-height: 100vh !important;
+        min-height: 100dvh !important;
+        justify-content: flex-start !important;
       }
       .container {
         padding: 16px 14px !important;
