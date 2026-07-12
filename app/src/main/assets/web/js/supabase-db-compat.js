@@ -115,7 +115,7 @@ window.handleUserRedirect = async function() {
     
     // فحص المسار الحالي للتأكد من عدم التكرار اللانهائي - مطابقة حقيقية للملفات القديمة الفعالة
     const isAlreadyOnAdmin = currentPath.endsWith('dashboard-admin.html');
-    const isAlreadyOnDashboard = currentPath.endsWith('dashboard.html') || currentPath.endsWith('dashboard-store.html');
+    const isAlreadyOnDashboard = currentPath.endsWith('dashboard-store.html');
     const isAlreadyOnCustomer = currentPath.endsWith('customer-home.html');
 
     console.log(`[Role Routing] الدور النشط الحالي: ${role} | المسار الحالي: ${currentPath}`);
