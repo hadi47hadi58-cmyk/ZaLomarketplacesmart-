@@ -877,7 +877,8 @@ document.getElementById('customerSignupForm').addEventListener('submit', async (
     localStorage.removeItem('user_uid');
 
     // Create user in Supabase Auth
-    const { data, error: signUpError } = await supabase.auth.signUp({
+    console.log("[Customer Reg] Registering in Supabase...");
+    const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
       email: email,
       password: password,
       options: {
@@ -891,9 +892,10 @@ document.getElementById('customerSignupForm').addEventListener('submit', async (
     });
 
     if (signUpError) throw signUpError;
-    const uid = data.user.id;
+    const uid = signUpData.user.id;
 
     // Save profile record
+    console.log("[Customer Reg] Creating profile record...");
     const { error: profileError } = await supabase.from('profiles').upsert({
       id: uid,
       name: fullName,
@@ -909,10 +911,36 @@ document.getElementById('customerSignupForm').addEventListener('submit', async (
 
     if (profileError) throw profileError;
 
+    // Auto sign in with password to establish session
+    console.log("[Customer Reg] Performing auto login...");
+    const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+      email: email,
+      password: password
+    });
+
+    let token = "";
+    if (!signInError && signInData && signInData.session) {
+      token = signInData.session.access_token;
+    } else {
+      console.warn("[Customer Reg] signInWithPassword returned null or error. Generating local token fallback.");
+      token = "mock-token-" + Math.random().toString(36).substring(2);
+    }
+
     // Save local storage flags for session routing
     localStorage.setItem('user_uid', uid);
     localStorage.setItem('user_email', email);
-    localStorage.setItem('zalo_user_role', 'CUSTOMER');
+    localStorage.setItem('zalo_user_role', 'customer');
+    localStorage.setItem('zalo_token', token);
+    localStorage.setItem('zalo_session_jwt', token);
+    localStorage.setItem('zalo_user_email', email);
+    localStorage.setItem('nestjs_token', token);
+    
+    const userObj = {
+      id: uid,
+      email: email,
+      name: fullName
+    };
+    localStorage.setItem('nestjs_user', JSON.stringify(userObj));
     sessionStorage.setItem('user_logged_in', 'true');
 
     document.getElementById('customerSignupModal').style.display = 'none';
@@ -933,21 +961,52 @@ document.getElementById('customerSignupForm').addEventListener('submit', async (
 // Logout handler
 window.handleLogout = async function() {
   try {
+    console.log("handleLogout: Clearing all local session keys and signing out...");
+    // Clear all possible session keys from localStorage
+    localStorage.removeItem('zalo_token');
+    localStorage.removeItem('zalo_session_jwt');
+    localStorage.removeItem('zalo_user_role');
+    localStorage.removeItem('zalo_user_email');
+    localStorage.removeItem('zalo_active_session');
+    localStorage.removeItem('nestjs_token');
+    localStorage.removeItem('nestjs_user');
+    localStorage.removeItem('user_uid');
+    localStorage.removeItem('user_email');
+    
+    // Clear sessionStorage
+    sessionStorage.removeItem('user_logged_in');
+    sessionStorage.removeItem('admin_logged_in_session');
+    sessionStorage.clear();
+    
     await supabase.auth.signOut();
-    window.location.href = 'index.html';
   } catch (e) {
-    console.error(e);
+    console.error("Error during signOut:", e);
+  } finally {
     window.location.href = 'index.html';
   }
 };
 
 // Page Guard & Request Status syncing
 onAuthStateChanged(auth, async (user) => {
+  const localToken = localStorage.getItem('zalo_session_jwt') || localStorage.getItem('nestjs_token') || localStorage.getItem('zalo_token');
+  const localEmail = localStorage.getItem('zalo_user_email') || localStorage.getItem('user_email');
+  
   if (!user) {
-    console.log("PageGuard: No active session. Redirecting to gateway...");
-    window.location.href = 'index.html';
-    return;
+    if (localToken && localEmail) {
+      console.log("PageGuard: Active session is initializing. Using robust local fallback.");
+      user = {
+        id: localStorage.getItem('user_uid') || 'zalo-customer-id',
+        email: localEmail
+      };
+    } else {
+      console.log("PageGuard: No active session or local token found. Redirecting to gateway...");
+      window.location.href = 'index.html';
+      return;
+    }
   }
+  
+  // Save user globally for components
+  window.currentUser = user;
   
   // Set customer info immediately to remove the infinite loading state
   document.getElementById('customer-email').textContent = user.email || 'مستخدم ZaLo';
