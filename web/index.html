@@ -1820,9 +1820,10 @@ onAuthStateChanged(auth, async (u) => {
           window.location.href = 'dashboard-admin.html';
         } else {
           supabase.from('profiles').select('*').eq('id', u.uid).maybeSingle().then(({ data: profile }) => {
-            if (profile && profile.role === 'merchant') {
+            const cleanRole = (profile && profile.role) ? profile.role.toLowerCase().trim() : '';
+            if (cleanRole === 'merchant') {
               window.location.href = 'dashboard-store.html';
-            } else if (profile && profile.role === 'admin') {
+            } else if (cleanRole === 'admin') {
               window.location.href = 'dashboard-admin.html';
             } else {
               supabase.from('shops').select('*').eq('id', u.uid).maybeSingle().then(({ data: shop }) => {
@@ -1870,9 +1871,10 @@ onAuthStateChanged(auth, async (u) => {
           window.location.href = 'dashboard-admin.html';
         } else {
           supabase.from('profiles').select('*').eq('id', u.uid).maybeSingle().then(({ data: profile }) => {
-            if (profile && profile.role === 'merchant') {
+            const cleanRole = (profile && profile.role) ? profile.role.toLowerCase().trim() : '';
+            if (cleanRole === 'merchant') {
               window.location.href = 'dashboard-store.html';
-            } else if (profile && profile.role === 'admin') {
+            } else if (cleanRole === 'admin') {
               window.location.href = 'dashboard-admin.html';
             } else {
               supabase.from('shops').select('*').eq('id', u.uid).maybeSingle().then(({ data: shop }) => {
