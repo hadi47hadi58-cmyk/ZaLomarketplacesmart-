@@ -164,8 +164,9 @@ supabase.auth.onAuthStateChange(async (event, session) => {
         if (event === 'SIGNED_IN' || event === 'INITIAL_SESSION') {
             await window.handleUserRedirect();
         }
-    } else {
+    } else if (event === 'SIGNED_OUT') {
         // Logged out
+        console.log("[Global Sync] Explicit SIGNED_OUT event. Cleaning up storage...");
         localStorage.removeItem('nestjs_token');
         localStorage.removeItem('zalo_session_jwt');
         localStorage.removeItem('nestjs_user');

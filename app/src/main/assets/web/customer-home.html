@@ -1045,12 +1045,14 @@ onAuthStateChanged(auth, async (user) => {
       .eq('id', user.id)
       .maybeSingle();
       
-    if (profile && profile.role && profile.role.toLowerCase().trim() !== 'customer') {
-      console.log("PageGuard: Access restricted for non-customer:", profile.role);
-      const cleanRole = profile.role.toLowerCase().trim();
-      if (cleanRole === 'admin') window.location.href = 'dashboard-admin.html';
-      else if (cleanRole === 'merchant') window.location.href = 'dashboard-store.html';
-      else window.location.href = 'index.html';
+    const cleanRole = (profile && profile.role) ? profile.role.toLowerCase().trim() : 'customer';
+    if (cleanRole === 'admin' || cleanRole === 'manager') {
+      console.log("PageGuard: Access restricted for customer page, redirecting admin:", cleanRole);
+      window.location.href = 'dashboard-admin.html';
+      return;
+    } else if (cleanRole === 'merchant' || cleanRole === 'seller') {
+      console.log("PageGuard: Access restricted for customer page, redirecting merchant:", cleanRole);
+      window.location.href = 'dashboard-store.html';
       return;
     }
     
