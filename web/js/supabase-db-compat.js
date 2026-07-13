@@ -388,9 +388,22 @@ export async function signOut() {
         'zalo_user_role', 'zalo_role',
         'zalo_user_email', 'zalo_user_name',
         'zalo_active_session', 'user_email',
-        'loggedInAdminEmail', 'loggedInAdminName'
+        'loggedInAdminEmail', 'loggedInAdminName',
+        'user_uid', 'zalo_uid', 'zalo_local_session'
     ];
     keysToRemove.forEach(k => localStorage.removeItem(k));
+
+    // Clear all Supabase related keys in localStorage (starting with sb-)
+    try {
+        for (let i = localStorage.length - 1; i >= 0; i--) {
+            const key = localStorage.key(i);
+            if (key && (key.startsWith('sb-') || key.includes('supabase') || key.includes('zalo_local_session'))) {
+                localStorage.removeItem(key);
+            }
+        }
+    } catch (e) {
+        console.warn("[ZaLo Compat Engine] Error clearing Supabase local storage keys:", e);
+    }
 
     // Clear all SessionStorage keys
     const sessionKeysToRemove = [
@@ -398,6 +411,7 @@ export async function signOut() {
         'zalo_admin_role', 'user_logged_in'
     ];
     sessionKeysToRemove.forEach(k => sessionStorage.removeItem(k));
+    sessionStorage.clear();
 
     try {
         await supabase.auth.signOut();

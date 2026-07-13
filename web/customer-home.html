@@ -963,6 +963,7 @@ window.handleLogout = async function() {
   try {
     console.log("handleLogout: Clearing all local session keys and signing out...");
     // Clear all possible session keys from localStorage
+    localStorage.removeItem('zalo_local_session');
     localStorage.removeItem('zalo_token');
     localStorage.removeItem('zalo_session_jwt');
     localStorage.removeItem('zalo_user_role');
@@ -972,6 +973,21 @@ window.handleLogout = async function() {
     localStorage.removeItem('nestjs_user');
     localStorage.removeItem('user_uid');
     localStorage.removeItem('user_email');
+    localStorage.removeItem('zalo_uid');
+    localStorage.removeItem('zalo_user_name');
+    localStorage.removeItem('zalo_role');
+    
+    // Clear all Supabase related keys in localStorage (starting with sb-)
+    try {
+        for (let i = localStorage.length - 1; i >= 0; i--) {
+            const key = localStorage.key(i);
+            if (key && (key.startsWith('sb-') || key.includes('supabase') || key.includes('zalo_local_session'))) {
+                localStorage.removeItem(key);
+            }
+        }
+    } catch (e) {
+        console.warn("Error clearing Supabase local storage keys:", e);
+    }
     
     // Clear sessionStorage
     sessionStorage.removeItem('user_logged_in');
