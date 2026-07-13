@@ -1016,6 +1016,15 @@ onAuthStateChanged(auth, async (user) => {
     loadFavorites();
     updateNotificationBadge();
 
+    // Check URL parameters to open a specific tab on load
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      const initialTab = urlParams.get('tab');
+      if (initialTab && window.switchTab) {
+        window.switchTab(initialTab);
+      }
+    } catch(e) { console.error('Error switching to initial tab:', e); }
+
   } catch (e) {
     console.warn("Error running page guard checks:", e);
     updateApplicationUI('none');

@@ -525,6 +525,462 @@ html,body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--text);
   word-wrap: break-word;
   overflow-wrap: break-word;
 }
+
+/* Mockup Premium Theme Redesign Overrides */
+:root {
+  --navy: #0A1F30;
+  --metallic-gold: #D4AF37;
+  --metallic-gold-hover: #bda230;
+  --premium-card-bg: #ffffff;
+  --premium-text-dark: #1e293b;
+  --premium-text-muted: #64748b;
+  --premium-green: #0F8241;
+}
+
+#s-home {
+  background-color: #f8fafc !important; /* light gray/white background as in mockup */
+  font-family: 'Cairo', sans-serif !important;
+}
+
+/* Header styling */
+.topbar-mockup {
+  background: #ffffff !important;
+  border-bottom: 2px solid var(--metallic-gold) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 12px 16px !important;
+  height: auto !important;
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 1000 !important;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.04) !important;
+}
+
+.logo-mockup {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  text-decoration: none !important;
+}
+
+.logo-text {
+  font-family: 'Cairo', sans-serif !important;
+  font-weight: 900 !important;
+  font-size: 26px !important;
+  color: var(--navy) !important;
+  letter-spacing: -0.5px !important;
+}
+
+.logo-palm {
+  font-size: 24px !important;
+  color: var(--metallic-gold) !important;
+}
+
+.search-bar-mockup {
+  flex: 1 !important;
+  margin: 0 16px !important;
+  position: relative !important;
+}
+
+.search-input-mockup {
+  width: 100% !important;
+  background: var(--navy) !important;
+  border: 1.5px solid var(--metallic-gold) !important;
+  border-radius: 30px !important;
+  padding: 10px 16px 10px 42px !important;
+  color: #ffffff !important;
+  font-family: 'Cairo', sans-serif !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  text-align: right !important;
+  outline: none !important;
+  transition: all 0.2s !important;
+}
+
+.search-input-mockup::placeholder {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+.search-icon-mockup {
+  position: absolute !important;
+  left: 14px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  color: var(--metallic-gold) !important;
+  font-size: 15px !important;
+  cursor: pointer !important;
+}
+
+.header-icons-mockup {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+}
+
+.header-icon-circle {
+  width: 42px !important;
+  height: 42px !important;
+  background: #ffffff !important;
+  border: 1.5px solid var(--metallic-gold) !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  position: relative !important;
+  cursor: pointer !important;
+  color: var(--navy) !important;
+  font-size: 18px !important;
+  transition: all 0.2s !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05) !important;
+}
+
+.header-icon-circle:active {
+  transform: scale(0.95) !important;
+  background: #fafafa !important;
+}
+
+.header-icon-badge {
+  position: absolute !important;
+  top: -4px !important;
+  right: -4px !important;
+  background: #ef4444 !important;
+  color: #ffffff !important;
+  font-size: 10px !important;
+  font-weight: 800 !important;
+  width: 18px !important;
+  height: 18px !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border: 1px solid #ffffff !important;
+}
+
+/* Category Slider */
+.categories-container-mockup {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 16px !important;
+  gap: 12px !important;
+  overflow-x: auto !important;
+  background: #ffffff !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.02) !important;
+}
+
+.category-item-mockup {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 8px !important;
+  cursor: pointer !important;
+  flex: 1 !important;
+  min-width: 68px !important;
+  transition: all 0.2s !important;
+}
+
+.category-circle-mockup {
+  width: 60px !important;
+  height: 60px !important;
+  background: #ffffff !important;
+  border: 2px solid var(--metallic-gold) !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 26px !important;
+  transition: all 0.25s !important;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.04) !important;
+}
+
+.category-item-mockup:active .category-circle-mockup,
+.category-item-mockup.active .category-circle-mockup {
+  background: var(--navy) !important;
+  border-color: var(--metallic-gold) !important;
+  transform: translateY(-2px) scale(1.05) !important;
+}
+
+.category-label-mockup {
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  color: var(--navy) !important;
+  text-align: center !important;
+  white-space: nowrap !important;
+}
+
+/* Elegant Promotional Banner */
+.banner-mockup {
+  background: linear-gradient(135deg, var(--navy) 0%, #15324b 50%, var(--navy) 100%) !important;
+  border-top: 2px solid var(--metallic-gold) !important;
+  border-bottom: 2px solid var(--metallic-gold) !important;
+  border-radius: 12px !important;
+  margin: 16px !important;
+  padding: 14px 16px !important;
+  position: relative !important;
+  overflow: hidden !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important;
+}
+
+.banner-spark {
+  position: absolute !important;
+  color: var(--metallic-gold) !important;
+  font-size: 14px !important;
+  opacity: 0.8 !important;
+}
+
+.banner-text-content {
+  color: #ffffff !important;
+  font-size: 14px !important;
+  font-weight: 800 !important;
+  text-align: center !important;
+  z-index: 10 !important;
+  letter-spacing: 0.3px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+
+/* Products Section Title */
+.section-title-mockup {
+  font-size: 15px !important;
+  font-weight: 800 !important;
+  color: var(--navy) !important;
+  padding: 0 16px !important;
+  margin-top: 8px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+}
+
+/* Grid of product cards */
+.products-grid-mockup {
+  display: grid !important;
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap: 12px !important;
+  padding: 12px 16px 80px !important;
+  max-width: 1000px !important;
+  margin: 0 auto !important;
+}
+
+/* Premium Product Card */
+.pcard {
+  background: var(--premium-card-bg) !important;
+  border-radius: 16px !important;
+  border: 1px solid rgba(212, 175, 55, 0.15) !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+  position: relative !important;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05) !important;
+  transition: all 0.25s ease !important;
+}
+
+.pcard:active {
+  transform: translateY(-2px) scale(0.99) !important;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.08) !important;
+}
+
+.pcard-img-container {
+  height: 140px !important;
+  background: #f8fafc !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  overflow: hidden !important;
+  padding: 8px !important;
+  cursor: pointer !important;
+}
+
+.pcard-img-tag {
+  max-width: 100% !important;
+  max-height: 100% !important;
+  object-fit: contain !important;
+  border-radius: 8px !important;
+}
+
+.pcard-emoji-span {
+  font-size: 56px !important;
+}
+
+.pcard-info-box {
+  padding: 12px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  flex-grow: 1 !important;
+}
+
+.pcard-rating-row {
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  font-size: 12px !important;
+  font-weight: 800 !important;
+  color: var(--premium-text-dark) !important;
+  margin-bottom: 6px !important;
+}
+
+.pcard-rating-star {
+  color: #ffb703 !important;
+}
+
+.pcard-title-text {
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  color: var(--premium-text-dark) !important;
+  line-height: 1.4 !important;
+  min-height: 36px !important;
+  max-height: 36px !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2 !important;
+  -webkit-box-orient: vertical !important;
+  cursor: pointer !important;
+}
+
+.pcard-price-row {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  margin-top: 6px !important;
+  margin-bottom: 10px !important;
+}
+
+.pcard-price-value {
+  font-size: 14px !important;
+  font-weight: 900 !important;
+  color: var(--metallic-gold) !important;
+}
+
+.pcard-coin-emoji {
+  font-size: 14px !important;
+}
+
+.pcard-add-btn {
+  background: var(--premium-green) !important;
+  color: #ffffff !important;
+  border: none !important;
+  border-radius: 8px !important;
+  padding: 8px 10px !important;
+  font-family: 'Cairo', sans-serif !important;
+  font-size: 11.5px !important;
+  font-weight: 800 !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  transition: all 0.2s !important;
+}
+
+.pcard-add-btn:active {
+  transform: scale(0.96) !important;
+  filter: brightness(1.1) !important;
+}
+
+/* Bottom Nav bar */
+.bnav-mockup {
+  position: fixed !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  background: #ffffff !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  height: 64px !important;
+  padding: 0 8px !important;
+  z-index: 1000 !important;
+  box-shadow: 0 -4px 15px rgba(0,0,0,0.06) !important;
+  border-top: 1.5px solid rgba(212, 175, 55, 0.2) !important;
+}
+
+.bnav-btn-mockup {
+  flex: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: var(--premium-text-muted) !important;
+  cursor: pointer !important;
+  text-decoration: none !important;
+  transition: all 0.2s !important;
+  padding: 6px 0 !important;
+}
+
+.bnav-btn-mockup i {
+  font-size: 18px !important;
+  margin-bottom: 2px !important;
+}
+
+.bnav-btn-mockup span {
+  font-size: 10px !important;
+  font-weight: 800 !important;
+}
+
+.bnav-btn-mockup.active {
+  color: var(--metallic-gold) !important;
+}
+
+/* Capsule background around active tab like in the mockup */
+.bnav-btn-capsule {
+  background: #e3bc57 !important; /* matching golden active capsule */
+  color: #ffffff !important;
+  border-radius: 20px !important;
+  padding: 6px 14px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+}
+
+.bnav-btn-capsule i {
+  margin-bottom: 0 !important;
+  font-size: 14px !important;
+}
+
+.bnav-btn-capsule span {
+  font-size: 11px !important;
+  color: #ffffff !important;
+}
+
+/* Floating custom toast */
+.toast-premium {
+  position: fixed !important;
+  bottom: 80px !important;
+  left: 16px !important;
+  right: 16px !important;
+  background: #ffffff !important;
+  border-radius: 12px !important;
+  padding: 12px 18px !important;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.12) !important;
+  border: 1.5px solid var(--metallic-gold) !important;
+  display: none;
+  align-items: center !important;
+  justify-content: space-between !important;
+  z-index: 10000 !important;
+  animation: toastFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+@keyframes toastFadeIn {
+  from { transform: translateY(15px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.toast-premium-title {
+  font-weight: 800 !important;
+  font-size: 11.5px !important;
+  color: var(--premium-text-muted) !important;
+}
+
+.toast-premium-msg {
+  font-weight: 900 !important;
+  font-size: 13.5px !important;
+  color: var(--premium-text-dark) !important;
+}
 </style>
 </head>
 <body>
@@ -602,68 +1058,130 @@ html,body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--text);
   </div>
 </div>
 <!-- HOME -->
+<!-- HOME REDESIGNED -->
 <div id="s-home" class="screen active">
-  <div class="topbar-standardized" style="position: relative;">
-    <div class="tb-bell" onclick="G('notif')" style="position: absolute; left: 14px; top: 17px;">🔔<div class="tb-badge" id="nb">0</div></div>
-    <button class="header-back-button" style="cursor: default;" onclick="void(0)">
-      <span>السوق الذكي الموحد</span>
-    </button>
-    <div class="tb-menu" onclick="openSide()" style="position: absolute; right: 14px; top: 4px;"><span></span><span></span><span></span></div>
-  </div>
-  <div class="content">
-    <!-- Global Realtime Announcement Banner -->
-    <div id="global-announcement-banner" style="display:none; background:linear-gradient(135deg, #cc9a00 0%, #ffdf00 100%); color:#000; direction:rtl; text-align:right; padding:10px 14px; font-family:'Cairo'; font-size:12px; font-weight:800; border-bottom:2px solid var(--gold); align-items:center; justify-content:space-between; gap:10px; box-sizing:border-box; border-radius:12px; margin: 0 auto 12px; width: 100%; max-width: 340px;">
-      <span style="display:flex; align-items:center; gap:6px;">📢 <span id="announcement-banner-text">...</span></span>
-      <button onclick="this.parentElement.style.display='none'" style="background:transparent; border:none; color:#000; font-size:14px; font-weight:900; cursor:pointer; padding:2px;">✕</button>
+  <!-- Top Header bar -->
+  <div class="topbar-mockup">
+    <!-- Logo with Palm tree -->
+    <a href="index.html" class="logo-mockup">
+      <span class="logo-text">ZaLo</span>
+      <span class="logo-palm">🌴</span>
+    </a>
+    
+    <!-- Search bar in center -->
+    <div class="search-bar-mockup">
+      <input type="text" id="homeSearchInp" placeholder="بحث فوري" class="search-input-mockup" onkeypress="window.handleHomeSearch(event)">
+      <i class="fa-solid fa-magnifying-glass search-icon-mockup" onclick="window.executeHomeSearch()"></i>
     </div>
     
-    <div class="home-body" style="padding: 16px; gap: 12px;">
-      <!-- Small Logo -->
-      <img src="assets/logo.svg" style="height: 120px; width: 120px; object-fit: contain; margin: 0 auto; display: block;" alt="ZaLo">
-      
-      <!-- Button "تسوق في 69 ولاية" -->
-      <button class="btn-gm" onclick="G('wilayas')" style="width: 100%; max-width: 340px; margin: 0 auto; height: 48px; border-radius: 14px; background: var(--g1); font-weight: 800; font-size: 14px; border: none; color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 12px rgba(26,92,42,0.15);">
-        <i class="fa-solid fa-location-dot"></i> تسوق في 69 ولاية الآن
-      </button>
-      
-      <!-- Network Icons Grid - styled beautifully (height 14 equivalent / h-14) -->
-      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; width: 100%; max-width: 340px; margin: 0 auto; padding: 4px 0;">
-        <div onclick="G('cats')" style="display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;">
-          <div style="background: rgba(26, 92, 42, 0.08); border: 1.5px solid rgba(26, 92, 42, 0.2); width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all 0.25s; box-shadow: 0 2px 8px rgba(26,92,42,0.05);" onmouseover="this.style.transform='scale(1.08)'; this.style.background='rgba(26, 92, 42, 0.15)'" onmouseout="this.style.transform='scale(1)'; this.style.background='rgba(26, 92, 42, 0.08)'">
-            <i class="fa-solid fa-grip" style="font-size: 15px; color: var(--g1);"></i>
-          </div>
-          <span style="font-size: 9.5px; font-weight: bold; color: var(--text); margin-top: 5px; text-align: center; white-space: nowrap;">الأقسام</span>
-        </div>
-        <div onclick="G('all-prods')" style="display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;">
-          <div style="background: rgba(26, 92, 42, 0.08); border: 1.5px solid rgba(26, 92, 42, 0.2); width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all 0.25s; box-shadow: 0 2px 8px rgba(26,92,42,0.05);" onmouseover="this.style.transform='scale(1.08)'; this.style.background='rgba(26, 92, 42, 0.15)'" onmouseout="this.style.transform='scale(1)'; this.style.background='rgba(26, 92, 42, 0.08)'">
-            <i class="fa-solid fa-box-open" style="font-size: 15px; color: var(--g1);"></i>
-          </div>
-          <span style="font-size: 9.5px; font-weight: bold; color: var(--text); margin-top: 5px; text-align: center; white-space: nowrap;">المنتجات</span>
-        </div>
-        <div onclick="focusHomeTracker()" style="display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;">
-          <div style="background: rgba(26, 92, 42, 0.08); border: 1.5px solid rgba(26, 92, 42, 0.2); width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all 0.25s; box-shadow: 0 2px 8px rgba(26,92,42,0.05);" onmouseover="this.style.transform='scale(1.08)'; this.style.background='rgba(26, 92, 42, 0.15)'" onmouseout="this.style.transform='scale(1)'; this.style.background='rgba(26, 92, 42, 0.08)'">
-            <i class="fa-solid fa-route" style="font-size: 15px; color: var(--g1);"></i>
-          </div>
-          <span style="font-size: 9.5px; font-weight: bold; color: var(--text); margin-top: 5px; text-align: center; white-space: nowrap;">التتبع الفوري</span>
-        </div>
-        <div onclick="G('driver-portal')" style="display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;">
-          <div style="background: rgba(26, 92, 42, 0.08); border: 1.5px solid rgba(26, 92, 42, 0.2); width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all 0.25s; box-shadow: 0 2px 8px rgba(26,92,42,0.05);" onmouseover="this.style.transform='scale(1.08)'; this.style.background='rgba(26, 92, 42, 0.15)'" onmouseout="this.style.transform='scale(1)'; this.style.background='rgba(26, 92, 42, 0.08)'">
-            <i class="fa-solid fa-motorcycle" style="font-size: 15px; color: var(--g1);"></i>
-          </div>
-          <span style="font-size: 9.5px; font-weight: bold; color: var(--text); margin-top: 5px; text-align: center; white-space: nowrap;">السائقين</span>
-        </div>
+    <!-- Right Actions -->
+    <div class="header-icons-mockup">
+      <!-- Cart -->
+      <div class="header-icon-circle" onclick="window.location.href='customer-home.html?tab=cart'">
+        <i class="fa-solid fa-shopping-cart"></i>
+        <div class="header-icon-badge" id="cart-badge-count" style="display: none;">0</div>
       </div>
-      
-      <!-- s-login Unified Smart Login Hub is defined below -->
-
+      <!-- Notifications -->
+      <div class="header-icon-circle" onclick="G('notif')">
+        <i class="fa-solid fa-bell"></i>
+        <div class="header-icon-badge" id="notif-badge-count-mock">2</div>
+      </div>
     </div>
   </div>
-  <div class="bnav" style="height: 60px;">
-    <div class="bn on" onclick="G('home')"><div class="bni"><i class="fa-solid fa-house"></i></div><div class="bnl">الرئيسية</div></div>
-    <div class="bn" onclick="G('myorders')"><div class="bni"><i class="fa-solid fa-bag-shopping"></i></div><div class="bnl">طلباتي</div></div>
-    <div class="bn" onclick="G('wilayas')"><div class="bni"><i class="fa-solid fa-location-dot"></i></div><div class="bnl">الولايات</div></div>
-    <div class="bn" onclick="G('search')"><div class="bni"><i class="fa-solid fa-magnifying-glass"></i></div><div class="bnl">البحث</div></div>
+
+  <div class="content" style="padding-bottom: 80px; background: #f8fafc;">
+    <!-- Horizontal Circular Categories Row -->
+    <div class="categories-container-mockup">
+      <div class="category-item-mockup" onclick="window.filterHomeProducts('هواتف وإلكترونيات', this)">
+        <div class="category-circle-mockup">📱</div>
+        <span class="category-label-mockup">الالكترونيات</span>
+      </div>
+      <div class="category-item-mockup" onclick="window.filterHomeProducts('ملابس وأزياء', this)">
+        <div class="category-circle-mockup">👗</div>
+        <span class="category-label-mockup">موضة</span>
+      </div>
+      <div class="category-item-mockup" onclick="window.filterHomeProducts('مواد غذائية', this)">
+        <div class="category-circle-mockup">🍎</div>
+        <span class="category-label-mockup">غذائية</span>
+      </div>
+      <div class="category-item-mockup" onclick="window.filterHomeProducts('أثاث ومنزل', this)">
+        <div class="category-circle-mockup">🏠</div>
+        <span class="category-label-mockup">منزل</span>
+      </div>
+      <div class="category-item-mockup" onclick="window.filterHomeProducts('كتب ومستلزمات', this)">
+        <div class="category-circle-mockup">📚</div>
+        <span class="category-label-mockup">كتب</span>
+      </div>
+    </div>
+
+    <!-- Elegant Promotional Banner -->
+    <div class="banner-mockup">
+      <span class="banner-spark" style="top: 8px; left: 16px;">✨</span>
+      <span class="banner-spark" style="bottom: 8px; right: 24px;">✨</span>
+      <span class="banner-spark" style="top: 14px; right: 48px;">✨</span>
+      <div class="banner-text-content">
+        عرض خاص: خصم 20% على كل المنتجات 🎉
+      </div>
+    </div>
+
+    <!-- Section Title -->
+    <div class="section-title-mockup">
+      <span>🛍️ شبكة المنتجات</span>
+      <span style="font-size: 11px; color: var(--premium-text-muted); font-weight: 700; cursor: pointer;" onclick="G('all-prods')">عرض الكل &larr;</span>
+    </div>
+
+    <!-- 2-column Grid of Product Cards -->
+    <div class="products-grid-mockup" id="home-pgrid">
+      <div style="grid-column:span 2; text-align:center; padding: 40px 10px;" class="empty">
+        <div class="ei" style="font-size: 32px;">⏳</div>
+        <p style="font-size: 13px; color: var(--premium-text-muted); font-weight: bold; margin-top: 8px;">جاري تحميل المنتجات...</p>
+      </div>
+    </div>
   </div>
+
+  <!-- Bottom Navigation Bar (pinned to the bottom) -->
+  <div class="bnav-mockup">
+    <!-- Active Tab الرئيسية -->
+    <div class="bnav-btn-mockup" onclick="G('home')">
+      <div class="bnav-btn-capsule">
+        <i class="fa-solid fa-house"></i>
+        <span>الرئيسية</span>
+      </div>
+    </div>
+    
+    <!-- الأقسام -->
+    <div class="bnav-btn-mockup" onclick="G('cats')">
+      <i class="fa-solid fa-folder"></i>
+      <span>الأقسام</span>
+    </div>
+    
+    <!-- المفضلة -->
+    <div class="bnav-btn-mockup" onclick="window.location.href='customer-home.html?tab=cart'">
+      <i class="fa-solid fa-heart" style="color: #ef4444;"></i>
+      <span>المفضلة</span>
+    </div>
+    
+    <!-- السلة -->
+    <div class="bnav-btn-mockup" onclick="window.location.href='customer-home.html?tab=cart'">
+      <i class="fa-solid fa-shopping-cart"></i>
+      <span>السلة</span>
+    </div>
+    
+    <!-- حسابي -->
+    <div class="bnav-btn-mockup" onclick="window.location.href='customer-home.html?tab=profile'">
+      <i class="fa-solid fa-user"></i>
+      <span>حسابي</span>
+    </div>
+  </div>
+</div>
+
+<!-- Floating Premium Toast Notification -->
+<div class="toast-premium" id="toast-notification-mockup">
+  <div style="display: flex; align-items: center; gap: 8px;">
+    <span class="toast-premium-title">تنبيه</span>
+    <span class="toast-premium-msg" id="toast-msg-text">✔️ تم إضافة المنتج بنجاح! 🛒</span>
+  </div>
+  <button style="border:none; background:transparent; color:var(--premium-text-muted); font-weight:bold; cursor:pointer;" onclick="this.parentElement.style.display='none'">✕</button>
 </div>
 
 <!-- WILAYAS -->
@@ -4165,7 +4683,181 @@ window.openUserDashboard = function() {
   window.location.href = 'customer-home.html';
 };
 
+// Premium Redesign Mockup helper functions
+window.loadedHomeProducts = [];
+
+window.loadHomeProducts = async () => {
+  const grid = document.getElementById('home-pgrid');
+  if (!grid) return;
+  try {
+    const snap = await getDocs(collection(db, 'products'));
+    window.loadedHomeProducts = [];
+    snap.forEach(d => {
+      const p = d.data();
+      p.id = d.id;
+      window.loadedHomeProducts.push(p);
+    });
+    window.renderHomeProducts(window.loadedHomeProducts);
+  } catch(e) {
+    console.error("loadHomeProducts error:", e);
+    grid.innerHTML = '<div style="grid-column:span 2" class="empty"><div class="ei">⚠️</div><p>خطأ في تحميل المنتجات</p></div>';
+  }
+};
+
+window.renderHomeProducts = (productsList) => {
+  const grid = document.getElementById('home-pgrid');
+  if (!grid) return;
+  if (productsList.length === 0) {
+    grid.innerHTML = '<div style="grid-column:span 2" class="empty"><div class="ei">📦</div><p>لا توجد منتجات معروضة بعد</p></div>';
+    return;
+  }
+  grid.innerHTML = '';
+  let count = 0;
+  productsList.forEach(p => {
+    if (p.deleted === true || p.status === 'deleted') return;
+    count++;
+    const pName = p.name || p.productName || '';
+    const imgUrl = p.image || p.imageURL || p.imageUrl || p.image_url || p.url || (p.images && p.images[0]) || (p.images && p.images.length ? p.images[0] : '');
+    const price = p.price || 0;
+    const storeId = p.storeId || '';
+    const storeName = (p.storeName || 'محل ZaLo').replace(/'/g, "\\'");
+    const rating = p.rating || '4.5';
+    const id = p.id;
+    
+    grid.innerHTML += `
+      <div class="pcard">
+        <div class="pcard-img-container" onclick="openProd('${id}','${pName.replace(/'/g,"\\'")}',${price},'${imgUrl}','${p.emoji||'📦'}')">
+          ${imgUrl ? `<img src="${imgUrl}" class="pcard-img-tag" alt="${pName}">` : `<span class="pcard-emoji-span">${p.emoji||'📦'}</span>`}
+        </div>
+        <div class="pcard-info-box">
+          <div class="pcard-rating-row"><span class="pcard-rating-star">⭐</span> ${rating}</div>
+          <div class="pcard-title-text" onclick="openProd('${id}','${pName.replace(/'/g,"\\'")}',${price},'${imgUrl}','${p.emoji||'📦'}')">${pName}</div>
+          <div class="pcard-price-row">
+            <span class="pcard-price-value">${price.toLocaleString()} دج</span> <span class="pcard-coin-emoji">💰</span>
+          </div>
+          <button class="pcard-add-btn" onclick="event.stopPropagation(); window.addToCartDirect('${id}','${pName.replace(/'/g,"\\'")}',${price},'${imgUrl}','${p.emoji||'📦'}','${storeId}','${storeName}')">
+            <i class="fa-solid fa-cart-shopping"></i> إضافة إلى السلة
+          </button>
+        </div>
+      </div>
+    `;
+  });
+  if (count === 0) {
+    grid.innerHTML = '<div style="grid-column:span 2" class="empty"><div class="ei">📦</div><p>لا توجد منتجات معروضة بعد</p></div>';
+  }
+};
+
+window.loadHomeProductsFiltered = (categoryName) => {
+  const filtered = window.loadedHomeProducts.filter(p => {
+    const cat = (p.category || '').toLowerCase();
+    if (categoryName === 'هواتف وإلكترونيات') {
+      return cat.includes('الكترون') || cat.includes('هاتف');
+    }
+    if (categoryName === 'ملابس وأزياء') {
+      return cat.includes('ملابس') || cat.includes('موضة') || cat.includes('أزياء');
+    }
+    if (categoryName === 'مواد غذائية') {
+      return cat.includes('غذائي') || cat.includes('طعام');
+    }
+    if (categoryName === 'أثاث ومنزل') {
+      return cat.includes('منزل') || cat.includes('أثاث');
+    }
+    if (categoryName === 'كتب ومستلزمات') {
+      return cat.includes('كتب') || cat.includes('مستلزمات') || cat.includes('مكتب');
+    }
+    return cat.includes(categoryName.toLowerCase());
+  });
+  window.renderHomeProducts(filtered);
+};
+
+window.filterHomeProducts = function(categoryName, element) {
+  const isCurrentlyActive = element.classList.contains('active');
+  
+  document.querySelectorAll('.category-item-mockup').forEach(item => {
+    item.classList.remove('active');
+  });
+  
+  if (isCurrentlyActive) {
+    window.renderHomeProducts(window.loadedHomeProducts);
+  } else {
+    element.classList.add('active');
+    window.loadHomeProductsFiltered(categoryName);
+  }
+};
+
+window.addToCartDirect = function(id, name, price, img, emoji, storeId, storeName) {
+  const cart = JSON.parse(localStorage.getItem('zalo_cart') || '[]');
+  const item = {
+    id: id,
+    name: name,
+    price: Number(price),
+    img: img || '',
+    emoji: emoji || '📦',
+    storeId: storeId || 'direct',
+    storeName: storeName || 'محل ZaLo شريك',
+    qty: 1
+  };
+  const existingIdx = cart.findIndex(c => c.id === item.id);
+  if (existingIdx !== -1) {
+    cart[existingIdx].qty += 1;
+  } else {
+    cart.push(item);
+  }
+  localStorage.setItem('zalo_cart', JSON.stringify(cart));
+  
+  window.showToastNotification("✔️ تم إضافة المنتج بنجاح! 🛒");
+  window.updateCartBadge();
+};
+
+window.updateCartBadge = function() {
+  const cart = JSON.parse(localStorage.getItem('zalo_cart') || '[]');
+  const count = cart.reduce((total, item) => total + (item.qty || 1), 0);
+  const badge = document.getElementById('cart-badge-count');
+  if (badge) {
+    if (count > 0) {
+      badge.textContent = count;
+      badge.style.display = 'flex';
+    } else {
+      badge.style.display = 'none';
+    }
+  }
+};
+
+window.showToastNotification = function(msg) {
+  const toast = document.getElementById('toast-notification-mockup');
+  if (toast) {
+    const textSpan = document.getElementById('toast-msg-text');
+    if (textSpan) textSpan.textContent = msg;
+    toast.style.display = 'flex';
+    clearTimeout(toast._timeout);
+    toast._timeout = setTimeout(() => {
+      toast.style.display = 'none';
+    }, 3000);
+  }
+};
+
+window.handleHomeSearch = function(e) {
+  if (e.key === 'Enter') {
+    window.executeHomeSearch();
+  }
+};
+
+window.executeHomeSearch = function() {
+  const q = document.getElementById('homeSearchInp').value.trim();
+  if (q) {
+    window.location.href = `products.html?q=${encodeURIComponent(q)}`;
+  } else {
+    window.location.href = `products.html`;
+  }
+};
+
 document.addEventListener('DOMContentLoaded',()=>{
+  // Load premium home products and update cart badges on load
+  try {
+    if (window.loadHomeProducts) window.loadHomeProducts();
+    if (window.updateCartBadge) window.updateCartBadge();
+  } catch(e) { console.error('Premium home init error:', e); }
+
   // Initialize visitor/member views and actions
   try {
     const hasToken = localStorage.getItem('zalo_token') || localStorage.getItem('zalo_session_jwt');
