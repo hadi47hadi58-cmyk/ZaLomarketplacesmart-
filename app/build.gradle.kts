@@ -180,12 +180,18 @@ val copyWebAssets by tasks.registering(Sync::class) {
         }
 
         // Inject the actual credentials into the web asset copy for the Android build
-        if (localConfigFile.exists() && supabaseUrl.isNotEmpty() && supabaseKey.isNotEmpty()) {
+        if (localConfigFile.exists()) {
             var content = localConfigFile.readText()
-            content = content.replace("SUPABASE_URL_PLACEHOLDER", supabaseUrl)
-            content = content.replace("SUPABASE_KEY_PLACEHOLDER", supabaseKey)
+            if (supabaseUrl.isNotEmpty() && supabaseKey.isNotEmpty()) {
+                content = content.replace("SUPABASE_URL_PLACEHOLDER", supabaseUrl)
+                content = content.replace("SUPABASE_KEY_PLACEHOLDER", supabaseKey)
+            }
+            val geminiKey = System.getenv("GEMINI_API_KEY") ?: ""
+            if (geminiKey.isNotEmpty()) {
+                content = content.replace("GEMINI_API_KEY_PLACEHOLDER", geminiKey)
+            }
             localConfigFile.writeText(content)
-            println("🔒 [Security Audit] Successfully injected Supabase URL and Key into web assets.")
+            println("🔒 [Security Audit] Successfully injected Supabase credentials and Gemini API Key into web assets.")
         }
 
         if (localAdminFile.exists() && supabaseUrl.isNotEmpty() && supabaseKey.isNotEmpty()) {

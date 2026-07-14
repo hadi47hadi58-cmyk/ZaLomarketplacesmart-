@@ -10,6 +10,7 @@ const SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY || (typeof process !== 'undef
 // Expose public config variables on window for use by other scripts (like sub-client registration)
 window.SUPABASE_URL = SUPABASE_URL;
 window.SUPABASE_ANON_KEY = SUPABASE_ANON_KEY;
+window.GEMINI_API_KEY = window.GEMINI_API_KEY || "GEMINI_API_KEY_PLACEHOLDER" || "AIzaSyC2KWJfMIQ3YZv9r-Ejp9hBWv3UYkkY_7M";
 
 // Initialize Supabase Client
 export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
