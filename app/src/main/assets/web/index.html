@@ -159,6 +159,125 @@ body {
   font-size: 11px;
   color: var(--gray);
 }
+
+/* ALL WILAYAS MODAL */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(16, 42, 67, 0.6);
+  backdrop-filter: blur(4px);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+  z-index: 10000;
+}
+.modal-content {
+  width: 100%;
+  max-width: 420px;
+  background: var(--white);
+  border-radius: 20px;
+  border: 1.5px solid rgba(212, 175, 55, 0.3);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+  display: flex;
+  flex-direction: column;
+  max-height: 80vh;
+  overflow: hidden;
+  animation: modal-fade-in 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes modal-fade-in {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.modal-header {
+  padding: 16px;
+  border-bottom: 1px solid var(--bd);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--navy);
+  color: var(--white);
+  border-top-left-radius: 18px;
+  border-top-right-radius: 18px;
+}
+.modal-title {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #cbd5e1;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.modal-close:hover {
+  color: var(--white);
+}
+.modal-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  background: var(--bg);
+}
+.search-input-wrap {
+  position: relative;
+  margin-bottom: 16px;
+}
+.search-input-wrap i {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--gray);
+}
+.search-input {
+  width: 100%;
+  height: 44px;
+  border-radius: 10px;
+  border: 1.5px solid var(--bd);
+  padding: 0 36px 0 12px;
+  font-family: 'Cairo', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  outline: none;
+  text-align: right;
+  transition: border-color 0.2s;
+}
+.search-input:focus {
+  border-color: var(--metallic-gold);
+}
+.wilayas-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+.wilaya-card {
+  background: var(--white);
+  border: 1px solid var(--bd);
+  border-radius: 10px;
+  padding: 10px;
+  text-align: center;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--navy);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.wilaya-card:hover {
+  background: var(--navy);
+  color: var(--white);
+  border-color: var(--navy);
+  transform: translateY(-1px);
+}
 </style>
 </head>
 <body>
@@ -178,14 +297,39 @@ body {
   </p>
 
   <!-- Login Button -->
-  <a href="login.html" class="btn btn-primary">
+  <a href="login.html" class="btn btn-primary" style="margin-bottom: 12px;">
     <i class="fa-solid fa-right-to-bracket"></i> تسجيل الدخول لحسابي
   </a>
 
   <!-- Register Button -->
-  <a href="register.html" class="btn btn-secondary">
-    <i class="fa-solid fa-user-plus"></i> إنشاء حساب جديد
+  <a href="register.html" class="btn btn-secondary" style="margin-bottom: 24px;">
+    <i class="fa-solid fa-user-plus"></i> إنشاء حساب جديد كلياً
   </a>
+
+  <!-- Interactive State Shopping Section -->
+  <div style="width: 100%; border-top: 1.5px dashed var(--bd); padding-top: 24px; margin-top: 10px; text-align: right;">
+    <h3 style="font-size: 14px; font-weight: 800; color: var(--navy); margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
+      <i class="fa-solid fa-location-dot" style="color: var(--metallic-gold)"></i> تسوق الآن حسب ولايتك
+    </h3>
+    <p style="font-size: 11px; color: var(--gray); margin-bottom: 14px; line-height: 1.5;">
+      اختر ولايتك من القائمة للبدء بتصفح المتاجر والسلع والخدمات المتوفرة في منطقتك فوراً كزائر:
+    </p>
+    
+    <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+      <select id="landing-wilaya-select" style="flex: 1; height: 48px; border-radius: 12px; border: 1.5px solid var(--bd); padding: 0 12px; font-family: 'Cairo', sans-serif; font-size: 13px; font-weight: 700; color: var(--navy); background: #fdfdfd; cursor: pointer; outline: none; transition: border-color 0.2s;">
+        <option value="">اختر ولايتك...</option>
+      </select>
+      
+      <button onclick="startGuestShopping()" style="height: 48px; padding: 0 16px; background: var(--navy); color: var(--white); border: none; border-radius: 12px; font-family: 'Cairo', sans-serif; font-size: 13px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: background 0.2s;">
+        انطلق <i class="fa-solid fa-arrow-left"></i>
+      </button>
+    </div>
+
+    <!-- View All States Button (The requested old button restoration with full modal search) -->
+    <button onclick="openAllWilayasModal()" style="width: 100%; height: 46px; background: rgba(212, 175, 55, 0.08); border: 1.5px solid rgba(212, 175, 55, 0.3); border-radius: 12px; color: var(--navy); font-family: 'Cairo', sans-serif; font-size: 12.5px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s;">
+      <i class="fa-solid fa-map-marked-alt" style="color: var(--metallic-gold)"></i> تصفح خريطة ولايات الجزائر المتاحة
+    </button>
+  </div>
 
   <!-- Unique Features -->
   <div class="features">
@@ -208,6 +352,97 @@ body {
   </div>
 
 </div>
+
+<!-- ALL WILAYAS MODAL -->
+<div class="modal-overlay" id="wilayasModal" onclick="if(event.target===this) closeAllWilayasModal()">
+  <div class="modal-content">
+    <div class="modal-header">
+      <div class="modal-title">
+        <i class="fa-solid fa-map-location-dot" style="color: var(--metallic-gold)"></i>
+        <span>اختر ولايتك للتسوق الفوري</span>
+      </div>
+      <button class="modal-close" onclick="closeAllWilayasModal()">✕</button>
+    </div>
+    
+    <div class="modal-body">
+      <div class="search-input-wrap">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" id="wilaya-search" class="search-input" placeholder="ابحث عن ولايتك (مثال: الجزائر العاصمة، الشلف...)" oninput="filterWilayas(this.value)">
+      </div>
+      
+      <div class="wilayas-grid" id="wilayas-grid-container">
+        <!-- Wilayas cards dynamically loaded here -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const WILAYAS = [
+  {n:"أدرار"},{n:"الشلف"},{n:"الأغواط"},{n:"أم البواقي"},{n:"باتنة"},{n:"بجاية"},{n:"بسكرة"},{n:"بشار"},{n:"البليدة"},{n:"البويرة"},
+  {n:"تمنراست"},{n:"تبسة"},{n:"تلمسان"},{n:"تيارت"},{n:"تيزي وزو"},{n:"الجزائر العاصمة"},{n:"الجلفة"},{n:"جيجل"},{n:"سطيف"},{n:"سعيدة"},
+  {n:"سكيكدة"},{n:"سيدي بلعباس"},{n:"عنابة"},{n:"قالمة"},{n:"قسنطينة"},{n:"المدية"},{n:"مستغانم"},{n:"المسيلة"},{n:"معسكر"},{n:"ورقلة"},
+  {n:"وهران"},{n:"البيض"},{n:"إليزي"},{n:"برج بوعريريج"},{n:"بومرداس"},{n:"الطارف"},{n:"تندوف"},{n:"تيسمسيلت"},{n:"الوادي"},{n:"خنشلة"},
+  {n:"سوق أهراس"},{n:"تيبازة"},{n:"ميلة"},{n:"عين الدفلى"},{n:"النعامة"},{n:"عين تموشنت"},{n:"غرداية"},{n:"غليزان"},{n:"تيميمون"},{n:"برج باجي مختار"},
+  {n:"أولاد جلال"},{n:"بني عباس"},{n:"عين صالح"},{n:"عين قزام"},{n:"تقرت"},{n:"جانت"},{n:"المغير"},{n:"المنيعة"},{n:"توقرت"}
+];
+
+document.addEventListener('DOMContentLoaded', () => {
+  // Populate landing select
+  const select = document.getElementById('landing-wilaya-select');
+  if (select) {
+    WILAYAS.forEach(w => {
+      const opt = document.createElement('option');
+      opt.value = w.n;
+      opt.textContent = w.n;
+      select.appendChild(opt);
+    });
+  }
+  
+  // Render Wilayas grid in modal
+  renderWilayasGrid(WILAYAS);
+});
+
+function renderWilayasGrid(list) {
+  const container = document.getElementById('wilayas-grid-container');
+  if (!container) return;
+  container.innerHTML = '';
+  list.forEach(w => {
+    const card = document.createElement('div');
+    card.className = 'wilaya-card';
+    card.textContent = w.n;
+    card.onclick = () => selectWilayaAndRedirect(w.n);
+    container.appendChild(card);
+  });
+}
+
+function filterWilayas(search) {
+  const filtered = WILAYAS.filter(w => w.n.includes(search));
+  renderWilayasGrid(filtered);
+}
+
+function startGuestShopping() {
+  const sel = document.getElementById('landing-wilaya-select');
+  if (!sel || !sel.value) {
+    alert('من فضلك اختر ولايتك للبدء بالتسوق الفوري!');
+    return;
+  }
+  selectWilayaAndRedirect(sel.value);
+}
+
+function selectWilayaAndRedirect(wilaya) {
+  localStorage.setItem('zalo_selected_wilaya', wilaya);
+  window.location.href = 'customer-home.html';
+}
+
+function openAllWilayasModal() {
+  document.getElementById('wilayasModal').style.display = 'flex';
+}
+
+function closeAllWilayasModal() {
+  document.getElementById('wilayasModal').style.display = 'none';
+}
+</script>
 
 </body>
 </html>

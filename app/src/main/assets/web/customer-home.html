@@ -1145,6 +1145,31 @@ body {
   background: var(--brand-gold);
   color: #000000;
 }
+
+/* ALL WILAYAS GRID STYLING FOR APP */
+.wilayas-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+.wilaya-card {
+  background: #ffffff;
+  border: 1px solid var(--bd);
+  border-radius: 10px;
+  padding: 10px;
+  text-align: center;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--navy);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.wilaya-card:hover {
+  background: var(--navy);
+  color: #ffffff;
+  border-color: var(--navy);
+  transform: translateY(-1px);
+}
 </style>
 </head>
 <body>
@@ -1183,6 +1208,17 @@ body {
         <div class="header-icon-badge" id="notif-badge-count" style="display: none;">0</div>
       </div>
     </div>
+  </div>
+
+  <!-- Active Wilaya Banner -->
+  <div id="active-wilaya-banner" style="background: linear-gradient(90deg, #102a43, #c59b27); color: #ffffff; padding: 10px 16px; font-size: 11.5px; font-weight: 800; display: flex; align-items: center; justify-content: space-between; border-bottom: 2.5px solid var(--brand-gold); text-align: right; direction: rtl;">
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <i class="fa-solid fa-location-dot" style="color: var(--brand-gold); font-size: 14px;"></i>
+      <span>ولاية التسوق الحالية: <strong id="active-wilaya-name" style="color: var(--brand-gold); font-size: 12.5px; background: rgba(255,255,255,0.15); padding: 2px 8px; border-radius: 6px;">الكل (توصيل لكافة الولايات)</strong></span>
+    </div>
+    <button onclick="openChangeWilayaModal()" style="background: #ffffff; color: #102a43; border: none; border-radius: 12px; padding: 5px 12px; font-family: 'Cairo', sans-serif; font-size: 10px; font-weight: 900; cursor: pointer; display: flex; align-items: center; gap: 4px; box-shadow: 0 2px 6px rgba(0,0,0,0.12); transition: all 0.2s;">
+      تغيير الولاية <i class="fa-solid fa-arrows-rotate" style="color: var(--brand-green);"></i>
+    </button>
   </div>
 
   <!-- Sidebar Overlay -->
@@ -1625,6 +1661,33 @@ body {
       </div>
       <div class="modal-body" id="notif-modal-body" style="display:flex; flex-direction:column; gap:10px;">
         <!-- Notifications rendered here -->
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: CHANGE WILAYA -->
+  <div class="modal-overlay" id="changeWilayaModal" onclick="if(event.target===this) closeChangeWilayaModal()">
+    <div class="modal-content" style="max-width: 420px; max-height: 80vh; overflow: hidden; display: flex; flex-direction: column;">
+      <div class="modal-header" style="background: var(--navy); border-top-left-radius: 18px; border-top-right-radius: 18px;">
+        <span style="font-size: 14px; font-weight: 800; color: #ffffff; display: flex; align-items: center; gap: 6px;">
+          <i class="fa-solid fa-map-location-dot" style="color: var(--brand-gold);"></i> تغيير ولاية التسوق والتوصيل
+        </span>
+        <button class="modal-close" onclick="closeChangeWilayaModal()">✕</button>
+      </div>
+      <div class="modal-body" style="flex: 1; overflow-y: auto; padding: 16px; background: #f8fafc; display: flex; flex-direction: column; gap: 12px; max-height: calc(80vh - 60px);">
+        <div style="position: relative; width: 100%;">
+          <i class="fa-solid fa-magnifying-glass" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: var(--gray);"></i>
+          <input type="text" id="app-wilaya-search" style="width: 100%; height: 44px; border-radius: 10px; border: 1.5px solid var(--bd); padding: 0 36px 0 12px; font-family: 'Cairo', sans-serif; font-size: 12px; font-weight: 700; outline: none; text-align: right;" placeholder="ابحث عن ولايتك للفلترة الفورية..." oninput="filterAppWilayas(this.value)">
+        </div>
+        
+        <!-- Option to show all -->
+        <button onclick="selectAppWilaya('الكل')" style="width: 100%; height: 46px; background: var(--navy); color: #ffffff; border: none; border-radius: 10px; font-family: 'Cairo', sans-serif; font-size: 12.5px; font-weight: 800; cursor: pointer; text-align: center; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); margin-bottom: 8px;">
+          <i class="fa-solid fa-globe"></i> تصفح كل الجزائر (69 ولاية كاملة)
+        </button>
+        
+        <div class="wilayas-grid" id="app-wilayas-grid" style="margin-top: 4px;">
+          <!-- Wilayas list loaded dynamically -->
+        </div>
       </div>
     </div>
   </div>
@@ -2266,7 +2329,7 @@ async function loadProducts() {
 
     if (error) throw error;
     state.loadedProducts = data || [];
-    renderProductsList(state.loadedProducts);
+    applyActiveWilayaFilter();
   } catch(e) {
     console.error("loadProducts error:", e);
     grid.innerHTML = `
@@ -2898,6 +2961,88 @@ function populateCheckoutWilayas() {
     });
   }
 }
+
+// --- IN-APP WILAYA MODAL FUNCTIONS ---
+window.openChangeWilayaModal = function() {
+  const modal = document.getElementById('changeWilayaModal');
+  if (modal) {
+    modal.style.display = 'flex';
+    renderAppWilayasGrid(WILAYAS);
+  }
+};
+
+window.closeChangeWilayaModal = function() {
+  const modal = document.getElementById('changeWilayaModal');
+  if (modal) {
+    modal.style.display = 'none';
+  }
+};
+
+function renderAppWilayasGrid(list) {
+  const container = document.getElementById('app-wilayas-grid');
+  if (!container) return;
+  container.innerHTML = '';
+  list.forEach(w => {
+    const card = document.createElement('div');
+    card.className = 'wilaya-card';
+    card.textContent = w.n;
+    card.onclick = () => selectAppWilaya(w.n);
+    container.appendChild(card);
+  });
+}
+
+window.filterAppWilayas = function(search) {
+  const filtered = WILAYAS.filter(w => w.n.includes(search));
+  renderAppWilayasGrid(filtered);
+};
+
+window.selectAppWilaya = function(wilaya) {
+  localStorage.setItem('zalo_selected_wilaya', wilaya);
+  closeChangeWilayaModal();
+  applyActiveWilayaFilter();
+};
+
+window.applyActiveWilayaFilter = function() {
+  const selected = localStorage.getItem('zalo_selected_wilaya') || 'الكل';
+  const bannerText = document.getElementById('active-wilaya-name');
+  if (bannerText) {
+    bannerText.textContent = selected === 'الكل' ? 'الكل (توصيل لكافة الولايات)' : selected;
+  }
+  
+  if (!state.loadedProducts || state.loadedProducts.length === 0) return;
+  
+  if (selected === 'الكل') {
+    renderProductsList(state.loadedProducts);
+  } else {
+    const filtered = state.loadedProducts.filter(p => {
+      const storeName = (p.storeName || p.store_name || '').toLowerCase();
+      const desc = (p.description || '').toLowerCase();
+      const val = selected.toLowerCase();
+      return storeName.includes(val) || desc.includes(val);
+    });
+    
+    if (filtered.length === 0) {
+      renderProductsList(state.loadedProducts);
+      const grid = document.getElementById('home-pgrid');
+      if (grid) {
+        // Clear any old tips first
+        const oldTip = document.getElementById('wilaya-empty-tip');
+        if (oldTip) oldTip.remove();
+        
+        const tip = document.createElement('div');
+        tip.id = 'wilaya-empty-tip';
+        tip.style.cssText = 'grid-column: span 2; background: rgba(212, 175, 55, 0.08); border: 1.5px solid var(--brand-gold); border-radius: 12px; padding: 12px; text-align: center; font-size: 11.5px; font-weight: bold; color: var(--navy); margin-bottom: 12px; width: 100%;';
+        tip.innerHTML = `💡 لا توجد متاجر محلية مسجلة بـ ${selected} حالياً. نعرض لك كافة المنتجات مع الشحن الفوري السريع لولايتك 🚚`;
+        grid.insertBefore(tip, grid.firstChild);
+      }
+    } else {
+      // Clear old tip if products are found now
+      const oldTip = document.getElementById('wilaya-empty-tip');
+      if (oldTip) oldTip.remove();
+      renderProductsList(filtered);
+    }
+  }
+};
 </script>
 
 </body>
