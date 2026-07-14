@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بوابة الرقابة والتحكم للجزائر - ZaLo Super Admin</title>
+    <title>لوحة المدير العام والرقابة العليا - ZaLo Market</title>
     <!-- Tailwind CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Cairo Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Google Cairo & Great Vibes Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Great+Vibes&display=swap" rel="stylesheet">
     <!-- ZaLo Custom Stylesheet -->
     <link rel="stylesheet" href="css/style.css">
     <style>
@@ -20,8 +20,6 @@
             --gold-dark: #b89116;
             --navy: #102a43;
             --white: #ffffff;
-            --green-premium: #1e3e26;
-            --green-premium-light: #f0fdf4;
         }
 
         body {
@@ -29,10 +27,20 @@
             background-color: #f8fafc;
             color: var(--navy);
             min-height: 100vh;
-            overflow-x: hidden;
         }
 
-        /* Standard custom scrollbar */
+        /* Interactive row style */
+        #wilaya-tbody tr {
+            color: var(--navy) !important;
+            border-top: 1px solid rgba(212, 175, 55, 0.1) !important;
+            font-weight: 600 !important;
+            transition: background-color 0.2s;
+        }
+        #wilaya-tbody tr:hover {
+            background-color: rgba(29, 155, 240, 0.04) !important;
+        }
+
+        /* Custom scrollbar */
         ::-webkit-scrollbar {
             width: 6px;
             height: 6px;
@@ -44,161 +52,219 @@
             background: var(--sky-blue);
             border-radius: 3px;
         }
+
+        @keyframes spin-once {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .spin-anim {
+            animation: spin-once 0.6s ease-in-out;
+        }
     </style>
+    
+    <!-- Strict Authorization & Session Checking -->
+    <script type="module">
+        import sessionManager from './js/session-manager.js';
+
+        const session = sessionManager.getSession();
+        if (!session.token || session.role !== 'admin') {
+            console.warn('🚨 Access Denied: User role is not admin. Redirecting to login...');
+            window.location.href = 'login.html';
+        } else {
+            console.log('✅ Admin Session Verified.');
+        }
+    </script>
 </head>
 <body class="min-h-screen flex flex-col justify-between" onload="initOldAdminDashboard()">
 
-    <!-- Top Premium Bar exactly matching old green and gold design -->
-    <header class="bg-[#113f1c] border-b-4 border-[#d4af37] w-full py-3 px-4 flex justify-between items-center sticky top-0 z-40 shadow-md">
-        <!-- Right side: Notifications yellow bell icon -->
-        <div class="flex items-center gap-3">
-            <button onclick="toggleSidebar()" class="text-white text-xl p-2 hover:bg-white/10 rounded-lg transition">
-                <i class="fa-solid fa-bars"></i>
-            </button>
-            <div class="relative cursor-pointer" onclick="alert('لوحة الإشعارات العامة والخاصة بالمدير')">
-                <i class="fa-solid fa-bell text-yellow-400 text-2xl hover:scale-110 transition duration-150"></i>
-                <span class="absolute -top-1 -right-1 bg-red-600 text-white text-[9px] font-bold rounded-full w-4 h-4 flex items-center justify-center animate-bounce">2</span>
-            </div>
-        </div>
-
-        <!-- Center: Portal Title Button -->
-        <div class="flex-1 flex justify-center">
-            <button class="bg-[#1e3e26] border-2 border-[#d4af37] text-white text-xs sm:text-sm font-black px-4 sm:px-6 py-2 rounded-full hover:bg-[#d4af37] hover:text-[#113f1c] transition-all duration-300 shadow-inner flex items-center gap-2">
-                <span>بوابة الرقابة والتحكم للجزائر 🇩🇿</span>
-                <i class="fa-solid fa-arrow-left"></i>
-            </button>
-        </div>
-
-        <!-- Left side: Gold Crown and branding -->
+    <!-- Main Navigation Bar -->
+    <header class="sticky top-0 z-50 bg-white/95 border-b-2 border-[#d4af37] w-full py-3 px-6 flex justify-between items-center backdrop-blur-md shadow-sm">
+        <a href="customer-home.html" class="flex items-center gap-1.5 text-xs text-sky-600 hover:text-sky-800 font-bold transition">
+            <i class="fa-solid fa-house"></i>
+            <span>العودة لصفحة الزبائن</span>
+        </a>
+        
+        <!-- Header Unified Logo -->
         <div class="flex items-center gap-2">
-            <span class="text-white text-xs font-black hidden sm:inline-block">لوحة الرقابة والتحكم العليا</span>
-            <i class="fa-solid fa-crown text-[#d4af37] text-2xl animate-pulse"></i>
+            <svg width="34" height="34" viewBox="0 0 100 100" style="flex-shrink: 0;">
+                <path d="M 29,13.6 A 42,42 0 1,0 71,13.6" fill="none" stroke="#d4af37" stroke-width="4.5" stroke-linecap="round" />
+                <path d="M47.5,75 L52.5,75 L52.1,68 L47.9,68 Z" fill="#d4af37" />
+                <path d="M47.9,66 L52.1,66 L51.7,59 L48.3,59 Z" fill="#d4af37" />
+                <path d="M48.3,57 L51.7,57 L51.3,50 L48.7,50 Z" fill="#d4af37" />
+                <path d="M48.7,48 L51.3,48 L51,45 L49,45 Z" fill="#d4af37" />
+                <path d="M49,46 C41,43 33,48 27,56 C35,51 43,49 49,48 Z" fill="#d4af37" />
+                <path d="M49,46 C39,37 30,39 22,45 C32,42 41,43 49,46 Z" fill="#d4af37" />
+                <path d="M51,46 C59,43 67,48 73,56 C65,51 57,49 51,48 Z" fill="#d4af37" />
+                <path d="M51,46 C61,37 70,39 78,45 C68,42 59,43 51,46 Z" fill="#d4af37" />
+                <path d="M50,45 C50,26 45,17 40,14 C47,19 50,31 50,45 Z" fill="#d4af37" />
+                <text x="35" y="62" font-family="'Cairo', sans-serif" font-weight="900" font-size="14" fill="#d4af37" text-anchor="middle">Z</text>
+                <text x="65" y="62" font-family="'Cairo', sans-serif" font-weight="900" font-size="14" fill="#d4af37" text-anchor="middle">L</text>
+            </svg>
+            <span style="font-family: 'Great Vibes', cursive; font-size: 24px; font-weight: normal; color: #d4af37; line-height: 1;">ZaLo Control</span>
+        </div>
+
+        <!-- Sidebar Trigger & Profile info -->
+        <div class="flex items-center gap-3">
+            <div class="text-right hidden sm:block">
+                <span id="sidebar-user-name" class="text-xs font-black block text-slate-800">المدير العام</span>
+                <span id="sidebar-user-email" class="text-[9px] text-slate-400 font-bold block">admin@zalo.dz</span>
+            </div>
+            <button onclick="logoutUser()" class="bg-red-50 text-red-600 border border-red-200 text-xs px-4 py-1.5 rounded-full hover:bg-red-600 hover:text-white font-bold transition">
+                <i class="fa-solid fa-power-off"></i> خروج
+            </button>
         </div>
     </header>
 
     <!-- Main Container -->
-    <div class="flex-1 flex relative">
+    <div class="flex-1 w-full flex flex-col justify-between">
+        <main class="w-full max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
 
-        <!-- RIGHT COLLAPSIBLE SIDEBAR PANEL -->
-        <aside id="sidebar-panel" class="fixed right-0 top-[60px] bottom-0 w-72 bg-white border-l border-slate-200 z-50 flex flex-col justify-between p-4 shadow-2xl transition-transform duration-300 translate-x-full">
-            <div class="space-y-6">
-                <!-- User card -->
-                <div class="bg-sky-50 border border-sky-100 p-4 rounded-2xl flex items-center gap-3">
-                    <div class="w-12 h-12 rounded-full bg-sky-200 border-2 border-sky-400 flex items-center justify-center text-sky-700 text-xl font-bold shadow-sm">
-                        <i class="fa-solid fa-user-shield"></i>
+            <!-- Banner exact styling for ZaLo -->
+            <div class="bg-white border-2 border-slate-200 rounded-3xl p-6 relative overflow-hidden shadow-sm text-right flex flex-col md:flex-row justify-between items-center gap-4">
+                <div class="absolute top-0 right-0 w-48 h-48 bg-amber-200/20 rounded-full blur-3xl"></div>
+                <div class="flex items-center gap-4 relative z-10">
+                    <div class="w-14 h-14 rounded-2xl bg-[#113f1c] text-[#d4af37] border-2 border-[#d4af37] flex items-center justify-center text-2xl shadow-sm">
+                        <i class="fa-solid fa-gavel"></i>
                     </div>
-                    <div class="text-right">
-                        <h4 id="sidebar-user-name" class="text-xs font-black text-slate-800">المدير العام للنظام</h4>
-                        <p id="sidebar-user-email" class="text-[9px] text-slate-500 font-bold">admin@zalo.dz</p>
+                    <div>
+                        <h2 class="text-lg font-black text-slate-800">الكونسول الأمني للتحكم والرقابة الكلية في الجزائر الـ 69</h2>
+                        <p class="text-[10px] text-slate-400 font-bold mt-0.5">منصة الإشراف المعتمَدة لتدقيق بيانات التجار وصناعة قرارات المبيعات في الوقت الفعلي</p>
                     </div>
                 </div>
-
-                <!-- Nav items -->
-                <nav class="space-y-1">
-                    <a href="customer-home.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-700 hover:bg-slate-50 hover:text-[#1d9bf0] font-bold text-xs transition">
-                        <i class="fa-solid fa-house text-[#d4af37] text-base"></i>
-                        <span>الرئيسية (واجهة الزبون)</span>
-                    </a>
-                    <div onclick="toggleSidebar()" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-sky-50 text-[#1d9bf0] font-black text-xs cursor-pointer border-r-4 border-[#1d9bf0]">
-                        <i class="fa-solid fa-chart-line text-[#1d9bf0] text-base"></i>
-                        <span>لوحة التحكم والرقابة</span>
-                    </div>
-                    <div onclick="alert('إدارة التجار الموثقين جارية...')" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-700 hover:bg-slate-50 hover:text-[#1d9bf0] font-bold text-xs cursor-pointer transition">
-                        <i class="fa-solid fa-store text-emerald-500 text-base"></i>
-                        <span>التجار الموثقون بالمنصة</span>
-                        <span class="mr-auto bg-emerald-500 text-white text-[9px] px-2 py-0.5 rounded-full font-bold">نشط</span>
-                    </div>
-                    <div onclick="alert('طلبات التسجيل المفتوحة قيد المراجعة...')" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-700 hover:bg-slate-50 hover:text-[#1d9bf0] font-bold text-xs cursor-pointer transition">
-                        <i class="fa-solid fa-file-signature text-amber-500 text-base"></i>
-                        <span>طلبات التسجيل الجدد</span>
-                    </div>
-                    <div onclick="alert('السلع والمنتجات العامة المعروضة حالياً بالجزائر...')" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-700 hover:bg-slate-50 hover:text-[#1d9bf0] font-bold text-xs cursor-pointer transition">
-                        <i class="fa-solid fa-cubes text-blue-500 text-base"></i>
-                        <span>المنتجات والسلع العامة</span>
-                    </div>
-                    <div onclick="alert('شحنات مبيعات وتوصيل ولاية المنيعة والولايات الأخرى...')" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-700 hover:bg-slate-50 hover:text-[#1d9bf0] font-bold text-xs cursor-pointer transition">
-                        <i class="fa-solid fa-truck-ramp-box text-indigo-500 text-base"></i>
-                        <span>شحنات وطلبات البيع</span>
-                    </div>
-                    <div onclick="alert('إدارة بيانات المستخدمين وتأهيل الزبائن...')" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-700 hover:bg-slate-50 hover:text-[#1d9bf0] font-bold text-xs cursor-pointer transition">
-                        <i class="fa-solid fa-users text-purple-500 text-base"></i>
-                        <span>المستخدمين والزبائن</span>
-                    </div>
-                    <div onclick="alert('إدارة المساعدين والمشرفين الإداريين بالبلديات...')" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-700 hover:bg-slate-50 hover:text-[#1d9bf0] font-bold text-xs cursor-pointer transition">
-                        <i class="fa-solid fa-user-gear text-pink-500 text-base"></i>
-                        <span>المشرفين والمساعدين</span>
-                    </div>
-                </nav>
+                <div class="bg-amber-50 border border-amber-300 rounded-2xl p-4 text-right max-w-sm space-y-1 relative z-10">
+                    <span class="text-amber-700 font-extrabold text-[11px] block"><i class="fa-solid fa-shield"></i> جدار المراقبة والرقابة الآمنة</span>
+                    <p class="text-[10px] text-slate-600 font-bold leading-relaxed">بصفتك مديراً عاماً، يرجى التحقق من أوراق السجلات التجارية والتأكد من مطابقة أرقام هواتف التجار قبل تفعيل حساباتهم تجنباً للاحتيال.</p>
+                </div>
             </div>
 
-            <!-- Sidebar Footer -->
-            <div class="border-t border-slate-100 pt-4 space-y-2">
-                <button onclick="logoutUser()" class="w-full bg-red-50 text-red-600 border border-red-200 hover:bg-red-600 hover:text-white font-black text-xs py-3 rounded-xl transition flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-power-off"></i>
-                    <span>مغادرة النظام (تسجيل الخروج)</span>
-                </button>
-                <p class="text-[9px] text-slate-400 text-center font-bold">ZaLo Security Console v3.1</p>
-            </div>
-        </aside>
-
-        <!-- Main Content Area -->
-        <main class="flex-1 p-4 sm:p-6 space-y-6 overflow-y-auto">
-
-            <!-- STATS CARDS CONTAINER WITH PRECISE OUTLINES & ICONS -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+            <!-- 8 RICH PERFORMANCE STATS CARDS -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                 
                 <!-- Card 1: Pending Security Review -->
-                <div class="bg-white p-4 rounded-2xl border-2 border-amber-300 shadow-sm flex items-center justify-between hover:scale-[1.02] transition duration-200">
+                <div class="bg-white p-4 rounded-2xl border-2 border-amber-300 shadow-sm flex items-center justify-between hover:scale-[1.02] transition duration-200 relative">
                     <div class="text-right space-y-1">
                         <span class="text-[10px] text-slate-400 font-bold block">طلبات قيد المعالجة الأمنية</span>
-                        <h3 class="text-2xl font-black text-amber-600">0</h3>
+                        <h3 class="text-xl font-black text-amber-600" id="stat-pending-security">1</h3>
                     </div>
-                    <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-500 border border-amber-200 flex items-center justify-center text-lg shadow-sm">
-                        <i class="fa-solid fa-file-shield animate-pulse"></i>
+                    <div class="flex flex-col items-end justify-between h-full min-h-[40px]">
+                        <button onclick="refreshIndividualStat('pending-security', this)" class="text-slate-400 hover:text-sky-500 transition text-[11px]" title="تحديث">
+                            <i class="fa-solid fa-arrows-rotate"></i>
+                        </button>
+                        <div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-500 border border-amber-200 flex items-center justify-center text-xs shadow-sm mt-2">
+                            <i class="fa-solid fa-file-shield animate-pulse"></i>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Card 2: Active Stores -->
-                <div onclick="openActiveStoresModal()" class="bg-white p-4 rounded-2xl border-2 border-emerald-400 shadow-sm flex items-center justify-between hover:scale-[1.02] transition duration-200 cursor-pointer">
+                <div onclick="openActiveStoresModal()" class="bg-white p-4 rounded-2xl border-2 border-emerald-400 shadow-sm flex items-center justify-between hover:scale-[1.02] transition duration-200 cursor-pointer relative">
                     <div class="text-right space-y-1">
-                        <span class="text-[10px] text-slate-400 font-bold block">المتاجر النشطة وعينات مميزة</span>
-                        <h3 class="text-2xl font-black text-emerald-600" id="stat-active-stores">4</h3>
+                        <span class="text-[10px] text-slate-400 font-bold block">المتاجر النشطة (معاينة)</span>
+                        <h3 class="text-xl font-black text-emerald-600" id="stat-active-stores">4</h3>
                     </div>
-                    <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-500 border border-emerald-200 flex items-center justify-center text-lg shadow-sm">
-                        <i class="fa-solid fa-store"></i>
+                    <div class="flex flex-col items-end justify-between h-full min-h-[40px]">
+                        <button onclick="event.stopPropagation(); refreshIndividualStat('active-stores', this)" class="text-slate-400 hover:text-sky-500 transition text-[11px]" title="تحديث">
+                            <i class="fa-solid fa-arrows-rotate"></i>
+                        </button>
+                        <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-500 border border-emerald-200 flex items-center justify-center text-xs shadow-sm mt-2">
+                            <i class="fa-solid fa-store"></i>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Card 3: Phone Verified Users -->
-                <div class="bg-white p-4 rounded-2xl border-2 border-sky-400 shadow-sm flex items-center justify-between hover:scale-[1.02] transition duration-200">
+                <div class="bg-white p-4 rounded-2xl border-2 border-sky-400 shadow-sm flex items-center justify-between hover:scale-[1.02] transition duration-200 relative">
                     <div class="text-right space-y-1">
                         <span class="text-[10px] text-slate-400 font-bold block">الزبائن الموثقين بالهواتف</span>
-                        <h3 class="text-2xl font-black text-sky-600">0</h3>
+                        <h3 class="text-xl font-black text-sky-600" id="stat-verified-users">186</h3>
                     </div>
-                    <div class="w-10 h-10 rounded-xl bg-sky-50 text-sky-50 border border-sky-200 flex items-center justify-center text-lg shadow-sm">
-                        <i class="fa-solid fa-user-check"></i>
+                    <div class="flex flex-col items-end justify-between h-full min-h-[40px]">
+                        <button onclick="refreshIndividualStat('verified-users', this)" class="text-slate-400 hover:text-sky-500 transition text-[11px]" title="تحديث">
+                            <i class="fa-solid fa-arrows-rotate"></i>
+                        </button>
+                        <div class="w-8 h-8 rounded-lg bg-sky-50 text-sky-500 border border-sky-200 flex items-center justify-center text-xs shadow-sm mt-2">
+                            <i class="fa-solid fa-user-check"></i>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Card 4: Total Products -->
-                <div class="bg-white p-4 rounded-2xl border-2 border-blue-400 shadow-sm flex items-center justify-between hover:scale-[1.02] transition duration-200">
+                <div class="bg-white p-4 rounded-2xl border-2 border-blue-400 shadow-sm flex items-center justify-between hover:scale-[1.02] transition duration-200 relative">
                     <div class="text-right space-y-1">
                         <span class="text-[10px] text-slate-400 font-bold block">إجمالي السلع المعروضة</span>
-                        <h3 class="text-2xl font-black text-blue-600" id="stat-total-products">4</h3>
+                        <h3 class="text-xl font-black text-blue-600" id="stat-total-products">4</h3>
                     </div>
-                    <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-500 border border-blue-200 flex items-center justify-center text-lg shadow-sm">
-                        <i class="fa-solid fa-box-open"></i>
+                    <div class="flex flex-col items-end justify-between h-full min-h-[40px]">
+                        <button onclick="refreshIndividualStat('total-products', this)" class="text-slate-400 hover:text-sky-500 transition text-[11px]" title="تحديث">
+                            <i class="fa-solid fa-arrows-rotate"></i>
+                        </button>
+                        <div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-500 border border-blue-200 flex items-center justify-center text-xs shadow-sm mt-2">
+                            <i class="fa-solid fa-box-open"></i>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Card 5: Administrators & Personnel -->
-                <div class="bg-white p-4 rounded-2xl border-2 border-purple-400 shadow-sm flex items-center justify-between hover:scale-[1.02] transition duration-200">
+                <!-- Card 5: Net Profits (New!) -->
+                <div class="bg-white p-4 rounded-2xl border-2 border-emerald-500 shadow-sm flex items-center justify-between hover:scale-[1.02] transition duration-200 relative">
+                    <div class="text-right space-y-1">
+                        <span class="text-[10px] text-slate-400 font-bold block">صافي أرباح المنصة (دج)</span>
+                        <h3 class="text-xl font-black text-emerald-700" id="stat-net-profits">145,500</h3>
+                    </div>
+                    <div class="flex flex-col items-end justify-between h-full min-h-[40px]">
+                        <button onclick="refreshIndividualStat('net-profits', this)" class="text-slate-400 hover:text-sky-500 transition text-[11px]" title="تحديث">
+                            <i class="fa-solid fa-arrows-rotate"></i>
+                        </button>
+                        <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-600 border border-emerald-300 flex items-center justify-center text-xs shadow-sm mt-2">
+                            <i class="fa-solid fa-sack-dollar"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 6: Active Orders Now (New!) -->
+                <div class="bg-white p-4 rounded-2xl border-2 border-red-400 shadow-sm flex items-center justify-between hover:scale-[1.02] transition duration-200 relative">
+                    <div class="text-right space-y-1">
+                        <span class="text-[10px] text-slate-400 font-bold block">الطلبات النشطة معالجة الآن</span>
+                        <h3 class="text-xl font-black text-red-600" id="stat-active-orders">8</h3>
+                    </div>
+                    <div class="flex flex-col items-end justify-between h-full min-h-[40px]">
+                        <button onclick="refreshIndividualStat('active-orders', this)" class="text-slate-400 hover:text-sky-500 transition text-[11px]" title="تحديث">
+                            <i class="fa-solid fa-arrows-rotate"></i>
+                        </button>
+                        <div class="w-8 h-8 rounded-lg bg-red-50 text-red-500 border border-red-200 flex items-center justify-center text-xs shadow-sm mt-2">
+                            <i class="fa-solid fa-spinner fa-spin"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 7: General Platform Rating (New!) -->
+                <div class="bg-white p-4 rounded-2xl border-2 border-yellow-400 shadow-sm flex items-center justify-between hover:scale-[1.02] transition duration-200 relative">
+                    <div class="text-right space-y-1">
+                        <span class="text-[10px] text-slate-400 font-bold block">تقييم المنصة العام للعملاء</span>
+                        <h3 class="text-xl font-black text-yellow-600" id="stat-platform-rating">4.8 / 5.0</h3>
+                    </div>
+                    <div class="flex flex-col items-end justify-between h-full min-h-[40px]">
+                        <button onclick="refreshIndividualStat('platform-rating', this)" class="text-slate-400 hover:text-sky-500 transition text-[11px]" title="تحديث">
+                            <i class="fa-solid fa-arrows-rotate"></i>
+                        </button>
+                        <div class="w-8 h-8 rounded-lg bg-yellow-50 text-yellow-500 border border-yellow-200 flex items-center justify-center text-xs shadow-sm mt-2">
+                            <i class="fa-solid fa-star"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 8: Administrators & Personnel -->
+                <div class="bg-white p-4 rounded-2xl border-2 border-purple-400 shadow-sm flex items-center justify-between hover:scale-[1.02] transition duration-200 relative">
                     <div class="text-right space-y-1">
                         <span class="text-[10px] text-slate-400 font-bold block">الموظفون والمشرفون الإداريون</span>
-                        <h3 class="text-2xl font-black text-purple-600">0</h3>
+                        <h3 class="text-xl font-black text-purple-600" id="stat-admins-count">3</h3>
                     </div>
-                    <div class="w-10 h-10 rounded-xl bg-purple-50 text-purple-500 border border-purple-200 flex items-center justify-center text-lg shadow-sm">
-                        <i class="fa-solid fa-crown"></i>
+                    <div class="flex flex-col items-end justify-between h-full min-h-[40px]">
+                        <button onclick="refreshIndividualStat('admins-count', this)" class="text-slate-400 hover:text-sky-500 transition text-[11px]" title="تحديث">
+                            <i class="fa-solid fa-arrows-rotate"></i>
+                        </button>
+                        <div class="w-8 h-8 rounded-lg bg-purple-50 text-purple-500 border border-purple-200 flex items-center justify-center text-xs shadow-sm mt-2">
+                            <i class="fa-solid fa-crown"></i>
+                        </div>
                     </div>
                 </div>
 
@@ -239,20 +305,65 @@
                             <span>جدول النشاط التجاري للولايات الـ 69 بالتفصيل الممل</span>
                         </h3>
                         
-                        <!-- Search Box inside matching image -->
-                        <div class="relative w-full sm:w-64">
-                            <input type="text" id="wilaya-search" oninput="filterWilayaTable()" placeholder="🔍 ابحث بالاسم أو رمز الولاية..." class="w-full bg-slate-50 border border-slate-200 text-xs rounded-xl py-2 pr-4 pl-8 focus:outline-none focus:border-sky-400 font-bold text-slate-700">
+                        <!-- Search and Buttons Wrapper -->
+                        <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+                            <!-- Advanced Filter Trigger Button -->
+                            <button onclick="toggleAdvancedFilter()" class="bg-slate-100 text-slate-700 hover:bg-slate-200 text-xs font-bold px-3 py-2 rounded-xl border border-slate-200 flex items-center gap-1.5 transition">
+                                <i class="fa-solid fa-filter text-sky-600"></i>
+                                <span>فلترة متقدمة</span>
+                            </button>
+                            
+                            <!-- Export Data CSV Button -->
+                            <button onclick="exportWilayaDataToCSV()" class="bg-[#113f1c] text-[#d4af37] border border-[#d4af37]/40 hover:bg-[#1a4f26] text-xs font-black px-3 py-2 rounded-xl flex items-center gap-1.5 transition">
+                                <i class="fa-solid fa-file-csv"></i>
+                                <span>تصدير البيانات (CSV)</span>
+                            </button>
+
+                            <!-- Search Box -->
+                            <div class="relative w-full sm:w-48">
+                                <input type="text" id="wilaya-search" oninput="filterWilayaTable()" placeholder="🔍 ابحث بالولاية أو الرمز..." class="w-full bg-slate-50 border border-slate-200 text-xs rounded-xl py-2 pr-4 pl-8 focus:outline-none focus:border-sky-400 font-bold text-slate-700">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Collapsible Advanced Filter Panel -->
+                    <div id="advanced-filter-panel" class="bg-slate-50 border border-slate-200 rounded-2xl p-4 text-right space-y-3 hidden">
+                        <h4 class="text-xs font-black text-slate-700 flex items-center gap-1">
+                            <i class="fa-solid fa-sliders text-sky-600"></i>
+                            <span>خيارات الفلترة والتصفية الإقليمية المتقدمة:</span>
+                        </h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-[10px] text-slate-500 font-bold mb-1">الحالة الإقليمية للنشاط</label>
+                                <select id="filter-status" onchange="filterWilayaTable()" class="w-full bg-white border border-slate-200 text-xs rounded-lg py-2 px-2.5 focus:outline-none focus:border-sky-400 font-semibold text-slate-800">
+                                    <option value="ALL">جميع الحالات</option>
+                                    <option value="ACTIVE">الولايات النشطة فقط (متجر واحد فأكثر)</option>
+                                    <option value="INACTIVE">الولايات الخاملة فقط (0 متاجر)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] text-slate-500 font-bold mb-1">الحد الأدنى لعدد المتاجر</label>
+                                <input type="number" id="filter-min-stores" value="0" min="0" oninput="filterWilayaTable()" class="w-full bg-white border border-slate-200 text-xs rounded-lg py-2 px-2.5 focus:outline-none focus:border-sky-400 font-bold text-slate-800" placeholder="0">
+                            </div>
+                            <div class="flex items-end">
+                                <button onclick="resetAdvancedFilters()" class="w-full bg-slate-200 text-slate-700 hover:bg-slate-300 text-xs font-bold py-2 rounded-lg transition">
+                                    إعادة تعيين الفلاتر
+                                </button>
+                            </div>
                         </div>
                     </div>
 
                     <div class="overflow-x-auto w-full max-h-96">
-                        <table class="w-full text-right text-xs" style="min-width: 500px;">
+                        <table class="w-full text-right text-xs" style="min-width: 750px;">
                             <thead class="sticky top-0 bg-white z-10">
                                 <tr class="text-slate-500 border-b border-slate-100">
-                                    <th class="pb-3 font-extrabold w-24">رمز الولاية</th>
-                                    <th class="pb-3 font-extrabold">اسم الولاية التابع</th>
+                                    <th class="pb-3 font-extrabold w-20">رمز الولاية</th>
+                                    <th class="pb-3 font-extrabold">اسم الولاية</th>
                                     <th class="pb-3 font-extrabold text-center">المتاجر المسجلة</th>
-                                    <th class="pb-3 font-extrabold text-center">المستخدمون</th>
+                                    <th class="pb-3 font-extrabold text-center">التجار النشطون</th>
+                                    <th class="pb-3 font-extrabold text-center">الطلبات الملغاة</th>
+                                    <th class="pb-3 font-extrabold text-center">وقت التوصيل المتوسط</th>
+                                    <th class="pb-3 font-extrabold text-center">المستخدمون النشطون</th>
                                     <th class="pb-3 font-extrabold text-center">الحالة الإقليمية</th>
                                 </tr>
                             </thead>
@@ -278,10 +389,28 @@
                     <!-- Broadcast Banner Form -->
                     <div class="bg-amber-50/50 border border-[#d4af37]/30 rounded-2xl p-4 space-y-3">
                         <span class="text-[10px] text-amber-800 font-black block">🚀 إطلاق شعار وإعلان عاجل لجميع الواجهات:</span>
-                        <textarea id="announcement-text" rows="3" class="w-full bg-white border border-slate-200 text-xs rounded-xl p-3 focus:outline-none focus:border-sky-400 font-bold text-slate-800" placeholder="اكتب هنا نص الإشعار العاجل الذي سيظهر فوراً لجميع الزبائن والتجار في واجهاتهم..."></textarea>
+                        
+                        <div class="space-y-2">
+                            <label class="block text-[9px] text-slate-500 font-bold">تصنيف ونوع الإشعار المنشور:</label>
+                            <select id="announcement-type" class="w-full bg-white border border-slate-200 text-xs rounded-lg py-2 px-2.5 focus:outline-none focus:border-sky-400 font-bold text-slate-800">
+                                <option value="إداري">إداري (تنبيهات المنصة والتسجيل)</option>
+                                <option value="تقني">تقني (صيانة وتحديثات التطبيق)</option>
+                                <option value="تسويقي">تسويقي (عروض وشراكات جديدة)</option>
+                            </select>
+                        </div>
+
+                        <div class="flex items-center gap-2 py-1">
+                            <input type="checkbox" id="announcement-popup" class="w-4 h-4 text-sky-600 border-slate-300 rounded focus:ring-sky-400">
+                            <label for="announcement-popup" class="text-[10px] text-slate-600 font-black cursor-pointer">
+                                عرض كإشعار منبثق (Popup) للمستخدمين فوراً
+                            </label>
+                        </div>
+
+                        <textarea id="announcement-text" rows="2" class="w-full bg-white border border-slate-200 text-xs rounded-xl p-3 focus:outline-none focus:border-sky-400 font-bold text-slate-800" placeholder="اكتب هنا نص الإشعار العاجل الذي سيظهر فوراً لجميع الزبائن والتجار في واجهاتهم..."></textarea>
+                        
                         <button onclick="publishAnnouncement()" class="w-full bg-[#113f1c] text-white font-black text-xs py-3 rounded-xl hover:bg-[#1e3e26] transition flex items-center justify-center gap-2 shadow-sm">
                             <i class="fa-solid fa-paper-plane"></i>
-                            <span>إطلاق الشعار فوراً 📢</span>
+                            <span>إطلاق الإشعار فوراً 📢</span>
                         </button>
                     </div>
 
@@ -304,14 +433,16 @@
                 </h3>
 
                 <div class="overflow-x-auto w-full">
-                    <table class="w-full text-right text-xs" style="min-width: 600px;">
+                    <table class="w-full text-right text-xs" style="min-width: 850px;">
                         <thead>
                             <tr class="text-slate-500 border-b border-slate-100">
                                 <th class="pb-3 font-extrabold">اسم متجر التاجر</th>
-                                <th class="pb-3 font-extrabold">صاحب المتجر والنشاط</th>
+                                <th class="pb-3 font-extrabold">صاحب المتجر</th>
+                                <th class="pb-3 font-extrabold">نوع النشاط</th>
                                 <th class="pb-3 font-extrabold">ولاية البلدية المحددة</th>
+                                <th class="pb-3 font-extrabold text-center">المستندات المرفقة</th>
                                 <th class="pb-3 font-extrabold text-center">الحالة العامة</th>
-                                <th class="pb-3 font-extrabold text-center">الاجراء القانوني الأمني</th>
+                                <th class="pb-3 font-extrabold text-center">الاجراء القانوني الأمني والاتصال</th>
                             </tr>
                         </thead>
                         <tbody id="registrations-tbody">
@@ -353,28 +484,52 @@
             <header class="bg-[#113f1c] text-white py-4 px-6 flex justify-between items-center">
                 <button onclick="closeDocumentsModal()" class="text-white hover:text-red-400 text-lg">
                     <i class="fa-solid fa-xmark"></i>
-                </header>
+                </button>
                 <h3 class="text-xs font-black flex items-center gap-2">
                     <i class="fa-solid fa-folder-open text-[#d4af37]"></i>
                     <span>وثائق الهوية والسجل التجاري للمراجعة</span>
                 </h3>
-            </div>
+            </header>
             <div class="p-6 space-y-4">
                 <div class="space-y-2">
-                    <span class="text-[10px] text-slate-500 font-extrabold block">بطاقة التعريف الوطنية البيومترية:</span>
-                    <div class="border border-dashed border-slate-300 rounded-xl p-2 flex items-center justify-between bg-slate-50">
-                        <span class="text-[11px] font-bold text-slate-700">ID_CARD_ALGERIA_BIOMETRIC.pdf</span>
-                        <a href="#" onclick="alert('جاري تنزيل الملف...'); return false;" class="text-sky-500 hover:underline"><i class="fa-solid fa-download"></i> تحميل</a>
+                    <span class="text-[10px] text-slate-500 font-extrabold block">بطاقة التعريف الوطنية البيومترية (المسح الضوئي):</span>
+                    <div class="border border-dashed border-slate-300 rounded-xl p-2.5 flex items-center justify-between bg-slate-50">
+                        <span class="text-[11px] font-bold text-slate-700"><i class="fa-solid fa-id-card text-sky-600"></i> ID_CARD_ALGERIA_BIOMETRIC.pdf</span>
+                        <a href="#" onclick="alert('جاري تنزيل ملف بطاقة الهوية الوطنية للفحص...'); return false;" class="text-sky-500 hover:underline"><i class="fa-solid fa-download"></i> تحميل</a>
                     </div>
                 </div>
                 <div class="space-y-2">
-                    <span class="text-[10px] text-slate-500 font-extrabold block">سجل تجاري مصدق:</span>
-                    <div class="border border-dashed border-slate-300 rounded-xl p-2 flex items-center justify-between bg-slate-50">
-                        <span class="text-[11px] font-bold text-slate-700">COMMERCIAL_REGISTER_RC.pdf</span>
-                        <a href="#" onclick="alert('جاري تنزيل الملف...'); return false;" class="text-sky-500 hover:underline"><i class="fa-solid fa-download"></i> تحميل</a>
+                    <span class="text-[10px] text-slate-500 font-extrabold block">سجل تجاري مصدق معمد من الغرفة التجارية:</span>
+                    <div class="border border-dashed border-slate-300 rounded-xl p-2.5 flex items-center justify-between bg-slate-50">
+                        <span class="text-[11px] font-bold text-slate-700"><i class="fa-solid fa-file-signature text-amber-600"></i> COMMERCIAL_REGISTER_RC.pdf</span>
+                        <a href="#" onclick="alert('جاري تنزيل ملف السجل التجاري للفحص...'); return false;" class="text-sky-500 hover:underline"><i class="fa-solid fa-download"></i> تحميل</a>
                     </div>
                 </div>
-                <button onclick="closeDocumentsModal()" class="w-full bg-[#113f1c] text-white font-black py-2.5 rounded-xl hover:bg-[#1e3e26] transition text-xs">إغلاق وتأكيد الفحص ✅</button>
+                <button onclick="closeDocumentsModal()" class="w-full bg-[#113f1c] text-white font-black py-2.5 rounded-xl hover:bg-[#1e3e26] transition text-xs">إغلاق وتأكيد الفحص الأمني ✅</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: SUSPEND ORDER WITH MESSAGE REQUEST (New!) -->
+    <div id="suspend-reason-modal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 hidden backdrop-blur-sm">
+        <div class="bg-white border-2 border-red-500 rounded-3xl w-full max-w-md overflow-hidden shadow-2xl text-right">
+            <header class="bg-red-600 text-white py-4 px-6 flex justify-between items-center">
+                <button onclick="closeSuspendModal()" class="text-white hover:text-white/80 text-lg">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+                <h3 class="text-xs font-black flex items-center gap-2">
+                    <i class="fa-solid fa-circle-pause"></i>
+                    <span>طلب تعليق حساب ومطالبة بمعلومات إضافية</span>
+                </h3>
+            </header>
+            <div class="p-6 space-y-4">
+                <input type="hidden" id="suspend-store-id">
+                <p class="text-xs text-slate-600 font-bold leading-relaxed">سيتم وضع طلب تسجيل المتجر في حالة "معلق" مع إرسال بريد الكتروني للمطالبة بملفات إضافية أو تصحيح العنوان.</p>
+                <div>
+                    <label class="block text-[11px] text-slate-500 font-black mb-1">سبب التعليق وتوجيهات للتاجر:</label>
+                    <textarea id="suspend-reason-text" rows="3" class="w-full bg-slate-50 border border-slate-200 text-xs rounded-xl p-3 focus:outline-none focus:border-red-400 font-bold text-slate-800" placeholder="مثال: يرجى رفع ملف السجل التجاري بوضوح حيث أن النسخة الحالية غير مقروءة..."></textarea>
+                </div>
+                <button onclick="submitSuspendStore()" class="w-full bg-red-600 text-white font-black py-2.5 rounded-xl hover:bg-red-700 transition text-xs">تأكيد تعليق الطلب ومراسلة التاجر 📨</button>
             </div>
         </div>
     </div>
@@ -391,46 +546,93 @@
             localStorage.setItem(DB_KEY_PREFIX + key, JSON.stringify(value));
         }
 
-        // List of all Algerian Wilayas
+        // List of all Algerian Wilayas with additional performance indicators
         const ALGERIAN_WILAYAS = [
-            { code: "01", name: "أدرار" }, { code: "02", name: "الشلف" }, { code: "03", name: "الأغواط" },
-            { code: "04", name: "أم البواقي" }, { code: "05", name: "باتنة" }, { code: "06", name: "بجاية" },
-            { code: "07", name: "بسكرة" }, { code: "08", name: "بشار" }, { code: "09", name: "البليدة" },
-            { code: "10", name: "البويرة" }, { code: "11", name: "تمنراست" }, { code: "12", name: "تبسة" },
-            { code: "13", name: "تلمسان" }, { code: "14", name: "تيارت" }, { code: "15", name: "تيزي وزو" },
-            { code: "16", name: "الجزائر", activeStores: 1 }, { code: "17", name: "الجلفة" }, { code: "18", name: "جيجل" },
-            { code: "19", name: "سطيف" }, { code: "20", name: "سعيدة" }, { code: "21", name: "سكيكدة" },
-            { code: "22", name: "سيدي بلعباس" }, { code: "23", name: "عنابة" }, { code: "24", name: "قالمة" },
-            { code: "25", name: "قسنطينة", activeStores: 1 }, { code: "26", name: "المدية" }, { code: "27", name: "مستغانم" },
-            { code: "28", name: "المسيلة" }, { code: "29", name: "معسكر" }, { code: "30", name: "ورقلة" },
-            { code: "31", name: "وهران", activeStores: 1 }, { code: "32", name: "البيض" }, { code: "33", name: "إليزي" },
-            { code: "34", name: "برج بوعريريج" }, { code: "35", name: "بومرداس" }, { code: "36", name: "الطارف" },
-            { code: "37", name: "تندوف" }, { code: "38", name: "تيسمسيلت" }, { code: "39", name: "الوادي" },
-            { code: "40", name: "خنشلة" }, { code: "41", name: "سوق أهراس" }, { code: "42", name: "تيبازة" },
-            { code: "43", name: "ميلة" }, { code: "44", name: "عين الدفلى" }, { code: "45", name: "النعامة" },
-            { code: "46", name: "عين تموشنت" }, { code: "47", name: "غرداية" }, { code: "48", name: "غليزان" },
-            { code: "49", name: "تيميمون" }, { code: "50", name: "برج باجي مختار" }, { code: "51", name: "أولاد جلال" },
-            { code: "52", name: "بني عباس" }, { code: "53", name: "عين صالح" }, { code: "54", name: "عين قزام" },
-            { code: "55", name: "تقرت" }, { code: "56", name: "جانت" }, { code: "57", name: "المغير" },
-            { code: "58", name: "المنيعة", activeStores: 1 }, { code: "59", name: "البلدية الجديدة 59" }, { code: "60", name: "البلدية الجديدة 60" },
-            { code: "61", name: "البلدية الجديدة 61" }, { code: "62", name: "البلدية الجديدة 62" }, { code: "63", name: "البلدية الجديدة 63" },
-            { code: "64", name: "البلدية الجديدة 64" }, { code: "65", name: "البلدية الجديدة 65" }, { code: "66", name: "البلدية الجديدة 66" },
-            { code: "67", name: "البلدية الجديدة 67" }, { code: "68", name: "البلدية الجديدة 68" }, { code: "69", name: "البلدية الجديدة 69" }
+            { code: "01", name: "أدرار", activeStores: 1, activeMerchants: 1, cancelledOrders: 2, avgDeliveryTime: "48 ساعة" },
+            { code: "02", name: "الشلف", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
+            { code: "03", name: "الأغواط", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
+            { code: "04", name: "أم البواقي", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
+            { code: "05", name: "باتنة", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
+            { code: "06", name: "بجاية", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
+            { code: "07", name: "بسكرة", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
+            { code: "08", name: "بشار", activeStores: 1, activeMerchants: 1, cancelledOrders: 1, avgDeliveryTime: "36 ساعة" },
+            { code: "09", name: "البليدة", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
+            { code: "10", name: "البويرة", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
+            { code: "11", name: "تمنراست", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
+            { code: "12", name: "تبسة", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
+            { code: "13", name: "تلمسان", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
+            { code: "14", name: "تيارت", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
+            { code: "15", name: "تيزي وزو", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
+            { code: "16", name: "الجزائر العاصمة", activeStores: 2, activeMerchants: 2, cancelledOrders: 0, avgDeliveryTime: "12 ساعة" },
+            { code: "17", name: "الجلفة", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
+            { code: "18", name: "جيجل", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
+            { code: "19", name: "سطيف", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
+            { code: "20", name: "سعيدة", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
+            { code: "21", name: "سكيكدة", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
+            { code: "22", name: "سيدي بلعباس", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
+            { code: "23", name: "عنابة", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
+            { code: "24", name: "قالمة", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
+            { code: "25", name: "قسنطينة", activeStores: 1, activeMerchants: 1, cancelledOrders: 0, avgDeliveryTime: "24 ساعة" },
+            { code: "26", name: "المدية", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
+            { code: "27", name: "مستغانم", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
+            { code: "28", name: "المسيلة", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
+            { code: "29", name: "معسكر", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
+            { code: "30", name: "ورقلة", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
+            { code: "31", name: "وهران", activeStores: 1, activeMerchants: 1, cancelledOrders: 1, avgDeliveryTime: "18 ساعة" },
+            { code: "32", name: "البيض", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
+            { code: "33", name: "إليزي", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
+            { code: "34", name: "برج بوعريريج", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
+            { code: "35", name: "بومرداس", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
+            { code: "36", name: "الطارف", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
+            { code: "37", name: "تندوف", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
+            { code: "38", name: "تيسمسيلت", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
+            { code: "39", name: "الوادي", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
+            { code: "40", name: "خنشلة", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
+            { code: "41", name: "سوق أهراس", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
+            { code: "42", name: "تيبازة", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
+            { code: "43", name: "ميلة", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
+            { code: "44", name: "عين الدفلى", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
+            { code: "45", name: "النعامة", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
+            { code: "46", name: "عين تموشنت", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
+            { code: "47", name: "غرداية", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
+            { code: "48", name: "غليزان", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
+            { code: "49", name: "تيميمون", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
+            { code: "50", name: "برج باجي مختار", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
+            { code: "51", name: "أولاد جلال", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
+            { code: "52", name: "بني عباس", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
+            { code: "53", name: "عين صالح", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
+            { code: "54", name: "عين قزام", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
+            { code: "55", name: "تقرت", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
+            { code: "56", name: "جانت", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
+            { code: "57", name: "المغير", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
+            { code: "58", name: "المنيعة", activeStores: 1, activeMerchants: 1, cancelledOrders: 0, avgDeliveryTime: "24 ساعة" },
+            { code: "59", name: "البلدية الجديدة 59", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
+            { code: "60", name: "البلدية الجديدة 60", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
+            { code: "61", name: "البلدية الجديدة 61", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
+            { code: "62", name: "البلدية الجديدة 62", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
+            { code: "63", name: "البلدية الجديدة 63", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
+            { code: "64", name: "البلدية الجديدة 64", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
+            { code: "65", name: "البلدية الجديدة 65", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
+            { code: "66", name: "البلدية الجديدة 66", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
+            { code: "67", name: "البلدية الجديدة 67", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
+            { code: "68", name: "البلدية الجديدة 68", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
+            { code: "69", name: "البلدية الجديدة 69", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" }
         ];
 
         // Default mock active stores list exactly matching screenshots
         const MOCK_STORES = [
-            { id: "s1", name: "مجوهرات ومجوهرات القصبة العريقة", owner: "الحاج سعيد البهجة", phone: "0698694010", location: "الجزائر - الجزائر الوسطى", regCode: "RC-778899", category: "مجوهرات وهدايا", status: "APPROVED" },
-            { id: "s2", name: "ملابس وبدلات الفخامة والجمال", owner: "عبد الوهاب القسنطيني", phone: "0770112233", location: "قسنطينة - قسنطينة", regCode: "RC-445566", category: "ملابس وأزياء", status: "APPROVED" },
-            { id: "s3", name: "أواني ومنزل المطبخ الجزائري", owner: "أمينة الوهرانية", phone: "0550998877", location: "وهران - وهران", regCode: "RC-112233", category: "أواني ومنزلية", status: "APPROVED" },
-            { id: "s4", name: "حنان بوزويس", owner: "unitedbadryan", phone: "0673544540", location: "المنيعة - غير محدد", regCode: "RC-123456", category: "عام", status: "APPROVED" }
+            { id: "s1", name: "مجوهرات ومجوهرات القصبة العريقة", owner: "الحاج سعيد البهجة", email: "hajj.said@casbah.dz", phone: "0698694010", location: "الجزائر - الجزائر الوسطى", regCode: "RC-778899", category: "مجوهرات وهدايا", activityType: "بيع منتجات", status: "APPROVED" },
+            { id: "s2", name: "ملابس وبدلات الفخامة والجمال", owner: "عبد الوهاب القسنطيني", email: "wahab.constantine@gmail.com", phone: "0770112233", location: "قسنطينة - قسنطينة", regCode: "RC-445566", category: "ملابس وأزياء", activityType: "بيع منتجات", status: "APPROVED" },
+            { id: "s3", name: "أواني ومنزل المطبخ الجزائري", owner: "أمينة الوهرانية", email: "amina.oran@hot.dz", phone: "0550998877", location: "وهران - وهران", regCode: "RC-112233", category: "أواني ومنزلية", activityType: "تقديم خدمات", status: "APPROVED" },
+            { id: "s4", name: "حنان بوزويس (ABDELALI.PHONE)", owner: "unitedbadryan", email: "abdelali.phone@zalo.dz", phone: "0673544540", location: "المنيعة - المنيعة", regCode: "RC-123456", category: "عام", activityType: "بيع منتجات", status: "APPROVED" },
+            { id: "s5", name: "مكتبة الإشراق وصيانة الهواتف", owner: "كمال المنيعي", email: "kamal.menia@clic.dz", phone: "0666551122", location: "المنيعة - حاسي القارة", regCode: "RC-998877", category: "خدمات شحن وصيانة", activityType: "تقديم خدمات", status: "PENDING" }
         ];
 
         // Seed data structures
         function initOldAdminDashboard() {
             // Setup User info
             const userEmail = localStorage.getItem('zalo_user_email') || 'admin@zalo.dz';
-            const userName = localStorage.getItem('zalo_user_name') || 'المدير العام';
+            const userName = localStorage.getItem('zalo_user_name') || 'المدير العام المعتمد';
             document.getElementById('sidebar-user-name').innerText = userName;
             document.getElementById('sidebar-user-email').innerText = userEmail;
 
@@ -440,7 +642,7 @@
 
             // Seed announcements
             let announcements = getDB("global_announcements", [
-                { id: "a1", text: "مرحبا بكم في منصة زالو ديزاد، تم تفعيل بوابات الرقابة الأمنية بالكامل." }
+                { id: "a1", text: "مرحبا بكم في منصة زالو ديزاد، تم تفعيل بوابات الرقابة الأمنية بالكامل.", type: "إداري", date: "2026-07-14 10:15", popup: false }
             ]);
             setDB("global_announcements", announcements);
 
@@ -457,16 +659,145 @@
             let activeCount = stores.filter(s => s.status === "APPROVED").length;
             document.getElementById('stat-active-stores').innerText = activeCount;
 
+            let pendingCount = stores.filter(s => s.status === "PENDING").length;
+            document.getElementById('stat-pending-security').innerText = pendingCount;
+
             // Total products count
             let products = getDB("products", []);
-            let count = products.length || 4; // default or real
+            let count = products.length || 4; 
             document.getElementById('stat-total-products').innerText = count;
+
+            // Set fixed stats for requested net profit and platform rate
+            document.getElementById('stat-net-profits').innerText = "145,500 دج";
+            document.getElementById('stat-active-orders').innerText = "8 طلبات";
+            document.getElementById('stat-platform-rating').innerText = "4.9 / 5.0 ★";
+            document.getElementById('stat-verified-users').innerText = "186 عميل";
+            document.getElementById('stat-admins-count').innerText = "3 مشرفين";
         }
 
-        // Toggle Right Sidebar
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar-panel');
-            sidebar.classList.toggle('translate-x-full');
+        // Individual card stats update simulator
+        function refreshIndividualStat(statId, button) {
+            // Add spin class to icon
+            const icon = button.querySelector('i');
+            icon.classList.add('spin-anim');
+            setTimeout(() => {
+                icon.classList.remove('spin-anim');
+            }, 600);
+
+            // Update with a random nice variance for real-time feel!
+            if (statId === 'net-profits') {
+                let rVal = Math.floor(140000 + Math.random() * 20000);
+                document.getElementById('stat-net-profits').innerText = rVal.toLocaleString() + " دج";
+            } else if (statId === 'active-orders') {
+                let rVal = Math.floor(5 + Math.random() * 10);
+                document.getElementById('stat-active-orders').innerText = rVal + " طلبات";
+            } else if (statId === 'verified-users') {
+                let rVal = Math.floor(180 + Math.random() * 20);
+                document.getElementById('stat-verified-users').innerText = rVal + " عميل";
+            } else if (statId === 'platform-rating') {
+                let rVal = (4.7 + Math.random() * 0.3).toFixed(1);
+                document.getElementById('stat-platform-rating').innerText = rVal + " / 5.0 ★";
+            } else {
+                renderStats();
+            }
+        }
+
+        // Toggle Advanced Filter Panel
+        function toggleAdvancedFilter() {
+            const panel = document.getElementById('advanced-filter-panel');
+            panel.classList.toggle('hidden');
+        }
+
+        // Reset Advanced Filters
+        function resetAdvancedFilters() {
+            document.getElementById('filter-status').value = "ALL";
+            document.getElementById('filter-min-stores').value = "0";
+            document.getElementById('wilaya-search').value = "";
+            renderWilayaTable();
+        }
+
+        // Render Wilayas Table
+        function renderWilayaTable() {
+            const tbody = document.getElementById('wilaya-tbody');
+            tbody.innerHTML = '';
+            
+            const query = document.getElementById('wilaya-search').value.toLowerCase().trim();
+            const statusFilter = document.getElementById('filter-status') ? document.getElementById('filter-status').value : "ALL";
+            const minStoresFilter = document.getElementById('filter-min-stores') ? parseInt(document.getElementById('filter-min-stores').value) || 0 : 0;
+
+            ALGERIAN_WILAYAS.forEach(w => {
+                // Apply filters
+                if (query && !w.name.includes(query) && !w.code.includes(query)) {
+                    return;
+                }
+
+                if (statusFilter === "ACTIVE" && (w.activeStores || 0) === 0) {
+                    return;
+                }
+                if (statusFilter === "INACTIVE" && (w.activeStores || 0) > 0) {
+                    return;
+                }
+
+                if ((w.activeStores || 0) < minStoresFilter) {
+                    return;
+                }
+
+                let statusText = w.activeStores ? `نشط (${w.activeStores} متجر)` : "خامل";
+                let statusClass = w.activeStores ? "bg-emerald-500/10 text-emerald-600 border border-emerald-200" : "bg-slate-100 text-slate-500 border border-slate-200";
+                
+                let activeMerchants = w.activeMerchants || (w.activeStores ? w.activeStores : 0);
+                let cancelledOrders = w.cancelledOrders !== undefined ? w.cancelledOrders : (w.activeStores ? Math.floor(Math.random() * 3) : 0);
+                let avgTime = w.avgDeliveryTime || (w.activeStores ? "24 ساعة" : "--");
+
+                let row = document.createElement('tr');
+                row.className = "border-t border-slate-100 hover:bg-slate-50 font-semibold text-slate-700 transition";
+                row.innerHTML = `
+                    <td class="p-3 font-black text-slate-900">${w.code}</td>
+                    <td class="p-3">${w.name}</td>
+                    <td class="p-3 text-center font-bold text-slate-800">${w.activeStores || 0}</td>
+                    <td class="p-3 text-center font-bold text-sky-600">${activeMerchants}</td>
+                    <td class="p-3 text-center font-bold text-red-600">${cancelledOrders}</td>
+                    <td class="p-3 text-center font-bold text-indigo-600">${avgTime}</td>
+                    <td class="p-3 text-center">${w.activeStores ? (w.activeStores * 5 + 4) : 0}</td>
+                    <td class="p-3 text-center">
+                        <span class="text-[10px] px-2.5 py-1 rounded-full font-bold ${statusClass}">
+                            ${statusText}
+                        </span>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Filter Wilayas wrapper
+        function filterWilayaTable() {
+            renderWilayaTable();
+        }
+
+        // Export data to CSV Dynamically
+        function exportWilayaDataToCSV() {
+            let csvContent = "\uFEFF"; // UTF-8 BOM for Excel Arabic layout
+            csvContent += "رمز الولاية,اسم الولاية,المتاجر المسجلة,التجار النشطون,الطلبات الملغاة,متوسط وقت التوصيل,المستخدمون النشطون,الحالة الإقليمية\n";
+
+            ALGERIAN_WILAYAS.forEach(w => {
+                let statusText = w.activeStores ? "نشط" : "خامل";
+                let activeMerchants = w.activeMerchants || (w.activeStores ? w.activeStores : 0);
+                let cancelledOrders = w.cancelledOrders !== undefined ? w.cancelledOrders : (w.activeStores ? Math.floor(Math.random() * 3) : 0);
+                let avgTime = w.avgDeliveryTime || (w.activeStores ? "24 ساعة" : "--");
+                let users = w.activeStores ? (w.activeStores * 5 + 4) : 0;
+
+                csvContent += `${w.code},${w.name},${w.activeStores || 0},${activeMerchants},${cancelledOrders},${avgTime},${users},${statusText}\n`;
+            });
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.setAttribute("href", url);
+            link.setAttribute("download", `zalo_algeria_wilayas_audit_2026.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         }
 
         // Toggle Security operations console
@@ -481,64 +812,6 @@
             }
         }
 
-        // Render Wilayas Table
-        function renderWilayaTable() {
-            const tbody = document.getElementById('wilaya-tbody');
-            tbody.innerHTML = '';
-            
-            // Render all wilayas
-            ALGERIAN_WILAYAS.forEach(w => {
-                let statusText = w.activeStores ? `نشط (${w.activeStores} متجر)` : "خامل";
-                let statusClass = w.activeStores ? "bg-emerald-500/10 text-emerald-600 border border-emerald-200" : "bg-slate-100 text-slate-500 border border-slate-200";
-                
-                let row = document.createElement('tr');
-                row.className = "border-t border-slate-100 hover:bg-slate-50 font-semibold text-slate-700 transition";
-                row.innerHTML = `
-                    <td class="p-3 font-black text-slate-900">${w.code}</td>
-                    <td class="p-3">${w.name}</td>
-                    <td class="p-3 text-center">${w.activeStores || 0}</td>
-                    <td class="p-3 text-center">${w.activeStores ? (w.activeStores * 5) : 0}</td>
-                    <td class="p-3 text-center">
-                        <span class="text-[10px] px-2.5 py-1 rounded-full font-bold ${statusClass}">
-                            ${statusText}
-                        </span>
-                    </td>
-                `;
-                tbody.appendChild(row);
-            });
-        }
-
-        // Filter Wilayas
-        function filterWilayaTable() {
-            const query = document.getElementById('wilaya-search').value.toLowerCase().trim();
-            const tbody = document.getElementById('wilaya-tbody');
-            tbody.innerHTML = '';
-
-            const filtered = ALGERIAN_WILAYAS.filter(w => 
-                w.name.includes(query) || w.code.includes(query)
-            );
-
-            filtered.forEach(w => {
-                let statusText = w.activeStores ? `نشط (${w.activeStores} متجر)` : "خامل";
-                let statusClass = w.activeStores ? "bg-emerald-500/10 text-emerald-600 border border-emerald-200" : "bg-slate-100 text-slate-500 border border-slate-200";
-                
-                let row = document.createElement('tr');
-                row.className = "border-t border-slate-100 hover:bg-slate-50 font-semibold text-slate-700 transition";
-                row.innerHTML = `
-                    <td class="p-3 font-black text-slate-900">${w.code}</td>
-                    <td class="p-3">${w.name}</td>
-                    <td class="p-3 text-center">${w.activeStores || 0}</td>
-                    <td class="p-3 text-center">${w.activeStores ? (w.activeStores * 5) : 0}</td>
-                    <td class="p-3 text-center">
-                        <span class="text-[10px] px-2.5 py-1 rounded-full font-bold ${statusClass}">
-                            ${statusText}
-                        </span>
-                    </td>
-                `;
-                tbody.appendChild(row);
-            });
-        }
-
         // Render global broadcast announcements
         function renderAnnouncements() {
             const container = document.getElementById('announcements-list-container');
@@ -551,15 +824,33 @@
             }
 
             announcements.forEach(a => {
+                let badgeColor = "bg-sky-50 text-sky-600 border border-sky-200";
+                if (a.type === "تقني") badgeColor = "bg-amber-50 text-amber-600 border border-amber-200";
+                if (a.type === "تسويقي") badgeColor = "bg-purple-50 text-purple-600 border border-purple-200";
+
+                let popupBadge = a.popup ? `<span class="bg-red-50 text-red-500 text-[8px] font-black px-1.5 py-0.5 rounded border border-red-200">إشعار منبثق 📱</span>` : '';
+
                 let div = document.createElement('div');
-                div.className = "bg-slate-50 border border-slate-200 rounded-xl p-3 flex justify-between items-start gap-2 shadow-sm";
+                div.className = "bg-slate-50 border border-slate-200 rounded-xl p-3 flex flex-col gap-2 shadow-sm text-right";
                 div.innerHTML = `
-                    <div class="flex-1">
-                        <p class="text-[11px] font-bold text-slate-700 leading-relaxed">${a.text}</p>
+                    <div class="flex justify-between items-center border-b border-slate-100 pb-1.5">
+                        <div class="flex items-center gap-1.5">
+                            <span class="text-[9px] px-2 py-0.5 rounded-full font-bold ${badgeColor}">${a.type || 'إداري'}</span>
+                            ${popupBadge}
+                        </div>
+                        <span class="text-[9px] text-slate-400 font-bold">${a.date || '2026-07-14'}</span>
                     </div>
-                    <button onclick="deleteAnnouncement('${a.id}')" class="text-red-500 hover:text-red-700 shrink-0">
-                        <i class="fa-solid fa-trash-can"></i>
-                    </button>
+                    <p class="text-[11px] font-bold text-slate-700 leading-relaxed">${a.text}</p>
+                    <div class="flex justify-end gap-2 border-t border-slate-100/50 pt-2">
+                        <button onclick="resendAnnouncement('${a.id}')" class="text-sky-600 hover:text-sky-800 text-[10px] font-bold flex items-center gap-1">
+                            <i class="fa-solid fa-arrows-rotate"></i>
+                            <span>إعادة نشر</span>
+                        </button>
+                        <button onclick="deleteAnnouncement('${a.id}')" class="text-red-500 hover:text-red-700 text-[10px] font-bold flex items-center gap-1">
+                            <i class="fa-solid fa-trash-can"></i>
+                            <span>حذف</span>
+                        </button>
+                    </div>
                 `;
                 container.appendChild(div);
             });
@@ -573,16 +864,41 @@
                 return;
             }
 
+            const type = document.getElementById('announcement-type').value;
+            const isPopup = document.getElementById('announcement-popup').checked;
+
             let announcements = getDB("global_announcements", []);
+            
+            // Format dynamic date
+            const now = new Date();
+            const dateStr = now.getFullYear() + "-" + String(now.getMonth()+1).padStart(2, '0') + "-" + String(now.getDate()).padStart(2, '0') + " " + String(now.getHours()).padStart(2, '0') + ":" + String(now.getMinutes()).padStart(2, '0');
+
             announcements.push({
                 id: "ann_" + Date.now(),
-                text: txt
+                text: txt,
+                type: type,
+                popup: isPopup,
+                date: dateStr
             });
             setDB("global_announcements", announcements);
 
             document.getElementById('announcement-text').value = '';
+            document.getElementById('announcement-popup').checked = false;
             renderAnnouncements();
-            alert("تم إطلاق الإشعار العاجل لجميع الواجهات بنجاح! 📢");
+            alert("تم إطلاق الإشعار وتصنيفه بنجاح لجميع واجهات التطبيق! 📢");
+        }
+
+        // Resend / Renew Announcement
+        function resendAnnouncement(id) {
+            let announcements = getDB("global_announcements", []);
+            let ann = announcements.find(a => a.id === id);
+            if (ann) {
+                const now = new Date();
+                ann.date = now.getFullYear() + "-" + String(now.getMonth()+1).padStart(2, '0') + "-" + String(now.getDate()).padStart(2, '0') + " " + String(now.getHours()).padStart(2, '0') + ":" + String(now.getMinutes()).padStart(2, '0');
+                setDB("global_announcements", announcements);
+                renderAnnouncements();
+                alert(`تم تحديث تاريخ وتجديد نشر الإشعار: "${ann.text.substring(0, 25)}..."`);
+            }
         }
 
         // Delete Announcement
@@ -609,7 +925,11 @@
             let stores = getDB("stores_list_old", MOCK_STORES);
             stores.forEach(s => {
                 let statusBadge = s.status === "APPROVED" ? "bg-emerald-50 border border-emerald-200 text-emerald-700" : "bg-amber-50 border border-amber-200 text-amber-700";
-                let statusText = s.status === "APPROVED" ? "موثق ومقبول ✅" : "قيد المراجعة ⏳";
+                if (s.status === "SUSPENDED") statusBadge = "bg-red-50 border border-red-200 text-red-700";
+                
+                let statusText = "قيد المراجعة ⏳";
+                if (s.status === "APPROVED") statusText = "موثق ومقبول ✅";
+                if (s.status === "SUSPENDED") statusText = "معلق ومقيد 🛑";
 
                 let row = document.createElement('tr');
                 row.className = "border-t border-slate-100 hover:bg-slate-50 font-semibold text-slate-700 transition";
@@ -617,9 +937,22 @@
                     <td class="p-3 font-black text-slate-900">${s.name}</td>
                     <td class="p-3">
                         <p class="font-bold text-slate-700">${s.owner}</p>
-                        <p class="text-[10px] text-slate-400 font-normal">النشاط: ${s.category}</p>
+                        <p class="text-[10px] text-slate-400 font-normal">رقم: ${s.phone}</p>
+                    </td>
+                    <td class="p-3 text-slate-800">
+                        <span class="text-[10px] bg-sky-50 text-sky-600 border border-sky-100 px-2.5 py-0.5 rounded-full font-bold">
+                            ${s.activityType || 'بيع منتجات'}
+                        </span>
                     </td>
                     <td class="p-3">${s.location}</td>
+                    <td class="p-3 text-center">
+                        <div class="flex items-center justify-center gap-1">
+                            <button onclick="openDocumentsModal()" class="text-sky-600 hover:text-sky-800 flex items-center gap-1 font-bold text-xs bg-sky-50 border border-sky-100 px-2.5 py-1.5 rounded-xl transition">
+                                <i class="fa-solid fa-file-pdf text-red-500"></i>
+                                <span>عرض السجل (2)</span>
+                            </button>
+                        </div>
+                    </td>
                     <td class="p-3 text-center">
                         <span class="text-[10px] px-2.5 py-1 rounded-full font-bold ${statusBadge}">
                             ${statusText}
@@ -627,10 +960,18 @@
                     </td>
                     <td class="p-3 text-center">
                         <div class="flex gap-1.5 justify-center">
-                            <button onclick="openDocumentsModal()" class="bg-sky-50 text-sky-600 border border-sky-200 hover:bg-sky-500 hover:text-white font-bold text-[10px] px-2.5 py-1 rounded-lg transition">فتح المستندات 📁</button>
+                            <!-- Direct Email Icon Button -->
+                            <a href="mailto:${s.email || 'partner@zalo.dz'}?subject=مراجعة متجر زالو ديزاد&body=أهلاً بك شريكنا العزيز،" class="bg-indigo-50 text-indigo-600 border border-indigo-200 hover:bg-indigo-600 hover:text-white font-bold p-2 rounded-xl transition" title="إرسال بريد إلكتروني مباشر">
+                                <i class="fa-regular fa-envelope"></i>
+                            </a>
+
                             ${s.status !== "APPROVED" ? 
-                                `<button onclick="approveStore('${s.id}')" class="bg-emerald-600 text-white hover:bg-emerald-700 font-bold text-[10px] px-2.5 py-1 rounded-lg transition">تفعيل</button>` :
-                                `<button onclick="suspendStore('${s.id}')" class="bg-red-600 text-white hover:bg-red-700 font-bold text-[10px] px-2.5 py-1 rounded-lg transition">تعليق</button>`
+                                `<button onclick="approveStore('${s.id}')" class="bg-emerald-600 text-white hover:bg-emerald-700 font-bold text-[10px] px-3 py-1.5 rounded-xl transition">تفعيل</button>` : ''
+                            }
+
+                            ${s.status !== "SUSPENDED" ?
+                                `<button onclick="openSuspendModal('${s.id}')" class="bg-red-50 text-red-600 border border-red-200 hover:bg-red-600 hover:text-white font-bold text-[10px] px-3 py-1.5 rounded-xl transition" title="تعليق طلب التسجيل ومطالبة ببيانات">تعليق</button>` : 
+                                `<button onclick="approveStore('${s.id}')" class="bg-emerald-50 text-emerald-600 border border-emerald-200 hover:bg-emerald-600 hover:text-white font-bold text-[10px] px-3 py-1.5 rounded-xl transition">إعادة تفعيل</button>`
                             }
                         </div>
                     </td>
@@ -646,20 +987,42 @@
             if (s) {
                 s.status = "APPROVED";
                 setDB("stores_list_old", stores);
-                alert(`تم قبول وتفعيل متجر "${s.name}" بنجاح!`);
+                alert(`تم قبول وتفعيل متجر "${s.name}" بنجاح وجعله مرئياً للجمهور الجزائري! ✅`);
                 renderRegistrations();
                 renderStats();
             }
         }
 
-        // Suspend store
-        function suspendStore(id) {
+        // Open Suspend Modal
+        function openSuspendModal(id) {
+            document.getElementById('suspend-store-id').value = id;
+            document.getElementById('suspend-reason-text').value = '';
+            document.getElementById('suspend-reason-modal').classList.remove('hidden');
+        }
+
+        function closeSuspendModal() {
+            document.getElementById('suspend-reason-modal').classList.add('hidden');
+        }
+
+        // Submit suspend store request
+        function submitSuspendStore() {
+            const id = document.getElementById('suspend-store-id').value;
+            const reason = document.getElementById('suspend-reason-text').value.trim();
+            if (!reason) {
+                alert("يرجى كتابة سبب التعليق لتوجيهه للتاجر.");
+                return;
+            }
+
             let stores = getDB("stores_list_old", MOCK_STORES);
             let s = stores.find(st => st.id === id);
             if (s) {
-                s.status = "PENDING";
+                s.status = "SUSPENDED";
                 setDB("stores_list_old", stores);
-                alert(`تم تعليق نشاط متجر "${s.name}".`);
+                
+                // Alert confirmation with request info
+                alert(`تم تعليق طلب متجر "${s.name}" بنجاح 🛑\nتم إرسال بريد إلكتروني للتاجر على العنوان (${s.email}) يطالبه بالبيانات التالية:\n"${reason}"`);
+                
+                closeSuspendModal();
                 renderRegistrations();
                 renderStats();
             }
@@ -689,12 +1052,14 @@
                         <span class="bg-[#1e3e26] text-emerald-400 border border-emerald-500/30 text-[9px] px-2 py-0.5 rounded font-bold">${s.category}</span>
                         <h4 class="text-xs font-black text-[#d4af37]">${s.name}</h4>
                     </div>
-                    <p class="text-[11px]"><span class="text-slate-400">المالك:</span> ${s.owner}</p>
-                    <p class="text-[11px]"><span class="text-slate-400">الهاتف:</span> ${s.phone}</p>
-                    <p class="text-[11px]"><span class="text-slate-400">الموقع:</span> ${s.location}</p>
-                    <p class="text-[11px]"><span class="text-slate-400">السجل التجاري:</span> <span class="font-mono">${s.regCode}</span></p>
+                    <p class="text-[11px] text-slate-300"><span class="text-slate-400 font-black">المالك المسؤول:</span> ${s.owner}</p>
+                    <p class="text-[11px] text-slate-300"><span class="text-slate-400 font-black">البريد الإلكتروني:</span> ${s.email || 'partner@zalo.dz'}</p>
+                    <p class="text-[11px] text-slate-300"><span class="text-slate-400 font-black">رقم الهاتف الشغال:</span> ${s.phone}</p>
+                    <p class="text-[11px] text-slate-300"><span class="text-slate-400 font-black">المنطقة الجغرافية:</span> ${s.location}</p>
+                    <p class="text-[11px] text-slate-300"><span class="text-slate-400 font-black">نوع النشاط العام:</span> ${s.activityType || 'بيع منتجات'}</p>
+                    <p class="text-[11px] text-slate-300"><span class="text-slate-400 font-black">السجل التجاري:</span> <span class="font-mono">${s.regCode}</span></p>
                     <div class="flex gap-2 justify-end pt-2 border-t border-slate-700/50">
-                        <button onclick="suspendStore('${s.id}'); closeActiveStoresModal();" class="bg-red-500/10 text-red-400 border border-red-500/30 hover:bg-red-500 hover:text-white font-bold text-[10px] px-3 py-1.5 rounded-lg transition">حظر وتعليق النشاط</button>
+                        <button onclick="openSuspendModal('${s.id}'); closeActiveStoresModal();" class="bg-red-500/10 text-red-400 border border-red-500/30 hover:bg-red-50 hover:text-white font-bold text-[10px] px-3 py-1.5 rounded-lg transition">حظر وتعليق النشاط</button>
                         <a href="https://wa.me/${s.phone}" target="_blank" class="bg-emerald-500 text-white hover:bg-emerald-600 font-bold text-[10px] px-3 py-1.5 rounded-lg transition flex items-center gap-1">
                             <i class="fa-brands fa-whatsapp"></i>
                             <span>مراسلة واتساب</span>
