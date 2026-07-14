@@ -8,24 +8,24 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 <style>
 :root {
-  --brand-green: oklch(0.35 0.08 145);
-  --brand-gold: oklch(0.72 0.13 75);
-  --g1: oklch(0.35 0.08 145);
-  --g2: oklch(0.42 0.09 145);
-  --g3: oklch(0.50 0.10 145);
-  --gold: oklch(0.72 0.13 75);
-  --gold2: oklch(0.80 0.10 75);
-  --bg: #f8fafc;
+  --brand-green: #0ea5e9; /* Sky Blue replaces green */
+  --brand-gold: #d4af37;
+  --g1: #0ea5e9;
+  --g2: #0284c7;
+  --g3: #0369a1;
+  --gold: #d4af37;
+  --gold2: #dfb134;
+  --bg: #fcfbfa; /* Light elegant cream background */
   --white: #ffffff;
   --text: #0f172a;
   --gray: #64748b;
-  --bd: #e2e8f0;
+  --bd: #cbd5e1;
   --red: #ef4444;
 
   /* Premium theme extensions */
   --navy: #102a43;
   --metallic-gold: #d4af37;
-  --premium-green: #1a5c2a;
+  --premium-green: #0ea5e9;
   --premium-card-bg: #ffffff;
   --premium-text-dark: #0f172a;
   --premium-text-muted: #64748b;
@@ -1184,9 +1184,21 @@ body {
     </div>
     
     <!-- Logo -->
-    <a href="customer-home.html" class="logo-mockup">
-      <span class="logo-text">ZaLo</span>
-      <span class="logo-palm">🌴</span>
+    <a href="customer-home.html" class="logo-mockup" style="display: flex; align-items: center; gap: 6px; text-decoration: none;">
+      <!-- Circular Golden Palm Tree Mini Logo -->
+      <svg width="34" height="34" viewBox="0 0 100 100">
+        <circle cx="50" cy="50" r="44" fill="none" stroke="#d4af37" stroke-width="3" />
+        <path d="M47.5,75 L52.5,75 L51,45 L49,45 Z" fill="#d4af37" />
+        <path d="M49,46 C41,43 33,48 27,56 C35,51 43,49 49,48 Z" fill="#d4af37" />
+        <path d="M49,46 C39,37 30,39 22,45 C32,42 41,43 49,46 Z" fill="#d4af37" />
+        <path d="M49,46 C42,29 35,27 28,30 C36,31 43,37 49,44 Z" fill="#d4af37" />
+        <path d="M51,46 C59,43 67,48 73,56 C65,51 57,49 51,48 Z" fill="#d4af37" />
+        <path d="M51,46 C61,37 70,39 78,45 C68,42 59,43 51,46 Z" fill="#d4af37" />
+        <path d="M51,46 C58,29 65,27 72,30 C64,31 57,37 51,44 Z" fill="#d4af37" />
+        <path d="M50,45 C50,26 45,17 40,14 C47,19 50,31 50,45 Z" fill="#d4af37" />
+        <path d="M50,45 C50,26 55,17 60,14 C53,19 50,31 50,45 Z" fill="#d4af37" />
+      </svg>
+      <span class="logo-text" style="font-family: 'Cairo', sans-serif; font-weight: 900; font-size: 20px; color: #b89116; margin-right: -2px;">ZaLo</span>
     </a>
     
     <!-- Search bar -->
