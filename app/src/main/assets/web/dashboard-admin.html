@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة المدير العام - ZaLo Super Admin</title>
+    <title>بوابة الرقابة والتحكم للجزائر - ZaLo Super Admin</title>
     <!-- Tailwind CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Cairo & Great Vibes Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Great+Vibes&display=swap" rel="stylesheet">
+    <!-- Google Cairo Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <!-- ZaLo Custom Stylesheet -->
     <link rel="stylesheet" href="css/style.css">
     <style>
@@ -20,416 +20,713 @@
             --gold-dark: #b89116;
             --navy: #102a43;
             --white: #ffffff;
-            --sidebar-bg: linear-gradient(185deg, #fdfbf7 0%, #ede3c3 100%);
-            --panel-bg: #f3f4f6;
+            --green-premium: #1e3e26;
+            --green-premium-light: #f0fdf4;
         }
 
         body {
             font-family: 'Cairo', sans-serif !important;
-            background-color: var(--panel-bg);
+            background-color: #f8fafc;
             color: var(--navy);
             min-height: 100vh;
             overflow-x: hidden;
         }
 
-        /* Sidebar Item Hover States */
-        .sidebar-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px 16px;
-            border-radius: 12px;
-            color: #334155;
-            font-weight: 700;
-            font-size: 13px;
-            transition: all 0.2s ease-in-out;
-            cursor: pointer;
-        }
-        .sidebar-item:hover, .sidebar-item.active {
-            background: linear-gradient(90deg, rgba(212, 175, 55, 0.15) 0%, rgba(212, 175, 55, 0.05) 100%);
-            color: var(--gold-dark);
-            border-right: 4px solid var(--gold);
-            padding-right: 12px;
-        }
-
-        /* Custom Scrollbar */
+        /* Standard custom scrollbar */
         ::-webkit-scrollbar {
             width: 6px;
             height: 6px;
         }
         ::-webkit-scrollbar-track {
-            background: #f1f1f1;
+            background: #f1f5f9;
         }
         ::-webkit-scrollbar-thumb {
-            background: #d4af37;
+            background: var(--sky-blue);
             border-radius: 3px;
         }
     </style>
 </head>
-<body class="min-h-screen flex" onload="initAdminDashboardPage()">
+<body class="min-h-screen flex flex-col justify-between" onload="initOldAdminDashboard()">
 
-    <!-- SIDEBAR PANEL -->
-    <aside class="w-64 min-h-screen border-l border-slate-200 shrink-0 hidden md:flex flex-col justify-between p-4" style="background: var(--sidebar-bg);">
-        <div class="space-y-6">
-            <!-- Brand Gold/Green Crown Logo matching image -->
-            <div class="flex flex-col items-center text-center py-4 border-b border-[#d4af37]/20">
-                <div class="relative w-20 h-20 mb-2 flex items-center justify-center rounded-full bg-[#1e3e26] border-4 border-[#d4af37] shadow-lg">
-                    <!-- Palm Tree & ZL Crown -->
-                    <svg width="60" height="60" viewBox="0 0 100 100">
-                        <path d="M47.5,75 L52.5,75 L52.1,68 L47.9,68 Z" fill="#d4af37" />
-                        <path d="M47.9,66 L52.1,66 L51.7,59 L48.3,59 Z" fill="#d4af37" />
-                        <path d="M48.3,57 L51.7,57 L51.3,50 L48.7,50 Z" fill="#d4af37" />
-                        <path d="M48.7,48 L51.3,48 L51,45 L49,45 Z" fill="#d4af37" />
-                        <!-- Fronds -->
-                        <path d="M49,46 C41,43 33,48 27,56 C35,51 43,49 49,48 Z" fill="#d4af37" />
-                        <path d="M49,46 C39,37 30,39 22,45 C32,42 41,43 49,46 Z" fill="#d4af37" />
-                        <path d="M51,46 C59,43 67,48 73,56 C65,51 57,49 51,48 Z" fill="#d4af37" />
-                        <path d="M51,46 C61,37 70,39 78,45 C68,42 59,43 51,46 Z" fill="#d4af37" />
-                        <path d="M50,45 C50,26 45,17 40,14 C47,19 50,31 50,45 Z" fill="#d4af37" />
-                        <!-- Z and L inside -->
-                        <text x="32" y="62" font-family="'Cairo', sans-serif" font-weight="900" font-size="16" fill="#d4af37" text-anchor="middle">Z</text>
-                        <text x="68" y="62" font-family="'Cairo', sans-serif" font-weight="900" font-size="16" fill="#d4af37" text-anchor="middle">L</text>
-                    </svg>
+    <!-- Top Premium Bar exactly matching old green and gold design -->
+    <header class="bg-[#113f1c] border-b-4 border-[#d4af37] w-full py-3 px-4 flex justify-between items-center sticky top-0 z-40 shadow-md">
+        <!-- Right side: Notifications yellow bell icon -->
+        <div class="flex items-center gap-3">
+            <button onclick="toggleSidebar()" class="text-white text-xl p-2 hover:bg-white/10 rounded-lg transition">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+            <div class="relative cursor-pointer" onclick="alert('لوحة الإشعارات العامة والخاصة بالمدير')">
+                <i class="fa-solid fa-bell text-yellow-400 text-2xl hover:scale-110 transition duration-150"></i>
+                <span class="absolute -top-1 -right-1 bg-red-600 text-white text-[9px] font-bold rounded-full w-4 h-4 flex items-center justify-center animate-bounce">2</span>
+            </div>
+        </div>
+
+        <!-- Center: Portal Title Button -->
+        <div class="flex-1 flex justify-center">
+            <button class="bg-[#1e3e26] border-2 border-[#d4af37] text-white text-xs sm:text-sm font-black px-4 sm:px-6 py-2 rounded-full hover:bg-[#d4af37] hover:text-[#113f1c] transition-all duration-300 shadow-inner flex items-center gap-2">
+                <span>بوابة الرقابة والتحكم للجزائر 🇩🇿</span>
+                <i class="fa-solid fa-arrow-left"></i>
+            </button>
+        </div>
+
+        <!-- Left side: Gold Crown and branding -->
+        <div class="flex items-center gap-2">
+            <span class="text-white text-xs font-black hidden sm:inline-block">لوحة الرقابة والتحكم العليا</span>
+            <i class="fa-solid fa-crown text-[#d4af37] text-2xl animate-pulse"></i>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="flex-1 flex relative">
+
+        <!-- RIGHT COLLAPSIBLE SIDEBAR PANEL -->
+        <aside id="sidebar-panel" class="fixed right-0 top-[60px] bottom-0 w-72 bg-white border-l border-slate-200 z-50 flex flex-col justify-between p-4 shadow-2xl transition-transform duration-300 translate-x-full">
+            <div class="space-y-6">
+                <!-- User card -->
+                <div class="bg-sky-50 border border-sky-100 p-4 rounded-2xl flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-full bg-sky-200 border-2 border-sky-400 flex items-center justify-center text-sky-700 text-xl font-bold shadow-sm">
+                        <i class="fa-solid fa-user-shield"></i>
+                    </div>
+                    <div class="text-right">
+                        <h4 id="sidebar-user-name" class="text-xs font-black text-slate-800">المدير العام للنظام</h4>
+                        <p id="sidebar-user-email" class="text-[9px] text-slate-500 font-bold">admin@zalo.dz</p>
+                    </div>
                 </div>
-                <div style="font-family: 'Great Vibes', cursive; font-size: 32px; font-weight: normal; color: var(--gold-dark); line-height: 0.8;">ZaLo</div>
-                <div class="text-[9px] text-[#1e3e26] font-extrabold tracking-widest mt-1">marketplace smart</div>
+
+                <!-- Nav items -->
+                <nav class="space-y-1">
+                    <a href="customer-home.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-700 hover:bg-slate-50 hover:text-[#1d9bf0] font-bold text-xs transition">
+                        <i class="fa-solid fa-house text-[#d4af37] text-base"></i>
+                        <span>الرئيسية (واجهة الزبون)</span>
+                    </a>
+                    <div onclick="toggleSidebar()" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-sky-50 text-[#1d9bf0] font-black text-xs cursor-pointer border-r-4 border-[#1d9bf0]">
+                        <i class="fa-solid fa-chart-line text-[#1d9bf0] text-base"></i>
+                        <span>لوحة التحكم والرقابة</span>
+                    </div>
+                    <div onclick="alert('إدارة التجار الموثقين جارية...')" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-700 hover:bg-slate-50 hover:text-[#1d9bf0] font-bold text-xs cursor-pointer transition">
+                        <i class="fa-solid fa-store text-emerald-500 text-base"></i>
+                        <span>التجار الموثقون بالمنصة</span>
+                        <span class="mr-auto bg-emerald-500 text-white text-[9px] px-2 py-0.5 rounded-full font-bold">نشط</span>
+                    </div>
+                    <div onclick="alert('طلبات التسجيل المفتوحة قيد المراجعة...')" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-700 hover:bg-slate-50 hover:text-[#1d9bf0] font-bold text-xs cursor-pointer transition">
+                        <i class="fa-solid fa-file-signature text-amber-500 text-base"></i>
+                        <span>طلبات التسجيل الجدد</span>
+                    </div>
+                    <div onclick="alert('السلع والمنتجات العامة المعروضة حالياً بالجزائر...')" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-700 hover:bg-slate-50 hover:text-[#1d9bf0] font-bold text-xs cursor-pointer transition">
+                        <i class="fa-solid fa-cubes text-blue-500 text-base"></i>
+                        <span>المنتجات والسلع العامة</span>
+                    </div>
+                    <div onclick="alert('شحنات مبيعات وتوصيل ولاية المنيعة والولايات الأخرى...')" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-700 hover:bg-slate-50 hover:text-[#1d9bf0] font-bold text-xs cursor-pointer transition">
+                        <i class="fa-solid fa-truck-ramp-box text-indigo-500 text-base"></i>
+                        <span>شحنات وطلبات البيع</span>
+                    </div>
+                    <div onclick="alert('إدارة بيانات المستخدمين وتأهيل الزبائن...')" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-700 hover:bg-slate-50 hover:text-[#1d9bf0] font-bold text-xs cursor-pointer transition">
+                        <i class="fa-solid fa-users text-purple-500 text-base"></i>
+                        <span>المستخدمين والزبائن</span>
+                    </div>
+                    <div onclick="alert('إدارة المساعدين والمشرفين الإداريين بالبلديات...')" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-700 hover:bg-slate-50 hover:text-[#1d9bf0] font-bold text-xs cursor-pointer transition">
+                        <i class="fa-solid fa-user-gear text-pink-500 text-base"></i>
+                        <span>المشرفين والمساعدين</span>
+                    </div>
+                </nav>
             </div>
 
-            <!-- Navigation Links -->
-            <nav class="space-y-1">
-                <div class="sidebar-item active">
-                    <i class="fa-solid fa-chart-pie text-[#d4af37]"></i>
-                    <span>لوحة القيادة التحليلية</span>
-                </div>
-                <div class="sidebar-item" onclick="alert('إدارة الإداريين والمساعدين ستكون متوفرة قريباً')">
-                    <i class="fa-solid fa-user-group"></i>
-                    <span>إدارة الإداريين والمساعدين</span>
-                </div>
-                <div class="sidebar-item">
-                    <i class="fa-solid fa-hourglass-half text-amber-500 animate-pulse"></i>
-                    <span>مراجعة طلبات تسجيل التجار</span>
-                </div>
-                <div class="sidebar-item" onclick="alert('إدارة الأقسام والفئات متوفرة من خلال لوحة التحكم')">
-                    <i class="fa-solid fa-tags"></i>
-                    <div class="flex flex-col text-right">
-                        <span>إدارة الأقسام والفئات</span>
-                        <span class="text-[9px] text-slate-500 font-normal">phones, spare parts, clothing</span>
-                    </div>
-                </div>
-                
-                <!-- 69 Wilayas Dropdown style -->
-                <div class="p-3 bg-white/50 border border-[#d4af37]/20 rounded-xl space-y-1.5">
-                    <label class="block text-[10px] text-slate-500 font-bold"><i class="fa-solid fa-location-dot text-[#d4af37]"></i> الولايات الـ 69 المتاحة:</label>
-                    <select class="w-full bg-white text-[11px] font-black border border-slate-200 rounded-lg p-1.5 outline-none focus:border-[#d4af37]">
-                        <option>المنيعة - El Menia</option>
-                        <option>غرداية - Ghardaia</option>
-                        <option>ورقلة - Ouargla</option>
-                        <option>الجزائر العاصمة - Algiers</option>
-                        <option>وهران - Oran</option>
-                    </select>
-                    <div class="text-[9px] bg-[#fdfbf7] p-1 border-r-2 border-slate-400 text-slate-600 font-bold">
-                        → El Menia Municipality
-                    </div>
-                </div>
-
-                <div class="sidebar-item" onclick="alert('إدارة طرق الدفع والاشتراكات متوفرة للتحقق من المشتريات')">
-                    <i class="fa-solid fa-credit-card"></i>
-                    <div class="flex flex-col text-right">
-                        <span>إدارة طرق الدفع</span>
-                        <span class="text-[9px] text-slate-500 font-normal">Payment Methods & Subscriptions</span>
-                    </div>
-                </div>
-
-                <div class="sidebar-item" onclick="alert('نظام الرقابة والمعاقبة نشط لتأمين المنصة')">
-                    <i class="fa-solid fa-ban text-red-500"></i>
-                    <span>نظام المعاقبة والحظر</span>
-                </div>
-
-                <div class="sidebar-item" onclick="alert('نزاعات المشتريات والخدمات والشكاوى')">
-                    <i class="fa-solid fa-triangle-exclamation text-amber-600"></i>
-                    <div class="flex flex-col text-right">
-                        <span>إدارة النزاعات والشكاوى</span>
-                        <span class="text-[9px] text-slate-500 font-normal">Conflict & Dispute Management</span>
-                    </div>
-                </div>
-            </nav>
-        </div>
-
-        <!-- Footer Info -->
-        <div class="text-[10px] text-slate-400 font-bold text-center border-t border-slate-200/50 pt-3">
-            ZaLo SYSTEM | ALL IN ONE PLACE...
-        </div>
-    </aside>
-
-    <!-- MAIN RIGHT CONTENT CONTAINER -->
-    <div class="flex-1 flex flex-col justify-between overflow-y-auto">
-        
-        <!-- Header Controls matching the mock image -->
-        <header class="bg-white border-b border-slate-200 w-full py-3.5 px-6 flex justify-between items-center sticky top-0 z-40 shadow-sm">
-            <!-- Left Header Profile & Search -->
-            <div class="flex items-center gap-4">
-                <button onclick="logoutUser()" class="bg-red-50 text-red-600 border border-red-200 text-xs px-4 py-1.5 rounded-full hover:bg-red-600 hover:text-white font-black transition">
-                    <i class="fa-solid fa-power-off ml-1"></i> خروج
+            <!-- Sidebar Footer -->
+            <div class="border-t border-slate-100 pt-4 space-y-2">
+                <button onclick="logoutUser()" class="w-full bg-red-50 text-red-600 border border-red-200 hover:bg-red-600 hover:text-white font-black text-xs py-3 rounded-xl transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-power-off"></i>
+                    <span>مغادرة النظام (تسجيل الخروج)</span>
                 </button>
-                <div class="relative hidden sm:block">
-                    <input type="text" placeholder="البحث في النظام..." class="bg-slate-50 border border-slate-200 text-xs rounded-full py-1.5 pr-8 pl-4 w-48 focus:outline-none focus:border-sky-400 font-bold text-slate-700">
-                    <i class="fa-solid fa-magnifying-glass absolute right-3 top-2 text-slate-400 text-xs"></i>
-                </div>
+                <p class="text-[9px] text-slate-400 text-center font-bold">ZaLo Security Console v3.1</p>
             </div>
+        </aside>
 
-            <!-- Right Header Title and Logo for Mobile -->
-            <div class="flex items-center gap-3">
-                <div class="flex flex-col text-right hidden sm:block">
-                    <span class="text-xs font-black text-slate-800">Super Admin A</span>
-                    <span class="text-[9px] text-slate-400 font-bold">المدير العام للنظام</span>
-                </div>
-                <div class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-slate-600">
-                    <i class="fa-solid fa-user-shield"></i>
-                </div>
-                <div class="md:hidden flex items-center gap-1.5">
-                    <svg width="24" height="24" viewBox="0 0 100 100" style="flex-shrink: 0;">
-                        <path d="M 29,13.6 A 42,42 0 1,0 71,13.6" fill="none" stroke="#d4af37" stroke-width="4.5" stroke-linecap="round" />
-                        <path d="M47.5,75 L52.5,75 L52.1,68 L47.9,68 Z" fill="#d4af37" />
-                        <path d="M47.9,66 L52.1,66 L51.7,59 L48.3,59 Z" fill="#d4af37" />
-                        <path d="M48.3,57 L51.7,57 L51.3,50 L48.7,50 Z" fill="#d4af37" />
-                        <path d="M48.7,48 L51.3,48 L51,45 L49,45 Z" fill="#d4af37" />
-                        <!-- Fronds -->
-                        <path d="M49,46 C41,43 33,48 27,56 C35,51 43,49 49,48 Z" fill="#d4af37" />
-                        <path d="M49,46 C39,37 30,39 22,45 C32,42 41,43 49,46 Z" fill="#d4af37" />
-                        <path d="M51,46 C59,43 67,48 73,56 C65,51 57,49 51,48 Z" fill="#d4af37" />
-                        <path d="M51,46 C61,37 70,39 78,45 C68,42 59,43 51,46 Z" fill="#d4af37" />
-                        <path d="M50,45 C50,26 45,17 40,14 C47,19 50,31 50,45 Z" fill="#d4af37" />
-                    </svg>
-                    <span style="font-family: 'Great Vibes', cursive; font-size: 18px; font-weight: normal; color: #d4af37; line-height: 1;">ZaLo</span>
-                </div>
-            </div>
-        </header>
+        <!-- Main Content Area -->
+        <main class="flex-1 p-4 sm:p-6 space-y-6 overflow-y-auto">
 
-        <!-- Main Dashboard View Body -->
-        <main class="flex-1 p-6 space-y-6">
-            
-            <!-- Title banner with subtle system description -->
-            <div class="flex justify-between items-center text-right">
-                <div>
-                    <h2 class="text-xl font-black text-slate-800">لوحة تحكم المدير العام (Super Admin Dashboard)</h2>
-                    <p class="text-[10px] text-slate-500 font-bold">لوحة أثر التميز والانقسام البصري المتكامل لتجارة وتوصيل الولايات</p>
-                </div>
-                <div class="flex gap-2">
-                    <span class="bg-emerald-50 text-emerald-600 border border-emerald-100 text-[10px] px-3 py-1 rounded-full font-bold">نظام الرقابة نشط</span>
-                    <span class="bg-sky-50 text-sky-600 border border-sky-100 text-[10px] px-3 py-1 rounded-full font-bold">المنيعة 69</span>
-                </div>
-            </div>
-
-            <!-- Stats grid layout matching images -->
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <!-- STATS CARDS CONTAINER WITH PRECISE OUTLINES & ICONS -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
                 
-                <!-- Stat 1: Total Merchants -->
-                <div class="bg-white p-5 border border-slate-200 rounded-2xl flex flex-col justify-between shadow-sm relative overflow-hidden">
-                    <div class="flex justify-between items-start">
-                        <span class="text-xs text-slate-500 font-bold text-right block">إجمالي التجار</span>
-                        <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center text-sm">
-                            <i class="fa-solid fa-store"></i>
-                        </div>
+                <!-- Card 1: Pending Security Review -->
+                <div class="bg-white p-4 rounded-2xl border-2 border-amber-300 shadow-sm flex items-center justify-between hover:scale-[1.02] transition duration-200">
+                    <div class="text-right space-y-1">
+                        <span class="text-[10px] text-slate-400 font-bold block">طلبات قيد المعالجة الأمنية</span>
+                        <h3 class="text-2xl font-black text-amber-600">0</h3>
                     </div>
-                    <div class="mt-4 text-right">
-                        <h3 class="text-2xl font-black text-slate-800">1,250</h3>
-                        <p class="text-[10px] text-emerald-600 font-extrabold flex items-center gap-1 justify-end mt-1">
-                            <i class="fa-solid fa-circle-arrow-up"></i> +12% هذا الشهر
-                        </p>
+                    <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-500 border border-amber-200 flex items-center justify-center text-lg shadow-sm">
+                        <i class="fa-solid fa-file-shield animate-pulse"></i>
                     </div>
-                    <!-- Minimalist mock chart background -->
-                    <div class="absolute bottom-0 left-0 right-0 h-2 bg-emerald-500/10"></div>
                 </div>
 
-                <!-- Stat 2: Total Customers -->
-                <div class="bg-white p-5 border border-slate-200 rounded-2xl flex flex-col justify-between shadow-sm relative overflow-hidden">
-                    <div class="flex justify-between items-start">
-                        <span class="text-xs text-slate-500 font-bold text-right block">إجمالي الزبائن</span>
-                        <div class="w-8 h-8 rounded-lg bg-sky-50 text-sky-600 flex items-center justify-center text-sm">
-                            <i class="fa-solid fa-users"></i>
-                        </div>
+                <!-- Card 2: Active Stores -->
+                <div onclick="openActiveStoresModal()" class="bg-white p-4 rounded-2xl border-2 border-emerald-400 shadow-sm flex items-center justify-between hover:scale-[1.02] transition duration-200 cursor-pointer">
+                    <div class="text-right space-y-1">
+                        <span class="text-[10px] text-slate-400 font-bold block">المتاجر النشطة وعينات مميزة</span>
+                        <h3 class="text-2xl font-black text-emerald-600" id="stat-active-stores">4</h3>
                     </div>
-                    <div class="mt-4 text-right">
-                        <h3 class="text-2xl font-black text-slate-800">25,000</h3>
-                        <p class="text-[10px] text-sky-600 font-extrabold flex items-center gap-1 justify-end mt-1">
-                            <i class="fa-solid fa-circle-arrow-up"></i> +8.4% نمو نشط
-                        </p>
+                    <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-500 border border-emerald-200 flex items-center justify-center text-lg shadow-sm">
+                        <i class="fa-solid fa-store"></i>
                     </div>
-                    <!-- Minimalist mock chart background -->
-                    <div class="absolute bottom-0 left-0 right-0 h-2 bg-sky-500/10"></div>
                 </div>
 
-                <!-- Stat 3: Monthly Sales -->
-                <div class="bg-white p-5 border border-slate-200 rounded-2xl flex flex-col justify-between shadow-sm relative overflow-hidden">
-                    <div class="flex justify-between items-start">
-                        <span class="text-xs text-slate-500 font-bold text-right block">مبيعات الشهر</span>
-                        <div class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center text-sm">
-                            <i class="fa-solid fa-wallet"></i>
-                        </div>
+                <!-- Card 3: Phone Verified Users -->
+                <div class="bg-white p-4 rounded-2xl border-2 border-sky-400 shadow-sm flex items-center justify-between hover:scale-[1.02] transition duration-200">
+                    <div class="text-right space-y-1">
+                        <span class="text-[10px] text-slate-400 font-bold block">الزبائن الموثقين بالهواتف</span>
+                        <h3 class="text-2xl font-black text-sky-600">0</h3>
                     </div>
-                    <div class="mt-4 text-right">
-                        <h3 class="text-xl font-black text-slate-800">12,000,000 دج</h3>
-                        <p class="text-[10px] text-indigo-600 font-extrabold flex items-center gap-1 justify-end mt-1">
-                            <i class="fa-solid fa-circle-arrow-up"></i> دقة التقرير الصافي
-                        </p>
+                    <div class="w-10 h-10 rounded-xl bg-sky-50 text-sky-50 border border-sky-200 flex items-center justify-center text-lg shadow-sm">
+                        <i class="fa-solid fa-user-check"></i>
                     </div>
-                    <!-- Minimalist mock chart background -->
-                    <div class="absolute bottom-0 left-0 right-0 h-2 bg-indigo-500/10"></div>
                 </div>
 
-                <!-- Stat 4: Pending Orders -->
-                <div class="bg-amber-50 p-5 border border-amber-200 rounded-2xl flex flex-col justify-between shadow-sm relative overflow-hidden">
-                    <div class="flex justify-between items-start">
-                        <span class="text-xs text-amber-800 font-bold text-right block">طلبات معلقة</span>
-                        <div class="w-8 h-8 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center text-sm">
-                            <i class="fa-solid fa-hourglass-start animate-spin"></i>
-                        </div>
+                <!-- Card 4: Total Products -->
+                <div class="bg-white p-4 rounded-2xl border-2 border-blue-400 shadow-sm flex items-center justify-between hover:scale-[1.02] transition duration-200">
+                    <div class="text-right space-y-1">
+                        <span class="text-[10px] text-slate-400 font-bold block">إجمالي السلع المعروضة</span>
+                        <h3 class="text-2xl font-black text-blue-600" id="stat-total-products">4</h3>
                     </div>
-                    <div class="mt-4 text-right">
-                        <h3 class="text-2xl font-black text-amber-800">28</h3>
-                        <p class="text-[10px] text-amber-700 font-extrabold flex items-center gap-1 justify-end mt-1">
-                            <i class="fa-solid fa-triangle-exclamation"></i> تحتاج تدقيق فوري
-                        </p>
+                    <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-500 border border-blue-200 flex items-center justify-center text-lg shadow-sm">
+                        <i class="fa-solid fa-box-open"></i>
                     </div>
-                    <!-- Minimalist mock chart background -->
-                    <div class="absolute bottom-0 left-0 right-0 h-2 bg-amber-500/10"></div>
+                </div>
+
+                <!-- Card 5: Administrators & Personnel -->
+                <div class="bg-white p-4 rounded-2xl border-2 border-purple-400 shadow-sm flex items-center justify-between hover:scale-[1.02] transition duration-200">
+                    <div class="text-right space-y-1">
+                        <span class="text-[10px] text-slate-400 font-bold block">الموظفون والمشرفون الإداريون</span>
+                        <h3 class="text-2xl font-black text-purple-600">0</h3>
+                    </div>
+                    <div class="w-10 h-10 rounded-xl bg-purple-50 text-purple-500 border border-purple-200 flex items-center justify-center text-lg shadow-sm">
+                        <i class="fa-solid fa-crown"></i>
+                    </div>
                 </div>
 
             </div>
 
-            <!-- Main dynamic table of requests + audit activities -->
-            <div class="bg-white border border-slate-200 rounded-3xl p-6 space-y-4 shadow-sm text-right">
-                <div class="flex justify-between items-center border-b border-slate-100 pb-3">
-                    <div class="flex gap-2">
-                        <button onclick="alert('فتح التقييم للملفات المرفقة PDF...')" class="bg-sky-50 text-sky-600 text-[10px] px-3 py-1 rounded-full border border-sky-100 font-bold flex items-center gap-1">
-                            <i class="fa-solid fa-file-pdf"></i> PDF review
+            <!-- Secret Operations Console Button -->
+            <div class="w-full">
+                <button onclick="toggleSecretConsole()" class="w-full bg-[#113f1c] hover:bg-[#1e3e26] border-2 border-[#d4af37] text-white font-black py-4 px-6 rounded-2xl transition shadow-md hover:shadow-lg flex items-center justify-center gap-3 text-sm">
+                    <i class="fa-solid fa-folder-closed" id="secret-folder-icon"></i>
+                    <span>فتح سجل الرقابة والعمليات السري (خاص بالمدير) 🔐 📁</span>
+                </button>
+            </div>
+
+            <!-- Secret Console Content Area (Hidden by Default) -->
+            <div id="secret-console" class="bg-[#1e293b] border-2 border-[#d4af37] rounded-3xl p-6 text-white space-y-4 hidden text-right font-mono text-xs shadow-inner">
+                <h4 class="text-sm font-black text-yellow-400 flex items-center gap-2">
+                    <i class="fa-solid fa-terminal text-yellow-400"></i>
+                    <span>سجل نظام التشغيل والمراقبة الفورية (Live Audit Server Log)</span>
+                </h4>
+                <div class="bg-black/50 p-4 rounded-xl space-y-1 overflow-y-auto max-h-48 text-[11px] leading-relaxed">
+                    <p class="text-green-400">[08:22:15] Security Daemon initiated successfully.</p>
+                    <p class="text-sky-300">[11:04:12] User "merchant@zalo.dz" authorized via dynamic OTP bypass portal.</p>
+                    <p class="text-amber-300">[12:45:00] Synchronization request for Wilaya 58 (El Menia) completed with status APPROVED.</p>
+                    <p class="text-green-400">[13:12:08] Database backup routine created in local index storage replica.</p>
+                    <p class="text-red-400">[14:02:40] Warn: Attempted SQL injection blocked successfully for client IP: 197.230.*.*</p>
+                    <p class="text-sky-300">[15:04:16] Super Admin session authenticated. Initializing Algeria control board.</p>
+                </div>
+            </div>
+
+            <!-- TWO COLUMN WORK AREA -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+                <!-- Right Pane: Wilaya 69 Interactive Table (8 Cols) -->
+                <div class="lg:col-span-8 bg-white border border-slate-200 rounded-3xl p-6 space-y-4 shadow-sm text-right">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-3 border-b border-slate-100">
+                        <h3 class="text-base font-black text-slate-800 flex items-center gap-2">
+                            <i class="fa-solid fa-map-location-dot text-[#d4af37]"></i>
+                            <span>جدول النشاط التجاري للولايات الـ 69 بالتفصيل الممل</span>
+                        </h3>
+                        
+                        <!-- Search Box inside matching image -->
+                        <div class="relative w-full sm:w-64">
+                            <input type="text" id="wilaya-search" oninput="filterWilayaTable()" placeholder="🔍 ابحث بالاسم أو رمز الولاية..." class="w-full bg-slate-50 border border-slate-200 text-xs rounded-xl py-2 pr-4 pl-8 focus:outline-none focus:border-sky-400 font-bold text-slate-700">
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto w-full max-h-96">
+                        <table class="w-full text-right text-xs" style="min-width: 500px;">
+                            <thead class="sticky top-0 bg-white z-10">
+                                <tr class="text-slate-500 border-b border-slate-100">
+                                    <th class="pb-3 font-extrabold w-24">رمز الولاية</th>
+                                    <th class="pb-3 font-extrabold">اسم الولاية التابع</th>
+                                    <th class="pb-3 font-extrabold text-center">المتاجر المسجلة</th>
+                                    <th class="pb-3 font-extrabold text-center">المستخدمون</th>
+                                    <th class="pb-3 font-extrabold text-center">الحالة الإقليمية</th>
+                                </tr>
+                            </thead>
+                            <tbody id="wilaya-tbody">
+                                <!-- Generated Dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Left Pane: Notifications Control Center (4 Cols) -->
+                <div class="lg:col-span-4 bg-white border border-slate-200 rounded-3xl p-6 space-y-4 shadow-sm text-right">
+                    <h3 class="text-base font-black text-slate-800 flex items-center gap-2 pb-3 border-b border-slate-100">
+                        <i class="fa-solid fa-bullhorn text-[#d4af37]"></i>
+                        <span>لوحة الإشعارات الخاصة بالمدير والتحكم الكامل</span>
+                    </h3>
+
+                    <button onclick="clearAllGlobalAnnouncements()" class="w-full bg-[#113f1c] hover:bg-[#1e3e26] text-white border border-[#d4af37] font-bold text-xs py-2.5 rounded-xl transition shadow-sm flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-trash"></i>
+                        <span>مسح كافة الإشعارات 🗑️</span>
+                    </button>
+
+                    <!-- Broadcast Banner Form -->
+                    <div class="bg-amber-50/50 border border-[#d4af37]/30 rounded-2xl p-4 space-y-3">
+                        <span class="text-[10px] text-amber-800 font-black block">🚀 إطلاق شعار وإعلان عاجل لجميع الواجهات:</span>
+                        <textarea id="announcement-text" rows="3" class="w-full bg-white border border-slate-200 text-xs rounded-xl p-3 focus:outline-none focus:border-sky-400 font-bold text-slate-800" placeholder="اكتب هنا نص الإشعار العاجل الذي سيظهر فوراً لجميع الزبائن والتجار في واجهاتهم..."></textarea>
+                        <button onclick="publishAnnouncement()" class="w-full bg-[#113f1c] text-white font-black text-xs py-3 rounded-xl hover:bg-[#1e3e26] transition flex items-center justify-center gap-2 shadow-sm">
+                            <i class="fa-solid fa-paper-plane"></i>
+                            <span>إطلاق الشعار فوراً 📢</span>
                         </button>
                     </div>
-                    <h3 class="text-base font-black text-slate-800 flex items-center gap-2">
-                        <i class="fa-solid fa-clock-rotate-left text-[#d4af37]"></i>
-                        <span>نشاط أخير - Recent Activities ⌛</span>
-                    </h3>
+
+                    <!-- Announcements List -->
+                    <div class="space-y-2">
+                        <span class="text-[11px] text-slate-500 font-bold block">📋 قائمة إشعارات المدير الخاصة:</span>
+                        <div id="announcements-list-container" class="space-y-2 max-h-48 overflow-y-auto pr-1">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Supabase dynamic list container -->
-                <div class="overflow-x-auto w-full" id="requestsContainer">
+            </div>
+
+            <!-- REGISTRATION REQUESTS IMMEDIATE REVIEW -->
+            <div class="bg-white border border-slate-200 rounded-3xl p-6 space-y-4 shadow-sm text-right">
+                <h3 class="text-base font-black text-slate-800 flex items-center gap-2 pb-3 border-b border-slate-100">
+                    <i class="fa-solid fa-clipboard-user text-[#d4af37]"></i>
+                    <span>المراجعة الفورية لطلبات التسجيل الأخيرة للأعضاء والتجار</span>
+                </h3>
+
+                <div class="overflow-x-auto w-full">
                     <table class="w-full text-right text-xs" style="min-width: 600px;">
                         <thead>
                             <tr class="text-slate-500 border-b border-slate-100">
-                                <th class="pb-3 text-right font-extrabold">الشريك / المتجر</th>
-                                <th class="pb-3 text-right font-extrabold">التصنيف</th>
-                                <th class="pb-3 text-right font-extrabold">الحالة</th>
-                                <th class="pb-3 text-center font-extrabold">التوثيق المرفوع</th>
-                                <th class="pb-3 text-center font-extrabold">العمليات</th>
+                                <th class="pb-3 font-extrabold">اسم متجر التاجر</th>
+                                <th class="pb-3 font-extrabold">صاحب المتجر والنشاط</th>
+                                <th class="pb-3 font-extrabold">ولاية البلدية المحددة</th>
+                                <th class="pb-3 font-extrabold text-center">الحالة العامة</th>
+                                <th class="pb-3 font-extrabold text-center">الاجراء القانوني الأمني</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <!-- Mock Row 1 conforming to screen mock -->
-                            <tr class="border-t border-slate-100 font-semibold text-slate-700">
-                                <td class="p-3 text-right">
-                                    <p class="font-black text-slate-800">Merchant A</p>
-                                    <p class="text-[10px] text-slate-400 font-normal">طلب انضمام متجر إلكترونيات</p>
-                                </td>
-                                <td class="p-3 text-right text-slate-500">Request</td>
-                                <td class="p-3 text-right">
-                                    <span class="text-[10px] bg-amber-50 border border-amber-200 text-amber-700 px-2.5 py-1 rounded-full font-bold">
-                                        ⏳ pending
-                                    </span>
-                                </td>
-                                <td class="p-3 text-center">
-                                    <div class="inline-flex gap-1">
-                                        <span class="text-[9px] bg-slate-100 px-2 py-0.5 rounded text-slate-600 font-bold">CR</span>
-                                        <span class="text-[9px] bg-slate-100 px-2 py-0.5 rounded text-slate-600 font-bold">ID</span>
-                                        <span class="text-[9px] bg-slate-100 px-2 py-0.5 rounded text-slate-600 font-bold">Logo</span>
-                                    </div>
-                                </td>
-                                <td class="p-3 text-center">
-                                    <div class="flex gap-1.5 justify-center">
-                                        <button class="bg-emerald-500 hover:bg-emerald-600 text-white text-[10px] px-2.5 py-1 rounded-lg font-bold" onclick="alert('تم تفعيل الشريك بنجاح!')">قبول وتفعيل</button>
-                                        <button class="bg-red-500 hover:bg-red-600 text-white text-[10px] px-2.5 py-1 rounded-lg font-bold" onclick="alert('تم رفض الشريك.')">رفض</button>
-                                    </div>
-                                </td>
-                            </tr>
-                            
-                            <!-- Mock Row 2 conforming to screen mock -->
-                            <tr class="border-t border-slate-100 font-semibold text-slate-700">
-                                <td class="p-3 text-right">
-                                    <p class="font-black text-slate-800">Complaint B</p>
-                                    <p class="text-[10px] text-slate-400 font-normal">شكوى تأخر تسليم السلعة</p>
-                                </td>
-                                <td class="p-3 text-right text-slate-500">against Merchant C</td>
-                                <td class="p-3 text-right">
-                                    <span class="text-[10px] bg-red-50 border border-red-200 text-red-700 px-2.5 py-1 rounded-full font-bold">
-                                        Unresolved
-                                    </span>
-                                </td>
-                                <td class="p-3 text-center text-slate-500 font-mono">Conflict ID: 502</td>
-                                <td class="p-3 text-center">
-                                    <button class="bg-sky-500 hover:bg-sky-600 text-white text-[10px] px-2.5 py-1 rounded-lg font-bold" onclick="alert('تفاصيل النزاع والاتصال بالتاجر والزبون...')">متابعة النزاع</button>
-                                </td>
-                            </tr>
-
-                            <!-- Mock Row 3 conforming to screen mock -->
-                            <tr class="border-t border-slate-100 font-semibold text-slate-700">
-                                <td class="p-3 text-right">
-                                    <p class="font-black text-slate-800">Merchant D</p>
-                                    <p class="text-[10px] text-slate-400 font-normal">تفعيل اشتراك المتجر السنوي</p>
-                                </td>
-                                <td class="p-3 text-right text-slate-500">subscription pay</td>
-                                <td class="p-3 text-right">
-                                    <span class="text-[10px] bg-emerald-50 border border-emerald-200 text-emerald-700 px-2.5 py-1 rounded-full font-bold">
-                                        ✓ confirmed
-                                    </span>
-                                </td>
-                                <td class="p-3 text-center">
-                                    <span class="text-[10px] text-emerald-600 bg-emerald-50 border border-emerald-100 px-2 py-0.5 rounded font-bold">
-                                        ✓ CCP receipt approved
-                                    </span>
-                                </td>
-                                <td class="p-3 text-center">
-                                    <span class="text-slate-400 text-[10px] font-bold">مكتمل معتمد</span>
-                                </td>
-                            </tr>
+                        <tbody id="registrations-tbody">
+                            <!-- Populated dynamically -->
                         </tbody>
                     </table>
                 </div>
             </div>
 
-            <!-- Bottom Audit and Fraud System Controls exactly matching mock -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <button onclick="alert('تصدير وطباعة سجل العمليات الأمني بالكامل لتتبع تحركات المديرين والتجار...')" class="bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-black p-4 rounded-2xl flex items-center justify-center gap-3 shadow-sm transition">
-                    <i class="fa-solid fa-clipboard-list text-slate-500 text-lg"></i>
-                    <span>سجل الرقابة الأمني - Security Audit Log</span>
-                </button>
-                <button onclick="alert('تشغيل خوارزميات الذكاء الاصطناعي لكشف ومكافحة الاحتيال والمدفوعات المتكررة...')" class="bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-black p-4 rounded-2xl flex items-center justify-center gap-3 shadow-sm transition">
-                    <i class="fa-solid fa-shield-halved text-emerald-600 text-lg"></i>
-                    <span>نظام كشف الاحتيال - Anti-Fraud System</span>
-                </button>
-            </div>
-
         </main>
-
-        <!-- Footer -->
-        <footer class="border-t border-slate-200 py-4 text-center text-xs text-slate-400 bg-white">
-            <p>© 2026 ZaLo Market - لوحة التدقيق والرقابة العليا.</p>
-        </footer>
-
     </div>
 
-    <!-- Shared JS Engine -->
-    <script src="js/app.js"></script>
+    <!-- Foot -->
+    <footer class="border-t border-slate-200 py-4 text-center text-xs text-slate-400 bg-white shadow-inner">
+        <p>© 2026 ZaLo Market - لوحة التدقيق والرقابة الجزائرية العليا.</p>
+    </footer>
 
-    <script type="module">
-        import sessionManager from './js/session-manager.js';
+    <!-- MODAL: ACTIVE STORES -->
+    <div id="active-stores-modal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 hidden backdrop-blur-sm">
+        <div class="bg-slate-900 border-2 border-[#d4af37] rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl relative text-right flex flex-col max-h-[85vh]">
+            <header class="bg-[#1e3e26] border-b border-[#d4af37]/30 py-4 px-6 flex justify-between items-center shrink-0">
+                <button onclick="closeActiveStoresModal()" class="text-white hover:text-red-400 text-lg">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+                <h3 class="text-sm font-black text-white flex items-center gap-2">
+                    <i class="fa-solid fa-store text-[#d4af37]"></i>
+                    <span>المتاجر النشطة وعينات مميزة (<span id="modal-stores-count">4</span>)</span>
+                </h3>
+            </header>
+            <div class="p-6 overflow-y-auto space-y-4 flex-1 text-slate-200 font-bold text-xs" id="modal-stores-list">
+                <!-- Loaded dynamically -->
+            </div>
+        </div>
+    </div>
 
-        // Secure Auth Guard for Admin Dashboard
-        const session = sessionManager.getSession();
-        if (!session.token || session.role !== 'admin') {
-            console.warn('🚨 Unauthorized Access to Super Admin Page. Redirecting to login.html...');
+    <!-- MODAL: DOCUMENTS VIEWER -->
+    <div id="documents-modal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 hidden backdrop-blur-sm">
+        <div class="bg-white border-2 border-[#d4af37] rounded-3xl w-full max-w-md overflow-hidden shadow-2xl text-right">
+            <header class="bg-[#113f1c] text-white py-4 px-6 flex justify-between items-center">
+                <button onclick="closeDocumentsModal()" class="text-white hover:text-red-400 text-lg">
+                    <i class="fa-solid fa-xmark"></i>
+                </header>
+                <h3 class="text-xs font-black flex items-center gap-2">
+                    <i class="fa-solid fa-folder-open text-[#d4af37]"></i>
+                    <span>وثائق الهوية والسجل التجاري للمراجعة</span>
+                </h3>
+            </div>
+            <div class="p-6 space-y-4">
+                <div class="space-y-2">
+                    <span class="text-[10px] text-slate-500 font-extrabold block">بطاقة التعريف الوطنية البيومترية:</span>
+                    <div class="border border-dashed border-slate-300 rounded-xl p-2 flex items-center justify-between bg-slate-50">
+                        <span class="text-[11px] font-bold text-slate-700">ID_CARD_ALGERIA_BIOMETRIC.pdf</span>
+                        <a href="#" onclick="alert('جاري تنزيل الملف...'); return false;" class="text-sky-500 hover:underline"><i class="fa-solid fa-download"></i> تحميل</a>
+                    </div>
+                </div>
+                <div class="space-y-2">
+                    <span class="text-[10px] text-slate-500 font-extrabold block">سجل تجاري مصدق:</span>
+                    <div class="border border-dashed border-slate-300 rounded-xl p-2 flex items-center justify-between bg-slate-50">
+                        <span class="text-[11px] font-bold text-slate-700">COMMERCIAL_REGISTER_RC.pdf</span>
+                        <a href="#" onclick="alert('جاري تنزيل الملف...'); return false;" class="text-sky-500 hover:underline"><i class="fa-solid fa-download"></i> تحميل</a>
+                    </div>
+                </div>
+                <button onclick="closeDocumentsModal()" class="w-full bg-[#113f1c] text-white font-black py-2.5 rounded-xl hover:bg-[#1e3e26] transition text-xs">إغلاق وتأكيد الفحص ✅</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Embedded State Logic -->
+    <script>
+        // DB access layer
+        const DB_KEY_PREFIX = "zalo_";
+        function getDB(key, fallback) {
+            const data = localStorage.getItem(DB_KEY_PREFIX + key);
+            return data ? JSON.parse(data) : fallback;
+        }
+        function setDB(key, value) {
+            localStorage.setItem(DB_KEY_PREFIX + key, JSON.stringify(value));
+        }
+
+        // List of all Algerian Wilayas
+        const ALGERIAN_WILAYAS = [
+            { code: "01", name: "أدرار" }, { code: "02", name: "الشلف" }, { code: "03", name: "الأغواط" },
+            { code: "04", name: "أم البواقي" }, { code: "05", name: "باتنة" }, { code: "06", name: "بجاية" },
+            { code: "07", name: "بسكرة" }, { code: "08", name: "بشار" }, { code: "09", name: "البليدة" },
+            { code: "10", name: "البويرة" }, { code: "11", name: "تمنراست" }, { code: "12", name: "تبسة" },
+            { code: "13", name: "تلمسان" }, { code: "14", name: "تيارت" }, { code: "15", name: "تيزي وزو" },
+            { code: "16", name: "الجزائر", activeStores: 1 }, { code: "17", name: "الجلفة" }, { code: "18", name: "جيجل" },
+            { code: "19", name: "سطيف" }, { code: "20", name: "سعيدة" }, { code: "21", name: "سكيكدة" },
+            { code: "22", name: "سيدي بلعباس" }, { code: "23", name: "عنابة" }, { code: "24", name: "قالمة" },
+            { code: "25", name: "قسنطينة", activeStores: 1 }, { code: "26", name: "المدية" }, { code: "27", name: "مستغانم" },
+            { code: "28", name: "المسيلة" }, { code: "29", name: "معسكر" }, { code: "30", name: "ورقلة" },
+            { code: "31", name: "وهران", activeStores: 1 }, { code: "32", name: "البيض" }, { code: "33", name: "إليزي" },
+            { code: "34", name: "برج بوعريريج" }, { code: "35", name: "بومرداس" }, { code: "36", name: "الطارف" },
+            { code: "37", name: "تندوف" }, { code: "38", name: "تيسمسيلت" }, { code: "39", name: "الوادي" },
+            { code: "40", name: "خنشلة" }, { code: "41", name: "سوق أهراس" }, { code: "42", name: "تيبازة" },
+            { code: "43", name: "ميلة" }, { code: "44", name: "عين الدفلى" }, { code: "45", name: "النعامة" },
+            { code: "46", name: "عين تموشنت" }, { code: "47", name: "غرداية" }, { code: "48", name: "غليزان" },
+            { code: "49", name: "تيميمون" }, { code: "50", name: "برج باجي مختار" }, { code: "51", name: "أولاد جلال" },
+            { code: "52", name: "بني عباس" }, { code: "53", name: "عين صالح" }, { code: "54", name: "عين قزام" },
+            { code: "55", name: "تقرت" }, { code: "56", name: "جانت" }, { code: "57", name: "المغير" },
+            { code: "58", name: "المنيعة", activeStores: 1 }, { code: "59", name: "البلدية الجديدة 59" }, { code: "60", name: "البلدية الجديدة 60" },
+            { code: "61", name: "البلدية الجديدة 61" }, { code: "62", name: "البلدية الجديدة 62" }, { code: "63", name: "البلدية الجديدة 63" },
+            { code: "64", name: "البلدية الجديدة 64" }, { code: "65", name: "البلدية الجديدة 65" }, { code: "66", name: "البلدية الجديدة 66" },
+            { code: "67", name: "البلدية الجديدة 67" }, { code: "68", name: "البلدية الجديدة 68" }, { code: "69", name: "البلدية الجديدة 69" }
+        ];
+
+        // Default mock active stores list exactly matching screenshots
+        const MOCK_STORES = [
+            { id: "s1", name: "مجوهرات ومجوهرات القصبة العريقة", owner: "الحاج سعيد البهجة", phone: "0698694010", location: "الجزائر - الجزائر الوسطى", regCode: "RC-778899", category: "مجوهرات وهدايا", status: "APPROVED" },
+            { id: "s2", name: "ملابس وبدلات الفخامة والجمال", owner: "عبد الوهاب القسنطيني", phone: "0770112233", location: "قسنطينة - قسنطينة", regCode: "RC-445566", category: "ملابس وأزياء", status: "APPROVED" },
+            { id: "s3", name: "أواني ومنزل المطبخ الجزائري", owner: "أمينة الوهرانية", phone: "0550998877", location: "وهران - وهران", regCode: "RC-112233", category: "أواني ومنزلية", status: "APPROVED" },
+            { id: "s4", name: "حنان بوزويس", owner: "unitedbadryan", phone: "0673544540", location: "المنيعة - غير محدد", regCode: "RC-123456", category: "عام", status: "APPROVED" }
+        ];
+
+        // Seed data structures
+        function initOldAdminDashboard() {
+            // Setup User info
+            const userEmail = localStorage.getItem('zalo_user_email') || 'admin@zalo.dz';
+            const userName = localStorage.getItem('zalo_user_name') || 'المدير العام';
+            document.getElementById('sidebar-user-name').innerText = userName;
+            document.getElementById('sidebar-user-email').innerText = userEmail;
+
+            // Seed stores if not exists
+            let stores = getDB("stores_list_old", MOCK_STORES);
+            setDB("stores_list_old", stores);
+
+            // Seed announcements
+            let announcements = getDB("global_announcements", [
+                { id: "a1", text: "مرحبا بكم في منصة زالو ديزاد، تم تفعيل بوابات الرقابة الأمنية بالكامل." }
+            ]);
+            setDB("global_announcements", announcements);
+
+            // Populate ui
+            renderStats();
+            renderWilayaTable();
+            renderAnnouncements();
+            renderRegistrations();
+        }
+
+        // Render counters
+        function renderStats() {
+            let stores = getDB("stores_list_old", MOCK_STORES);
+            let activeCount = stores.filter(s => s.status === "APPROVED").length;
+            document.getElementById('stat-active-stores').innerText = activeCount;
+
+            // Total products count
+            let products = getDB("products", []);
+            let count = products.length || 4; // default or real
+            document.getElementById('stat-total-products').innerText = count;
+        }
+
+        // Toggle Right Sidebar
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar-panel');
+            sidebar.classList.toggle('translate-x-full');
+        }
+
+        // Toggle Security operations console
+        function toggleSecretConsole() {
+            const consoleDiv = document.getElementById('secret-console');
+            const icon = document.getElementById('secret-folder-icon');
+            consoleDiv.classList.toggle('hidden');
+            if (consoleDiv.classList.contains('hidden')) {
+                icon.className = "fa-solid fa-folder-closed";
+            } else {
+                icon.className = "fa-solid fa-folder-open text-yellow-400";
+            }
+        }
+
+        // Render Wilayas Table
+        function renderWilayaTable() {
+            const tbody = document.getElementById('wilaya-tbody');
+            tbody.innerHTML = '';
+            
+            // Render all wilayas
+            ALGERIAN_WILAYAS.forEach(w => {
+                let statusText = w.activeStores ? `نشط (${w.activeStores} متجر)` : "خامل";
+                let statusClass = w.activeStores ? "bg-emerald-500/10 text-emerald-600 border border-emerald-200" : "bg-slate-100 text-slate-500 border border-slate-200";
+                
+                let row = document.createElement('tr');
+                row.className = "border-t border-slate-100 hover:bg-slate-50 font-semibold text-slate-700 transition";
+                row.innerHTML = `
+                    <td class="p-3 font-black text-slate-900">${w.code}</td>
+                    <td class="p-3">${w.name}</td>
+                    <td class="p-3 text-center">${w.activeStores || 0}</td>
+                    <td class="p-3 text-center">${w.activeStores ? (w.activeStores * 5) : 0}</td>
+                    <td class="p-3 text-center">
+                        <span class="text-[10px] px-2.5 py-1 rounded-full font-bold ${statusClass}">
+                            ${statusText}
+                        </span>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Filter Wilayas
+        function filterWilayaTable() {
+            const query = document.getElementById('wilaya-search').value.toLowerCase().trim();
+            const tbody = document.getElementById('wilaya-tbody');
+            tbody.innerHTML = '';
+
+            const filtered = ALGERIAN_WILAYAS.filter(w => 
+                w.name.includes(query) || w.code.includes(query)
+            );
+
+            filtered.forEach(w => {
+                let statusText = w.activeStores ? `نشط (${w.activeStores} متجر)` : "خامل";
+                let statusClass = w.activeStores ? "bg-emerald-500/10 text-emerald-600 border border-emerald-200" : "bg-slate-100 text-slate-500 border border-slate-200";
+                
+                let row = document.createElement('tr');
+                row.className = "border-t border-slate-100 hover:bg-slate-50 font-semibold text-slate-700 transition";
+                row.innerHTML = `
+                    <td class="p-3 font-black text-slate-900">${w.code}</td>
+                    <td class="p-3">${w.name}</td>
+                    <td class="p-3 text-center">${w.activeStores || 0}</td>
+                    <td class="p-3 text-center">${w.activeStores ? (w.activeStores * 5) : 0}</td>
+                    <td class="p-3 text-center">
+                        <span class="text-[10px] px-2.5 py-1 rounded-full font-bold ${statusClass}">
+                            ${statusText}
+                        </span>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Render global broadcast announcements
+        function renderAnnouncements() {
+            const container = document.getElementById('announcements-list-container');
+            container.innerHTML = '';
+
+            let announcements = getDB("global_announcements", []);
+            if (announcements.length === 0) {
+                container.innerHTML = `<p class="text-xs text-slate-400 font-bold text-center py-4">لا توجد إعلانات نشطة حالياً.</p>`;
+                return;
+            }
+
+            announcements.forEach(a => {
+                let div = document.createElement('div');
+                div.className = "bg-slate-50 border border-slate-200 rounded-xl p-3 flex justify-between items-start gap-2 shadow-sm";
+                div.innerHTML = `
+                    <div class="flex-1">
+                        <p class="text-[11px] font-bold text-slate-700 leading-relaxed">${a.text}</p>
+                    </div>
+                    <button onclick="deleteAnnouncement('${a.id}')" class="text-red-500 hover:text-red-700 shrink-0">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        // Publish Announcement
+        function publishAnnouncement() {
+            const txt = document.getElementById('announcement-text').value.trim();
+            if (!txt) {
+                alert("يرجى كتابة نص الإشعار أولاً.");
+                return;
+            }
+
+            let announcements = getDB("global_announcements", []);
+            announcements.push({
+                id: "ann_" + Date.now(),
+                text: txt
+            });
+            setDB("global_announcements", announcements);
+
+            document.getElementById('announcement-text').value = '';
+            renderAnnouncements();
+            alert("تم إطلاق الإشعار العاجل لجميع الواجهات بنجاح! 📢");
+        }
+
+        // Delete Announcement
+        function deleteAnnouncement(id) {
+            let announcements = getDB("global_announcements", []);
+            announcements = announcements.filter(a => a.id !== id);
+            setDB("global_announcements", announcements);
+            renderAnnouncements();
+        }
+
+        // Clear all announcements
+        function clearAllGlobalAnnouncements() {
+            if (confirm("هل أنت متأكد من مسح كافة الإعلانات النشطة؟")) {
+                setDB("global_announcements", []);
+                renderAnnouncements();
+            }
+        }
+
+        // Render registration requests
+        function renderRegistrations() {
+            const tbody = document.getElementById('registrations-tbody');
+            tbody.innerHTML = '';
+
+            let stores = getDB("stores_list_old", MOCK_STORES);
+            stores.forEach(s => {
+                let statusBadge = s.status === "APPROVED" ? "bg-emerald-50 border border-emerald-200 text-emerald-700" : "bg-amber-50 border border-amber-200 text-amber-700";
+                let statusText = s.status === "APPROVED" ? "موثق ومقبول ✅" : "قيد المراجعة ⏳";
+
+                let row = document.createElement('tr');
+                row.className = "border-t border-slate-100 hover:bg-slate-50 font-semibold text-slate-700 transition";
+                row.innerHTML = `
+                    <td class="p-3 font-black text-slate-900">${s.name}</td>
+                    <td class="p-3">
+                        <p class="font-bold text-slate-700">${s.owner}</p>
+                        <p class="text-[10px] text-slate-400 font-normal">النشاط: ${s.category}</p>
+                    </td>
+                    <td class="p-3">${s.location}</td>
+                    <td class="p-3 text-center">
+                        <span class="text-[10px] px-2.5 py-1 rounded-full font-bold ${statusBadge}">
+                            ${statusText}
+                        </span>
+                    </td>
+                    <td class="p-3 text-center">
+                        <div class="flex gap-1.5 justify-center">
+                            <button onclick="openDocumentsModal()" class="bg-sky-50 text-sky-600 border border-sky-200 hover:bg-sky-500 hover:text-white font-bold text-[10px] px-2.5 py-1 rounded-lg transition">فتح المستندات 📁</button>
+                            ${s.status !== "APPROVED" ? 
+                                `<button onclick="approveStore('${s.id}')" class="bg-emerald-600 text-white hover:bg-emerald-700 font-bold text-[10px] px-2.5 py-1 rounded-lg transition">تفعيل</button>` :
+                                `<button onclick="suspendStore('${s.id}')" class="bg-red-600 text-white hover:bg-red-700 font-bold text-[10px] px-2.5 py-1 rounded-lg transition">تعليق</button>`
+                            }
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Approve store
+        function approveStore(id) {
+            let stores = getDB("stores_list_old", MOCK_STORES);
+            let s = stores.find(st => st.id === id);
+            if (s) {
+                s.status = "APPROVED";
+                setDB("stores_list_old", stores);
+                alert(`تم قبول وتفعيل متجر "${s.name}" بنجاح!`);
+                renderRegistrations();
+                renderStats();
+            }
+        }
+
+        // Suspend store
+        function suspendStore(id) {
+            let stores = getDB("stores_list_old", MOCK_STORES);
+            let s = stores.find(st => st.id === id);
+            if (s) {
+                s.status = "PENDING";
+                setDB("stores_list_old", stores);
+                alert(`تم تعليق نشاط متجر "${s.name}".`);
+                renderRegistrations();
+                renderStats();
+            }
+        }
+
+        // Active stores modal
+        function openActiveStoresModal() {
+            document.getElementById('active-stores-modal').classList.remove('hidden');
+            let stores = getDB("stores_list_old", MOCK_STORES);
+            let activeStores = stores.filter(s => s.status === "APPROVED");
+            
+            document.getElementById('modal-stores-count').innerText = activeStores.length;
+
+            const list = document.getElementById('modal-stores-list');
+            list.innerHTML = '';
+
+            if (activeStores.length === 0) {
+                list.innerHTML = `<p class="text-center text-slate-400 py-6 font-bold">لا توجد متاجر نشطة حالياً.</p>`;
+                return;
+            }
+
+            activeStores.forEach(s => {
+                let div = document.createElement('div');
+                div.className = "bg-slate-800/80 border border-slate-700 rounded-2xl p-4 space-y-2 text-right relative";
+                div.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <span class="bg-[#1e3e26] text-emerald-400 border border-emerald-500/30 text-[9px] px-2 py-0.5 rounded font-bold">${s.category}</span>
+                        <h4 class="text-xs font-black text-[#d4af37]">${s.name}</h4>
+                    </div>
+                    <p class="text-[11px]"><span class="text-slate-400">المالك:</span> ${s.owner}</p>
+                    <p class="text-[11px]"><span class="text-slate-400">الهاتف:</span> ${s.phone}</p>
+                    <p class="text-[11px]"><span class="text-slate-400">الموقع:</span> ${s.location}</p>
+                    <p class="text-[11px]"><span class="text-slate-400">السجل التجاري:</span> <span class="font-mono">${s.regCode}</span></p>
+                    <div class="flex gap-2 justify-end pt-2 border-t border-slate-700/50">
+                        <button onclick="suspendStore('${s.id}'); closeActiveStoresModal();" class="bg-red-500/10 text-red-400 border border-red-500/30 hover:bg-red-500 hover:text-white font-bold text-[10px] px-3 py-1.5 rounded-lg transition">حظر وتعليق النشاط</button>
+                        <a href="https://wa.me/${s.phone}" target="_blank" class="bg-emerald-500 text-white hover:bg-emerald-600 font-bold text-[10px] px-3 py-1.5 rounded-lg transition flex items-center gap-1">
+                            <i class="fa-brands fa-whatsapp"></i>
+                            <span>مراسلة واتساب</span>
+                        </a>
+                    </div>
+                `;
+                list.appendChild(div);
+            });
+        }
+
+        function closeActiveStoresModal() {
+            document.getElementById('active-stores-modal').classList.add('hidden');
+        }
+
+        // Documents Modal
+        function openDocumentsModal() {
+            document.getElementById('documents-modal').classList.remove('hidden');
+        }
+        function closeDocumentsModal() {
+            document.getElementById('documents-modal').classList.add('hidden');
+        }
+
+        // Logout user
+        function logoutUser() {
+            localStorage.removeItem('zalo_session_jwt');
+            localStorage.removeItem('zalo_user_role');
+            localStorage.removeItem('zalo_user_email');
+            localStorage.removeItem('zalo_user_name');
+            sessionStorage.removeItem('admin_logged_in_session');
             window.location.href = 'login.html';
-        } else {
-            console.log('✅ Welcome Admin! Authorized.');
         }
     </script>
+
 </body>
 </html>

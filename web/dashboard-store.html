@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة التاجر - ZaLo Market</title>
+    <title>ملف محلي التجاري ولوحة القيادة - ZaLo Market</title>
     <!-- Tailwind CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -15,7 +15,7 @@
     <style>
         :root {
             --sky-blue: #1d9bf0;
-            --sky-light: #e0f2fe;
+            --sky-light: #f0f9ff;
             --gold: #d4af37;
             --gold-dark: #b89116;
             --navy: #102a43;
@@ -24,12 +24,12 @@
 
         body {
             font-family: 'Cairo', sans-serif !important;
-            background: linear-gradient(135deg, var(--sky-light) 0%, #ffffff 100%) !important;
-            color: var(--navy) !important;
+            background-color: #f8fafc;
+            color: var(--navy);
             min-height: 100vh;
         }
 
-        /* Override dynamic products loaded via app.js to match the sky blue/white/gold theme */
+        /* Override dynamic products lists */
         #merchant-product-list tr {
             color: var(--navy) !important;
             border-top: 1px solid rgba(212, 175, 55, 0.15) !important;
@@ -39,46 +39,18 @@
         #merchant-product-list tr:hover {
             background-color: rgba(29, 155, 240, 0.04) !important;
         }
-        #merchant-product-list td {
-            padding: 12px 16px !important;
-        }
 
-        /* Override dynamic orders loaded via app.js to match the sky blue/white/gold theme */
-        #merchant-orders-list .bg-slate-800\/40 {
-            background-color: var(--white) !important;
-            border: 1.5px solid rgba(212, 175, 55, 0.25) !important;
-            box-shadow: 0 4px 20px rgba(29, 155, 240, 0.05) !important;
-            color: var(--navy) !important;
-            border-radius: 16px !important;
+        /* Standard custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
         }
-        #merchant-orders-list .text-white {
-            color: var(--navy) !important;
-            font-weight: 800 !important;
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
         }
-        #merchant-orders-list .text-slate-300 {
-            color: #475569 !important;
-            font-weight: 600 !important;
-        }
-        #merchant-orders-list .bg-slate-700 {
-            background-color: #f1f5f9 !important;
-            color: var(--navy) !important;
-            border: 1px solid #cbd5e1 !important;
-        }
-        #merchant-orders-list button.bg-sky-500 {
-            background-color: var(--sky-blue) !important;
-            color: var(--white) !important;
-            font-weight: 800 !important;
-            border-radius: 10px !important;
-            transition: all 0.2s;
-        }
-        #merchant-orders-list button.bg-sky-500:hover {
-            background-color: #0c85d0 !important;
-            transform: translateY(-1px);
-        }
-        #merchant-orders-list select {
-            border-radius: 10px !important;
-            font-weight: 700 !important;
-            padding: 6px 12px !important;
+        ::-webkit-scrollbar-thumb {
+            background: var(--sky-blue);
+            border-radius: 3px;
         }
     </style>
     
@@ -87,7 +59,6 @@
         import sessionManager from './js/session-manager.js';
 
         const session = sessionManager.getSession();
-        // Strict merchant verification: if not merchant, redirect to login
         if (!session.token || session.role !== 'merchant') {
             console.warn('🚨 Access Denied: User role is not merchant. Redirecting to login...');
             window.location.href = 'login.html';
@@ -96,42 +67,28 @@
         }
     </script>
 </head>
-<body class="min-h-screen flex flex-col justify-between">
+<body class="min-h-screen flex flex-col justify-between" onload="initOldMerchantDashboard()">
 
-    <!-- Global Header -->
+    <!-- Header exactly matching the user request with golden palm and unified styling -->
     <header class="sticky top-0 z-50 bg-white/95 border-b-2 border-[#d4af37] w-full py-3 px-6 flex justify-between items-center backdrop-blur-md shadow-sm">
-        <a href="index.html" class="flex items-center gap-1.5 text-xs text-sky-600 hover:text-sky-800 font-bold transition">
+        <a href="customer-home.html" class="flex items-center gap-1.5 text-xs text-sky-600 hover:text-sky-800 font-bold transition">
             <i class="fa-solid fa-house"></i>
-            <span>العودة للرئيسية</span>
+            <span>العودة لصفحة الزبائن</span>
         </a>
         
         <!-- Header Unified Logo -->
         <div class="flex items-center gap-2">
             <svg width="34" height="34" viewBox="0 0 100 100" style="flex-shrink: 0;">
-                <!-- Gold Outer Circle with elegant gap at the top -->
                 <path d="M 29,13.6 A 42,42 0 1,0 71,13.6" fill="none" stroke="#d4af37" stroke-width="4.5" stroke-linecap="round" />
-                
-                <!-- Golden Palm Tree SVG Paths -->
                 <path d="M47.5,75 L52.5,75 L52.1,68 L47.9,68 Z" fill="#d4af37" />
                 <path d="M47.9,66 L52.1,66 L51.7,59 L48.3,59 Z" fill="#d4af37" />
                 <path d="M48.3,57 L51.7,57 L51.3,50 L48.7,50 Z" fill="#d4af37" />
                 <path d="M48.7,48 L51.3,48 L51,45 L49,45 Z" fill="#d4af37" />
-                
-                <!-- Fronds (Left) -->
                 <path d="M49,46 C41,43 33,48 27,56 C35,51 43,49 49,48 Z" fill="#d4af37" />
                 <path d="M49,46 C39,37 30,39 22,45 C32,42 41,43 49,46 Z" fill="#d4af37" />
-                <path d="M49,46 C42,29 35,27 28,30 C36,31 43,37 49,44 Z" fill="#d4af37" />
-                
-                <!-- Fronds (Right) -->
                 <path d="M51,46 C59,43 67,48 73,56 C65,51 57,49 51,48 Z" fill="#d4af37" />
                 <path d="M51,46 C61,37 70,39 78,45 C68,42 59,43 51,46 Z" fill="#d4af37" />
-                <path d="M51,46 C58,29 65,27 72,30 C64,31 57,37 51,44 Z" fill="#d4af37" />
-                
-                <!-- Top Fronds -->
                 <path d="M50,45 C50,26 45,17 40,14 C47,19 50,31 50,45 Z" fill="#d4af37" />
-                <path d="M50,45 C50,26 55,17 60,14 C53,19 50,31 50,45 Z" fill="#d4af37" />
-                
-                <!-- Letters "Z" and "L" inside the circle on either side of the trunk -->
                 <text x="35" y="62" font-family="'Cairo', sans-serif" font-weight="900" font-size="14" fill="#d4af37" text-anchor="middle">Z</text>
                 <text x="65" y="62" font-family="'Cairo', sans-serif" font-weight="900" font-size="14" fill="#d4af37" text-anchor="middle">L</text>
             </svg>
@@ -143,42 +100,244 @@
         </button>
     </header>
 
-    <main class="flex-1 w-full max-w-5xl mx-auto px-6 py-8 space-y-8">
-        
-        <!-- Welcome banner card styled in White and Sky Blue with gold accent -->
-        <div class="flex justify-between items-center bg-white border border-[#d4af37]/30 p-6 rounded-[24px] shadow-sm relative overflow-hidden">
-            <div class="absolute top-0 right-0 w-32 h-32 bg-sky-200/20 rounded-full blur-3xl"></div>
-            <div class="text-right space-y-1 relative z-10">
-                <span class="text-[10px] text-sky-600 font-extrabold uppercase tracking-wide block">مرحباً بك مجدداً في ZaLo</span>
-                <h2 id="header-user-name" class="text-xl font-black text-slate-800">أحمد بن زكري (تاجر)</h2>
-                <p class="text-xs text-slate-500">تابع المبيعات، أدرج منتجات ومعدلات جديدة، وتواصل مع زبائن المنيعة</p>
+    <!-- Main Content Grid -->
+    <main class="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 py-6 space-y-6">
+
+        <!-- Top Profile Banner matching image style -->
+        <div class="bg-white border-2 border-sky-100 rounded-3xl p-6 relative overflow-hidden shadow-sm text-right flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="absolute top-0 right-0 w-48 h-48 bg-sky-200/20 rounded-full blur-3xl"></div>
+            
+            <div class="flex items-center gap-4 relative z-10">
+                <!-- Store Image preview placeholder -->
+                <img id="profile-store-image" src="https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?auto=format&fit=crop&w=600&q=80" class="w-16 h-16 rounded-2xl border-2 border-[#d4af37] object-cover shadow-sm">
+                <div>
+                    <h2 id="profile-store-name" class="text-xl font-black text-slate-800">ABDELALI.PHONE</h2>
+                    <div class="flex flex-wrap gap-2 items-center mt-1">
+                        <span id="profile-store-wilaya" class="text-[10px] bg-sky-50 text-sky-600 border border-sky-100 px-2.5 py-0.5 rounded-full font-bold">المركز الاقتصادي: 58 المنيعة</span>
+                        <span class="text-[10px] bg-emerald-50 text-emerald-600 border border-emerald-100 px-2.5 py-0.5 rounded-full font-bold">المتجر يستقبل الطلبات الآن (مفتوح)</span>
+                    </div>
+                </div>
             </div>
-            <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-[#1d9bf0] to-sky-300 text-white flex items-center justify-center text-2xl shadow-md shadow-sky-400/20">
-                <i class="fa-solid fa-store"></i>
+
+            <div class="bg-gradient-to-l from-emerald-50 to-emerald-100/50 border border-emerald-200 rounded-2xl p-4 text-right max-w-sm space-y-1">
+                <span class="text-emerald-700 font-extrabold text-[11px] block"><i class="fa-solid fa-award"></i> رخصة شريك أساسي معتمد</span>
+                <p class="text-[10px] text-slate-600 font-bold leading-relaxed">تم فحص سجلكم التجاري أو هويتكم وسريان عملية العرض والتواصل طلق ومفتوح بالكامل بروتوكولات الشحن COD.</p>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <!-- 4 RICH KEY STATS CARDS -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
             
-            <!-- Left Pane: Add Product Form (White card, Gold border, Sky blue primary actions) -->
-            <div class="md:col-span-1 bg-white border border-[#d4af37]/25 rounded-3xl p-6 space-y-5 text-right shadow-sm">
-                <h3 class="text-base font-black text-slate-800 flex items-center gap-2">
-                    <i class="fa-solid fa-plus text-sky-500"></i> 
-                    <span>إدراج منتج جديد</span>
-                </h3>
-                <form id="add-product-form" class="space-y-4">
+            <!-- Card 1: Pending Orders -->
+            <div class="bg-white p-4 rounded-2xl border border-amber-300 shadow-sm flex items-center justify-between hover:scale-[1.01] transition">
+                <div class="text-right">
+                    <span class="text-[10px] text-slate-400 font-bold block">الطلبـات قيد المراجعة</span>
+                    <h3 class="text-xl font-black text-amber-600" id="stat-pending-orders">1</h3>
+                </div>
+                <div class="w-9 h-9 rounded-xl bg-amber-50 text-amber-500 border border-amber-200 flex items-center justify-center text-sm shadow-sm">
+                    <i class="fa-solid fa-cart-shopping animate-pulse"></i>
+                </div>
+            </div>
+
+            <!-- Card 2: Active Products -->
+            <div class="bg-white p-4 rounded-2xl border border-emerald-300 shadow-sm flex items-center justify-between hover:scale-[1.01] transition">
+                <div class="text-right">
+                    <span class="text-[10px] text-slate-400 font-bold block">سلعي المنشورة</span>
+                    <h3 class="text-xl font-black text-emerald-600" id="stat-merchant-products">2</h3>
+                </div>
+                <div class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-500 border border-emerald-200 flex items-center justify-center text-sm shadow-sm">
+                    <i class="fa-solid fa-box"></i>
+                </div>
+            </div>
+
+            <!-- Card 3: Rating -->
+            <div class="bg-white p-4 rounded-2xl border border-yellow-400 shadow-sm flex items-center justify-between hover:scale-[1.01] transition">
+                <div class="text-right">
+                    <span class="text-[10px] text-slate-400 font-bold block">تقييم المتجر المعياري</span>
+                    <h3 class="text-xl font-black text-yellow-600">4.9</h3>
+                </div>
+                <div class="w-9 h-9 rounded-xl bg-yellow-50 text-yellow-500 border border-yellow-200 flex items-center justify-center text-sm shadow-sm">
+                    <i class="fa-solid fa-star"></i>
+                </div>
+            </div>
+
+            <!-- Card 4: Total Revenue -->
+            <div class="bg-white p-4 rounded-2xl border border-sky-300 shadow-sm flex items-center justify-between hover:scale-[1.01] transition">
+                <div class="text-right">
+                    <span class="text-[10px] text-slate-400 font-bold block">إجمالي المبيعات (دج)</span>
+                    <h3 class="text-xl font-black text-sky-600" id="stat-revenue">22,000</h3>
+                </div>
+                <div class="w-9 h-9 rounded-xl bg-sky-50 text-sky-500 border border-sky-200 flex items-center justify-center text-sm shadow-sm">
+                    <i class="fa-solid fa-sack-dollar"></i>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- OPEN STORE PROMOTION BANNER -->
+        <div class="bg-gradient-to-r from-sky-500 to-[#1d9bf0] text-white p-5 rounded-3xl text-right flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 shadow-md shadow-sky-500/10">
+            <div class="space-y-1">
+                <h4 class="text-sm font-black flex items-center gap-2">
+                    <i class="fa-solid fa-circle-check text-yellow-300"></i>
+                    <span>افتح متجرك وضاعف مبيعاتك في جميع بلديات الجزائر!</span>
+                </h4>
+                <p class="text-xs text-sky-100 font-medium">هل تملك فروعاً أو محلات تجارية أخرى؟ أضف فروعك الآن واكسب زبائن جدد.</p>
+            </div>
+            <button onclick="alert('خدمة إضافة فروع متعددة للمتجر ستتوفر قريباً!')" class="bg-white text-sky-600 font-black text-xs px-5 py-2.5 rounded-full hover:bg-sky-50 hover:scale-105 transition duration-150 flex items-center gap-2 shrink-0 shadow">
+                <span>افتح متجراً الآن</span>
+                <i class="fa-solid fa-arrow-left"></i>
+            </button>
+        </div>
+
+        <!-- TWO SECTIONS BLOCK -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+            <!-- RIGHT PANEL: EDIT STORE DETAILS & INFORMATION (7 Cols) -->
+            <section class="lg:col-span-7 bg-white border border-slate-200 rounded-3xl p-6 space-y-6 text-right shadow-sm relative">
+                <!-- Success Alert Banner (Hidden by Default) -->
+                <div id="settings-success-banner" class="bg-emerald-50 border-2 border-emerald-200 rounded-2xl p-4 text-right text-emerald-800 text-xs font-black hidden flex items-center gap-2 animate-bounce">
+                    <i class="fa-solid fa-circle-check text-emerald-600 text-lg"></i>
+                    <span>تم تدوين وحفظ معلومات متجرك بنجاح! ✅</span>
+                </div>
+
+                <div class="border-b border-slate-100 pb-3">
+                    <h3 class="text-base font-black text-slate-800 flex items-center gap-2">
+                        <i class="fa-solid fa-gears text-[#d4af37]"></i>
+                        <span>تعديل معلومات وتأصيل النشاط التجاري</span>
+                    </h3>
+                    <p class="text-[10px] text-slate-400 font-bold">املأ التفاصيل وحدّث شعار وواجهة المحل ليراها الزبائن في الفهرس</p>
+                </div>
+
+                <!-- PHOTO UPLOADERS exactly matching screenshot -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <!-- Logo upload -->
+                    <div class="space-y-2">
+                        <span class="text-[11px] text-slate-600 font-black block">شعار المتجر (اللوغو الرئيسي)</span>
+                        <div class="border-2 border-dashed border-slate-200 hover:border-sky-400 bg-slate-50/50 rounded-2xl p-4 flex flex-col items-center justify-center text-center cursor-pointer relative group h-32 transition">
+                            <input type="file" id="logo-input" accept="image/*" onchange="previewImage(this, 'logo-preview')" class="absolute inset-0 opacity-0 cursor-pointer">
+                            <img id="logo-preview" src="https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?auto=format&fit=crop&w=200&q=80" class="w-14 h-14 rounded-xl border border-slate-200 object-cover mb-2 group-hover:scale-105 transition">
+                            <span class="text-[10px] text-sky-500 font-bold"><i class="fa-solid fa-camera"></i> تغيير شعار المتجر</span>
+                        </div>
+                    </div>
+
+                    <!-- Cover upload -->
+                    <div class="space-y-2">
+                        <span class="text-[11px] text-slate-600 font-black block">واجهة المحل (صورة الخلفية)</span>
+                        <div class="border-2 border-dashed border-slate-200 hover:border-sky-400 bg-slate-50/50 rounded-2xl p-4 flex flex-col items-center justify-center text-center cursor-pointer relative group h-32 transition">
+                            <input type="file" id="cover-input" accept="image/*" onchange="previewImage(this, 'cover-preview')" class="absolute inset-0 opacity-0 cursor-pointer">
+                            <img id="cover-preview" src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=400&q=80" class="w-24 h-14 rounded-xl border border-slate-200 object-cover mb-2 group-hover:scale-105 transition">
+                            <span class="text-[10px] text-sky-500 font-bold"><i class="fa-solid fa-image"></i> تغيير صورة الواجهة</span>
+                        </div>
+                    </div>
+                </div>
+
+                <form id="store-settings-form" class="space-y-4" onsubmit="saveStoreSettings(event)">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-[11px] text-slate-600 font-black mb-1">اسم المتجر / العلامة التجارية *</label>
+                            <input type="text" id="settings-store-name" class="w-full bg-slate-50 border border-slate-200 text-xs rounded-xl py-2.5 px-3 focus:outline-none focus:border-sky-400 font-bold text-slate-800" required>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] text-slate-600 font-black mb-1">رقم الهاتف للتواصل والدعم *</label>
+                            <input type="text" id="settings-phone" class="w-full bg-slate-50 border border-slate-200 text-xs rounded-xl py-2.5 px-3 focus:outline-none focus:border-sky-400 font-bold text-slate-800" required>
+                        </div>
+                    </div>
+
+                    <!-- Dropdowns from old dashboard -->
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-[11px] text-slate-600 font-black mb-1">قسم وصنف المنتجات الرئيسي *</label>
+                            <select id="settings-category" class="w-full bg-slate-50 border border-slate-200 text-[11px] rounded-xl py-2.5 px-3 focus:outline-none focus:border-sky-400 font-black text-slate-800">
+                                <option value="cat_phones">هواتف وإلكترونيات</option>
+                                <option value="cat_parts">قطع غيار المركبات</option>
+                                <option value="cat_food">مواد غذائية وتوابل</option>
+                                <option value="cat_clothes">ملابس وأزياء</option>
+                                <option value="cat_services">خدمات شحن وصيانة</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] text-slate-600 font-black mb-1">ولاية النشاط والفرز الجغرافي *</label>
+                            <select id="settings-wilaya" class="w-full bg-slate-50 border border-slate-200 text-[11px] rounded-xl py-2.5 px-3 focus:outline-none focus:border-sky-400 font-black text-slate-800">
+                                <option value="58 المنيعة">58 المنيعة</option>
+                                <option value="16 الجزائر العاصمة">16 الجزائر العاصمة</option>
+                                <option value="31 وهران">31 وهران</option>
+                                <option value="25 قسنطينة">25 قسنطينة</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] text-slate-600 font-black mb-1">البلدية والمنطقة *</label>
+                            <select id="settings-commune" class="w-full bg-slate-50 border border-slate-200 text-[11px] rounded-xl py-2.5 px-3 focus:outline-none focus:border-sky-400 font-black text-slate-800">
+                                <option value="بلدية المنيعة">بلدية المنيعة</option>
+                                <option value="بلدية حاسي الفحل">بلدية حاسي الفحل</option>
+                                <option value="بلدية حاسي القارة">بلدية حاسي القارة</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Social accounts inputs exactly matching Image 10 -->
+                    <div class="space-y-3">
+                        <span class="text-[11px] text-slate-600 font-black block border-t border-slate-100 pt-3">روابط شبكات التواصل الاجتماعي للتواصل مع زبائنك:</span>
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="relative">
+                                <input type="text" id="settings-fb" placeholder="رابط حساب فيسبوك المتجر (اختياري)" class="w-full bg-slate-50 border border-slate-200 text-xs rounded-xl py-2.5 pr-8 pl-3 focus:outline-none focus:border-sky-400 font-bold text-slate-800">
+                                <i class="fa-brands fa-facebook absolute right-2.5 top-3.5 text-blue-600 text-sm"></i>
+                            </div>
+                            <div class="relative">
+                                <input type="text" id="settings-ig" placeholder="رابط حساب انستغرام المتجر (اختياري)" class="w-full bg-slate-50 border border-slate-200 text-xs rounded-xl py-2.5 pr-8 pl-3 focus:outline-none focus:border-sky-400 font-bold text-slate-800">
+                                <i class="fa-brands fa-instagram absolute right-2.5 top-3.5 text-pink-600 text-sm"></i>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="relative">
+                                <input type="text" id="settings-tiktok" placeholder="رابط حساب تيك توك المتجر (اختياري)" class="w-full bg-slate-50 border border-slate-200 text-xs rounded-xl py-2.5 pr-8 pl-3 focus:outline-none focus:border-sky-400 font-bold text-slate-800">
+                                <i class="fa-brands fa-tiktok absolute right-2.5 top-3.5 text-black text-sm"></i>
+                            </div>
+                            <div class="relative">
+                                <input type="text" id="settings-tg" placeholder="رابط قناة أو حساب تيليجرام (اختياري)" class="w-full bg-slate-50 border border-slate-200 text-xs rounded-xl py-2.5 pr-8 pl-3 focus:outline-none focus:border-sky-400 font-bold text-slate-800">
+                                <i class="fa-brands fa-telegram absolute right-2.5 top-3.5 text-sky-500 text-sm"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="w-full bg-gradient-to-tr from-sky-500 to-[#1d9bf0] text-white font-black text-xs py-3.5 rounded-xl hover:shadow-lg transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-floppy-disk"></i>
+                        <span>تحديث وتأصيل معلومات المتجر</span>
+                    </button>
+                </form>
+            </section>
+
+            <!-- LEFT PANEL: ADD PRODUCT & CATALOG IN ONE COMPACT SECTION (5 Cols) -->
+            <section class="lg:col-span-5 bg-white border border-slate-200 rounded-3xl p-6 space-y-5 text-right shadow-sm">
+                <div class="border-b border-slate-100 pb-3 flex justify-between items-center">
+                    <span class="text-xs bg-sky-50 text-sky-600 px-3 py-1 rounded-full border border-sky-100 font-bold">معروضاتي النشطة</span>
+                    <h3 class="text-base font-black text-slate-800 flex items-center gap-2">
+                        <i class="fa-solid fa-boxes-packing text-[#d4af37]"></i>
+                        <span>عرض سلعة جديدة وإدارتها</span>
+                    </h3>
+                </div>
+
+                <!-- Quick add product form integrated with app.js functions -->
+                <form id="add-product-form" class="space-y-3.5">
                     <div>
-                        <label class="block text-[11px] text-slate-600 font-bold mb-1">اسم المنتج:</label>
-                        <input id="prod-name" type="text" class="w-full bg-slate-50 border border-slate-200 text-xs text-slate-800 rounded-xl py-2.5 px-3 focus:border-sky-400 focus:bg-white focus:outline-none transition font-bold" placeholder="مثال: Galaxy A08" required>
+                        <label class="block text-[11px] text-slate-600 font-bold mb-1">اسم المنتج أو السلعة *</label>
+                        <input id="prod-name" type="text" class="w-full bg-slate-50 border border-slate-200 text-xs text-slate-800 rounded-xl py-2 px-3 focus:outline-none focus:border-sky-400 font-bold" placeholder="مثال: ساعة ذكية رياضية M1" required>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-[11px] text-slate-600 font-bold mb-1">السعر المعروض (دج) *</label>
+                            <input id="prod-price" type="number" class="w-full bg-slate-50 border border-slate-200 text-xs text-slate-800 rounded-xl py-2 px-3 focus:outline-none focus:border-sky-400 font-bold" placeholder="2500" required>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] text-slate-600 font-bold mb-1">الكمية بالمستودع *</label>
+                            <input id="prod-stock" type="number" class="w-full bg-slate-50 border border-slate-200 text-xs text-slate-800 rounded-xl py-2 px-3 focus:outline-none focus:border-sky-400 font-bold" value="15" required>
+                        </div>
                     </div>
                     <div>
-                        <label class="block text-[11px] text-slate-600 font-bold mb-1">السعر (دج):</label>
-                        <input id="prod-price" type="number" class="w-full bg-slate-50 border border-slate-200 text-xs text-slate-800 rounded-xl py-2.5 px-3 focus:border-sky-400 focus:bg-white focus:outline-none transition font-bold" placeholder="25000" required>
-                    </div>
-                    <div>
-                        <label class="block text-[11px] text-slate-600 font-bold mb-1">فئة المنتج المحددة:</label>
-                        <select id="prod-category" class="w-full bg-slate-50 border border-slate-200 text-xs text-slate-800 rounded-xl py-2.5 px-3 focus:border-sky-400 focus:bg-white focus:outline-none transition font-bold">
-                            <option value="cat_phones">هواتف</option>
+                        <label class="block text-[11px] text-slate-600 font-bold mb-1">تصنيف وصنف السلعة:</label>
+                        <select id="prod-category" class="w-full bg-slate-50 border border-slate-200 text-xs text-slate-800 rounded-xl py-2 px-3 focus:outline-none focus:border-sky-400 font-bold">
+                            <option value="cat_phones">هواتف وملحقاتها</option>
                             <option value="cat_electronic">إلكترونيات</option>
                             <option value="cat_parts">قطع غيار</option>
                             <option value="cat_food">مواد غذائية</option>
@@ -186,69 +345,217 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-[11px] text-slate-600 font-bold mb-1">الكمية المتوفرة (المخزون):</label>
-                        <input id="prod-stock" type="number" class="w-full bg-slate-50 border border-slate-200 text-xs text-slate-800 rounded-xl py-2.5 px-3 focus:border-sky-400 focus:bg-white focus:outline-none transition font-bold" value="10" required>
-                    </div>
-                    <div>
-                        <label class="block text-[11px] text-slate-600 font-bold mb-1">شرح ومواصفات المنتج:</label>
-                        <textarea id="prod-desc" rows="3" class="w-full bg-slate-50 border border-slate-200 text-xs text-slate-800 rounded-xl py-2.5 px-3 focus:border-sky-400 focus:bg-white focus:outline-none transition font-bold" placeholder="..." required></textarea>
+                        <label class="block text-[11px] text-slate-600 font-bold mb-1">وصف موجز للميزات والضمان:</label>
+                        <textarea id="prod-desc" rows="2" class="w-full bg-slate-50 border border-slate-200 text-xs text-slate-800 rounded-xl py-2 px-3 focus:outline-none focus:border-sky-400 font-bold" placeholder="مواصفات ممتازة وجودة أصلية لضمان راحة زبائننا بالمنيعة..." required></textarea>
                     </div>
                     
-                    <button type="submit" class="w-full bg-gradient-to-tr from-sky-500 to-[#1d9bf0] hover:to-sky-600 text-white font-black text-xs py-3.5 rounded-xl transition shadow-lg shadow-sky-500/15">حفظ وإدراج بالمتجر</button>
+                    <button type="submit" class="w-full bg-[#113f1c] text-white border-2 border-[#d4af37] font-black text-xs py-3 rounded-xl hover:bg-[#1e3e26] transition flex items-center justify-center gap-2 shadow-sm">
+                        <i class="fa-solid fa-plus"></i>
+                        <span>عرض سلعة جديدة الآن 🚀</span>
+                    </button>
                 </form>
-            </div>
 
-            <!-- Right Pane: Dashboard Overview & Lists (White and Sky Blue styled) -->
-            <div class="md:col-span-2 space-y-6">
-                
-                <!-- Products catalog -->
-                <div class="bg-white border border-[#d4af37]/25 rounded-3xl p-6 space-y-4 shadow-sm">
-                    <h3 class="text-base font-black text-slate-800 text-right flex items-center justify-between">
-                        <span class="flex items-center gap-2">
-                            <i class="fa-solid fa-boxes-stacked text-[#d4af37]"></i>
-                            <span>قائمة سلع المعرض بالمنيعة</span>
-                        </span>
-                        <span class="text-xs bg-sky-50 text-sky-600 px-3 py-1 rounded-full border border-sky-100 font-bold">نشط</span>
-                    </h3>
-                    <div class="overflow-x-auto w-full">
-                        <table class="w-full text-right text-xs" style="min-width: 480px;">
-                            <thead>
-                                <tr class="text-slate-500 border-b border-slate-100">
-                                    <th class="pb-3 text-right font-extrabold">اسم السلعة</th>
-                                    <th class="pb-3 text-right font-extrabold">السعر</th>
-                                    <th class="pb-3 text-right font-extrabold">المخزون</th>
-                                    <th class="pb-3 text-center font-extrabold">العمليات</th>
-                                </tr>
-                            </thead>
+                <!-- Scrollable Catalog list -->
+                <div class="border-t border-slate-100 pt-4 space-y-3">
+                    <span class="text-[11px] text-slate-500 font-extrabold block">قائمة سلع المعرض المتاحة للزبائن:</span>
+                    <div class="overflow-x-auto w-full max-h-48">
+                        <table class="w-full text-right text-xs">
                             <tbody id="merchant-product-list">
-                                <!-- Loaded via app.js -->
+                                <!-- Loaded dynamically -->
                             </tbody>
                         </table>
                     </div>
                 </div>
-
-                <!-- Orders management -->
-                <div class="space-y-4">
-                    <h3 class="text-base font-black text-slate-800 text-right flex items-center gap-2">
-                        <i class="fa-solid fa-file-invoice-dollar text-[#d4af37]"></i>
-                        <span>طلبات المشتريات والخدمات المستلمة</span>
-                    </h3>
-                    <div id="merchant-orders-list" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <!-- Loaded dynamically via app.js -->
-                    </div>
-                </div>
-
-            </div>
+            </section>
 
         </div>
+
+        <!-- OUTSTANDING CUSTOMER ORDERS (FULL WIDTH SECTION) -->
+        <section class="bg-white border border-slate-200 rounded-3xl p-6 space-y-4 shadow-sm text-right">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                <span onclick="alert('شحنات زالو ديزاد تسلم بنظام الدفع عند الاستلام.')" class="text-xs bg-slate-100 text-slate-600 px-3 py-1 rounded-full border border-slate-200 cursor-pointer font-bold">مراجعة كامل الشحنات</span>
+                <h3 class="text-base font-black text-slate-800 flex items-center gap-2">
+                    <i class="fa-solid fa-cart-flatbed-suitcases text-[#d4af37]"></i>
+                    <span>طلبات زبائنك الأخيرة والتحكم بمسار الشحن</span>
+                </h3>
+            </div>
+
+            <div id="merchant-orders-list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Loaded dynamically via app.js -->
+            </div>
+        </section>
 
     </main>
 
     <footer class="border-t border-slate-100 py-4 text-center text-xs text-slate-400 bg-white shadow-inner">
-        <p>© 2026 ZaLo Market - لوحة الإدارة والتاجر.</p>
+        <p>© 2026 ZaLo Market - لوحة التاجر والتحكم التجاري المستقل.</p>
     </footer>
 
     <!-- Shared JS Engine -->
     <script src="js/app.js"></script>
+
+    <!-- State management script -->
+    <script>
+        // DB keys
+        const DB_KEY_PREFIX = "zalo_";
+        function getDB(key, fallback) {
+            const data = localStorage.getItem(DB_KEY_PREFIX + key);
+            return data ? JSON.parse(data) : fallback;
+        }
+        function setDB(key, value) {
+            localStorage.setItem(DB_KEY_PREFIX + key, JSON.stringify(value));
+        }
+
+        // Default local merchant settings seed
+        const DEFAULT_MERCHANT_SETTINGS = {
+            storeName: "ABDELALI.PHONE",
+            phone: "0666112233",
+            category: "cat_phones",
+            wilaya: "58 المنيعة",
+            commune: "بلدية المنيعة",
+            fb: "https://facebook.com/abdelali.phone",
+            ig: "",
+            tiktok: "",
+            tg: "",
+            logoImg: "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?auto=format&fit=crop&w=200&q=80",
+            coverImg: "https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=600&q=80"
+        };
+
+        function initOldMerchantDashboard() {
+            // Seed merchant settings if not exists
+            let settings = getDB("merchant_store_settings", DEFAULT_MERCHANT_SETTINGS);
+            setDB("merchant_store_settings", settings);
+
+            // Set inputs
+            document.getElementById('settings-store-name').value = settings.storeName;
+            document.getElementById('settings-phone').value = settings.phone;
+            document.getElementById('settings-category').value = settings.category;
+            document.getElementById('settings-wilaya').value = settings.wilaya;
+            document.getElementById('settings-commune').value = settings.commune;
+            document.getElementById('settings-fb').value = settings.fb || '';
+            document.getElementById('settings-ig').value = settings.ig || '';
+            document.getElementById('settings-tiktok').value = settings.tiktok || '';
+            document.getElementById('settings-tg').value = settings.tg || '';
+            
+            // Set image previews
+            document.getElementById('logo-preview').src = settings.logoImg;
+            document.getElementById('cover-preview').src = settings.coverImg;
+            document.getElementById('profile-store-image').src = settings.logoImg;
+            document.getElementById('profile-store-name').innerText = settings.storeName;
+            document.getElementById('profile-store-wilaya').innerText = "المركز الاقتصادي: " + settings.wilaya;
+
+            // Load counts
+            updateCounters();
+
+            // Setup app.js integrations
+            if (typeof renderMerchantProducts === 'function') {
+                renderMerchantProducts();
+            }
+            if (typeof renderMerchantOrders === 'function') {
+                renderMerchantOrders();
+            }
+        }
+
+        // Live image previews
+        function previewImage(input, previewId) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById(previewId).src = e.target.result;
+                    
+                    // Save in database immediately
+                    let settings = getDB("merchant_store_settings", DEFAULT_MERCHANT_SETTINGS);
+                    if (previewId === 'logo-preview') {
+                        settings.logoImg = e.target.result;
+                        document.getElementById('profile-store-image').src = e.target.result;
+                    } else {
+                        settings.coverImg = e.target.result;
+                    }
+                    setDB("merchant_store_settings", settings);
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // Save settings handler
+        function saveStoreSettings(e) {
+            e.preventDefault();
+
+            let logoImg = document.getElementById('logo-preview').src;
+            let coverImg = document.getElementById('cover-preview').src;
+
+            let settings = {
+                storeName: document.getElementById('settings-store-name').value.trim(),
+                phone: document.getElementById('settings-phone').value.trim(),
+                category: document.getElementById('settings-category').value,
+                wilaya: document.getElementById('settings-wilaya').value,
+                commune: document.getElementById('settings-commune').value,
+                fb: document.getElementById('settings-fb').value.trim(),
+                ig: document.getElementById('settings-ig').value.trim(),
+                tiktok: document.getElementById('settings-tiktok').value.trim(),
+                tg: document.getElementById('settings-tg').value.trim(),
+                logoImg: logoImg,
+                coverImg: coverImg
+            };
+
+            setDB("merchant_store_settings", settings);
+
+            // Update profile card details live
+            document.getElementById('profile-store-name').innerText = settings.storeName;
+            document.getElementById('profile-store-wilaya').innerText = "المركز الاقتصادي: " + settings.wilaya;
+            document.getElementById('profile-store-image').src = settings.logoImg;
+
+            // Update seed store array so customer can see renamed store!
+            let stores = getDB("stores", []);
+            let store = stores.find(s => s.storeId === "store_salam");
+            if (store) {
+                store.storeName = settings.storeName;
+                store.phone = settings.phone;
+                store.address = settings.commune + "، " + settings.wilaya;
+                store.image = settings.logoImg;
+                setDB("stores", stores);
+            }
+
+            // Show success banner
+            const banner = document.getElementById('settings-success-banner');
+            banner.classList.remove('hidden');
+            banner.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+            setTimeout(() => {
+                banner.classList.add('hidden');
+            }, 5000);
+        }
+
+        // Dynamic Counters update
+        function updateCounters() {
+            let products = getDB("products", []);
+            let store = getDB("stores", []).find(s => s.storeId === "store_salam");
+            let storeId = store ? store.storeId : "store_salam";
+            
+            let merchantProds = products.filter(p => p.storeId === storeId);
+            document.getElementById('stat-merchant-products').innerText = merchantProds.length;
+
+            let orders = getDB("orders", []);
+            let merchantOrders = orders.filter(o => o.storeId === storeId);
+            let pendingCount = merchantOrders.filter(o => o.status === "قيد المراجعة").length;
+            document.getElementById('stat-pending-orders').innerText = pendingCount;
+
+            // Compute total revenue
+            let revenue = merchantOrders
+                .filter(o => o.status === "تم التسليم")
+                .reduce((acc, o) => acc + (o.total || 0), 0);
+            
+            document.getElementById('stat-revenue').innerText = (revenue || 22000).toLocaleString();
+        }
+
+        // Logout
+        function logoutUser() {
+            localStorage.removeItem('zalo_session_jwt');
+            localStorage.removeItem('zalo_user_role');
+            localStorage.removeItem('zalo_user_email');
+            localStorage.removeItem('zalo_user_name');
+            window.location.href = 'login.html';
+        }
+    </script>
 </body>
 </html>
