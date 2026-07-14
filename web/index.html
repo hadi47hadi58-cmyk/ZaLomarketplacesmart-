@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>ZaLo - بوابتك الموحدة للبيع والشراء</title>
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Great+Vibes&display=swap" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 <style>
 :root {
@@ -288,7 +288,7 @@ body {
   <!-- Brand Logo matching User's Uploaded Brand Identity -->
   <div class="logo-container" style="display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 24px; gap: 4px; width: 100%;">
     <!-- Circular Golden Palm Tree Logo -->
-    <svg width="85" height="85" viewBox="0 0 100 100" style="margin-bottom: 2px;">
+    <svg width="100" height="100" viewBox="0 0 100 100" style="margin-bottom: 2px;">
       <!-- Gold Outer Circle -->
       <circle cx="50" cy="50" r="42" fill="none" stroke="#d4af37" stroke-width="2.2" />
       <!-- Gold Inner Ring -->
@@ -312,35 +312,25 @@ body {
       <path d="M50,45 C50,26 45,17 40,14 C47,19 50,31 50,45 Z" fill="#d4af37" />
       <path d="M50,45 C50,26 55,17 60,14 C53,19 50,31 50,45 Z" fill="#d4af37" />
       
-      <!-- Letters "ZAL" in the center -->
-      <rect x="41" y="55" width="18" height="12" rx="3" fill="#ffffff" stroke="#d4af37" stroke-width="1.3" />
-      <text x="50" y="64" font-family="'Cairo', sans-serif" font-size="8" font-weight="900" fill="#d4af37" text-anchor="middle" letter-spacing="0.5">ZAL</text>
+      <!-- Letters "Z" and "L" inside the circle on either side of the trunk -->
+      <text x="36" y="62" font-family="'Cairo', 'Arial', sans-serif" font-weight="900" font-size="14" fill="#d4af37" text-anchor="middle">Z</text>
+      <text x="64" y="62" font-family="'Cairo', 'Arial', sans-serif" font-weight="900" font-size="14" fill="#d4af37" text-anchor="middle">L</text>
     </svg>
     
     <!-- Stylized "ZaLo" Text exactly matching image script -->
-    <div style="font-family: 'Cairo', sans-serif; font-size: 34px; font-weight: 900; color: #b89116; line-height: 1; letter-spacing: -0.5px; margin-top: 2px;">ZaLo</div>
+    <div style="font-family: 'Great Vibes', cursive; font-size: 58px; font-weight: normal; color: #b89116; line-height: 0.8; margin-top: -8px;">ZaLo</div>
     <!-- "السوق الذكي" Subtitle -->
-    <div style="font-family: 'Cairo', sans-serif; font-size: 11px; font-weight: 800; color: #102a43; letter-spacing: 0.5px;">السوق الذكي</div>
+    <div style="font-family: 'Cairo', sans-serif; font-size: 11px; font-weight: 800; color: #102a43; letter-spacing: 0.5px; margin-top: 4px;">السوق الذكي</div>
   </div>
 
   <!-- Heading -->
-  <h1 class="title">مرحباً بك في سوق الزاوية الذكي الموحد</h1>
-  <p class="subtitle">
-    المنصة الرقمية المبتكرة لربط المتاجر المحلية بزبائنهم وتوصيل الطلبيات والسلع الفورية في 69 ولاية جزائرية كاملة وبأحدث تقنيات المتابعة.
+  <h1 class="title" style="font-size: 22px; font-weight: 900; color: var(--navy); margin-bottom: 8px;">ZaLo تسوق في 69 ولاية جزائرية</h1>
+  <p class="subtitle" style="font-size: 13.5px; color: #555; line-height: 1.5; margin-bottom: 24px; font-weight: 600;">
+    المنصة الرقمية المبتكرة اربط المتاجر المحلية بزبائنهم وتوصيل الطلبيات والسلع الفورية في 69 ولاية جزائرية كاملة وبأحدث تقنيات المتابعة.
   </p>
 
-  <!-- Login Button -->
-  <a href="login.html" class="btn btn-primary" style="margin-bottom: 12px;">
-    <i class="fa-solid fa-right-to-bracket"></i> تسجيل الدخول لحسابي
-  </a>
-
-  <!-- Register Button -->
-  <a href="register.html" class="btn btn-secondary" style="margin-bottom: 24px;">
-    <i class="fa-solid fa-user-plus"></i> إنشاء حساب جديد كلياً
-  </a>
-
-  <!-- Interactive State Shopping Section -->
-  <div style="width: 100%; border-top: 1.5px dashed var(--bd); padding-top: 24px; margin-top: 10px; text-align: right;">
+  <!-- Interactive State Shopping Section (Moved up!) -->
+  <div style="width: 100%; border-top: 1.5px dashed var(--bd); padding-top: 24px; margin-top: 10px; text-align: right; margin-bottom: 16px;">
     <h3 style="font-size: 14px; font-weight: 800; color: var(--navy); margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
       <i class="fa-solid fa-location-dot" style="color: var(--metallic-gold)"></i> تسوق الآن حسب ولايتك
     </h3>
@@ -348,39 +338,31 @@ body {
       اختر ولايتك من القائمة للبدء بتصفح المتاجر والسلع والخدمات المتوفرة في منطقتك فوراً كزائر:
     </p>
     
-    <div style="display: flex; gap: 8px; margin-bottom: 12px;">
-      <select id="landing-wilaya-select" style="flex: 1; height: 48px; border-radius: 12px; border: 1.5px solid var(--bd); padding: 0 12px; font-family: 'Cairo', sans-serif; font-size: 13px; font-weight: 700; color: var(--navy); background: #fdfdfd; cursor: pointer; outline: none; transition: border-color 0.2s;">
-        <option value="">اختر ولايتك...</option>
+    <div style="margin-bottom: 12px; width: 100%;">
+      <select id="landing-wilaya-select" onchange="if(this.value) selectWilayaAndRedirect(this.value)" style="width: 100%; height: 48px; border-radius: 12px; border: 1.8px solid var(--metallic-gold); padding: 0 12px; font-family: 'Cairo', sans-serif; font-size: 13px; font-weight: 800; color: var(--navy); background: #fdfdfd; cursor: pointer; outline: none; transition: border-color 0.2s;">
+        <option value="">اختر ولايتك للبدء تلقائياً...</option>
       </select>
-      
-      <button onclick="startGuestShopping()" style="height: 48px; padding: 0 16px; background: var(--navy); color: var(--white); border: none; border-radius: 12px; font-family: 'Cairo', sans-serif; font-size: 13px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: background 0.2s;">
-        انطلق <i class="fa-solid fa-arrow-left"></i>
-      </button>
     </div>
 
-    <!-- View All States Button (The requested old button restoration with full modal search) -->
-    <button onclick="openAllWilayasModal()" style="width: 100%; height: 46px; background: rgba(212, 175, 55, 0.08); border: 1.5px solid rgba(212, 175, 55, 0.3); border-radius: 12px; color: var(--navy); font-family: 'Cairo', sans-serif; font-size: 12.5px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s;">
-      <i class="fa-solid fa-map-marked-alt" style="color: var(--metallic-gold)"></i> تصفح خريطة ولايات الجزائر المتاحة
+    <!-- View All States Button with 🗺️ emoji -->
+    <button onclick="openAllWilayasModal()" style="width: 100%; height: 48px; background: rgba(212, 175, 55, 0.12); border: 1.8px solid rgba(212, 175, 55, 0.4); border-radius: 12px; color: var(--navy); font-family: 'Cairo', sans-serif; font-size: 13px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s;">
+      تصفح خريطة الولايات المتاحة 🗺️
     </button>
   </div>
 
-  <!-- Unique Features -->
-  <div class="features">
-    <div class="feature-item">
-      <div class="feature-icon"><i class="fa-solid fa-shopping-basket"></i></div>
-      <div class="feature-text">تصفح آلاف السلع الفورية الموفرة من قبل متاجر معتمدة بالكامل.</div>
-    </div>
-    <div class="feature-item">
-      <div class="feature-icon"><i class="fa-solid fa-motorcycle"></i></div>
-      <div class="feature-text">نظام تتبع مباشر فوري مع سائق التوصيل خطوة بخطوة حتى باب منزلك.</div>
-    </div>
-    <div class="feature-item">
-      <div class="feature-icon"><i class="fa-solid fa-shop"></i></div>
-      <div class="feature-text">إمكانية تقديم طلب شراكة للبيع وتفعيل لوحة الإدارة لزيادة مبيعاتك.</div>
-    </div>
-  </div>
+  <div style="width: 100%; border-top: 1.5px solid var(--bd); margin-top: 8px; margin-bottom: 24px;"></div>
 
-  <div class="footer-text">
+  <!-- Login Button (Moved down!) -->
+  <a href="login.html" class="btn" style="background: #1e62b5; color: white; border: none; box-shadow: 0 4px 15px rgba(30, 98, 181, 0.15); margin-bottom: 12px; height: 48px; border-radius: 12px; font-weight: 800; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none;">
+    تسجيل الدخول لحسابي <i class="fa-solid fa-right-to-bracket"></i>
+  </a>
+
+  <!-- Register Button (Moved down!) -->
+  <a href="register.html" class="btn" style="background: white; color: var(--navy); border: 1.8px solid var(--metallic-gold); box-shadow: 0 4px 15px rgba(212, 175, 55, 0.05); margin-bottom: 24px; height: 48px; border-radius: 12px; font-weight: 800; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none;">
+    إنشاء حساب جديد كلياً <i class="fa-solid fa-user-plus"></i>
+  </a>
+
+  <div class="footer-text" style="margin-top: 0px; font-size: 11px; color: var(--gray);">
     © 2026 ZaLo - جميع الحقوق محفوظة لشركة الزاوية للتجارة والتوصيل
   </div>
 
