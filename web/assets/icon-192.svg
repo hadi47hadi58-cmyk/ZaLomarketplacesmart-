@@ -1,17 +1,51 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192">
   <defs>
-    <linearGradient id="greenBg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#1a5c2a" />
-      <stop offset="100%" stop-color="#0e3618" />
+    <linearGradient id="skyBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0ea5e9" />
+      <stop offset="100%" stop-color="#0284c7" />
     </linearGradient>
     <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
-      <feDropShadow dx="0" dy="6" stdDeviation="4" flood-color="#000000" flood-opacity="0.3"/>
+      <feDropShadow dx="0" dy="4" stdDeviation="3" flood-color="#000000" flood-opacity="0.25"/>
     </filter>
   </defs>
-  <rect width="192" height="192" rx="42" fill="url(#greenBg)"/>
-  <rect x="8" y="8" width="176" height="176" rx="34" fill="none" stroke="#e8c97a" stroke-width="2" opacity="0.75" stroke-dasharray="6 3"/>
-  <text x="50%" y="56%" font-family="'Cairo', system-ui, -apple-system, sans-serif" font-weight="900" font-size="52" text-anchor="middle" dominant-baseline="middle" filter="url(#shadow)">
-    <tspan fill="#ffffff">Za</tspan><tspan fill="#e8c97a">Lo</tspan>
-  </text>
-  <text x="50%" y="78%" font-family="'Cairo', system-ui, -apple-system, sans-serif" font-weight="700" font-size="14" fill="#ffffff" opacity="0.8" text-anchor="middle" letter-spacing="1">SMART</text>
+  <!-- Sky Blue Background -->
+  <rect width="192" height="192" rx="42" fill="url(#skyBg)"/>
+  
+  <!-- Outer Gold Dotted Border -->
+  <rect x="8" y="8" width="176" height="176" rx="34" fill="none" stroke="#d4af37" stroke-width="2.5" opacity="0.8" stroke-dasharray="6 3"/>
+  
+  <!-- Centered Golden Palm Tree & Z/L Crown Logo -->
+  <g transform="translate(46, 36) scale(1)" filter="url(#shadow)">
+    <!-- Gold Outer Circle with elegant gap at the top -->
+    <path d="M 29,13.6 A 42,42 0 1,0 71,13.6" fill="none" stroke="#d4af37" stroke-width="3" stroke-linecap="round" />
+    
+    <!-- Golden Palm Tree SVG Paths -->
+    <!-- Segmented Trunk -->
+    <path d="M47.5,75 L52.5,75 L52.1,68 L47.9,68 Z" fill="#d4af37" />
+    <path d="M47.9,66 L52.1,66 L51.7,59 L48.3,59 Z" fill="#d4af37" />
+    <path d="M48.3,57 L51.7,57 L51.3,50 L48.7,50 Z" fill="#d4af37" />
+    <path d="M48.7,48 L51.3,48 L51,45 L49,45 Z" fill="#d4af37" />
+    
+    <!-- Fronds (Left) -->
+    <path d="M49,46 C41,43 33,48 27,56 C35,51 43,49 49,48 Z" fill="#d4af37" />
+    <path d="M49,46 C39,37 30,39 22,45 C32,42 41,43 49,46 Z" fill="#d4af37" />
+    <path d="M49,46 C42,29 35,27 28,30 C36,31 43,37 49,44 Z" fill="#d4af37" />
+    
+    <!-- Fronds (Right) -->
+    <path d="M51,46 C59,43 67,48 73,56 C65,51 57,49 51,48 Z" fill="#d4af37" />
+    <path d="M51,46 C61,37 70,39 78,45 C68,42 59,43 51,46 Z" fill="#d4af37" />
+    <path d="M51,46 C58,29 65,27 72,30 C64,31 57,37 51,44 Z" fill="#d4af37" />
+    
+    <!-- Top Fronds -->
+    <path d="M50,45 C50,26 45,17 40,14 C47,19 50,31 50,45 Z" fill="#d4af37" />
+    <path d="M50,45 C50,26 55,17 60,14 C53,19 50,31 50,45 Z" fill="#d4af37" />
+    
+    <!-- Letters "Z" and "L" inside the circle on either side of the trunk -->
+    <text x="35" y="62" font-family="'Cairo', system-ui, sans-serif" font-weight="900" font-size="12" fill="#d4af37" text-anchor="middle">Z</text>
+    <text x="65" y="62" font-family="'Cairo', system-ui, sans-serif" font-weight="900" font-size="12" fill="#d4af37" text-anchor="middle">L</text>
+  </g>
+  
+  <!-- Bottom Text Label -->
+  <text x="50%" y="152" font-family="'Cairo', system-ui, sans-serif" font-weight="900" font-size="15" fill="#ffffff" text-anchor="middle" letter-spacing="1">ZaLo</text>
+  <text x="50%" y="166" font-family="'Cairo', system-ui, sans-serif" font-weight="800" font-size="8" fill="#d4af37" text-anchor="middle" opacity="0.9">MARKETPLACE</text>
 </svg>
