@@ -96,6 +96,16 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         
+        // Clear webview console log file for a fresh start
+        try {
+            val logFile = java.io.File(cacheDir, "webview_console.log")
+            if (logFile.exists()) {
+                logFile.delete()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        
         // Pre-create the WebView Code Cache directories to prevent Chromium opendir error logs
         try {
             val codeCacheJsDir = java.io.File(cacheDir, "WebView/Default/HTTP Cache/Code Cache/js")
@@ -243,6 +253,21 @@ fun PureWebContainerScreen(
                         ): Boolean {
                             onOpenFileChooser(filePathCallback, fileChooserParams)
                             return true
+                        }
+
+                        override fun onConsoleMessage(consoleMessage: android.webkit.ConsoleMessage?): Boolean {
+                            consoleMessage?.let {
+                                val logMsg = "[${it.messageLevel()}] ${it.message()} -- From ${it.sourceId()}:${it.lineNumber()}\n"
+                                try {
+                                    val logFile = java.io.File(activity.cacheDir, "webview_console.log")
+                                    java.io.FileWriter(logFile, true).use { writer ->
+                                        writer.write(logMsg)
+                                    }
+                                } catch (e: Exception) {
+                                    e.printStackTrace()
+                                }
+                            }
+                            return super.onConsoleMessage(consoleMessage)
                         }
                     }
                     clearCache(true)
