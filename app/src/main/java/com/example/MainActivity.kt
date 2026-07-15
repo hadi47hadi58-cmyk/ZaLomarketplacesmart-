@@ -96,11 +96,15 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         
-        // Pre-create the WebView Code Cache directory to prevent the Chromium opendir error log
+        // Pre-create the WebView Code Cache directories to prevent Chromium opendir error logs
         try {
             val codeCacheJsDir = java.io.File(cacheDir, "WebView/Default/HTTP Cache/Code Cache/js")
             if (!codeCacheJsDir.exists()) {
                 codeCacheJsDir.mkdirs()
+            }
+            val codeCacheWasmDir = java.io.File(cacheDir, "WebView/Default/HTTP Cache/Code Cache/wasm")
+            if (!codeCacheWasmDir.exists()) {
+                codeCacheWasmDir.mkdirs()
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -243,6 +247,10 @@ fun PureWebContainerScreen(
                     }
                     clearCache(true)
                     try {
+                        val jsDir = java.io.File(activity.cacheDir, "WebView/Default/HTTP Cache/Code Cache/js")
+                        if (!jsDir.exists()) {
+                            jsDir.mkdirs()
+                        }
                         val wasmDir = java.io.File(activity.cacheDir, "WebView/Default/HTTP Cache/Code Cache/wasm")
                         if (!wasmDir.exists()) {
                             wasmDir.mkdirs()
