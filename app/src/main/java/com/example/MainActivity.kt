@@ -263,6 +263,8 @@ fun PureWebContainerScreen(
                         domStorageEnabled = true
                         allowFileAccess = true
                         allowContentAccess = true
+                        allowFileAccessFromFileURLs = true
+                        allowUniversalAccessFromFileURLs = true
                         databaseEnabled = true
                         loadWithOverviewMode = true
                         useWideViewPort = true
