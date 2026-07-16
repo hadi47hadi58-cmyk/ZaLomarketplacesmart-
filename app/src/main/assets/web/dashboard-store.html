@@ -57,6 +57,10 @@
     <!-- Strict Authorization & Session Checking -->
     <script type="module">
         import sessionManager from './js/session-manager.js';
+        import { supabaseClient } from './js/supabase-db-compat.js';
+
+        // Expose globally for merchant actions
+        window.supabaseClient = supabaseClient;
 
         const session = sessionManager.getSession();
         if (!session.token || session.role !== 'merchant') {
@@ -859,15 +863,17 @@
         }
 
         // Add Product with dynamic customized attributes
-        function merchantAddProduct(e) {
+        async function merchantAddProduct(e) {
             e.preventDefault();
 
             let products = getDB("products", []);
             let store = getDB("stores", []).find(s => s.storeId === "store_salam");
             let storeId = store ? store.storeId : "store_salam";
+            let storeName = store ? store.storeName : "محل ZaLo شريك";
 
+            const pId = "p_" + Date.now();
             const newProd = {
-                productId: "p_" + Date.now(),
+                productId: pId,
                 productName: document.getElementById('prod-name').value.trim(),
                 price: parseFloat(document.getElementById('prod-price').value),
                 stock: parseInt(document.getElementById('prod-stock').value),
@@ -877,11 +883,37 @@
                 weight: parseFloat(document.getElementById('prod-weight').value) || 0.1,
                 minOrder: parseInt(document.getElementById('prod-min-order').value) || 1,
                 storeId: storeId,
-                variants: ""
+                variants: "",
+                image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=600&q=80"
             };
 
             products.push(newProd);
             setDB("products", products);
+
+            // Write to Supabase table products if active
+            try {
+                if (window.supabaseClient) {
+                    const sbPayload = {
+                        id: pId,
+                        name: newProd.productName,
+                        price: newProd.price,
+                        stock: newProd.stock,
+                        category: newProd.category,
+                        description: newProd.description,
+                        sku: newProd.sku,
+                        weight: newProd.weight,
+                        minOrder: newProd.minOrder,
+                        storeId: storeId,
+                        storeName: storeName,
+                        image: newProd.image,
+                        status: 'active'
+                    };
+                    await window.supabaseClient.from('products').insert(sbPayload);
+                    console.log("Successfully inserted product to Supabase products table.");
+                }
+            } catch (err) {
+                console.error("Failed to sync new product to Supabase:", err);
+            }
 
             // Clear inputs
             document.getElementById('prod-name').value = '';

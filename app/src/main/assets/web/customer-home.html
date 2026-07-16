@@ -2232,6 +2232,7 @@ async function syncMerchantRequestStatus(user) {
         container.style.color = '#d4af37';
         container.innerHTML = '⏳ تم إيداع طلب الشراكة بنجاح وهو قيد الدراسة والتدقيق من قبل الإدارة العليا.';
       } else if (requests.status === 'approved' || requests.status === 'active') {
+        localStorage.setItem('zalo_user_role', 'MERCHANT');
         btn.disabled = true;
         btn.innerHTML = `<i class="fa-solid fa-circle-check"></i> شريك معتمد`;
         container.style.display = 'block';
@@ -2350,24 +2351,70 @@ window.switchTab = function(tabId) {
 async function loadProducts() {
   const grid = document.getElementById('home-pgrid');
   if (!grid) return;
+  
+  let localProds = [];
+  try {
+    const rawLocal = localStorage.getItem('zalo_products');
+    if (rawLocal) {
+      localProds = JSON.parse(rawLocal);
+    }
+  } catch (e) {
+    console.error("Failed to parse local products:", e);
+  }
+
+  let remoteProds = [];
   try {
     const { data, error } = await supabase
       .from('products')
-      .select('*')
-      .eq('status', 'active');
-
-    if (error) throw error;
-    state.loadedProducts = data || [];
-    applyActiveWilayaFilter();
-  } catch(e) {
-    console.error("loadProducts error:", e);
-    grid.innerHTML = `
-      <div style="grid-column: span 2; text-align: center; padding: 40px 0; color: var(--gray);">
-        <i class="fa-solid fa-triangle-exclamation" style="font-size: 28px; color: var(--red); margin-bottom: 8px;"></i>
-        <p>فشل جلب المنتجات. تم تفعيل المخزن المحلي المؤقت.</p>
-      </div>
-    `;
+      .select('*');
+    
+    if (!error && data) {
+      remoteProds = data;
+    }
+  } catch (e) {
+    console.warn("Failed to fetch remote products:", e);
   }
+
+  const unifiedRemote = remoteProds.map(p => ({
+    id: p.id || p.productId,
+    productId: p.productId || p.id,
+    name: p.name || p.productName || 'سلعة ZaLo',
+    productName: p.productName || p.name || 'سلعة ZaLo',
+    price: p.price || 0,
+    stock: p.stock || 0,
+    category: p.category || 'عام',
+    description: p.description || p.desc || '',
+    image: p.image || p.imageUrl || p.image_url || p.imageURL || '',
+    storeId: p.storeId || 'direct',
+    storeName: p.storeName || 'محل ZaLo شريك',
+    status: p.status || 'active'
+  }));
+
+  const unifiedLocal = localProds.map(p => ({
+    id: p.productId || p.id,
+    productId: p.productId || p.id,
+    name: p.productName || p.name || 'سلعة ZaLo',
+    productName: p.productName || p.name || 'سلعة ZaLo',
+    price: parseFloat(p.price) || 0,
+    stock: parseInt(p.stock) || 0,
+    category: p.category || 'عام',
+    description: p.description || p.desc || '',
+    image: p.image || p.logoImg || p.coverImg || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=600&q=80',
+    storeId: p.storeId || 'direct',
+    storeName: p.storeName || 'محل ZaLo شريك',
+    status: p.status || 'active'
+  }));
+
+  let merged = [...unifiedRemote];
+  unifiedLocal.forEach(lp => {
+    const exists = merged.some(rp => rp.id === lp.id || rp.name.trim() === lp.name.trim());
+    if (!exists) {
+      merged.push(lp);
+    }
+  });
+
+  state.loadedProducts = merged;
+  applyActiveWilayaFilter();
 }
 
 function renderProductsList(list) {

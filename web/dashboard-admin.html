@@ -65,6 +65,10 @@
     <!-- Strict Authorization & Session Checking -->
     <script type="module">
         import sessionManager from './js/session-manager.js';
+        import { supabaseClient } from './js/supabase-db-compat.js';
+
+        // Expose globally for administrative actions
+        window.supabaseClient = supabaseClient;
 
         const session = sessionManager.getSession();
         if (!session.token || session.role !== 'admin') {
@@ -918,12 +922,57 @@
         }
 
         // Render registration requests
-        function renderRegistrations() {
+        async function renderRegistrations() {
             const tbody = document.getElementById('registrations-tbody');
+            if (!tbody) return;
             tbody.innerHTML = '';
 
-            let stores = getDB("stores_list_old", MOCK_STORES);
-            stores.forEach(s => {
+            let localStores = getDB("stores_list_old", MOCK_STORES);
+            let liveRequests = [];
+            try {
+                if (window.supabaseClient) {
+                    const { data, error } = await window.supabaseClient.from('merchant_requests').select('*');
+                    if (!error && data) {
+                        liveRequests = data;
+                    }
+                }
+            } catch (e) {
+                console.error("Error fetching live merchant requests:", e);
+            }
+
+            const mappedLiveRequests = liveRequests.map(r => {
+                let mappedStatus = "PENDING";
+                if (r.status === "approved" || r.status === "active" || r.status === "APPROVED") mappedStatus = "APPROVED";
+                if (r.status === "suspended" || r.status === "SUSPENDED" || r.status === "rejected") mappedStatus = "SUSPENDED";
+                
+                return {
+                    id: r.id,
+                    name: r.storeName || r.name || "متجر جديد",
+                    owner: r.ownerName || r.email?.split('@')[0] || "تاجر جديد",
+                    email: r.email || "",
+                    phone: r.phone || "",
+                    location: r.wilaya ? `${r.wilaya}` : "غير محدد",
+                    regCode: r.rcNumber || r.id?.substring(0, 8) || "RC-PENDING",
+                    category: r.category || "عام",
+                    activityType: r.storeType === "registered" ? "بيع منتجات" : "تقديم خدمات",
+                    status: mappedStatus,
+                    isLive: true
+                };
+            });
+
+            let mergedStores = [...localStores];
+            mappedLiveRequests.forEach(live => {
+                const existingIdx = mergedStores.findIndex(st => st.id === live.id || st.name.trim() === live.name.trim());
+                if (existingIdx !== -1) {
+                    mergedStores[existingIdx] = { ...mergedStores[existingIdx], ...live };
+                } else {
+                    mergedStores.unshift(live);
+                }
+            });
+
+            setDB("stores_list_old", mergedStores);
+
+            mergedStores.forEach(s => {
                 let statusBadge = s.status === "APPROVED" ? "bg-emerald-50 border border-emerald-200 text-emerald-700" : "bg-amber-50 border border-amber-200 text-amber-700";
                 if (s.status === "SUSPENDED") statusBadge = "bg-red-50 border border-red-200 text-red-700";
                 
@@ -981,12 +1030,23 @@
         }
 
         // Approve store
-        function approveStore(id) {
+        async function approveStore(id) {
             let stores = getDB("stores_list_old", MOCK_STORES);
             let s = stores.find(st => st.id === id);
             if (s) {
                 s.status = "APPROVED";
                 setDB("stores_list_old", stores);
+                
+                try {
+                    if (window.supabaseClient) {
+                        await window.supabaseClient.from('merchant_requests').update({ status: 'approved' }).eq('id', id);
+                        await window.supabaseClient.from('profiles').update({ status: 'approved', role: 'merchant' }).eq('id', id);
+                        console.log("Successfully synchronized approval to Supabase!");
+                    }
+                } catch(e) {
+                    console.error("Failed to sync approval to Supabase:", e);
+                }
+
                 alert(`تم قبول وتفعيل متجر "${s.name}" بنجاح وجعله مرئياً للجمهور الجزائري! ✅`);
                 renderRegistrations();
                 renderStats();
@@ -1000,12 +1060,13 @@
             document.getElementById('suspend-reason-modal').classList.remove('hidden');
         }
 
+        // Close Suspend Modal
         function closeSuspendModal() {
             document.getElementById('suspend-reason-modal').classList.add('hidden');
         }
 
         // Submit suspend store request
-        function submitSuspendStore() {
+        async function submitSuspendStore() {
             const id = document.getElementById('suspend-store-id').value;
             const reason = document.getElementById('suspend-reason-text').value.trim();
             if (!reason) {
@@ -1018,6 +1079,16 @@
             if (s) {
                 s.status = "SUSPENDED";
                 setDB("stores_list_old", stores);
+
+                try {
+                    if (window.supabaseClient) {
+                        await window.supabaseClient.from('merchant_requests').update({ status: 'rejected' }).eq('id', id);
+                        await window.supabaseClient.from('profiles').update({ status: 'rejected' }).eq('id', id);
+                        console.log("Successfully synchronized suspension to Supabase!");
+                    }
+                } catch(e) {
+                    console.error("Failed to sync suspension to Supabase:", e);
+                }
                 
                 // Alert confirmation with request info
                 alert(`تم تعليق طلب متجر "${s.name}" بنجاح 🛑\nتم إرسال بريد إلكتروني للتاجر على العنوان (${s.email}) يطالبه بالبيانات التالية:\n"${reason}"`);
