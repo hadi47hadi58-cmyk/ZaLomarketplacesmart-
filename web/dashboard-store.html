@@ -799,12 +799,9 @@
             list.innerHTML = "";
             let products = getDB("products", []);
             
-            // Seed defaults if empty
+            // Seed defaults if empty (Cleared to prevent mock products)
             if (products.length === 0) {
-                products = [
-                    { productId: "p1", productName: "هاتف ذكي بيكسل بريميوم", price: 78000, stock: 5, sku: "SKU-9901", weight: 0.18, minOrder: 1, storeId: "store_salam", category: "cat_phones", description: "جودة ممتازة وحالة مثالية مع الضمان الأصلي" },
-                    { productId: "p2", productName: "شاحن سريع أصلي بقوة 65 واط", price: 4200, stock: 12, sku: "SKU-4412", weight: 0.09, minOrder: 1, storeId: "store_salam", category: "cat_electronic", description: "شحن فائق السرعة لجميع الهواتف الذكية" }
-                ];
+                products = [];
                 setDB("products", products);
             }
 
@@ -872,6 +869,12 @@
             let storeName = store ? store.storeName : "محل ZaLo شريك";
 
             const pId = "p_" + Date.now();
+            
+            let pImg = "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=600&q=80"; // fallback default
+            if (uploadedAnglesPreview && uploadedAnglesPreview.length > 0) {
+                pImg = uploadedAnglesPreview[0];
+            }
+
             const newProd = {
                 productId: pId,
                 productName: document.getElementById('prod-name').value.trim(),
@@ -884,7 +887,7 @@
                 minOrder: parseInt(document.getElementById('prod-min-order').value) || 1,
                 storeId: storeId,
                 variants: "",
-                image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=600&q=80"
+                image: pImg
             };
 
             products.push(newProd);
@@ -984,11 +987,9 @@
             container.innerHTML = "";
             let orders = getDB("orders", []);
             
-            // Seed mock order if empty
+            // Seed mock order if empty (Cleared to prevent mock orders)
             if (orders.length === 0) {
-                orders = [
-                    { orderId: "ord_101", productId: "p1", productName: "هاتف ذكي بيكسل بريميوم", storeId: "store_salam", total: 78000, address: "حي المستضعفين، المنيعة (ولاية المنيعة)", status: "قيد المراجعة", paymentMethod: "الدفع عند الاستلام (COD)", date: "2026-07-14" }
-                ];
+                orders = [];
                 setDB("orders", orders);
             }
 

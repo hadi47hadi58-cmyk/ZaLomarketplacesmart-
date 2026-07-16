@@ -2304,6 +2304,39 @@ document.getElementById('merchantRequestForm').addEventListener('submit', async 
       updatedAt: new Date().toISOString()
     });
 
+    // Save locally to stores_list_old so Admin Dashboard can see it instantly
+    try {
+      const dbKey = "zalo_stores_list_old";
+      let localStores = [];
+      const raw = localStorage.getItem(dbKey);
+      if (raw) {
+        localStores = JSON.parse(raw);
+      }
+      
+      const newLocalStore = {
+        id: user.id,
+        name: storeName,
+        owner: user.email ? user.email.split('@')[0] : 'تاجر ZaLo',
+        email: user.email,
+        phone: phone,
+        location: wilaya,
+        regCode: rc || "RC-" + Math.floor(100000 + Math.random() * 900000),
+        category: "عام",
+        activityType: "بيع منتجات",
+        status: "PENDING"
+      };
+
+      const existsIdx = localStores.findIndex(s => s.id === user.id);
+      if (existsIdx !== -1) {
+        localStores[existsIdx] = newLocalStore;
+      } else {
+        localStores.unshift(newLocalStore);
+      }
+      localStorage.setItem(dbKey, JSON.stringify(localStores));
+    } catch(e) {
+      console.warn("Local storage sync for store requests failed:", e);
+    }
+
     document.getElementById('merchantModal').style.display = 'none';
     window.showToast("✨ تم تقديم طلب انضمامك للشبكة بنجاح!");
     syncMerchantRequestStatus(user);
@@ -2390,20 +2423,33 @@ async function loadProducts() {
     status: p.status || 'active'
   }));
 
-  const unifiedLocal = localProds.map(p => ({
-    id: p.productId || p.id,
-    productId: p.productId || p.id,
-    name: p.productName || p.name || 'سلعة ZaLo',
-    productName: p.productName || p.name || 'سلعة ZaLo',
-    price: parseFloat(p.price) || 0,
-    stock: parseInt(p.stock) || 0,
-    category: p.category || 'عام',
-    description: p.description || p.desc || '',
-    image: p.image || p.logoImg || p.coverImg || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=600&q=80',
-    storeId: p.storeId || 'direct',
-    storeName: p.storeName || 'محل ZaLo شريك',
-    status: p.status || 'active'
-  }));
+  const unifiedLocal = localProds.map(p => {
+    let sName = p.storeName || 'محل ZaLo شريك';
+    try {
+      const ms = localStorage.getItem('zalo_merchant_store_settings');
+      if (ms) {
+        const settings = JSON.parse(ms);
+        if (settings && settings.storeName) {
+          sName = settings.storeName;
+        }
+      }
+    } catch (err) {}
+
+    return {
+      id: p.productId || p.id,
+      productId: p.productId || p.id,
+      name: p.productName || p.name || 'سلعة ZaLo',
+      productName: p.productName || p.name || 'سلعة ZaLo',
+      price: parseFloat(p.price) || 0,
+      stock: parseInt(p.stock) || 0,
+      category: p.category || 'عام',
+      description: p.description || p.desc || '',
+      image: p.image || p.logoImg || p.coverImg || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=600&q=80',
+      storeId: p.storeId || 'direct',
+      storeName: sName,
+      status: p.status || 'active'
+    };
+  });
 
   let merged = [...unifiedRemote];
   unifiedLocal.forEach(lp => {

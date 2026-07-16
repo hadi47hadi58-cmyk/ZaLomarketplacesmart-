@@ -623,14 +623,8 @@
             { code: "69", name: "البلدية الجديدة 69", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" }
         ];
 
-        // Default mock active stores list exactly matching screenshots
-        const MOCK_STORES = [
-            { id: "s1", name: "مجوهرات ومجوهرات القصبة العريقة", owner: "الحاج سعيد البهجة", email: "hajj.said@casbah.dz", phone: "0698694010", location: "الجزائر - الجزائر الوسطى", regCode: "RC-778899", category: "مجوهرات وهدايا", activityType: "بيع منتجات", status: "APPROVED" },
-            { id: "s2", name: "ملابس وبدلات الفخامة والجمال", owner: "عبد الوهاب القسنطيني", email: "wahab.constantine@gmail.com", phone: "0770112233", location: "قسنطينة - قسنطينة", regCode: "RC-445566", category: "ملابس وأزياء", activityType: "بيع منتجات", status: "APPROVED" },
-            { id: "s3", name: "أواني ومنزل المطبخ الجزائري", owner: "أمينة الوهرانية", email: "amina.oran@hot.dz", phone: "0550998877", location: "وهران - وهران", regCode: "RC-112233", category: "أواني ومنزلية", activityType: "تقديم خدمات", status: "APPROVED" },
-            { id: "s4", name: "حنان بوزويس (ABDELALI.PHONE)", owner: "unitedbadryan", email: "abdelali.phone@zalo.dz", phone: "0673544540", location: "المنيعة - المنيعة", regCode: "RC-123456", category: "عام", activityType: "بيع منتجات", status: "APPROVED" },
-            { id: "s5", name: "مكتبة الإشراق وصيانة الهواتف", owner: "كمال المنيعي", email: "kamal.menia@clic.dz", phone: "0666551122", location: "المنيعة - حاسي القارة", regCode: "RC-998877", category: "خدمات شحن وصيانة", activityType: "تقديم خدمات", status: "PENDING" }
-        ];
+        // Default mock active stores list (Cleared to prevent fake/mock stores)
+        const MOCK_STORES = [];
 
         // Seed data structures
         function initOldAdminDashboard() {
