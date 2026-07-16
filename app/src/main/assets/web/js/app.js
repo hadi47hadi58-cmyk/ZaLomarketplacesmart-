@@ -48,6 +48,27 @@ class DB {
         localStorage.setItem("zalo_" + key, JSON.stringify(data));
     }
     static init() {
+        // Force-clear old mock/fake data from previous builds if they contain mock IDs to ensure clean state
+        try {
+            let p = localStorage.getItem("zalo_products");
+            if (p && (p.includes("prod_phone") || p.includes("prod_lap") || p.includes("prod_shoe") || p.includes("prod_galaxy"))) {
+                console.log("[ZaLo DB] Wiping old fake products seed from localStorage...");
+                localStorage.removeItem("zalo_products");
+            }
+            let s = localStorage.getItem("zalo_stores");
+            if (s && s.includes("store_salam")) {
+                console.log("[ZaLo DB] Wiping old fake stores seed from localStorage...");
+                localStorage.removeItem("zalo_stores");
+            }
+            let o = localStorage.getItem("zalo_orders");
+            if (o && (o.includes("ord_1") || o.includes("order_"))) {
+                console.log("[ZaLo DB] Wiping old fake orders seed from localStorage...");
+                localStorage.removeItem("zalo_orders");
+            }
+        } catch (e) {
+            console.error("Error cleaning old local seeds:", e);
+        }
+
         this.get("users", SEED_USERS);
         this.get("municipalities", SEED_MUNICIPALITIES);
         this.get("stores", SEED_STORES);

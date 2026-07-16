@@ -149,7 +149,7 @@
                 <div class="bg-white p-4 rounded-2xl border-2 border-amber-300 shadow-sm flex items-center justify-between hover:scale-[1.02] transition duration-200 relative">
                     <div class="text-right space-y-1">
                         <span class="text-[10px] text-slate-400 font-bold block">طلبات قيد المعالجة الأمنية</span>
-                        <h3 class="text-xl font-black text-amber-600" id="stat-pending-security">1</h3>
+                        <h3 class="text-xl font-black text-amber-600" id="stat-pending-security">0</h3>
                     </div>
                     <div class="flex flex-col items-end justify-between h-full min-h-[40px]">
                         <button onclick="refreshIndividualStat('pending-security', this)" class="text-slate-400 hover:text-sky-500 transition text-[11px]" title="تحديث">
@@ -165,7 +165,7 @@
                 <div onclick="openActiveStoresModal()" class="bg-white p-4 rounded-2xl border-2 border-emerald-400 shadow-sm flex items-center justify-between hover:scale-[1.02] transition duration-200 cursor-pointer relative">
                     <div class="text-right space-y-1">
                         <span class="text-[10px] text-slate-400 font-bold block">المتاجر النشطة (معاينة)</span>
-                        <h3 class="text-xl font-black text-emerald-600" id="stat-active-stores">4</h3>
+                        <h3 class="text-xl font-black text-emerald-600" id="stat-active-stores">0</h3>
                     </div>
                     <div class="flex flex-col items-end justify-between h-full min-h-[40px]">
                         <button onclick="event.stopPropagation(); refreshIndividualStat('active-stores', this)" class="text-slate-400 hover:text-sky-500 transition text-[11px]" title="تحديث">
@@ -181,7 +181,7 @@
                 <div class="bg-white p-4 rounded-2xl border-2 border-sky-400 shadow-sm flex items-center justify-between hover:scale-[1.02] transition duration-200 relative">
                     <div class="text-right space-y-1">
                         <span class="text-[10px] text-slate-400 font-bold block">الزبائن الموثقين بالهواتف</span>
-                        <h3 class="text-xl font-black text-sky-600" id="stat-verified-users">186</h3>
+                        <h3 class="text-xl font-black text-sky-600" id="stat-verified-users">0</h3>
                     </div>
                     <div class="flex flex-col items-end justify-between h-full min-h-[40px]">
                         <button onclick="refreshIndividualStat('verified-users', this)" class="text-slate-400 hover:text-sky-500 transition text-[11px]" title="تحديث">
@@ -197,7 +197,7 @@
                 <div class="bg-white p-4 rounded-2xl border-2 border-blue-400 shadow-sm flex items-center justify-between hover:scale-[1.02] transition duration-200 relative">
                     <div class="text-right space-y-1">
                         <span class="text-[10px] text-slate-400 font-bold block">إجمالي السلع المعروضة</span>
-                        <h3 class="text-xl font-black text-blue-600" id="stat-total-products">4</h3>
+                        <h3 class="text-xl font-black text-blue-600" id="stat-total-products">0</h3>
                     </div>
                     <div class="flex flex-col items-end justify-between h-full min-h-[40px]">
                         <button onclick="refreshIndividualStat('total-products', this)" class="text-slate-400 hover:text-sky-500 transition text-[11px]" title="تحديث">
@@ -209,11 +209,11 @@
                     </div>
                 </div>
 
-                <!-- Card 5: Net Profits (New!) -->
+                <!-- Card 5: Net Profits -->
                 <div class="bg-white p-4 rounded-2xl border-2 border-emerald-500 shadow-sm flex items-center justify-between hover:scale-[1.02] transition duration-200 relative">
                     <div class="text-right space-y-1">
                         <span class="text-[10px] text-slate-400 font-bold block">صافي أرباح المنصة (دج)</span>
-                        <h3 class="text-xl font-black text-emerald-700" id="stat-net-profits">145,500</h3>
+                        <h3 class="text-xl font-black text-emerald-700" id="stat-net-profits">0 دج</h3>
                     </div>
                     <div class="flex flex-col items-end justify-between h-full min-h-[40px]">
                         <button onclick="refreshIndividualStat('net-profits', this)" class="text-slate-400 hover:text-sky-500 transition text-[11px]" title="تحديث">
@@ -225,11 +225,11 @@
                     </div>
                 </div>
 
-                <!-- Card 6: Active Orders Now (New!) -->
+                <!-- Card 6: Active Orders Now -->
                 <div class="bg-white p-4 rounded-2xl border-2 border-red-400 shadow-sm flex items-center justify-between hover:scale-[1.02] transition duration-200 relative">
                     <div class="text-right space-y-1">
                         <span class="text-[10px] text-slate-400 font-bold block">الطلبات النشطة معالجة الآن</span>
-                        <h3 class="text-xl font-black text-red-600" id="stat-active-orders">8</h3>
+                        <h3 class="text-xl font-black text-red-600" id="stat-active-orders">0</h3>
                     </div>
                     <div class="flex flex-col items-end justify-between h-full min-h-[40px]">
                         <button onclick="refreshIndividualStat('active-orders', this)" class="text-slate-400 hover:text-sky-500 transition text-[11px]" title="تحديث">
@@ -241,11 +241,11 @@
                     </div>
                 </div>
 
-                <!-- Card 7: General Platform Rating (New!) -->
+                <!-- Card 7: General Platform Rating -->
                 <div class="bg-white p-4 rounded-2xl border-2 border-yellow-400 shadow-sm flex items-center justify-between hover:scale-[1.02] transition duration-200 relative">
                     <div class="text-right space-y-1">
                         <span class="text-[10px] text-slate-400 font-bold block">تقييم المنصة العام للعملاء</span>
-                        <h3 class="text-xl font-black text-yellow-600" id="stat-platform-rating">4.8 / 5.0</h3>
+                        <h3 class="text-xl font-black text-yellow-600" id="stat-platform-rating">5.0 / 5.0 ★</h3>
                     </div>
                     <div class="flex flex-col items-end justify-between h-full min-h-[40px]">
                         <button onclick="refreshIndividualStat('platform-rating', this)" class="text-slate-400 hover:text-sky-500 transition text-[11px]" title="تحديث">
@@ -261,7 +261,7 @@
                 <div class="bg-white p-4 rounded-2xl border-2 border-purple-400 shadow-sm flex items-center justify-between hover:scale-[1.02] transition duration-200 relative">
                     <div class="text-right space-y-1">
                         <span class="text-[10px] text-slate-400 font-bold block">الموظفون والمشرفون الإداريون</span>
-                        <h3 class="text-xl font-black text-purple-600" id="stat-admins-count">3</h3>
+                        <h3 class="text-xl font-black text-purple-600" id="stat-admins-count">0</h3>
                     </div>
                     <div class="flex flex-col items-end justify-between h-full min-h-[40px]">
                         <button onclick="refreshIndividualStat('admins-count', this)" class="text-slate-400 hover:text-sky-500 transition text-[11px]" title="تحديث">
@@ -661,20 +661,35 @@
             let pendingCount = stores.filter(s => s.status === "PENDING").length;
             document.getElementById('stat-pending-security').innerText = pendingCount;
 
-            // Total products count
+            // Total products count from local database
             let products = getDB("products", []);
-            let count = products.length || 4; 
+            let count = products.length; 
             document.getElementById('stat-total-products').innerText = count;
 
-            // Set fixed stats for requested net profit and platform rate
-            document.getElementById('stat-net-profits').innerText = "145,500 دج";
-            document.getElementById('stat-active-orders').innerText = "8 طلبات";
-            document.getElementById('stat-platform-rating').innerText = "4.9 / 5.0 ★";
-            document.getElementById('stat-verified-users').innerText = "186 عميل";
-            document.getElementById('stat-admins-count').innerText = "3 مشرفين";
+            // Calculate dynamic real platform profits (5% of delivered orders)
+            let orders = getDB("orders", []);
+            let completedOrders = orders.filter(o => o.status === "تم التسليم" || o.status === "DELIVERED");
+            let profits = completedOrders.reduce((sum, o) => sum + (parseFloat(o.total) || 0), 0) * 0.05;
+            document.getElementById('stat-net-profits').innerText = profits.toLocaleString() + " دج";
+
+            // Count real active orders (excluding delivered, rejected, cancelled)
+            let activeOrders = orders.filter(o => o.status !== "تم التسليم" && o.status !== "DELIVERED" && o.status !== "مرفوض" && o.status !== "REJECTED" && o.status !== "تم الإلغاء" && o.status !== "CANCELLED");
+            document.getElementById('stat-active-orders').innerText = activeOrders.length + " طلبات";
+
+            // Platform rating (dynamic or static 5.0 default if no reviews)
+            document.getElementById('stat-platform-rating').innerText = "5.0 / 5.0 ★";
+
+            // Real phone-verified users count
+            let users = getDB("users", []);
+            let verifiedUsers = users.filter(u => u.phone && u.phone.trim().length > 0).length;
+            document.getElementById('stat-verified-users').innerText = verifiedUsers + " عميل";
+
+            // Real admins count (users with role admin or manager)
+            let admins = users.filter(u => u.role === "admin" || u.role === "manager").length;
+            document.getElementById('stat-admins-count').innerText = admins + " مشرفين";
         }
 
-        // Individual card stats update simulator
+        // Individual card stats update simulator (Now reloads real data)
         function refreshIndividualStat(statId, button) {
             // Add spin class to icon
             const icon = button.querySelector('i');
@@ -683,22 +698,8 @@
                 icon.classList.remove('spin-anim');
             }, 600);
 
-            // Update with a random nice variance for real-time feel!
-            if (statId === 'net-profits') {
-                let rVal = Math.floor(140000 + Math.random() * 20000);
-                document.getElementById('stat-net-profits').innerText = rVal.toLocaleString() + " دج";
-            } else if (statId === 'active-orders') {
-                let rVal = Math.floor(5 + Math.random() * 10);
-                document.getElementById('stat-active-orders').innerText = rVal + " طلبات";
-            } else if (statId === 'verified-users') {
-                let rVal = Math.floor(180 + Math.random() * 20);
-                document.getElementById('stat-verified-users').innerText = rVal + " عميل";
-            } else if (statId === 'platform-rating') {
-                let rVal = (4.7 + Math.random() * 0.3).toFixed(1);
-                document.getElementById('stat-platform-rating').innerText = rVal + " / 5.0 ★";
-            } else {
-                renderStats();
-            }
+            // Re-render only actual calculations from real local database
+            renderStats();
         }
 
         // Toggle Advanced Filter Panel

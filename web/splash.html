@@ -108,92 +108,10 @@
   <div class="subtitle">جاري التحضير...</div>
 
   <script>
-    // قراءة التوكن والدور لتوجيه المستخدم بشكل صحيح ومنع حلقة التكرار اللانهائي
-    const token = localStorage.getItem('zalo_session_jwt') || localStorage.getItem('zalo_token');
-    const rawRole = localStorage.getItem('zalo_user_role') || localStorage.getItem('zalo_role') || 'customer';
-    const role = rawRole.toLowerCase().trim();
-
     async function checkTokenAndRedirect() {
-      if (!token) {
-        // لا يوجد توكن نشط -> التوجيه إلى الصفحة الرئيسية العامة (index.html)
-        console.log("[Splash Router] No active token found. Redirecting to index.html...");
-        window.location.href = 'index.html';
-        return;
-      }
-
-      // تحديد رابط الخادم بناءً على بيئة التشغيل
-      const NESTJS_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-        ? 'http://localhost:3000/api'
-        : (window.location.hostname.endsWith('run.app') || window.location.hostname.includes('google.com')
-           ? `${window.location.origin}/api`
-           : 'https://zalo-smart-backend-service-api.run.app/api');
-
-      console.log(`[Splash Router] Active token detected. Verifying validity via: ${NESTJS_BASE_URL}/users/profile`);
-
-      try {
-        const response = await fetch(`${NESTJS_BASE_URL}/users/profile`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          }
-        });
-
-        if (response.ok) {
-          const result = await response.json();
-          if (result && result.data) {
-            const user = result.data;
-            const updatedRole = (user.role || 'customer').toLowerCase().trim();
-            console.log(`[Splash Router] Token verified successfully! Role is: ${updatedRole}`);
-            
-            // مزامنة الدور والبيانات المستردة بدقة لضمان مطابقة حقيقية
-            localStorage.setItem('zalo_user_role', user.role || 'customer');
-            localStorage.setItem('zalo_role', user.role || 'customer');
-            localStorage.setItem('zalo_user_email', user.email || '');
-            localStorage.setItem('zalo_user_name', user.name || '');
-
-            if (updatedRole === 'merchant') {
-              window.location.href = 'dashboard-store.html';
-            } else if (updatedRole === 'admin') {
-              window.location.href = 'dashboard-admin.html';
-            } else {
-              window.location.href = 'customer-home.html';
-            }
-            return;
-          }
-        } else if (response.status === 401 || response.status === 403) {
-          console.warn(`[Splash Router] Validation failed (Status ${response.status}). Cleaning invalid session...`);
-          
-          // تنظيف كامل التخزين المحلي لمنع ظهور العميل كمسجل دخول بوثيقة غير صالحة
-          localStorage.removeItem('zalo_session_jwt');
-          localStorage.removeItem('zalo_token');
-          localStorage.removeItem('zalo_local_session');
-          localStorage.removeItem('zalo_active_session');
-          localStorage.removeItem('zalo_user_role');
-          localStorage.removeItem('zalo_role');
-          localStorage.removeItem('user_email');
-          sessionStorage.removeItem('admin_logged_in_session');
-
-          window.location.href = 'index.html';
-          return;
-        }
-      } catch (err) {
-        console.warn("[Splash Router] Network or server error during validation. Falling back to local state for offline resilience:", err.message);
-      }
-
-      // خطة احتياطية في حالة انقطاع الشبكة أو استخدام توكن تجريبي محلي غير مسجل في السيرفر
-      console.log(`[Splash Router] Routing with offline fallback role: ${role}`);
-      if (!token) {
-        window.location.href = 'index.html';
-        return;
-      }
-      if (role === 'merchant') {
-        window.location.href = 'dashboard-store.html';
-      } else if (role === 'admin') {
-        window.location.href = 'dashboard-admin.html';
-      } else {
-        window.location.href = 'customer-home.html';
-      }
+      // التوجيه مباشرة إلى الواجهة الرئيسية العامة (index.html) عند فتح التطبيق كما طلب المستخدم
+      console.log("[Splash Router] Routing directly to index.html...");
+      window.location.href = 'index.html';
     }
 
     // الانتظار ثانيتين لتهيئة وعرض الشعار الجمالي للمنصة

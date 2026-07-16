@@ -11,6 +11,8 @@ import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Toast
+import androidx.webkit.WebViewAssetLoader
+import androidx.webkit.WebViewAssetLoader.AssetsPathHandler
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
@@ -178,6 +180,12 @@ fun PureWebContainerScreen(
 ) {
     var webView: WebView? by remember { mutableStateOf(null) }
 
+    val assetLoader = remember {
+        WebViewAssetLoader.Builder()
+            .addPathHandler("/assets/", AssetsPathHandler(activity))
+            .build()
+    }
+
     // Handle back button clicks to navigate backward in the WebView instead of exiting the app
     BackHandler(enabled = webView?.canGoBack() == true) {
         webView?.goBack()
@@ -199,6 +207,16 @@ fun PureWebContainerScreen(
                             return false
                         }
 
+                        override fun shouldInterceptRequest(
+                            view: WebView?,
+                            request: android.webkit.WebResourceRequest?
+                        ): android.webkit.WebResourceResponse? {
+                            if (request != null) {
+                                return assetLoader.shouldInterceptRequest(request.url)
+                            }
+                            return null
+                        }
+
                         override fun onPageStarted(view: WebView?, url: String?, favicon: android.graphics.Bitmap?) {
                             super.onPageStarted(view, url, favicon)
                             // Let the page start loading so we can capture the full URL with hash fragment in onPageFinished
@@ -207,42 +225,58 @@ fun PureWebContainerScreen(
                         override fun onPageFinished(view: WebView?, url: String?) {
                             super.onPageFinished(view, url)
                             if (url != null) {
-                                val targetDomains = arrayOf(
-                                    "hadi47hadi58-cmyk.github.io/ZaLo-marketplace-smart-/web/",
-                                    "hadi47hadi58-cmyk.github.io/ZaLo-marketplace-smart-/",
-                                    "hadi47hadi58-cmyk.github.io/"
-                                )
-                                var matchesDomain = false
-                                for (domain in targetDomains) {
-                                    if (url.contains(domain)) {
-                                        matchesDomain = true
-                                        break
-                                    }
-                                }
-                                if (matchesDomain) {
-                                    // Query the full URL from JS to preserve hash fragment
-                                    view?.evaluateJavascript("window.location.href") { fullUrl ->
-                                        val cleanUrl = fullUrl?.removePrefix("\"")?.removeSuffix("\"")
-                                        if (cleanUrl != null && cleanUrl.isNotEmpty() && cleanUrl != "null") {
-                                            val filename = when {
-                                                cleanUrl.contains("register-step1.html") -> "register-step1.html"
-                                                cleanUrl.contains("login-customer.html") -> "login-customer.html"
-                                                cleanUrl.contains("login.html") -> "login.html"
-                                                cleanUrl.contains("index.html") -> "index.html"
-                                                else -> "index.html" // Default callback target
+                                if (url.startsWith("http://") || url.startsWith("https://")) {
+                                    if (!url.contains("appassets.androidplatform.net")) {
+                                        val targetDomains = arrayOf(
+                                            "hadi47hadi58-cmyk.github.io/ZaLo-marketplace-smart-/web/",
+                                            "hadi47hadi58-cmyk.github.io/ZaLo-marketplace-smart-/",
+                                            "hadi47hadi58-cmyk.github.io/"
+                                        )
+                                        var matchesDomain = false
+                                        for (domain in targetDomains) {
+                                            if (url.contains(domain)) {
+                                                matchesDomain = true
+                                                break
                                             }
-                                            val extraParams = when {
-                                                cleanUrl.contains("#") -> "#" + cleanUrl.substringAfter("#")
-                                                cleanUrl.contains("?") -> "?" + cleanUrl.substringAfter("?")
-                                                else -> ""
+                                        }
+                                        if (matchesDomain) {
+                                            // Query the full URL from JS to preserve hash fragment
+                                            view?.evaluateJavascript("window.location.href") { fullUrl ->
+                                                val cleanUrl = fullUrl?.removePrefix("\"")?.removeSuffix("\"")
+                                                if (cleanUrl != null && cleanUrl.isNotEmpty() && cleanUrl != "null") {
+                                                    val filename = when {
+                                                        cleanUrl.contains("register-step1.html") -> "register-step1.html"
+                                                        cleanUrl.contains("login-customer.html") -> "login-customer.html"
+                                                        cleanUrl.contains("login.html") -> "login.html"
+                                                        cleanUrl.contains("index.html") -> "index.html"
+                                                        else -> "index.html" // Default callback target
+                                                    }
+                                                    val extraParams = when {
+                                                        cleanUrl.contains("#") -> "#" + cleanUrl.substringAfter("#")
+                                                        cleanUrl.contains("?") -> "?" + cleanUrl.substringAfter("?")
+                                                        else -> ""
+                                                    }
+                                                    val localUrl = "https://appassets.androidplatform.net/assets/web/$filename$extraParams"
+                                                    view?.stopLoading()
+                                                    view?.loadUrl(localUrl)
+                                                }
                                             }
-                                            val localUrl = "file:///android_asset/web/$filename$extraParams"
-                                            view?.stopLoading()
-                                            view?.loadUrl(localUrl)
                                         }
                                     }
                                 }
                             }
+                        }
+
+                        override fun onReceivedError(
+                            view: WebView?,
+                            request: android.webkit.WebResourceRequest?,
+                            error: android.webkit.WebResourceError?
+                        ) {
+                            super.onReceivedError(view, request, error)
+                            val description = error?.description ?: "Unknown error"
+                            val errorCode = error?.errorCode ?: 0
+                            val urlStr = request?.url?.toString() ?: ""
+                            android.util.Log.e("WebViewError", "Error loading URL $urlStr: $description ($errorCode)")
                         }
                     }
                     webChromeClient = object : WebChromeClient() {
@@ -297,7 +331,7 @@ fun PureWebContainerScreen(
                         cacheMode = WebSettings.LOAD_NO_CACHE
                     }
                     addJavascriptInterface(WebAppInterface(activity, this), "AndroidInterface")
-                    loadUrl("file:///android_asset/web/splash.html")
+                    loadUrl("https://appassets.androidplatform.net/assets/web/splash.html")
                     webView = this
                     activity.currentWebView = this
                 }

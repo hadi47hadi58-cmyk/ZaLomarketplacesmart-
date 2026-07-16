@@ -254,10 +254,7 @@
     import { supabase } from "./js/supabase-config.js";
 
     // Load local seed orders if none exist
-    const SEED_ORDERS = [
-        { orderId: "ord_1001", userId: "user_hadi", storeId: "store_salam", productId: "prod_galaxy_a07", status: "قيد المراجعة", total: 22000, qty: 1, paymentMethod: "COD", address: "حي ميعاد، المنيعة", phone: "0666112233", trackingNumber: "DZ-COD-1001-ZALO", timestamp: Date.now() - 3600000 * 2 },
-        { orderId: "ord_1002", userId: "user_hadi", storeId: "store_salam", productId: "prod_honor_x6c", status: "تم التسليم", total: 29000, qty: 1, paymentMethod: "BaridiMob", address: "بلدية حاسي الفحل", phone: "0666112233", trackingNumber: "DZ-BMOB-1002-ZALO", timestamp: Date.now() - 86400000 }
-    ];
+    const SEED_ORDERS = [];
 
     function getLocalOrders() {
         let merged = [...SEED_ORDERS];
