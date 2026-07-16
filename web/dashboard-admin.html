@@ -183,6 +183,41 @@
                         </div>
                         <span class="bg-red-100 text-red-700 px-2 py-0.5 rounded-full text-[9px] font-bold">آمن</span>
                     </button>
+
+                    <button onclick="switchTab('qr')" id="btn-tab-qr" class="sidebar-tab-btn w-full flex items-center justify-between px-4 py-3 rounded-xl text-right text-xs font-black transition">
+                        <div class="flex items-center gap-2.5">
+                            <i class="fa-solid fa-qrcode text-lg w-5 text-[#d4af37]"></i>
+                            <span>رمز الاستجابة السريعة (QR) 📲</span>
+                        </div>
+                    </button>
+
+                    <button onclick="switchTab('settings-global')" id="btn-tab-settings-global" class="sidebar-tab-btn w-full flex items-center justify-between px-4 py-3 rounded-xl text-right text-xs font-black transition">
+                        <div class="flex items-center gap-2.5">
+                            <i class="fa-solid fa-gears text-lg w-5 text-slate-500"></i>
+                            <span>إعدادات المنصة الموحدة ⚙️</span>
+                        </div>
+                    </button>
+
+                    <button onclick="switchTab('reports-global')" id="btn-tab-reports-global" class="sidebar-tab-btn w-full flex items-center justify-between px-4 py-3 rounded-xl text-right text-xs font-black transition">
+                        <div class="flex items-center gap-2.5">
+                            <i class="fa-solid fa-chart-line text-lg w-5 text-emerald-500"></i>
+                            <span>التقارير المالية والإدارية 📈</span>
+                        </div>
+                    </button>
+
+                    <button onclick="switchTab('users-global')" id="btn-tab-users-global" class="sidebar-tab-btn w-full flex items-center justify-between px-4 py-3 rounded-xl text-right text-xs font-black transition">
+                        <div class="flex items-center gap-2.5">
+                            <i class="fa-solid fa-users text-lg w-5 text-sky-500"></i>
+                            <span>المستخدمين والزبائن 👥</span>
+                        </div>
+                    </button>
+
+                    <button onclick="switchTab('products-global')" id="btn-tab-products-global" class="sidebar-tab-btn w-full flex items-center justify-between px-4 py-3 rounded-xl text-right text-xs font-black transition">
+                        <div class="flex items-center gap-2.5">
+                            <i class="fa-solid fa-box-open text-lg w-5 text-amber-500"></i>
+                            <span>المنتجات العامة 📦</span>
+                        </div>
+                    </button>
                 </nav>
             </div>
 
@@ -663,7 +698,7 @@
 
         // Sidebar and Tab Switch Helpers
         function switchTab(tabId) {
-            const sections = ['home', 'registrations', 'wilayas', 'notifications', 'secret'];
+            const sections = ['home', 'registrations', 'wilayas', 'notifications', 'secret', 'qr', 'settings-global', 'reports-global', 'users-global', 'products-global'];
             sections.forEach(sec => {
                 const el = document.getElementById(`section-${sec}`);
                 if (el) {
