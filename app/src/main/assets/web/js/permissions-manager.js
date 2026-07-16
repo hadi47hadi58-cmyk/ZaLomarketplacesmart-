@@ -1,3 +1,4 @@
+// ZaLo Marketplace Smart Sync Update: 2026-07-16
 /**
  * ZaLo Smart - Fine-Grained Role Based Access Control (RBAC) & Permissions Manager
  * نظام إدارة الصلاحيات المفصلة للتحقق الآمن من الصلاحيات والتحكم بالأدوار (CUSTOMER, MERCHANT, ADMIN)

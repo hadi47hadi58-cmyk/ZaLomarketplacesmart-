@@ -1,3 +1,4 @@
+// ZaLo Marketplace Smart Sync Update: 2026-07-16
 // ZaLo Smart Marketplace - Client-Side Cache Purger & Auto-Updater (cache-purger.js)
 // Implements a self-healing version check to eliminate ghost sessions and cached HTML/JS lag.
 

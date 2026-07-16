@@ -1,3 +1,4 @@
+// ZaLo Marketplace Smart Sync Update: 2026-07-16
 // ZaLo Smart Marketplace - Supabase & NestJS Unified Compatibility Layer
 // This file acts as a drop-in compatibility replacement module,
 // routing all operations completely and cleanly through Supabase AND our NestJS + PostgreSQL Backend.

@@ -1,3 +1,4 @@
+// ZaLo Marketplace Smart Sync Update: 2026-07-16
 // ZaLo Smart Marketplace - JavaScript Shared Engine (app.js)
 // Implements 100% Client-Side Firestore Database Replica using localStorage
 // Fully localized in Arabic with support for 69 Algerian Wilayas and custom Southern Municipalities
@@ -16,13 +17,7 @@ const SEED_USERS = [
     { uid: "user_manager", email: "manager@zalo.dz", name: "المدير العام للنظام", phone: "0660447711", role: "manager", status: "ACTIVE" }
 ];
 
-const SEED_STORES = [
-    { storeId: "store_salam", municipalityId: "el-menia", storeName: "متجر السلام", ownerName: "أحمد بن زكري", phone: "0666112233", address: "وسط المدينة، المنيعة (بالقرب من البريد القديم)", image: "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?auto=format&fit=crop&w=600&q=80" },
-    { storeId: "store_noor", municipalityId: "el-menia", storeName: "متجر النور", ownerName: "سعيد بن عمر", phone: "0555998877", address: "شارع المجاهدين المقابل لبلدية المنيعة", image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=600&q=80" },
-    { storeId: "store_oasis", municipalityId: "el-menia", storeName: "متجر الواحة", ownerName: "عمر المنيعي", phone: "0770454545", address: "حي البساتين الشمالي، المنيعة", image: "https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=600&q=80" },
-    { storeId: "store_sahara", municipalityId: "el-menia", storeName: "متجر الصحراء", ownerName: "بشير الصحراوي", phone: "0662334455", address: "المخرج الجغرافي باتجاه عين صالح", image: "https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=600&q=80" },
-    { storeId: "store_fhal_tech", municipalityId: "hassi-el-fhal", storeName: "تقنية الفحل للإلكترونيات", ownerName: "إبراهيم الهاشمي", phone: "0661122334", address: "الشارع الرئيسي، بلدة حاسي الفحل", image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&q=80" }
-];
+const SEED_STORES = [];
 
 const SEED_CATEGORIES = [
     { categoryId: "cat_phones", storeId: "store_salam", categoryName: "هواتف" },
@@ -33,24 +28,11 @@ const SEED_CATEGORIES = [
     { categoryId: "cat_services", storeId: "store_salam", categoryName: "خدمات" }
 ];
 
-const SEED_PRODUCTS = [
-    { productId: "prod_galaxy_a07", storeId: "store_salam", categoryId: "cat_phones", productName: "Galaxy A07", price: 22000, description: "هاتف ذكي ببطارية قوية 6000 مللي أمبير، شاشة قياس 6.5 بوصة، مع سعة تخزين 64 جيجابايت وكاميرا خلفية مزدوجة بدقة 50 ميجابكسل للتقاط أهم تفاصيل يومك الصيفي ببلدية المنيعة.", images: ["https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?auto=format&fit=crop&w=600&q=80", "https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=600&q=80"], stock: 15 },
-    { productId: "prod_honor_x6c", storeId: "store_salam", categoryId: "cat_phones", productName: "Honor X6C", price: 29000, description: "تصميم عصري رياضي بملمس ناعم، يدعم اتصال فائق الجودة وقوة تحمل ضد السقوط، مثالي للاستخدام الشاق ومكالمات البائعين والبريد الإلكتروني للعمل اليومي بالجزائر.", images: ["https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=600&q=80"], stock: 8 },
-    { productId: "prod_battery_pack", storeId: "store_salam", categoryId: "cat_electronic", productName: "بنك طاقة شاحن أنكر 20K", price: 6500, description: "شاحن لاسلكي سريع بسعة 20,000 مللي أمبير مع منافذ شحن سريعة متعددة لتغذية هاتفك في الحالات الاستثنائية.", images: ["https://images.unsplash.com/photo-1583863788434-e58a36330cf0?auto=format&fit=crop&w=600&q=80"], stock: 20 },
-    { productId: "prod_brakes", storeId: "store_salam", categoryId: "cat_parts", productName: "فحمات فرامل سيارة بوش", price: 4500, description: "فرامل سيارة أصلية مصنوعة خصيصاً لتحمل الاحتكاك الشديد والحرارة العالية لضمان سلامتك وسلامة عائلتك على الطريق.", images: ["https://images.unsplash.com/photo-1486006920555-c77dce18193b?auto=format&fit=crop&w=600&q=80"], stock: 12 },
-    { productId: "prod_dates", storeId: "store_oasis", categoryId: "cat_food", productName: "علبة تمور دقلة نور تولقة", price: 1500, description: "تمور طبيعية بكر ممتازة تم قطفها وتغليفها محلياً بعناية فائقة لتنير مائدتك الجزائرية بصحة وعافية تامة.", images: ["https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=600&q=80"], stock: 50 },
-    { productId: "prod_jacket", storeId: "store_salam", categoryId: "cat_clothes", productName: "سترة صوفية شتوية صحراوية", price: 5500, description: "جاكيت من الصوف الحر الفاخر يوفر الدفء المثالي لليالي الصحراء الباردة في ولايات الجنوب وكل بلديات المنيعة.", images: ["https://images.unsplash.com/photo-1544022613-e87ca75a784a?auto=format&fit=crop&w=600&q=80"], stock: 5 }
-];
+const SEED_PRODUCTS = [];
 
-const SEED_ORDERS = [
-    { orderId: "ord_1001", userId: "user_hadi", storeId: "store_salam", productId: "prod_galaxy_a07", status: "قيد المراجعة", total: 22000, qty: 1, paymentMethod: "COD", address: "حي ميعاد، المنيعة", receiptImage: "", timestamp: Date.now() - 3600000 * 2 },
-    { orderId: "ord_1002", userId: "user_hadi", storeId: "store_salam", productId: "prod_honor_x6c", status: "تم التسليم", total: 29000, qty: 1, paymentMethod: "BaridiMob", address: "بلدية حاسي الفحل", receiptImage: "mock_receipt.png", timestamp: Date.now() - 86400000 }
-];
+const SEED_ORDERS = [];
 
-const SEED_MESSAGES = [
-    { messageId: "msg_1", senderId: "user_hadi", receiverId: "user_merchant", message: "السلام عليكم، هل هاتف Galaxy A07 متوفر حالياً لتوصيله لبلدية حاسي الفحل؟", timestamp: Date.now() - 3600000 },
-    { messageId: "msg_2", senderId: "user_merchant", receiverId: "user_hadi", message: "وعليكم السلام ورحمة الله وبركاته، نعم أخي الكريم متوفر ويتم شحنه في الصباح مع الدفع عند الاستلام.", timestamp: Date.now() - 3000000 }
-];
+const SEED_MESSAGES = [];
 
 // --- State Database Controller (Simulating Firestore Observers & Live Mutation) ---
 class DB {

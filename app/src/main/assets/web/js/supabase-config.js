@@ -1,3 +1,4 @@
+// ZaLo Marketplace Smart Sync Update: 2026-07-16
 // ZaLo Smart Marketplace - Supabase Config (supabase-config.js)
 // This file initializes the Supabase Client for the client-side Web Application.
 

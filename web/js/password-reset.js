@@ -1,3 +1,4 @@
+// ZaLo Marketplace Smart Sync Update: 2026-07-16
 /**
  * ZaLo Smart Algerian Multivendor Marketplace
  * نظام استعادة وتحديث كلمة المرور - Password Reset Client Module

@@ -1,3 +1,4 @@
+// ZaLo Marketplace Smart Sync Update: 2026-07-16
 /**
  * ZaLo Smart Algerian Multivendor Marketplace
  * نظام حماية الواجهات والجلسات - Client Login Security & Session Protection

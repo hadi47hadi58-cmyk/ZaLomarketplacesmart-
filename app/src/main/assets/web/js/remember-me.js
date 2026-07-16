@@ -1,3 +1,4 @@
+// ZaLo Marketplace Smart Sync Update: 2026-07-16
 /**
  * ZaLo Smart Algerian Multivendor Marketplace
  * نظام تذكر البيانات والتعبئة التلقائية الآمنة - Client Remember Me Module

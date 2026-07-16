@@ -1,3 +1,4 @@
+// ZaLo Marketplace Smart Sync Update: 2026-07-16
 // ZaLo Smart Marketplace - NestJS Backend REST API Bridge
 // جسر الاتصال البرمجي الموحد بين الواجهة الأمامية والخلفية لـ NestJS وقاعدة بيانات PostgreSQL
 // يدعم التبديل التلقائي والحفظ الاحتياطي في الـ LocalStorage لضمان تشغيل أوفلاين متين وسلس.

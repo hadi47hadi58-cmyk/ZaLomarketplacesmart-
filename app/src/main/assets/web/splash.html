@@ -1,3 +1,4 @@
+<!-- ZaLo Marketplace Smart Sync Update: 2026-07-16 -->
 <!DOCTYPE html>
 <!-- ZaLo Marketplace Smart-Spark Final Version Update (Sync Trigger) -->
 <html lang="ar" dir="rtl">
@@ -106,7 +107,7 @@
   </div>
   <div class="subtitle">جاري التحضير...</div>
 
-  <script type="module">
+  <script>
     // قراءة التوكن والدور لتوجيه المستخدم بشكل صحيح ومنع حلقة التكرار اللانهائي
     const token = localStorage.getItem('zalo_session_jwt') || localStorage.getItem('zalo_token');
     const rawRole = localStorage.getItem('zalo_user_role') || localStorage.getItem('zalo_role') || 'customer';
@@ -182,6 +183,10 @@
 
       // خطة احتياطية في حالة انقطاع الشبكة أو استخدام توكن تجريبي محلي غير مسجل في السيرفر
       console.log(`[Splash Router] Routing with offline fallback role: ${role}`);
+      if (!token) {
+        window.location.href = 'index.html';
+        return;
+      }
       if (role === 'merchant') {
         window.location.href = 'dashboard-store.html';
       } else if (role === 'admin') {

@@ -1,3 +1,4 @@
+// ZaLo Marketplace Smart Sync Update: 2026-07-16
 /**
  * ZaLo Smart Algerian Multivendor Marketplace
  * نظام إدارة الجلسات الذكي والتوجيه التلقائي الآمن - Smart Session Manager

@@ -1,3 +1,4 @@
+// ZaLo Marketplace Smart Sync Update: 2026-07-16
 /**
  * ZaLo Smart Algerian Multivendor Marketplace
  * معالج تسجيل الدخول المتقدم والربط مع الواجهة الخلفية - Advanced Login Handler
