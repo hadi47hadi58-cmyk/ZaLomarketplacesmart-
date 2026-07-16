@@ -61,6 +61,27 @@
         .spin-anim {
             animation: spin-once 0.6s ease-in-out;
         }
+
+        /* Sidebar Styles */
+        .sidebar-tab-btn {
+            background-color: transparent;
+            color: #64748b;
+            border: 1.5px solid transparent;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.2s ease-in-out;
+        }
+        .sidebar-tab-btn:hover {
+            background-color: #f1f5f9;
+            color: var(--navy);
+        }
+        .sidebar-tab-btn.active {
+            background-color: rgba(29, 155, 240, 0.08);
+            color: var(--sky-blue);
+            border-color: rgba(29, 155, 240, 0.2);
+            box-shadow: 0 2px 4px rgba(29, 155, 240, 0.04);
+        }
     </style>
     
     <!-- Strict Authorization & Session Checking -->
@@ -80,49 +101,138 @@
         }
     </script>
 </head>
-<body class="min-h-screen flex flex-col justify-between" onload="initOldAdminDashboard()">
+<body class="min-h-screen bg-slate-50 text-[#102a43]" onload="initOldAdminDashboard()">
 
-    <!-- Main Navigation Bar -->
-    <header class="sticky top-0 z-50 bg-white/95 border-b-2 border-[#d4af37] w-full py-3 px-6 flex justify-between items-center backdrop-blur-md shadow-sm">
-        <a href="customer-home.html" class="flex items-center gap-1.5 text-xs text-sky-600 hover:text-sky-800 font-bold transition">
-            <i class="fa-solid fa-house"></i>
-            <span>العودة لصفحة الزبائن</span>
-        </a>
+    <!-- Sidebar Overlay (for mobile drawer background dim) -->
+    <div id="sidebar-overlay" onclick="toggleSidebarMobile()" class="fixed inset-0 bg-black/50 z-40 hidden lg:hidden backdrop-blur-sm"></div>
+
+    <div class="min-h-screen flex flex-col lg:flex-row w-full">
         
-        <!-- Header Unified Logo -->
-        <div class="flex items-center gap-2">
-            <svg width="34" height="34" viewBox="0 0 100 100" style="flex-shrink: 0;">
-                <path d="M 29,13.6 A 42,42 0 1,0 71,13.6" fill="none" stroke="#d4af37" stroke-width="4.5" stroke-linecap="round" />
-                <path d="M47.5,75 L52.5,75 L52.1,68 L47.9,68 Z" fill="#d4af37" />
-                <path d="M47.9,66 L52.1,66 L51.7,59 L48.3,59 Z" fill="#d4af37" />
-                <path d="M48.3,57 L51.7,57 L51.3,50 L48.7,50 Z" fill="#d4af37" />
-                <path d="M48.7,48 L51.3,48 L51,45 L49,45 Z" fill="#d4af37" />
-                <path d="M49,46 C41,43 33,48 27,56 C35,51 43,49 49,48 Z" fill="#d4af37" />
-                <path d="M49,46 C39,37 30,39 22,45 C32,42 41,43 49,46 Z" fill="#d4af37" />
-                <path d="M51,46 C59,43 67,48 73,56 C65,51 57,49 51,48 Z" fill="#d4af37" />
-                <path d="M51,46 C61,37 70,39 78,45 C68,42 59,43 51,46 Z" fill="#d4af37" />
-                <path d="M50,45 C50,26 45,17 40,14 C47,19 50,31 50,45 Z" fill="#d4af37" />
-                <text x="35" y="62" font-family="'Cairo', sans-serif" font-weight="900" font-size="14" fill="#d4af37" text-anchor="middle">Z</text>
-                <text x="65" y="62" font-family="'Cairo', sans-serif" font-weight="900" font-size="14" fill="#d4af37" text-anchor="middle">L</text>
-            </svg>
-            <span style="font-family: 'Great Vibes', cursive; font-size: 24px; font-weight: normal; color: #d4af37; line-height: 1;">ZaLo Control</span>
-        </div>
+        <!-- Right Sidebar (RTL) -->
+        <aside id="zalo-sidebar" class="bg-white border-l-2 border-[#d4af37] w-72 shrink-0 flex flex-col justify-between hidden lg:flex fixed lg:sticky top-0 right-0 h-screen z-50 transition-transform duration-300 transform translate-x-0">
+            <div class="flex flex-col h-full overflow-y-auto">
+                <!-- Sidebar Header Logo -->
+                <div class="p-6 border-b border-slate-100 flex flex-col items-center gap-3 bg-gradient-to-b from-slate-50 to-white">
+                    <svg width="48" height="48" viewBox="0 0 100 100">
+                        <path d="M 29,13.6 A 42,42 0 1,0 71,13.6" fill="none" stroke="#d4af37" stroke-width="4.5" stroke-linecap="round" />
+                        <path d="M47.5,75 L52.5,75 L52.1,68 L47.9,68 Z" fill="#d4af37" />
+                        <path d="M47.9,66 L52.1,66 L51.7,59 L48.3,59 Z" fill="#d4af37" />
+                        <path d="M48.3,57 L51.7,57 L51.3,50 L48.7,50 Z" fill="#d4af37" />
+                        <path d="M48.7,48 L51.3,48 L51,45 L49,45 Z" fill="#d4af37" />
+                        <path d="M49,46 C41,43 33,48 27,56 C35,51 43,49 49,48 Z" fill="#d4af37" />
+                        <path d="M49,46 C39,37 30,39 22,45 C32,42 41,43 49,46 Z" fill="#d4af37" />
+                        <path d="M51,46 C59,43 67,48 73,56 C65,51 57,49 51,48 Z" fill="#d4af37" />
+                        <path d="M51,46 C61,37 70,39 78,45 C68,42 59,43 51,46 Z" fill="#d4af37" />
+                        <path d="M50,45 C50,26 45,17 40,14 C47,19 50,31 50,45 Z" fill="#d4af37" />
+                        <text x="35" y="62" font-family="'Cairo', sans-serif" font-weight="900" font-size="14" fill="#d4af37" text-anchor="middle">Z</text>
+                        <text x="65" y="62" font-family="'Cairo', sans-serif" font-weight="900" font-size="14" fill="#d4af37" text-anchor="middle">L</text>
+                    </svg>
+                    <span style="font-family: 'Great Vibes', cursive; font-size: 26px; font-weight: normal; color: #d4af37; line-height: 1;">ZaLo Control</span>
+                    <span class="text-[10px] text-slate-400 font-extrabold tracking-widest uppercase">الرقابة العليا في الجزائر</span>
+                </div>
 
-        <!-- Sidebar Trigger & Profile info -->
-        <div class="flex items-center gap-3">
-            <div class="text-right hidden sm:block">
-                <span id="sidebar-user-name" class="text-xs font-black block text-slate-800">المدير العام</span>
-                <span id="sidebar-user-email" class="text-[9px] text-slate-400 font-bold block">admin@zalo.dz</span>
+                <!-- Admin Profile Card -->
+                <div class="p-4 mx-4 my-3 bg-slate-50 border border-slate-200 rounded-2xl flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-purple-100 text-purple-600 border border-purple-200 flex items-center justify-center text-sm font-black shadow-sm">
+                        <i class="fa-solid fa-crown"></i>
+                    </div>
+                    <div class="text-right">
+                        <span id="sidebar-user-name" class="text-xs font-black block text-slate-800">المدير العام</span>
+                        <span id="sidebar-user-email" class="text-[9px] text-slate-400 font-bold block">admin@zalo.dz</span>
+                    </div>
+                </div>
+
+                <!-- Navigation List -->
+                <nav class="flex-1 px-4 py-2 space-y-1.5">
+                    <button onclick="switchTab('home')" id="btn-tab-home" class="sidebar-tab-btn active w-full flex items-center justify-between px-4 py-3 rounded-xl text-right text-xs font-black transition">
+                        <div class="flex items-center gap-2.5">
+                            <i class="fa-solid fa-chart-line text-lg w-5"></i>
+                            <span>الرئيسية والإحصائيات</span>
+                        </div>
+                        <span class="bg-sky-100 text-sky-700 px-2 py-0.5 rounded-full text-[9px] font-bold">نشط</span>
+                    </button>
+
+                    <button onclick="switchTab('registrations')" id="btn-tab-registrations" class="sidebar-tab-btn w-full flex items-center justify-between px-4 py-3 rounded-xl text-right text-xs font-black transition">
+                        <div class="flex items-center gap-2.5">
+                            <i class="fa-solid fa-clipboard-user text-lg w-5"></i>
+                            <span>طلبات التسجيل والمراجعة</span>
+                        </div>
+                        <span id="badge-registrations-count" class="bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full text-[9px] font-bold">0</span>
+                    </button>
+
+                    <button onclick="switchTab('wilayas')" id="btn-tab-wilayas" class="sidebar-tab-btn w-full flex items-center justify-between px-4 py-3 rounded-xl text-right text-xs font-black transition">
+                        <div class="flex items-center gap-2.5">
+                            <i class="fa-solid fa-map-location-dot text-lg w-5"></i>
+                            <span>النشاط الإقليمي للولايات</span>
+                        </div>
+                        <span class="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full text-[9px] font-bold">69</span>
+                    </button>
+
+                    <button onclick="switchTab('notifications')" id="btn-tab-notifications" class="sidebar-tab-btn w-full flex items-center justify-between px-4 py-3 rounded-xl text-right text-xs font-black transition">
+                        <div class="flex items-center gap-2.5">
+                            <i class="fa-solid fa-bullhorn text-lg w-5"></i>
+                            <span>لوحة الإشعارات والإعلانات</span>
+                        </div>
+                        <span id="badge-announcements-count" class="bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full text-[9px] font-bold">0</span>
+                    </button>
+
+                    <button onclick="switchTab('secret')" id="btn-tab-secret" class="sidebar-tab-btn w-full flex items-center justify-between px-4 py-3 rounded-xl text-right text-xs font-black transition">
+                        <div class="flex items-center gap-2.5">
+                            <i class="fa-solid fa-terminal text-lg w-5"></i>
+                            <span>سجل العمليات السري</span>
+                        </div>
+                        <span class="bg-red-100 text-red-700 px-2 py-0.5 rounded-full text-[9px] font-bold">آمن</span>
+                    </button>
+                </nav>
             </div>
-            <button onclick="logoutUser()" class="bg-red-50 text-red-600 border border-red-200 text-xs px-4 py-1.5 rounded-full hover:bg-red-600 hover:text-white font-bold transition">
-                <i class="fa-solid fa-power-off"></i> خروج
-            </button>
-        </div>
-    </header>
 
-    <!-- Main Container -->
-    <div class="flex-1 w-full flex flex-col justify-between">
-        <main class="w-full max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
+            <!-- Sidebar Footer -->
+            <div class="p-4 border-t border-slate-100 bg-slate-50 space-y-2">
+                <a href="customer-home.html" class="flex items-center justify-center gap-1.5 text-xs text-sky-600 hover:text-sky-800 font-bold transition py-2 rounded-xl bg-sky-50 border border-sky-100">
+                    <i class="fa-solid fa-house"></i>
+                    <span>صفحة الزبائن المفتوحة</span>
+                </a>
+                <button onclick="logoutUser()" class="w-full bg-red-50 hover:bg-red-600 hover:text-white text-red-600 border border-red-200 text-xs py-2.5 rounded-xl font-bold transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-power-off"></i> 
+                    <span>خروج</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <div class="flex-1 min-w-0 flex flex-col justify-between">
+            <!-- Header with Hamburger for mobile and top info -->
+            <header class="sticky top-0 z-30 bg-white/95 border-b-2 border-[#d4af37] w-full py-3 px-6 flex justify-between items-center backdrop-blur-md shadow-sm">
+                <div class="flex items-center gap-3">
+                    <button onclick="toggleSidebarMobile()" class="lg:hidden text-slate-800 hover:text-[#d4af37] text-xl p-2 focus:outline-none">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                    <a href="customer-home.html" class="hidden sm:flex items-center gap-1.5 text-xs text-sky-600 hover:text-sky-800 font-bold transition">
+                        <i class="fa-solid fa-house"></i>
+                        <span>العودة لصفحة الزبائن</span>
+                    </a>
+                </div>
+                
+                <div class="flex items-center gap-2">
+                    <span style="font-family: 'Great Vibes', cursive; font-size: 24px; font-weight: normal; color: #d4af37; line-height: 1;">ZaLo Control</span>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <div class="text-right hidden sm:block">
+                        <span id="header-user-name" class="text-xs font-black block text-slate-800">المدير العام</span>
+                        <span id="header-user-email" class="text-[9px] text-slate-400 font-bold block">admin@zalo.dz</span>
+                    </div>
+                    <button onclick="logoutUser()" class="lg:hidden bg-red-50 text-red-600 border border-red-200 text-xs p-2 rounded-xl hover:bg-red-600 hover:text-white font-bold transition">
+                        <i class="fa-solid fa-power-off"></i>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Main Container -->
+            <main class="w-full max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6 flex-1">
+                
+                <!-- Section 1: Home & Stats -->
+                <div id="section-home" class="space-y-6">
 
             <!-- Banner exact styling for ZaLo -->
             <div class="bg-white border-2 border-slate-200 rounded-3xl p-6 relative overflow-hidden shadow-sm text-right flex flex-col md:flex-row justify-between items-center gap-4">
@@ -275,21 +385,17 @@
 
             </div>
 
-            <!-- Secret Operations Console Button -->
-            <div class="w-full">
-                <button onclick="toggleSecretConsole()" class="w-full bg-[#113f1c] hover:bg-[#1e3e26] border-2 border-[#d4af37] text-white font-black py-4 px-6 rounded-2xl transition shadow-md hover:shadow-lg flex items-center justify-center gap-3 text-sm">
-                    <i class="fa-solid fa-folder-closed" id="secret-folder-icon"></i>
-                    <span>فتح سجل الرقابة والعمليات السري (خاص بالمدير) 🔐 📁</span>
-                </button>
-            </div>
+        </div> <!-- End of Section 1: Home & Stats -->
 
-            <!-- Secret Console Content Area (Hidden by Default) -->
-            <div id="secret-console" class="bg-[#1e293b] border-2 border-[#d4af37] rounded-3xl p-6 text-white space-y-4 hidden text-right font-mono text-xs shadow-inner">
+        <!-- Section 5: Secret Console -->
+        <div id="section-secret" class="space-y-6 hidden">
+            <!-- Secret Console Content Area -->
+            <div class="bg-[#1e293b] border-2 border-[#d4af37] rounded-3xl p-6 text-white space-y-4 text-right font-mono text-xs shadow-inner">
                 <h4 class="text-sm font-black text-yellow-400 flex items-center gap-2">
                     <i class="fa-solid fa-terminal text-yellow-400"></i>
                     <span>سجل نظام التشغيل والمراقبة الفورية (Live Audit Server Log)</span>
                 </h4>
-                <div class="bg-black/50 p-4 rounded-xl space-y-1 overflow-y-auto max-h-48 text-[11px] leading-relaxed">
+                <div class="bg-black/50 p-4 rounded-xl space-y-1 overflow-y-auto max-h-[60vh] text-[11px] leading-relaxed">
                     <p class="text-green-400">[08:22:15] Security Daemon initiated successfully.</p>
                     <p class="text-sky-300">[11:04:12] User "merchant@zalo.dz" authorized via dynamic OTP bypass portal.</p>
                     <p class="text-amber-300">[12:45:00] Synchronization request for Wilaya 58 (El Menia) completed with status APPROVED.</p>
@@ -298,12 +404,12 @@
                     <p class="text-sky-300">[15:04:16] Super Admin session authenticated. Initializing Algeria control board.</p>
                 </div>
             </div>
+        </div>
 
-            <!-- TWO COLUMN WORK AREA -->
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-
-                <!-- Right Pane: Wilaya 69 Interactive Table (8 Cols) -->
-                <div class="lg:col-span-8 bg-white border border-slate-200 rounded-3xl p-6 space-y-4 shadow-sm text-right">
+        <!-- Section 3: Wilayas -->
+        <div id="section-wilayas" class="space-y-6 hidden animate-fadeIn">
+            <!-- Right Pane: Wilaya 69 Interactive Table -->
+            <div class="bg-white border-2 border-slate-200 rounded-3xl p-6 space-y-4 shadow-sm text-right">
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-3 border-b border-slate-100">
                         <h3 class="text-base font-black text-slate-800 flex items-center gap-2">
                             <i class="fa-solid fa-map-location-dot text-[#d4af37]"></i>
@@ -377,10 +483,12 @@
                             </tbody>
                         </table>
                     </div>
-                </div>
+        </div> <!-- End of Section 3: Wilayas -->
 
-                <!-- Left Pane: Notifications Control Center (4 Cols) -->
-                <div class="lg:col-span-4 bg-white border border-slate-200 rounded-3xl p-6 space-y-4 shadow-sm text-right">
+        <!-- Section 4: Notifications -->
+        <div id="section-notifications" class="space-y-6 hidden animate-fadeIn">
+            <!-- Left Pane: Notifications Control Center -->
+            <div class="bg-white border-2 border-slate-200 rounded-3xl p-6 space-y-4 shadow-sm text-right">
                     <h3 class="text-base font-black text-slate-800 flex items-center gap-2 pb-3 border-b border-slate-100">
                         <i class="fa-solid fa-bullhorn text-[#d4af37]"></i>
                         <span>لوحة الإشعارات الخاصة بالمدير والتحكم الكامل</span>
@@ -425,13 +533,13 @@
                         <div id="announcements-list-container" class="space-y-2 max-h-48 overflow-y-auto pr-1">
                             <!-- Populated dynamically -->
                         </div>
-                    </div>
-                </div>
-
             </div>
+        </div> <!-- End of Section 4: Notifications -->
 
+        <!-- Section 2: Registrations -->
+        <div id="section-registrations" class="space-y-6 hidden animate-fadeIn">
             <!-- REGISTRATION REQUESTS IMMEDIATE REVIEW -->
-            <div class="bg-white border border-slate-200 rounded-3xl p-6 space-y-4 shadow-sm text-right">
+            <div class="bg-white border-2 border-slate-200 rounded-3xl p-6 space-y-4 shadow-sm text-right">
                 <h3 class="text-base font-black text-slate-800 flex items-center gap-2 pb-3 border-b border-slate-100">
                     <i class="fa-solid fa-clipboard-user text-[#d4af37]"></i>
                     <span>المراجعة الفورية لطلبات التسجيل الأخيرة للأعضاء والتجار</span>
@@ -456,14 +564,16 @@
                     </table>
                 </div>
             </div>
+        </div> <!-- End of Section 2: Registrations -->
 
         </main>
-    </div>
 
-    <!-- Foot -->
-    <footer class="border-t border-slate-200 py-4 text-center text-xs text-slate-400 bg-white shadow-inner">
-        <p>© 2026 ZaLo Market - لوحة التدقيق والرقابة الجزائرية العليا.</p>
-    </footer>
+        <!-- Foot -->
+        <footer class="border-t border-slate-200 py-4 text-center text-xs text-slate-400 bg-white shadow-inner">
+            <p>© 2026 ZaLo Market - لوحة التدقيق والرقابة الجزائرية العليا.</p>
+        </footer>
+        </div> <!-- End of main content area flex-col -->
+    </div> <!-- End of outer min-h-screen flex-row wrapper -->
 
     <!-- MODAL: ACTIVE STORES -->
     <div id="active-stores-modal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 hidden backdrop-blur-sm">
@@ -549,6 +659,54 @@
         }
         function setDB(key, value) {
             localStorage.setItem(DB_KEY_PREFIX + key, JSON.stringify(value));
+        }
+
+        // Sidebar and Tab Switch Helpers
+        function switchTab(tabId) {
+            const sections = ['home', 'registrations', 'wilayas', 'notifications', 'secret'];
+            sections.forEach(sec => {
+                const el = document.getElementById(`section-${sec}`);
+                if (el) {
+                    if (sec === tabId) {
+                        el.classList.remove('hidden');
+                    } else {
+                        el.classList.add('hidden');
+                    }
+                }
+                const btn = document.getElementById(`btn-tab-${sec}`);
+                if (btn) {
+                    if (sec === tabId) {
+                        btn.classList.add('active');
+                    } else {
+                        btn.classList.remove('active');
+                    }
+                }
+            });
+
+            // Close mobile sidebar if open
+            const sidebar = document.getElementById("zalo-sidebar");
+            const overlay = document.getElementById("sidebar-overlay");
+            if (sidebar && !sidebar.classList.contains("hidden") && window.innerWidth < 1024) {
+                sidebar.classList.add("hidden");
+                sidebar.classList.remove("flex");
+                if (overlay) overlay.classList.add("hidden");
+            }
+        }
+
+        function toggleSidebarMobile() {
+            const sidebar = document.getElementById("zalo-sidebar");
+            const overlay = document.getElementById("sidebar-overlay");
+            if (sidebar) {
+                if (sidebar.classList.contains("hidden")) {
+                    sidebar.classList.remove("hidden");
+                    sidebar.classList.add("flex");
+                    if (overlay) overlay.classList.remove("hidden");
+                } else {
+                    sidebar.classList.add("hidden");
+                    sidebar.classList.remove("flex");
+                    if (overlay) overlay.classList.add("hidden");
+                }
+            }
         }
 
         // List of all Algerian Wilayas with additional performance indicators
@@ -660,6 +818,10 @@
 
             let pendingCount = stores.filter(s => s.status === "PENDING").length;
             document.getElementById('stat-pending-security').innerText = pendingCount;
+
+            // Update sidebar registrations badge
+            const pendingRegBadge = document.getElementById('badge-registrations-count');
+            if (pendingRegBadge) pendingRegBadge.innerText = pendingCount;
 
             // Total products count from local database
             let products = getDB("products", []);
@@ -818,6 +980,11 @@
             container.innerHTML = '';
 
             let announcements = getDB("global_announcements", []);
+
+            // Update sidebar announcements badge
+            const announceBadge = document.getElementById('badge-announcements-count');
+            if (announceBadge) announceBadge.innerText = announcements.length;
+
             if (announcements.length === 0) {
                 container.innerHTML = `<p class="text-xs text-slate-400 font-bold text-center py-4">لا توجد إعلانات نشطة حالياً.</p>`;
                 return;
