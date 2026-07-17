@@ -175,7 +175,13 @@
                     <p class="text-xs text-slate-500 font-bold">مقدم الشكوى: عبد الهادي نجم الدين</p>
                     <hr class="border-slate-200">
                     <div class="flex gap-2 justify-end">
-                        <button class="bg-sky-500 hover:bg-sky-600 text-white text-[10px] px-4 py-2 rounded-lg font-bold transition" onclick="alert('تم تحذير المتجر وتدارك التوصيل بنجاح.')">حل النزاع وإصلاح المشكلة 🤝</button>
+                        <button class="bg-sky-500 hover:bg-sky-600 text-white text-[10px] px-4 py-2 rounded-lg font-bold transition" onclick="showPermissionAudit({
+                            actionName: 'حل النزاعات والتحكيم بين الزبائن والتجار بالولاية',
+                            allowedRoles: ['admin', 'manager', 'disputes'],
+                            currentRole: 'manager',
+                            status: 'GRANTED',
+                            description: 'بصفتك مديراً تنفيذاً للولاية، تملك الصلاحية الكاملة للتحكيم الإداري والمالي وحل النزاعات القائمة بين الزوار والمتاجر المعتمدة. تم إرسال تنبيه رسمي ومتابعة تدارك مشكلة التوصيل مع المتجر والمندوب فوراً بنجاح! 🤝'
+                        })">حل النزاع وإصلاح المشكلة 🤝</button>
                     </div>
                 </div>
             </div>

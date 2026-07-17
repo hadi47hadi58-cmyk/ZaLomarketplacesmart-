@@ -295,7 +295,13 @@
                 </h4>
                 <p class="text-xs text-sky-100 font-medium">هل تملك فروعاً أو محلات تجارية أخرى؟ أضف فروعك الآن واكسب زبائن جدد.</p>
             </div>
-            <button onclick="alert('خدمة إضافة فروع متعددة للمتجر ستتوفر قريباً!')" class="bg-white text-sky-600 font-black text-xs px-5 py-2.5 rounded-full hover:bg-sky-50 hover:scale-105 transition duration-150 flex items-center gap-2 shrink-0 shadow">
+            <button onclick="showPermissionAudit({
+                actionName: 'إضافة فروع متعددة للمتجر الإقليمي',
+                allowedRoles: ['admin', 'manager'],
+                currentRole: 'merchant',
+                status: 'RESTRICTED',
+                description: 'صلاحية إضافة فروع إقليمية متعددة للمتاجر هي للمدير العام والمديرين التنفيذيين فقط لمراجعة السجلات ومطابقة تراخيص النشاط التجاري قبل النشر والتوسيع. دورك الحالي: تاجر معتمد بالمنصة.'
+            })" class="bg-white text-sky-600 font-black text-xs px-5 py-2.5 rounded-full hover:bg-sky-50 hover:scale-105 transition duration-150 flex items-center gap-2 shrink-0 shadow">
                 <span>افتح متجراً الآن</span>
                 <i class="fa-solid fa-arrow-left"></i>
             </button>
@@ -571,7 +577,13 @@
             <!-- OUTSTANDING CUSTOMER ORDERS (FULL WIDTH SECTION) -->
             <section class="bg-white border-2 border-slate-200 rounded-3xl p-6 space-y-4 shadow-sm text-right">
             <div class="flex justify-between items-center border-b border-slate-100 pb-3">
-                <span onclick="alert('شحنات زالو ديزاد تسلم بنظام الدفع عند الاستلام.')" class="text-xs bg-slate-100 text-slate-600 px-3 py-1 rounded-full border border-slate-200 cursor-pointer font-bold">مراجعة كامل الشحنات</span>
+                <span onclick="showPermissionAudit({
+                    actionName: 'مراجعة ومراقبة كامل شحنات المنصة المباشرة',
+                    allowedRoles: ['admin', 'coordinator', 'confirmer'],
+                    currentRole: 'merchant',
+                    status: 'RESTRICTED',
+                    description: 'صلاحية مراقبة الشحنات المركزية لجميع التجار والمشترين عبر الولايات تقتصر على المدير العام، المنسق الولائي، ومؤكد الشحنات للتوزيع الإداري والفرز الأمني. كتاجر معتمد بالمنصة، يمكنك مراجعة وتتبع الطلبات الخاصة بمتجرك فقط من خلال هذا الجدول.'
+                })" class="text-xs bg-slate-100 text-slate-600 px-3 py-1 rounded-full border border-slate-200 cursor-pointer font-bold">مراجعة كامل الشحنات</span>
                 <h3 class="text-base font-black text-slate-800 flex items-center gap-2">
                     <i class="fa-solid fa-cart-flatbed-suitcases text-[#d4af37]"></i>
                     <span>طلبات زبائنك الأخيرة والتحكم بمسار الشحن</span>
@@ -1081,7 +1093,13 @@
             urlInput.select();
             urlInput.setSelectionRange(0, 99999); 
             navigator.clipboard.writeText(urlInput.value);
-            alert("تم نسخ رابط متجرك التجاري المباشر لتبادله ومشاركته مع زبائنك! 🔗");
+            showPermissionAudit({
+                actionName: 'مشاركة ونشر الرابط التجاري لمتجرك المباشر',
+                allowedRoles: ['merchant', 'admin'],
+                currentRole: 'merchant',
+                status: 'GRANTED',
+                description: 'بصفتك تاجراً معتمداً، لديك الصلاحية الكاملة لتوليد ومشاركة رابط متجرك المباشر مع الزبائن والجمهور عبر منصات التواصل (فيسبوك، إنستغرام) لتلقي الطلبات مباشرة وبدء عمليات البيع والشحن الفوري!'
+            });
         }
 
         // Save settings handler

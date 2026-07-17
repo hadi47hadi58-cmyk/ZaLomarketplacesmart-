@@ -927,3 +927,112 @@ window.banUser = function(uid) {
         renderManagerUsers();
     }
 }
+
+window.showPermissionAudit = function({
+    actionName,
+    allowedRoles = [],
+    currentRole = "customer",
+    status = "GRANTED", // GRANTED or RESTRICTED
+    description,
+    onExecute = null
+}) {
+    let modalId = "zalo-permission-audit-modal";
+    let modalEl = document.getElementById(modalId);
+    if (!modalEl) {
+        modalEl = document.createElement("div");
+        modalEl.id = modalId;
+        modalEl.className = "fixed inset-0 bg-black/75 z-[9999] flex items-center justify-center p-4 backdrop-blur-sm text-right font-sans";
+        modalEl.setAttribute("dir", "rtl");
+        document.body.appendChild(modalEl);
+    }
+
+    const roleMap = {
+        "admin": "المدير العام للمنصة 👑",
+        "manager": "المدير التنفيذي للولاية 🧑‍💼",
+        "merchant": "تاجر معتمد بالمنصة 🏬",
+        "customer": "زبون / مستهلك وفير 🛍️",
+        "coordinator": "منسق ولائي / بلدي 🗺️",
+        "confirmer": "مؤكد طلبيات وشحن 📦",
+        "auditor": "مراقب ومراجع مالي 💸",
+        "disputes": "مساعد مشرف وحل النزاعات 🤝"
+    };
+
+    const formatRole = (r) => roleMap[r] || r;
+    const allowedRolesStr = allowedRoles.map(r => `<span class="bg-sky-50 text-sky-700 border border-sky-200 text-[10px] font-bold px-2.5 py-1 rounded-full whitespace-nowrap">${formatRole(r)}</span>`).join(" ");
+
+    let statusHeaderBg = status === "GRANTED" ? "bg-[#113f1c]" : "bg-[#991b1b]";
+    let statusIcon = status === "GRANTED" 
+        ? `<div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-3xl mx-auto shadow-sm"><i class="fa-solid fa-circle-check"></i></div>` 
+        : `<div class="w-16 h-16 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center text-3xl mx-auto shadow-sm"><i class="fa-solid fa-shield-halved animate-pulse"></i></div>`;
+
+    let statusText = status === "GRANTED" 
+        ? `<span class="bg-emerald-100 text-emerald-800 border border-emerald-300 px-3 py-1 rounded-full text-xs font-black">مسموح بالوصول والعمل ✅</span>`
+        : `<span class="bg-rose-100 text-rose-800 border border-rose-300 px-3 py-1 rounded-full text-xs font-black">الوصول مقيد / صلاحية محجوبة 🛑</span>`;
+
+    let actionBtn = status === "GRANTED" && onExecute
+        ? `<button id="audit-execute-btn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black py-3 rounded-2xl shadow-md hover:shadow-lg transition duration-150 text-xs">تنفيذ العملية الآن 🚀</button>`
+        : `<button id="audit-close-btn" class="w-full bg-[#113f1c] hover:bg-[#1e3e26] text-white font-black py-3 rounded-2xl shadow-md transition duration-150 text-xs">إغلاق وفهم الصلاحيات 🤝</button>`;
+
+    modalEl.innerHTML = `
+        <div class="bg-white border-2 border-[#d4af37] rounded-[32px] w-full max-w-lg overflow-hidden shadow-2xl transform transition-all duration-300 scale-100 flex flex-col">
+            <header class="${statusHeaderBg} text-white py-5 px-6 flex justify-between items-center shadow">
+                <button onclick="document.getElementById('${modalId}').style.display='none'" class="text-white hover:text-rose-200 text-xl transition">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+                <div class="flex items-center gap-2.5">
+                    <i class="fa-solid fa-shield-halved text-[#d4af37] text-lg"></i>
+                    <span class="text-sm font-black tracking-wide">بوابة فحص الصلاحيات والرتب - ZaLo Secure</span>
+                </div>
+            </header>
+
+            <div class="p-6 space-y-5 text-right overflow-y-auto max-h-[75vh]">
+                <div class="text-center space-y-3 pb-2 border-b border-slate-100">
+                    ${statusIcon}
+                    <h3 class="text-base font-black text-slate-800 mt-2">${actionName}</h3>
+                    <div class="mt-1">${statusText}</div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-bold">
+                    <div class="bg-slate-50 border border-slate-200 p-3.5 rounded-2xl space-y-1.5">
+                        <span class="text-[10px] text-slate-400 font-extrabold block">الرتب والوظائف المخولة:</span>
+                        <div class="flex flex-wrap gap-1.5 mt-1">${allowedRolesStr || '<span class="text-slate-500">للجميع</span>'}</div>
+                    </div>
+                    <div class="bg-slate-50 border border-slate-200 p-3.5 rounded-2xl space-y-1.5">
+                        <span class="text-[10px] text-slate-400 font-extrabold block">رتبتك الحالية في النظام:</span>
+                        <div class="mt-1">
+                            <span class="bg-amber-50 text-amber-800 border border-amber-200 text-xs px-3 py-1 rounded-full font-black inline-block font-sans">
+                                ${formatRole(currentRole)}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-slate-50 border border-slate-200 p-4 rounded-2xl space-y-1.5">
+                    <span class="text-[10px] text-sky-600 font-extrabold block"><i class="fa-solid fa-circle-info"></i> التفاصيل والمسؤولية التنظيمية:</span>
+                    <p class="text-xs text-slate-600 leading-relaxed font-semibold font-sans">${description}</p>
+                </div>
+
+                <div class="pt-2 flex flex-col gap-2">
+                    ${actionBtn}
+                    ${status === "GRANTED" && onExecute ? `<button onclick="document.getElementById('${modalId}').style.display='none'" class="w-full text-slate-500 hover:text-slate-700 font-bold text-xs py-2 transition">تراجع وإلغاء</button>` : ""}
+                </div>
+            </div>
+        </div>
+    `;
+
+    modalEl.style.display = "flex";
+
+    if (status === "GRANTED" && onExecute) {
+        document.getElementById("audit-execute-btn").onclick = function() {
+            modalEl.style.display = "none";
+            onExecute();
+        };
+    } else {
+        const closeBtn = document.getElementById("audit-close-btn");
+        if (closeBtn) {
+            closeBtn.onclick = function() {
+                modalEl.style.display = "none";
+            };
+        }
+    }
+};

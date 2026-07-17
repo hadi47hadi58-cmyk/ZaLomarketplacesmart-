@@ -1187,14 +1187,26 @@
                     <span class="text-[10px] text-slate-500 font-extrabold block">بطاقة التعريف الوطنية البيومترية (المسح الضوئي):</span>
                     <div class="border border-dashed border-slate-300 rounded-xl p-2.5 flex items-center justify-between bg-slate-50">
                         <span class="text-[11px] font-bold text-slate-700"><i class="fa-solid fa-id-card text-sky-600"></i> ID_CARD_ALGERIA_BIOMETRIC.pdf</span>
-                        <a href="#" onclick="alert('جاري تنزيل ملف بطاقة الهوية الوطنية للفحص...'); return false;" class="text-sky-500 hover:underline"><i class="fa-solid fa-download"></i> تحميل</a>
+                        <a href="#" onclick="showPermissionAudit({
+                            actionName: 'تحميل وفحص بطاقة الهوية الوطنية للتاجر',
+                            allowedRoles: ['admin', 'manager', 'disputes'],
+                            currentRole: 'admin',
+                            status: 'GRANTED',
+                            description: 'بصفتك المدير العام للمنصة، لديك كامل الصلاحية الأمنية لتحميل ومطابقة وثيقة الهوية الوطنية البيومترية للتاجر للتحقق من هوية صاحب النشاط وضمان سلامة المعاملات. جاري الفحص وتحميل المستند...'
+                        }); return false;" class="text-sky-500 hover:underline"><i class="fa-solid fa-download"></i> تحميل</a>
                     </div>
                 </div>
                 <div class="space-y-2">
                     <span class="text-[10px] text-slate-500 font-extrabold block">سجل تجاري مصدق معمد من الغرفة التجارية:</span>
                     <div class="border border-dashed border-slate-300 rounded-xl p-2.5 flex items-center justify-between bg-slate-50">
                         <span class="text-[11px] font-bold text-slate-700"><i class="fa-solid fa-file-signature text-amber-600"></i> COMMERCIAL_REGISTER_RC.pdf</span>
-                        <a href="#" onclick="alert('جاري تنزيل ملف السجل التجاري للفحص...'); return false;" class="text-sky-500 hover:underline"><i class="fa-solid fa-download"></i> تحميل</a>
+                        <a href="#" onclick="showPermissionAudit({
+                            actionName: 'تحميل وفحص السجل التجاري المصدق للتاجر',
+                            allowedRoles: ['admin', 'manager', 'auditor'],
+                            currentRole: 'admin',
+                            status: 'GRANTED',
+                            description: 'بصفتك المدير العام للمنصة، تملك الصلاحية التنظيمية الكاملة لتحميل السجل التجاري ومطابقة أرقام القيد الرسمية للتاجر للتأكد من اعتماده القانوني. جاري فحص وتحميل المستند...'
+                        }); return false;" class="text-sky-500 hover:underline"><i class="fa-solid fa-download"></i> تحميل</a>
                     </div>
                 </div>
                 <button onclick="closeDocumentsModal()" class="w-full bg-[#113f1c] text-white font-black py-2.5 rounded-xl hover:bg-[#1e3e26] transition text-xs">إغلاق وتأكيد الفحص الأمني ✅</button>
