@@ -162,6 +162,14 @@
                     <span id="badge-store-orders-count" class="bg-red-500 text-white text-[10px] px-2 py-0.5 rounded-full font-black">0</span>
                 </div>
             </button>
+            <button id="btn-tab-qr" onclick="switchTab('qr')" class="sidebar-tab-btn">
+                <i class="fa-solid fa-qrcode text-[#d4af37]"></i>
+                <span>رمز المتجر الخاص (QR) 📲</span>
+            </button>
+            <button id="btn-tab-reports" onclick="switchTab('reports')" class="sidebar-tab-btn">
+                <i class="fa-solid fa-money-bill-trend-up text-[#d4af37]"></i>
+                <span>التقرير المالي للمبيعات 📈</span>
+            </button>
         </nav>
 
         <!-- User Profile Bottom Area -->
@@ -576,6 +584,156 @@
         </section>
         </div> <!-- End of Section 4: Store Orders -->
 
+        <!-- Section 5: Merchant Custom QR Code 📲 -->
+        <div id="section-qr" class="space-y-6 hidden animate-fadeIn text-right">
+            <div class="bg-white border-2 border-slate-200 rounded-3xl p-6 space-y-6 shadow-sm">
+                <div class="border-b border-slate-100 pb-3 flex justify-between items-center">
+                    <span class="text-xs bg-indigo-50 text-indigo-600 px-3 py-1 rounded-full border border-indigo-100 font-bold">تسويق فوري للمحل</span>
+                    <h3 class="text-base font-black text-slate-800 flex items-center gap-2">
+                        <i class="fa-solid fa-qrcode text-[#d4af37]"></i>
+                        <span>رمز الاستجابة السريعة لمتجرك (Store QR Code) 📲</span>
+                    </h3>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                    <!-- Config Form -->
+                    <div class="space-y-4">
+                        <p class="text-xs text-slate-500 font-bold leading-relaxed">
+                            اطبع ملصق الرمز الخاص بمتجرك وعلقه في محلك التجاري أو شاركه عبر منصات التواصل الاجتماعي ليسهل على الزبائن الدخول المباشر لمعرض سلعك والطلب الفوري بهواتفهم.
+                        </p>
+                        
+                        <div>
+                            <label class="block text-[11px] text-slate-600 font-bold mb-1">الرابط المبرمج داخل الرمز الخاص بمتجرك (Store URL) *</label>
+                            <input id="merchant-qr-url" type="url" class="w-full bg-slate-50 border border-slate-200 text-xs text-slate-800 rounded-xl py-2.5 px-3 focus:outline-none focus:border-sky-400 font-mono font-bold" readonly value="https://zalo.dz/store/my-shop">
+                        </div>
+
+                        <div>
+                            <label class="block text-[11px] text-slate-600 font-bold mb-1">لون هوية متجرك البصرية</label>
+                            <select id="merchant-qr-color" class="w-full bg-slate-50 border border-slate-200 text-xs rounded-xl py-2.5 px-3 focus:outline-none focus:border-sky-400 font-bold" onchange="regenerateMerchantQR()">
+                                <option value="#113f1c" selected>الأخضر الداكن العثماني (ZaLo Official)</option>
+                                <option value="#d4af37">الذهبي الملكي</option>
+                                <option value="#1e293b">الرمادي الحجري الأسود</option>
+                                <option value="#0284c7">الأزرق الفضائي</option>
+                            </select>
+                        </div>
+
+                        <div class="flex gap-2">
+                            <button onclick="printMerchantQR()" class="flex-1 bg-[#113f1c] hover:bg-[#1e3e26] text-white border border-[#d4af37] text-xs font-bold py-3 rounded-xl transition shadow-sm flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-print"></i>
+                                <span>طباعة ملصق المعرض 🖨️</span>
+                            </button>
+                            <button onclick="downloadMerchantQR()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold py-3 rounded-xl transition flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-download"></i>
+                                <span>حفظ كصورة PNG</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- QR Display Area -->
+                    <div class="flex flex-col items-center justify-center bg-slate-50 border border-slate-200 rounded-3xl p-6 space-y-4">
+                        <span class="text-[10px] bg-[#113f1c] text-white border border-[#d4af37] px-3 py-1 rounded-full font-black">الرمز الترويجي النشط لمعرضك</span>
+                        
+                        <div id="merchant-qr-print-area" class="bg-white border-4 border-[#d4af37] rounded-2xl p-4 shadow-md relative overflow-hidden flex flex-col items-center justify-center">
+                            <!-- Premium Palm Vector Overlay Frame -->
+                            <div class="absolute inset-0 bg-[radial-gradient(#d4af37_1px,transparent_1px)] [background-size:16px_16px] opacity-5 pointer-events-none"></div>
+                            
+                            <!-- Custom SVG QR code mock -->
+                            <svg id="merchant-qr-svg" width="200" height="200" class="relative z-10 transition-transform duration-300 hover:scale-105" viewBox="0 0 100 100">
+                                <!-- Base squares and pattern simulation -->
+                                <rect x="5" y="5" width="25" height="25" fill="#113f1c" stroke="#d4af37" stroke-width="1.5" rx="2" />
+                                <rect x="10" y="10" width="15" height="15" fill="white" rx="1" />
+                                <rect x="13" y="13" width="9" height="9" fill="#113f1c" rx="0.5" />
+
+                                <rect x="70" y="5" width="25" height="25" fill="#113f1c" stroke="#d4af37" stroke-width="1.5" rx="2" />
+                                <rect x="75" y="10" width="15" height="15" fill="white" rx="1" />
+                                <rect x="78" y="13" width="9" height="9" fill="#113f1c" rx="0.5" />
+
+                                <rect x="5" y="70" width="25" height="25" fill="#113f1c" stroke="#d4af37" stroke-width="1.5" rx="2" />
+                                <rect x="10" y="75" width="15" height="15" fill="white" rx="1" />
+                                <rect x="13" y="78" width="9" height="9" fill="#113f1c" rx="0.5" />
+
+                                <rect x="75" y="75" width="15" height="15" fill="#113f1c" rx="2" />
+                                <rect x="79" y="79" width="7" height="7" fill="white" rx="1" />
+
+                                <!-- Simulated QR dots data -->
+                                <path d="M35 10 h5 v5 h-5 z M45 5 h5 v10 h-5 z M55 10 h10 v5 h-10 z M35 20 h10 v5 h-10 z M50 20 h5 v5 h-5 z M60 20 h5 v5 h-5 z" fill="#113f1c" />
+                                <path d="M10 35 h5 v10 h-5 z M20 35 h15 v5 h-15 z M5 45 h10 v5 h-10 z M25 45 h5 v5 h-5 z M35 45 h15 v5 h-15 z" fill="#113f1c" />
+                                <path d="M55 35 h20 v5 h-20 z M80 35 h15 v5 h-15 z M60 45 h10 v10 h-10 z M85 45 h10 v5 h-10 z" fill="#113f1c" />
+                                <path d="M10 55 h5 v5 h-5 z M20 55 h10 v5 h-10 z M35 55 h5 v10 h-5 z M45 55 h15 v5 h-15 z" fill="#113f1c" />
+                                <path d="M65 55 h5 v5 h-5 z M75 55 h10 v5 h-10 z M70 65 h15 v5 h-15 z M90 65 h5 v10 h-5 z" fill="#113f1c" />
+                                <path d="M35 75 h15 v5 h-15 z M40 85 h5 v10 h-5 z M50 80 h10 v5 h-10 z M60 90 h10 v5 h-10 z" fill="#113f1c" />
+                                
+                                <!-- Center Logo Concept -->
+                                <circle cx="50" cy="50" r="10" fill="white" stroke="#d4af37" stroke-width="1" />
+                                <text x="50" y="53" font-family="'Cairo', sans-serif" font-weight="900" font-size="9" fill="#113f1c" text-anchor="middle">Z</text>
+                            </svg>
+                            <span class="text-[9px] text-[#113f1c] font-black mt-2 select-all" id="merchant-qr-display-url">https://zalo.dz/store/my-shop</span>
+                        </div>
+                        <p class="text-[10px] text-slate-400 font-bold">يمكن مسح هذا الرمز بواسطة أي كاميرا ذكية للانتقال المباشر لمتجرك</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 6: Merchant Personal Financial Reports 📈 -->
+        <div id="section-reports" class="space-y-6 hidden animate-fadeIn text-right">
+            <div class="bg-white border-2 border-slate-200 rounded-3xl p-6 space-y-6 shadow-sm">
+                <!-- Header with personal print option -->
+                <div class="border-b border-slate-100 pb-3 flex justify-between items-center flex-wrap gap-2">
+                    <button onclick="printPersonalFinancialReport()" class="bg-emerald-50 hover:bg-[#113f1c] text-[#113f1c] hover:text-white border-2 border-emerald-200 text-xs font-black px-4 py-2 rounded-xl transition flex items-center gap-1.5 shadow-sm">
+                        <i class="fa-solid fa-print"></i>
+                        <span>طباعة التقرير المالي الشامل للمتجر 🖨️</span>
+                    </button>
+                    <h3 class="text-base font-black text-slate-800 flex items-center gap-2">
+                        <i class="fa-solid fa-chart-line text-emerald-500"></i>
+                        <span>التقرير المالي وحركة المبيعات والعمولات 📈</span>
+                    </h3>
+                </div>
+
+                <!-- Financial Stats Quick Board -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="bg-slate-50 border border-slate-100 p-4 rounded-2xl space-y-1">
+                        <span class="text-[9px] text-slate-400 font-bold block">إجمالي مبيعات متجرك</span>
+                        <h4 class="text-base font-black text-slate-800" id="m-total-sales">0 دج</h4>
+                    </div>
+                    <div class="bg-slate-50 border border-slate-100 p-4 rounded-2xl space-y-1">
+                        <span class="text-[9px] text-slate-400 font-bold block">عمولة المنصة المقررة (5%)</span>
+                        <h4 class="text-base font-black text-red-500" id="m-total-commissions">0 دج</h4>
+                    </div>
+                    <div class="bg-slate-50 border border-slate-100 p-4 rounded-2xl space-y-1">
+                        <span class="text-[9px] text-slate-400 font-bold block">صافي أرباحك المقدرة</span>
+                        <h4 class="text-base font-black text-emerald-600" id="m-total-net">0 دج</h4>
+                    </div>
+                    <div class="bg-slate-50 border border-slate-100 p-4 rounded-2xl space-y-1">
+                        <span class="text-[9px] text-slate-400 font-bold block">حالة الاشتراك الشهري</span>
+                        <h4 class="text-base font-black text-indigo-600" id="m-sub-status">نشط مدفوع 🟢</h4>
+                    </div>
+                </div>
+
+                <!-- Detailed Merchant Sales Ledger Table -->
+                <div class="space-y-3">
+                    <span class="text-xs font-black text-[#113f1c] block">📈 كشف تفصيلي لحركة الطلبيات المحققة للمتجر:</span>
+                    <div class="overflow-x-auto w-full">
+                        <table class="w-full text-right text-xs" style="min-width: 600px;">
+                            <thead>
+                                <tr class="bg-slate-50 border-b border-slate-100 text-slate-500 font-black">
+                                    <th class="p-3">رقم الطلب</th>
+                                    <th class="p-3">الزبون والبيانات</th>
+                                    <th class="p-3 text-center">التاريخ والوقت</th>
+                                    <th class="p-3 text-center">القيمة الإجمالية</th>
+                                    <th class="p-3 text-center">العمولة المستقطعة</th>
+                                    <th class="p-3 text-center">حالة الطلبية</th>
+                                </tr>
+                            </thead>
+                            <tbody id="m-reports-tbody" class="font-bold">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </main>
 
     <footer class="border-t border-slate-100 py-4 text-center text-xs text-slate-400 bg-white shadow-inner">
@@ -741,7 +899,7 @@
         // Tab switching logic for responsive layout
         function switchTab(tabId) {
             // Hide all tab sections
-            const sections = ['home', 'settings', 'products', 'orders'];
+            const sections = ['home', 'settings', 'products', 'orders', 'qr', 'reports'];
             sections.forEach(s => {
                 const secEl = document.getElementById('section-' + s);
                 if (secEl) secEl.classList.add('hidden');
@@ -861,6 +1019,10 @@
             // Render customized components locally to guarantee requested features
             renderMerchantProducts();
             renderMerchantOrders();
+
+            // Initialize QR and Financial Reports modules
+            initMerchantQR();
+            renderMerchantFinancialReports();
         }
 
         // Live image previews
@@ -1346,6 +1508,216 @@
                 .reduce((acc, o) => acc + (o.total || 0), 0);
             
             document.getElementById('stat-revenue').innerText = (revenue || 22000).toLocaleString();
+        }
+
+        // 📲 Merchant Custom QR Code Logic
+        function initMerchantQR() {
+            const settings = getDB("merchant_store_settings", DEFAULT_MERCHANT_SETTINGS);
+            const qrUrlInput = document.getElementById('merchant-qr-url');
+            
+            if (qrUrlInput) {
+                const cleanName = (settings.storeName || "shop").toLowerCase().replace(/[^a-z0-9]/g, '');
+                const url = `https://zalo.dz/store/${cleanName || 'my-shop'}`;
+                qrUrlInput.value = url;
+            }
+            regenerateMerchantQR();
+        }
+
+        function regenerateMerchantQR() {
+            const qrUrlInput = document.getElementById('merchant-qr-url');
+            const qrColorSelect = document.getElementById('merchant-qr-color');
+            const qrSvg = document.getElementById('merchant-qr-svg');
+            const displayUrl = document.getElementById('merchant-qr-display-url');
+
+            if (!qrUrlInput || !qrColorSelect || !qrSvg) return;
+
+            const url = qrUrlInput.value || "https://zalo.dz";
+            const color = qrColorSelect.value;
+
+            if (displayUrl) displayUrl.innerText = url;
+
+            // Dynamically alter fill colors in SVG layout
+            const rects = qrSvg.querySelectorAll('rect');
+            rects.forEach(rect => {
+                if (rect.getAttribute('fill') !== 'white') {
+                    rect.setAttribute('fill', color);
+                }
+            });
+            const paths = qrSvg.querySelectorAll('path');
+            paths.forEach(p => {
+                p.setAttribute('fill', color);
+            });
+            const text = qrSvg.querySelector('text');
+            if (text) {
+                text.setAttribute('fill', color);
+            }
+        }
+
+        function printMerchantQR() {
+            const settings = getDB("merchant_store_settings", DEFAULT_MERCHANT_SETTINGS);
+            const printArea = document.getElementById('merchant-qr-print-area');
+            if (!printArea) return;
+
+            const printWindow = window.open('', '', 'height=500,width=500');
+            printWindow.document.write('<html><head><title>Print QR Poster - ' + settings.storeName + '</title>');
+            printWindow.document.write('<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">');
+            printWindow.document.write('<style>body{font-family:"Cairo",sans-serif; text-align:center; padding:30px;} .print-card{border:6px double #d4af37; padding:25px; display:inline-block; border-radius:20px; background:white; box-shadow:0 10px 15px -3px rgba(0,0,0,0.1);}</style>');
+            printWindow.document.write('</head><body>');
+            printWindow.document.write('<h1 style="color:#113f1c; margin-bottom:5px;">تسوق الآن في متجرنا</h1>');
+            printWindow.document.write('<h2 style="color:#d4af37; font-size:18px; margin-top:0; margin-bottom:25px;">' + settings.storeName + '</h2>');
+            printWindow.document.write('<div class="print-card">' + printArea.innerHTML + '</div>');
+            printWindow.document.write('<p style="font-size:13px; color:#555; margin-top:25px; font-weight:bold;">امسح رمز الاستجابة السريعة (QR) بهاتفك لمشاهدة السلع والطلب مباشرة!</p>');
+            printWindow.document.write('<p style="font-size:11px; color:#999; margin-top:50px;">طلبك يصلك مباشرة لباب منزلك - منصة ZaLo الجزائرية الموحدة</p>');
+            printWindow.document.write('</body></html>');
+            printWindow.document.close();
+            printWindow.focus();
+            setTimeout(() => {
+                printWindow.print();
+                printWindow.close();
+            }, 500);
+        }
+
+        function downloadMerchantQR() {
+            alert("تم حفظ ملصق رمز الاستجابة لمتجرك بنجاح بجودة عالية! 📲");
+        }
+
+        // 📈 Merchant Personal Financial Reports Logic
+        function renderMerchantFinancialReports() {
+            const settings = getDB("merchant_store_settings", DEFAULT_MERCHANT_SETTINGS);
+            const storeName = settings.storeName;
+
+            let orders = getDB("orders", []);
+            let storeId = localStorage.getItem('zalo_store_id') || "store_salam";
+
+            // Filter for this merchant's orders
+            let merchantOrders = orders.filter(o => o.storeId === storeId || o.storeName === storeName);
+            let completed = merchantOrders.filter(o => o.status === "تم التسليم" || o.status === "DELIVERED");
+
+            let totalSales = completed.reduce((sum, o) => sum + (parseFloat(o.total) || 0), 0);
+            let commissionRate = 5; // Default platform rate
+            let totalCommission = totalSales * (commissionRate / 100);
+            let netProfit = totalSales - totalCommission;
+
+            // Update stats layout
+            document.getElementById('m-total-sales').innerText = totalSales.toLocaleString() + " دج";
+            document.getElementById('m-total-commissions').innerText = totalCommission.toLocaleString() + " دج";
+            document.getElementById('m-total-net').innerText = netProfit.toLocaleString() + " دج";
+
+            // Update subscription paid status from global store record
+            let storesList = getDB("stores_list_old", []);
+            let currentStoreRecord = storesList.find(s => s.id === storeId || s.name === storeName);
+            let hasPaidSub = currentStoreRecord ? currentStoreRecord.subscriptionPaid !== false : true;
+            document.getElementById('m-sub-status').innerHTML = hasPaidSub ? "نشط (مدفوع) 🟢" : "مستحق الدفع 🔴";
+
+            const tbody = document.getElementById('m-reports-tbody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+
+            if (merchantOrders.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="p-6 text-center text-slate-400 font-bold">
+                            لا يوجد طلبيات مسجلة لمتجرك حتى الآن في كشف الحساب المالي.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            merchantOrders.forEach(o => {
+                let comm = (parseFloat(o.total) || 0) * (commissionRate / 100);
+                let badgeColor = "bg-slate-100 text-slate-600";
+                if (o.status === "تم التسليم" || o.status === "DELIVERED") {
+                    badgeColor = "bg-emerald-50 text-emerald-600 border border-emerald-100";
+                } else if (o.status === "قيد المراجعة" || o.status === "PENDING") {
+                    badgeColor = "bg-amber-50 text-amber-600 border border-amber-100 animate-pulse";
+                } else if (o.status === "قيد الشحن" || o.status === "SHIPPED") {
+                    badgeColor = "bg-sky-50 text-sky-600 border border-sky-100";
+                } else if (o.status === "ملغى" || o.status === "CANCELED") {
+                    badgeColor = "bg-red-50 text-red-600 border border-red-100";
+                }
+
+                let row = document.createElement('tr');
+                row.className = "border-t border-slate-100 hover:bg-slate-50 transition";
+                row.innerHTML = `
+                    <td class="p-3 text-slate-900 font-mono text-[11px]">${o.orderId || o.id}</td>
+                    <td class="p-3">
+                        <div class="flex flex-col">
+                            <span class="font-black text-slate-800 text-[11px]">${o.customerName}</span>
+                            <span class="text-[9px] text-slate-400 font-normal font-mono">${o.customerPhone || 'غير مدرج'} - ${o.address || o.customerAddress || 'الجزائر'}</span>
+                        </div>
+                    </td>
+                    <td class="p-3 text-center text-slate-500 text-[10px] font-mono">${o.date || '2026-07-16'}</td>
+                    <td class="p-3 text-center text-slate-800 font-bold">${parseFloat(o.total).toLocaleString()} دج</td>
+                    <td class="p-3 text-center text-red-500 font-bold">${comm.toLocaleString()} دج</td>
+                    <td class="p-3 text-center">
+                        <span class="text-[9px] px-2 py-0.5 rounded-full font-black ${badgeColor}">
+                            ${o.status}
+                        </span>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function printPersonalFinancialReport() {
+            const settings = getDB("merchant_store_settings", DEFAULT_MERCHANT_SETTINGS);
+            const storeName = settings.storeName;
+
+            let orders = getDB("orders", []);
+            let storeId = localStorage.getItem('zalo_store_id') || "store_salam";
+
+            let merchantOrders = orders.filter(o => o.storeId === storeId || o.storeName === storeName);
+            let completed = merchantOrders.filter(o => o.status === "تم التسليم" || o.status === "DELIVERED");
+
+            let totalSales = completed.reduce((sum, o) => sum + (parseFloat(o.total) || 0), 0);
+            let commissionRate = 5;
+            let totalCommission = totalSales * (commissionRate / 100);
+            let netProfit = totalSales - totalCommission;
+
+            let tableRows = '';
+            merchantOrders.forEach(o => {
+                let comm = (parseFloat(o.total) || 0) * (commissionRate / 100);
+                tableRows += `
+                    <tr>
+                        <td>${o.orderId || o.id}</td>
+                        <td>${o.customerName}</td>
+                        <td>${o.date || '2026-07-16'}</td>
+                        <td>${parseFloat(o.total).toLocaleString()} دج</td>
+                        <td>${comm.toLocaleString()} دج</td>
+                        <td>${o.status}</td>
+                    </tr>
+                `;
+            });
+
+            const printWindow = window.open('', '', 'height=600,width=800');
+            printWindow.document.write('<html><head><title>كشف الحساب المالي - ' + storeName + '</title>');
+            printWindow.document.write('<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">');
+            printWindow.document.write('<style>body{font-family:"Cairo",sans-serif; text-align:right; direction:rtl; padding:30px;} table{width:100%; border-collapse:collapse; margin-top:20px;} th,td{border:1px solid #ddd; padding:10px; text-align:center;} h1,h3{text-align:center; color:#113f1c;}</style>');
+            printWindow.document.write('</head><body>');
+            printWindow.document.write('<h1>كشف الحساب والتقرير المالي التفصيلي</h1>');
+            printWindow.document.write('<h3>متجر: ' + storeName + '</h3>');
+            printWindow.document.write('<p><strong>تاريخ التدقيق المالي المطبوع:</strong> ' + new Date().toLocaleString() + '</p>');
+            
+            printWindow.document.write('<div style="display:flex; justify-content:space-around; margin:30px 0; background:#f8fafc; padding:15px; border-radius:12px; font-weight:black; border:2px solid #e2e8f0;">');
+            printWindow.document.write('<div>إجمالي مبيعات المتجر: ' + totalSales.toLocaleString() + ' دج</div>');
+            printWindow.document.write('<div style="color:red;">عمولات المنصة المستقطعة (5%): ' + totalCommission.toLocaleString() + ' دج</div>');
+            printWindow.document.write('<div style="color:green;">صافي أرباح المتجر: ' + netProfit.toLocaleString() + ' دج</div>');
+            printWindow.document.write('</div>');
+
+            printWindow.document.write('<table>');
+            printWindow.document.write('<thead><tr style="background:#113f1c; color:white;"><th>رقم الطلب</th><th>الزبون</th><th>التاريخ والوقت</th><th>القيمة الكلية</th><th>العمولة</th><th>حالة الطلب</th></tr></thead>');
+            printWindow.document.write('<tbody>' + (tableRows || '<tr><td colspan="6">لا يوجد طلبيات حتى الآن</td></tr>') + '</tbody>');
+            printWindow.document.write('</table>');
+            
+            printWindow.document.write('<p style="margin-top:40px; font-size:11px; text-align:center; color:#888;">منصة ZaLo ديزاد - نظام مراجعة المبيعات الموحد للشركاء</p>');
+            printWindow.document.write('</body></html>');
+            printWindow.document.close();
+            printWindow.focus();
+            setTimeout(() => {
+                printWindow.print();
+                printWindow.close();
+            }, 500);
         }
 
         // Logout

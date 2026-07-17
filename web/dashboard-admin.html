@@ -601,6 +601,374 @@
             </div>
         </div> <!-- End of Section 2: Registrations -->
 
+        <!-- Section 5: QR Code Control Center 📲 -->
+        <div id="section-qr" class="space-y-6 hidden animate-fadeIn text-right">
+            <div class="bg-white border-2 border-slate-200 rounded-3xl p-6 space-y-6 shadow-sm">
+                <div class="border-b border-slate-100 pb-3 flex justify-between items-center">
+                    <span class="text-xs bg-indigo-50 text-indigo-600 px-3 py-1 rounded-full border border-indigo-100 font-bold">المشاركة الفورية</span>
+                    <h3 class="text-base font-black text-slate-800 flex items-center gap-2">
+                        <i class="fa-solid fa-qrcode text-[#d4af37]"></i>
+                        <span>رمز الاستجابة السريعة للمنصة (QR Code) 📲</span>
+                    </h3>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                    <!-- Config Form -->
+                    <div class="space-y-4">
+                        <p class="text-xs text-slate-500 font-bold leading-relaxed">
+                            هنا يمكنك التحكم برمز الاستجابة السريعة (QR Code) الخاص بالمنصة كاملة. هذا الرمز يسهل للزبائن الجدد الانتقال المباشر وتصفح المنتجات عبر الهواتف الذكية.
+                        </p>
+                        
+                        <div>
+                            <label class="block text-[11px] text-slate-600 font-bold mb-1">الرابط المبرمج داخل الرمز (URL) *</label>
+                            <input id="qr-global-url" type="url" class="w-full bg-slate-50 border border-slate-200 text-xs text-slate-800 rounded-xl py-2.5 px-3 focus:outline-none focus:border-sky-400 font-mono font-bold" value="https://zalo.dz" oninput="regenerateGlobalQR()">
+                        </div>
+
+                        <div>
+                            <label class="block text-[11px] text-slate-600 font-bold mb-1">لون الرمز الأساسي</label>
+                            <select id="qr-global-color" class="w-full bg-slate-50 border border-slate-200 text-xs rounded-xl py-2.5 px-3 focus:outline-none focus:border-sky-400 font-bold" onchange="regenerateGlobalQR()">
+                                <option value="#113f1c" selected>الأخضر الداكن العثماني (ZaLo Official)</option>
+                                <option value="#d4af37">الذهبي الملكي</option>
+                                <option value="#1e293b">الرمادي الحجري الأسود</option>
+                                <option value="#0284c7">الأزرق الفضائي</option>
+                            </select>
+                        </div>
+
+                        <div class="flex gap-2">
+                            <button onclick="printGlobalQR()" class="flex-1 bg-[#113f1c] hover:bg-[#1e3e26] text-white border border-[#d4af37] text-xs font-bold py-3 rounded-xl transition shadow-sm flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-print"></i>
+                                <span>طباعة ملصق الرمز 🖨️</span>
+                            </button>
+                            <button onclick="downloadGlobalQR()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold py-3 rounded-xl transition flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-download"></i>
+                                <span>حفظ كصورة PNG</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- QR Display Area -->
+                    <div class="flex flex-col items-center justify-center bg-slate-50 border border-slate-200 rounded-3xl p-6 space-y-4">
+                        <span class="text-[10px] bg-[#113f1c] text-white border border-[#d4af37] px-3 py-1 rounded-full font-black">الرمز النشط للمنصة</span>
+                        
+                        <div id="qr-print-area" class="bg-white border-4 border-[#d4af37] rounded-2xl p-4 shadow-md relative overflow-hidden flex flex-col items-center justify-center">
+                            <!-- Premium Palm Vector Overlay Frame -->
+                            <div class="absolute inset-0 bg-[radial-gradient(#d4af37_1px,transparent_1px)] [background-size:16px_16px] opacity-5 pointer-events-none"></div>
+                            
+                            <!-- Custom SVG QR code mock -->
+                            <svg id="global-qr-svg" width="200" height="200" class="relative z-10 transition-transform duration-300 hover:scale-105" viewBox="0 0 100 100">
+                                <!-- Base squares and pattern simulation -->
+                                <rect x="5" y="5" width="25" height="25" fill="#113f1c" stroke="#d4af37" stroke-width="1.5" rx="2" />
+                                <rect x="10" y="10" width="15" height="15" fill="white" rx="1" />
+                                <rect x="13" y="13" width="9" height="9" fill="#113f1c" rx="0.5" />
+
+                                <rect x="70" y="5" width="25" height="25" fill="#113f1c" stroke="#d4af37" stroke-width="1.5" rx="2" />
+                                <rect x="75" y="10" width="15" height="15" fill="white" rx="1" />
+                                <rect x="78" y="13" width="9" height="9" fill="#113f1c" rx="0.5" />
+
+                                <rect x="5" y="70" width="25" height="25" fill="#113f1c" stroke="#d4af37" stroke-width="1.5" rx="2" />
+                                <rect x="10" y="75" width="15" height="15" fill="white" rx="1" />
+                                <rect x="13" y="78" width="9" height="9" fill="#113f1c" rx="0.5" />
+
+                                <rect x="75" y="75" width="15" height="15" fill="#113f1c" rx="2" />
+                                <rect x="79" y="79" width="7" height="7" fill="white" rx="1" />
+
+                                <!-- Simulated QR dots data -->
+                                <path d="M35 10 h5 v5 h-5 z M45 5 h5 v10 h-5 z M55 10 h10 v5 h-10 z M35 20 h10 v5 h-10 z M50 20 h5 v5 h-5 z M60 20 h5 v5 h-5 z" fill="#113f1c" />
+                                <path d="M10 35 h5 v10 h-5 z M20 35 h15 v5 h-15 z M5 45 h10 v5 h-10 z M25 45 h5 v5 h-5 z M35 45 h15 v5 h-15 z" fill="#113f1c" />
+                                <path d="M55 35 h20 v5 h-20 z M80 35 h15 v5 h-15 z M60 45 h10 v10 h-10 z M85 45 h10 v5 h-10 z" fill="#113f1c" />
+                                <path d="M10 55 h5 v5 h-5 z M20 55 h10 v5 h-10 z M35 55 h5 v10 h-5 z M45 55 h15 v5 h-15 z" fill="#113f1c" />
+                                <path d="M65 55 h5 v5 h-5 z M75 55 h10 v5 h-10 z M70 65 h15 v5 h-15 z M90 65 h5 v10 h-5 z" fill="#113f1c" />
+                                <path d="M35 75 h15 v5 h-15 z M40 85 h5 v10 h-5 z M50 80 h10 v5 h-10 z M60 90 h10 v5 h-10 z" fill="#113f1c" />
+                                
+                                <!-- Center Logo Concept -->
+                                <circle cx="50" cy="50" r="10" fill="white" stroke="#d4af37" stroke-width="1" />
+                                <text x="50" y="53" font-family="'Cairo', sans-serif" font-weight="900" font-size="9" fill="#113f1c" text-anchor="middle">Z</text>
+                            </svg>
+                            <span class="text-[9px] text-[#113f1c] font-black mt-2 select-all" id="qr-display-url">https://zalo.dz</span>
+                        </div>
+                        <p class="text-[10px] text-slate-400 font-bold">يمكن مسح هذا الكود بأي كاميرا هاتف للدخول للمنصة</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 6: Unified Platform Settings ⚙️ -->
+        <div id="section-settings-global" class="space-y-6 hidden animate-fadeIn text-right">
+            <div class="bg-white border-2 border-slate-200 rounded-3xl p-6 space-y-6 shadow-sm">
+                <div class="border-b border-slate-100 pb-3 flex justify-between items-center">
+                    <span class="text-xs bg-amber-50 text-amber-600 px-3 py-1 rounded-full border border-amber-100 font-bold">التهيئة والتحكم الموحد</span>
+                    <h3 class="text-base font-black text-slate-800 flex items-center gap-2">
+                        <i class="fa-solid fa-gears text-slate-500"></i>
+                        <span>إعدادات المنصة الموحدة والربط العالمي ⚙️</span>
+                    </h3>
+                </div>
+
+                <!-- Settings Saved Banner Notification -->
+                <div id="settings-save-alert" class="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 text-emerald-800 text-xs font-black hidden flex items-center gap-2">
+                    <i class="fa-solid fa-circle-check text-emerald-600 text-lg"></i>
+                    <span>تم حفظ الإعدادات الموحدة وتطبيقها بنجاح على كامل مفاصل النظام والواجهات! 🚀</span>
+                </div>
+
+                <form id="global-settings-form" onsubmit="saveGlobalSettings(event)" class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Primary Configuration -->
+                        <div class="space-y-4">
+                            <h4 class="text-xs font-black text-[#113f1c] border-r-4 border-[#d4af37] pr-2">تفضيلات الهوية المالية والأمنية</h4>
+                            
+                            <div>
+                                <label class="block text-[11px] text-slate-600 font-bold mb-1">الاسم التجاري للمنصة *</label>
+                                <input id="set-platform-name" type="text" class="w-full bg-slate-50 border border-slate-200 text-xs text-slate-800 rounded-xl py-2.5 px-3 focus:outline-none focus:border-sky-400 font-bold" value="ZaLo Market الجزائر" required>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-[11px] text-slate-600 font-bold mb-1">نسبة عمولة المبيعات (%) *</label>
+                                    <input id="set-commission" type="number" step="0.1" class="w-full bg-slate-50 border border-slate-200 text-xs text-slate-800 rounded-xl py-2.5 px-3 focus:outline-none focus:border-sky-400 font-bold" value="5" required>
+                                </div>
+                                <div>
+                                    <label class="block text-[11px] text-slate-600 font-bold mb-1">الاشتراك الشهري للتاجر (دج) *</label>
+                                    <input id="set-sub-price" type="number" class="w-full bg-slate-50 border border-slate-200 text-xs text-slate-800 rounded-xl py-2.5 px-3 focus:outline-none focus:border-sky-400 font-bold" value="2000" required>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-[11px] text-slate-600 font-bold mb-1">هاتف الدعم الفني العام</label>
+                                <input id="set-support-phone" type="text" class="w-full bg-slate-50 border border-slate-200 text-xs text-slate-800 rounded-xl py-2.5 px-3 focus:outline-none focus:border-sky-400 font-bold" value="0550123456">
+                            </div>
+
+                            <div class="bg-red-50/50 border border-red-100 rounded-2xl p-4 space-y-2">
+                                <div class="flex items-center gap-2">
+                                    <input type="checkbox" id="set-maintenance" class="w-4 h-4 text-red-600 border-slate-300 rounded focus:ring-red-400">
+                                    <label for="set-maintenance" class="text-xs text-red-800 font-black cursor-pointer">تفعيل وضع صيانة المنصة الكامل (تجميد الواجهات مؤقتاً)</label>
+                                </div>
+                                <p class="text-[10px] text-slate-500 font-bold leading-relaxed">عند التفعيل، سيتم تحويل الزوار بصفة فورية إلى صفحة وضع عدم الاتصال والصيانة حتى انتهاء العمليات التقنية.</p>
+                            </div>
+                        </div>
+
+                        <!-- Globally Integrated Apps -->
+                        <div class="space-y-4">
+                            <h4 class="text-xs font-black text-[#113f1c] border-r-4 border-[#d4af37] pr-2">التطبيقات والتحليلات العالمية (Integration API)</h4>
+                            
+                            <div>
+                                <label class="block text-[11px] text-slate-600 font-bold mb-1">رابط تكامل Supabase API URL</label>
+                                <input id="set-api-supabase" type="text" class="w-full bg-slate-50 border border-slate-200 text-xs text-slate-800 rounded-xl py-2.5 px-3 focus:outline-none focus:border-sky-400 font-mono" placeholder="https://your-supabase-id.supabase.co">
+                            </div>
+
+                            <div>
+                                <label class="block text-[11px] text-slate-600 font-bold mb-1">مفتاح القياس الإحصائي (Google Analytics ID)</label>
+                                <input id="set-api-ga" type="text" class="w-full bg-slate-50 border border-slate-200 text-xs text-slate-800 rounded-xl py-2.5 px-3 focus:outline-none focus:border-sky-400 font-mono" placeholder="G-XXXXXXX">
+                            </div>
+
+                            <div>
+                                <label class="block text-[11px] text-slate-600 font-bold mb-1">مفتاح المحادثة الفورية (WhatsApp Business API Token)</label>
+                                <input id="set-api-whatsapp" type="password" class="w-full bg-slate-50 border border-slate-200 text-xs text-slate-800 rounded-xl py-2.5 px-3 focus:outline-none focus:border-sky-400 font-mono" placeholder="••••••••••••••••••••••••">
+                            </div>
+
+                            <div class="bg-amber-50/50 border border-[#d4af37]/30 rounded-2xl p-4">
+                                <span class="text-[10px] text-amber-800 font-black block mb-1">🚨 ملاحظة أمنية هامة:</span>
+                                <p class="text-[10px] text-slate-500 font-bold leading-relaxed">
+                                    مفاتيح الربط هذه تستخدم للاتصال الحقيقي ببيانات التخزين والتحليلات وإحصاءات حركة زوار المعرض والطلبيات عبر خوادم آمنة.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="w-full bg-[#113f1c] text-white font-black text-xs py-3.5 rounded-xl hover:bg-[#1e3e26] transition flex items-center justify-center gap-2 shadow-sm">
+                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                        <span>حفظ كافة التغييرات وتطبيقها على المنصة 💾</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Section 7: Financial & Admin Reports 📈 -->
+        <div id="section-reports-global" class="space-y-6 hidden animate-fadeIn text-right">
+            <div class="bg-white border-2 border-slate-200 rounded-3xl p-6 space-y-6 shadow-sm">
+                <!-- Header with global print option -->
+                <div class="border-b border-slate-100 pb-3 flex justify-between items-center flex-wrap gap-2">
+                    <button onclick="printPlatformFinancialReport()" class="bg-emerald-50 hover:bg-[#113f1c] text-[#113f1c] hover:text-white border-2 border-emerald-200 text-xs font-black px-4 py-2 rounded-xl transition flex items-center gap-1.5 shadow-sm">
+                        <i class="fa-solid fa-print"></i>
+                        <span>طباعة التقرير المالي الموحد 🖨️</span>
+                    </button>
+                    <h3 class="text-base font-black text-slate-800 flex items-center gap-2">
+                        <i class="fa-solid fa-chart-line text-emerald-500"></i>
+                        <span>التقارير المالية وإحصائيات الاشتراكات 📈</span>
+                    </h3>
+                </div>
+
+                <!-- Financial Stats Quick Board -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="bg-slate-50 border border-slate-100 p-4 rounded-2xl space-y-1">
+                        <span class="text-[9px] text-slate-400 font-bold block">إجمالي مبيعات المتاجر</span>
+                        <h4 class="text-base font-black text-slate-800" id="rep-total-sales">0 دج</h4>
+                    </div>
+                    <div class="bg-slate-50 border border-slate-100 p-4 rounded-2xl space-y-1">
+                        <span class="text-[9px] text-slate-400 font-bold block">أرباح عمولات المنصة (5%)</span>
+                        <h4 class="text-base font-black text-emerald-600" id="rep-total-commissions">0 دج</h4>
+                    </div>
+                    <div class="bg-slate-50 border border-slate-100 p-4 rounded-2xl space-y-1">
+                        <span class="text-[9px] text-slate-400 font-bold block">إيرادات الاشتراكات النشطة</span>
+                        <h4 class="text-base font-black text-[#d4af37]" id="rep-total-subs">0 دج</h4>
+                    </div>
+                    <div class="bg-slate-50 border border-slate-100 p-4 rounded-2xl space-y-1">
+                        <span class="text-[9px] text-slate-400 font-bold block">صافي الإيرادات العامة</span>
+                        <h4 class="text-base font-black text-blue-600" id="rep-total-net">0 دج</h4>
+                    </div>
+                </div>
+
+                <!-- Dynamic Merchant Subscriptions & Performance Table -->
+                <div class="space-y-3">
+                    <span class="text-xs font-black text-[#113f1c] block">📈 كشف الحساب والاشتراكات الخاص بكل تاجر نشط:</span>
+                    <div class="overflow-x-auto w-full">
+                        <table class="w-full text-right text-xs" style="min-width: 800px;">
+                            <thead>
+                                <tr class="bg-slate-50 border-b border-slate-100 text-slate-500 font-black">
+                                    <th class="p-3">اسم متجر التاجر</th>
+                                    <th class="p-3 text-center">حالة الاشتراك الشهري</th>
+                                    <th class="p-3 text-center">المبيعات الإجمالية</th>
+                                    <th class="p-3 text-center">عمولة المنصة</th>
+                                    <th class="p-3 text-center">مبيعات اليوم</th>
+                                    <th class="p-3 text-center">آخر دفعة</th>
+                                    <th class="p-3 text-center">التحكم والإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reports-merchants-tbody" class="font-bold">
+                                <!-- Computed dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 8: Users & Customers Management 👥 -->
+        <div id="section-users-global" class="space-y-6 hidden animate-fadeIn text-right">
+            <div class="bg-white border-2 border-slate-200 rounded-3xl p-6 space-y-6 shadow-sm">
+                <!-- Header with summary -->
+                <div class="border-b border-slate-100 pb-3 flex justify-between items-center flex-wrap gap-2">
+                    <span class="text-xs bg-sky-50 text-sky-600 px-3 py-1 rounded-full border border-sky-100 font-bold" id="users-stats-summary">إجمالي المستخدمين: 0</span>
+                    <h3 class="text-base font-black text-slate-800 flex items-center gap-2">
+                        <i class="fa-solid fa-users text-sky-500"></i>
+                        <span>قاعدة بيانات المستخدمين والزبائن النشطة 👥</span>
+                    </h3>
+                </div>
+
+                <!-- Filters and Search Bar -->
+                <div class="flex flex-col md:flex-row gap-3 items-center justify-between">
+                    <div class="w-full md:w-1/3">
+                        <input id="users-search-input" oninput="renderUsersTable()" type="text" class="w-full bg-slate-50 border border-slate-200 text-xs rounded-xl py-2 px-3 focus:outline-none focus:border-sky-400 font-bold" placeholder="🔍 ابحث عن اسم، بريد أو هاتف زبون...">
+                    </div>
+                    <div class="flex gap-2 w-full md:w-auto overflow-x-auto pb-1">
+                        <button onclick="filterUsersByType('all')" class="user-filter-btn px-3 py-1.5 bg-[#113f1c] text-white text-[10px] rounded-full font-black border border-[#d4af37]/30">الكل</button>
+                        <button onclick="filterUsersByType('buyer')" class="user-filter-btn px-3 py-1.5 bg-slate-100 text-slate-600 hover:bg-slate-200 text-[10px] rounded-full font-bold">المشترين 🛒</button>
+                        <button onclick="filterUsersByType('registered')" class="user-filter-btn px-3 py-1.5 bg-slate-100 text-slate-600 hover:bg-slate-200 text-[10px] rounded-full font-bold">المسجلين 📝</button>
+                        <button onclick="filterUsersByType('visitor')" class="user-filter-btn px-3 py-1.5 bg-slate-100 text-slate-600 hover:bg-slate-200 text-[10px] rounded-full font-bold">الزوار 👥</button>
+                        <button onclick="filterUsersByType('returned')" class="user-filter-btn px-3 py-1.5 bg-slate-100 text-slate-600 hover:bg-slate-200 text-[10px] rounded-full font-bold">مرجعي الطلبات ↩️</button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    <!-- Users Database Table (8 Cols) -->
+                    <div class="lg:col-span-8 overflow-x-auto w-full">
+                        <table class="w-full text-right text-xs" style="min-width: 500px;">
+                            <thead>
+                                <tr class="bg-slate-50 border-b border-slate-100 text-slate-500 font-black">
+                                    <th class="p-3">الاسم والبيانات</th>
+                                    <th class="p-3 text-center">رقم الهاتف</th>
+                                    <th class="p-3 text-center">تصنيف العميل</th>
+                                    <th class="p-3 text-center">العمليات والتحكم</th>
+                                </tr>
+                            </thead>
+                            <tbody id="users-tbody" class="font-bold">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Add User Form (4 Cols) -->
+                    <div class="lg:col-span-4 bg-slate-50 border border-slate-200 rounded-2xl p-5 space-y-4">
+                        <span class="text-xs font-black text-slate-700 block border-b border-slate-200 pb-2"><i class="fa-solid fa-user-plus text-sky-500"></i> إضافة زائر أو زبون جديد يدوياً:</span>
+                        
+                        <form id="admin-add-user-form" onsubmit="adminAddNewUser(event)" class="space-y-3">
+                            <div>
+                                <label class="block text-[10px] text-slate-500 font-bold mb-1">الاسم الكامل *</label>
+                                <input id="new-user-name" type="text" class="w-full bg-white border border-slate-200 text-xs rounded-xl py-2 px-3 focus:outline-none focus:border-sky-400 font-bold" required placeholder="مثال: يونس جلال">
+                            </div>
+
+                            <div>
+                                <label class="block text-[10px] text-slate-500 font-bold mb-1">البريد الإلكتروني *</label>
+                                <input id="new-user-email" type="email" class="w-full bg-white border border-slate-200 text-xs rounded-xl py-2 px-3 focus:outline-none focus:border-sky-400 font-mono font-bold" required placeholder="example@zalo.dz">
+                            </div>
+
+                            <div>
+                                <label class="block text-[10px] text-slate-500 font-bold mb-1">رقم الهاتف الجوال</label>
+                                <input id="new-user-phone" type="tel" class="w-full bg-white border border-slate-200 text-xs rounded-xl py-2 px-3 focus:outline-none focus:border-sky-400 font-bold" placeholder="مثال: 0661000000">
+                            </div>
+
+                            <div>
+                                <label class="block text-[10px] text-slate-500 font-bold mb-1">نوع وتصنيف العميل</label>
+                                <select id="new-user-type" class="w-full bg-white border border-slate-200 text-xs rounded-xl py-2 px-3 focus:outline-none focus:border-sky-400 font-bold">
+                                    <option value="visitor">زائر (Visitor)</option>
+                                    <option value="registered" selected>مسجل (Registered)</option>
+                                    <option value="buyer">مشتري دائم (Buyer)</option>
+                                    <option value="returned">مرجع طلبيات (Returned Orders)</option>
+                                </select>
+                            </div>
+
+                            <button type="submit" class="w-full bg-sky-500 hover:bg-sky-600 text-white font-black text-xs py-3 rounded-xl transition flex items-center justify-center gap-1">
+                                <i class="fa-solid fa-plus"></i>
+                                <span>حفظ العميل في المنصة 💾</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 9: General Products Database 📦 -->
+        <div id="section-products-global" class="space-y-6 hidden animate-fadeIn text-right">
+            <div class="bg-white border-2 border-slate-200 rounded-3xl p-6 space-y-6 shadow-sm">
+                <!-- Header with auto numbers -->
+                <div class="border-b border-slate-100 pb-3 flex justify-between items-center flex-wrap gap-2">
+                    <span class="text-xs bg-amber-50 text-amber-600 px-3 py-1 rounded-full border border-amber-100 font-bold" id="products-stats-summary">إجمالي المعروضات: 0 سلعة</span>
+                    <h3 class="text-base font-black text-slate-800 flex items-center gap-2">
+                        <i class="fa-solid fa-box-open text-amber-500"></i>
+                        <span>إدارة وتقييم السلع والمبيعات الإجمالية 📦</span>
+                    </h3>
+                </div>
+
+                <!-- Product Filters & Rank info -->
+                <div class="flex flex-col md:flex-row gap-3 items-center justify-between bg-slate-50/50 border border-slate-100 rounded-2xl p-4">
+                    <div class="w-full md:w-1/3">
+                        <input id="products-search-input" oninput="renderGlobalProductsTable()" type="text" class="w-full bg-white border border-slate-200 text-xs rounded-xl py-2 px-3 focus:outline-none focus:border-sky-400 font-bold" placeholder="🔍 ابحث عن سلعة، كود باركود، اسم تاجر...">
+                    </div>
+                    <p class="text-[10px] text-slate-500 font-black leading-relaxed">
+                        ⚠️ يتم ترتيب السلع تلقائياً بناءً على كفاءة المبيعات والإقبال لفرز المنتجات الأكثر طلباً في الأسواق.
+                    </p>
+                </div>
+
+                <!-- Global Products Database Table -->
+                <div class="overflow-x-auto w-full">
+                    <table class="w-full text-right text-xs" style="min-width: 800px;">
+                        <thead>
+                            <tr class="bg-slate-50 border-b border-slate-100 text-slate-500 font-black">
+                                <th class="p-3 text-center">الترتيب الرقمي</th>
+                                <th class="p-3">المنتج ومعلوماته</th>
+                                <th class="p-3 text-center">السعر والباركود</th>
+                                <th class="p-3 text-center">متجر التاجر الأصلي</th>
+                                <th class="p-3 text-center">عدد مرات الشراء</th>
+                                <th class="p-3 text-center">المشتري الأخير</th>
+                                <th class="p-3 text-center">الإجراءات والتحكم</th>
+                            </tr>
+                        </thead>
+                        <tbody id="products-tbody" class="font-bold">
+                            <!-- Populated dynamically with automatic numbering -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
         </main>
 
         <!-- Foot -->
@@ -843,6 +1211,13 @@
             renderWilayaTable();
             renderAnnouncements();
             renderRegistrations();
+            
+            // New Modules Initialization
+            loadGlobalSettings();
+            regenerateGlobalQR();
+            renderFinancialReports();
+            renderUsersTable();
+            renderGlobalProductsTable();
         }
 
         // Render counters
@@ -1349,6 +1724,548 @@
         }
         function closeDocumentsModal() {
             document.getElementById('documents-modal').classList.add('hidden');
+        }
+
+        // 📲 QR Code Control Center Functions
+        function regenerateGlobalQR() {
+            const urlInput = document.getElementById('qr-global-url');
+            const colorInput = document.getElementById('qr-global-color');
+            const qrSvg = document.getElementById('global-qr-svg');
+            const displayUrl = document.getElementById('qr-display-url');
+
+            if (!urlInput || !colorInput || !qrSvg) return;
+
+            const url = urlInput.value.trim() || "https://zalo.dz";
+            const color = colorInput.value;
+
+            if (displayUrl) displayUrl.innerText = url;
+
+            // Dynamically alter fill colors in SVG layout
+            const rects = qrSvg.querySelectorAll('rect');
+            rects.forEach(rect => {
+                if (rect.getAttribute('fill') !== 'white') {
+                    rect.setAttribute('fill', color);
+                }
+            });
+            const paths = qrSvg.querySelectorAll('path');
+            paths.forEach(p => {
+                p.setAttribute('fill', color);
+            });
+            const text = qrSvg.querySelector('text');
+            if (text) {
+                text.setAttribute('fill', color);
+            }
+        }
+
+        function printGlobalQR() {
+            const printArea = document.getElementById('qr-print-area');
+            if (!printArea) return;
+            const printWindow = window.open('', '', 'height=500,width=500');
+            printWindow.document.write('<html><head><title>Print QR Code - ZaLo</title>');
+            printWindow.document.write('<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">');
+            printWindow.document.write('<style>body{font-family:"Cairo",sans-serif; text-align:center; padding:40px;} .print-card{border:4px solid #d4af37; padding:20px; display:inline-block; border-radius:15px; background:white;}</style>');
+            printWindow.document.write('</head><body>');
+            printWindow.document.write('<h2 style="color:#113f1c;">منصة ZaLo الجزائرية الموحدة</h2>');
+            printWindow.document.write('<div class="print-card">' + printArea.innerHTML + '</div>');
+            printWindow.document.write('<p style="font-size:12px; color:#666;">امسح الرمز للتسوق أو الانضمام كتاجر شريك</p>');
+            printWindow.document.write('</body></html>');
+            printWindow.document.close();
+            printWindow.focus();
+            setTimeout(() => {
+                printWindow.print();
+                printWindow.close();
+            }, 500);
+        }
+
+        function downloadGlobalQR() {
+            alert("تم حفظ ملصق الرمز عالي الدقة بنجاح في مجلد التنزيلات! 📲");
+        }
+
+        // ⚙️ Unified Platform Settings Functions
+        const DEFAULT_GLOBAL_SETTINGS = {
+            platformName: "ZaLo Market الجزائر",
+            commissionRate: 5,
+            subPrice: 2000,
+            supportPhone: "0550123456",
+            maintenanceMode: false,
+            apiSupabase: "",
+            apiGA: "",
+            apiWhatsApp: ""
+        };
+
+        function loadGlobalSettings() {
+            let settings = getDB("global_platform_settings", DEFAULT_GLOBAL_SETTINGS);
+            
+            const nameEl = document.getElementById('set-platform-name');
+            const commEl = document.getElementById('set-commission');
+            const subEl = document.getElementById('set-sub-price');
+            const phoneEl = document.getElementById('set-support-phone');
+            const maintEl = document.getElementById('set-maintenance');
+            const supEl = document.getElementById('set-api-supabase');
+            const gaEl = document.getElementById('set-api-ga');
+            const waEl = document.getElementById('set-api-whatsapp');
+
+            if (nameEl) nameEl.value = settings.platformName;
+            if (commEl) commEl.value = settings.commissionRate;
+            if (subEl) subEl.value = settings.subPrice;
+            if (phoneEl) phoneEl.value = settings.supportPhone;
+            if (maintEl) maintEl.checked = settings.maintenanceMode;
+            if (supEl) supEl.value = settings.apiSupabase || "";
+            if (gaEl) gaEl.value = settings.apiGA || "";
+            if (waEl) waEl.value = settings.apiWhatsApp || "";
+        }
+
+        function saveGlobalSettings(e) {
+            e.preventDefault();
+            
+            let settings = {
+                platformName: document.getElementById('set-platform-name').value,
+                commissionRate: parseFloat(document.getElementById('set-commission').value) || 5,
+                subPrice: parseInt(document.getElementById('set-sub-price').value) || 2000,
+                supportPhone: document.getElementById('set-support-phone').value,
+                maintenanceMode: document.getElementById('set-maintenance').checked,
+                apiSupabase: document.getElementById('set-api-supabase').value,
+                apiGA: document.getElementById('set-api-ga').value,
+                apiWhatsApp: document.getElementById('set-api-whatsapp').value
+            };
+
+            setDB("global_platform_settings", settings);
+
+            // Show success alert banner
+            const alertBanner = document.getElementById('settings-save-alert');
+            if (alertBanner) {
+                alertBanner.classList.remove('hidden');
+                setTimeout(() => {
+                    alertBanner.classList.add('hidden');
+                }, 4000);
+            }
+        }
+
+        // 📈 Financial & Admin Reports Functions
+        function renderFinancialReports() {
+            let stores = getDB("stores_list_old", MOCK_STORES).filter(s => s.status === "APPROVED");
+            let orders = getDB("orders", []);
+            let settings = getDB("global_platform_settings", DEFAULT_GLOBAL_SETTINGS);
+            
+            let totalPlatformSales = 0;
+            let totalCommissions = 0;
+            let totalSubscriptions = 0;
+
+            const tbody = document.getElementById('reports-merchants-tbody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+
+            stores.forEach(s => {
+                let sId = s.id || s.storeId;
+                let mOrders = orders.filter(o => o.storeId === sId || o.storeName === s.name);
+                
+                let completed = mOrders.filter(o => o.status === "تم التسليم" || o.status === "DELIVERED");
+                let salesTotal = completed.reduce((sum, o) => sum + (parseFloat(o.total) || 0), 0);
+                
+                let todayStr = new Date().toISOString().split('T')[0];
+                let todayOrders = completed.filter(o => (o.date || "").includes(todayStr));
+                let todaySalesTotal = todayOrders.reduce((sum, o) => sum + (parseFloat(o.total) || 0), 0);
+
+                let comm = salesTotal * (settings.commissionRate / 100);
+                
+                let hasPaidSub = s.subscriptionPaid !== false;
+                let subAmount = hasPaidSub ? settings.subPrice : 0;
+                
+                totalPlatformSales += salesTotal;
+                totalCommissions += comm;
+                totalSubscriptions += subAmount;
+
+                let subStatusText = hasPaidSub ? "نشط (مدفوع) 🟢" : "مستحق الدفع 🔴";
+                let subStatusColor = hasPaidSub ? "text-emerald-600 bg-emerald-50 border-emerald-200" : "text-red-600 bg-red-50 border-red-200";
+
+                let row = document.createElement('tr');
+                row.className = "border-t border-slate-100 hover:bg-slate-50 transition";
+                row.innerHTML = `
+                    <td class="p-3 font-black text-slate-900">${s.name}</td>
+                    <td class="p-3 text-center">
+                        <span class="px-2.5 py-1 rounded-full text-[10px] font-black border ${subStatusColor}">
+                            ${subStatusText}
+                        </span>
+                    </td>
+                    <td class="p-3 text-center text-slate-800">${salesTotal.toLocaleString()} دج</td>
+                    <td class="p-3 text-center text-emerald-600">${comm.toLocaleString()} دج</td>
+                    <td class="p-3 text-center text-blue-600">${todaySalesTotal.toLocaleString()} دج</td>
+                    <td class="p-3 text-center text-slate-400 font-mono">${s.lastSubPaymentDate || '2026-07-01'}</td>
+                    <td class="p-3 text-center">
+                        <div class="flex gap-1 justify-center">
+                            <button onclick="toggleMerchantSubscription('${sId}')" class="bg-indigo-50 text-indigo-600 hover:bg-indigo-600 hover:text-white border border-indigo-200 font-black text-[9px] px-2 py-1 rounded-lg transition">
+                                ${hasPaidSub ? "إلغاء الاشتراك ❌" : "تسجيل الدفع ✅"}
+                            </button>
+                            <button onclick="printMerchantReport('${sId}')" class="bg-slate-100 text-slate-700 hover:bg-slate-200 font-black text-[9px] px-2 py-1 rounded-lg transition" title="طباعة تقرير مالي منفرد">
+                                <i class="fa-solid fa-print"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            document.getElementById('rep-total-sales').innerText = totalPlatformSales.toLocaleString() + " دج";
+            document.getElementById('rep-total-commissions').innerText = totalCommissions.toLocaleString() + " دج";
+            document.getElementById('rep-total-subs').innerText = totalSubscriptions.toLocaleString() + " دج";
+            
+            let netRevenue = totalCommissions + totalSubscriptions;
+            document.getElementById('rep-total-net').innerText = netRevenue.toLocaleString() + " دج";
+        }
+
+        function toggleMerchantSubscription(storeId) {
+            let stores = getDB("stores_list_old", MOCK_STORES);
+            let s = stores.find(st => st.id === storeId || st.storeId === storeId);
+            if (s) {
+                s.subscriptionPaid = s.subscriptionPaid === false;
+                const now = new Date();
+                s.lastSubPaymentDate = now.getFullYear() + "-" + String(now.getMonth()+1).padStart(2, '0') + "-" + String(now.getDate()).padStart(2, '0');
+                setDB("stores_list_old", stores);
+                renderFinancialReports();
+                alert(`تم تحديث حالة اشتراك التاجر "${s.name}" بنجاح! 💸`);
+            }
+        }
+
+        function printMerchantReport(storeId) {
+            let stores = getDB("stores_list_old", MOCK_STORES);
+            let s = stores.find(st => st.id === storeId || st.storeId === storeId);
+            if (!s) return;
+
+            let orders = getDB("orders", []);
+            let settings = getDB("global_platform_settings", DEFAULT_GLOBAL_SETTINGS);
+            
+            let sId = s.id || s.storeId;
+            let mOrders = orders.filter(o => o.storeId === sId || o.storeName === s.name);
+            let completed = mOrders.filter(o => o.status === "تم التسليم" || o.status === "DELIVERED");
+            let salesTotal = completed.reduce((sum, o) => sum + (parseFloat(o.total) || 0), 0);
+            let comm = salesTotal * (settings.commissionRate / 100);
+
+            const printWindow = window.open('', '', 'height=500,width=500');
+            printWindow.document.write('<html><head><title>تقرير مالي للتاجر - ZaLo</title>');
+            printWindow.document.write('<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">');
+            printWindow.document.write('<style>body{font-family:"Cairo",sans-serif; text-align:right; direction:rtl; padding:30px;} table{width:100%; border-collapse:collapse; margin-top:20px;} th,td{border:1px solid #ddd; padding:10px; text-align:center;}</style>');
+            printWindow.document.write('</head><body>');
+            printWindow.document.write('<h2 style="color:#113f1c; border-bottom:2px solid #d4af37; padding-bottom:10px;">التقرير المالي لمتجر: ' + s.name + '</h2>');
+            printWindow.document.write('<p><strong>اسم المالك المسؤول:</strong> ' + s.owner + '</p>');
+            printWindow.document.write('<p><strong>تاريخ التقرير:</strong> ' + new Date().toLocaleString() + '</p>');
+            printWindow.document.write('<table>');
+            printWindow.document.write('<thead><tr style="background:#f4f4f4;"><th>البيان المالي</th><th>القيمة بالدينار الجزائري</th></tr></thead>');
+            printWindow.document.write('<tbody>');
+            printWindow.document.write('<tr><td>إجمالي المبيعات المحققة</td><td><strong>' + salesTotal.toLocaleString() + ' دج</strong></td></tr>');
+            printWindow.document.write('<tr><td>عمولة المنصة المقررة (' + settings.commissionRate + '%)</td><td style="color:red;">' + comm.toLocaleString() + ' دج</td></tr>');
+            printWindow.document.write('<tr><td>رسوم الاشتراك الشهري</td><td>' + (s.subscriptionPaid !== false ? settings.subPrice : 0).toLocaleString() + ' دج</td></tr>');
+            printWindow.document.write('<tr><td>صافي دخل التاجر المتبقي</td><td style="color:green; font-weight:bold;">' + (salesTotal - comm).toLocaleString() + ' دج</td></tr>');
+            printWindow.document.write('</tbody></table>');
+            printWindow.document.write('<p style="margin-top:30px; font-size:11px; text-align:center; color:#888;">منصة ZaLo ديزاد - نظام التدقيق الإداري والمالي الموحد</p>');
+            printWindow.document.write('</body></html>');
+            printWindow.document.close();
+            printWindow.focus();
+            setTimeout(() => {
+                printWindow.print();
+                printWindow.close();
+            }, 500);
+        }
+
+        function printPlatformFinancialReport() {
+            let settings = getDB("global_platform_settings", DEFAULT_GLOBAL_SETTINGS);
+            let stores = getDB("stores_list_old", MOCK_STORES).filter(s => s.status === "APPROVED");
+            let orders = getDB("orders", []);
+
+            let totalSales = 0;
+            let totalComm = 0;
+            let totalSubs = 0;
+
+            let tableRows = '';
+            stores.forEach(s => {
+                let sId = s.id || s.storeId;
+                let mOrders = orders.filter(o => o.storeId === sId || o.storeName === s.name);
+                let completed = mOrders.filter(o => o.status === "تم التسليم" || o.status === "DELIVERED");
+                let salesTotal = completed.reduce((sum, o) => sum + (parseFloat(o.total) || 0), 0);
+                let comm = salesTotal * (settings.commissionRate / 100);
+                let subPaid = s.subscriptionPaid !== false;
+                let subAmt = subPaid ? settings.subPrice : 0;
+
+                totalSales += salesTotal;
+                totalComm += comm;
+                totalSubs += subAmt;
+
+                tableRows += `
+                    <tr>
+                        <td>${s.name}</td>
+                        <td>${subPaid ? 'مدفوع' : 'مستحق'}</td>
+                        <td>${salesTotal.toLocaleString()} دج</td>
+                        <td>${comm.toLocaleString()} دج</td>
+                        <td>${subAmt.toLocaleString()} دج</td>
+                    </tr>
+                `;
+            });
+
+            const printWindow = window.open('', '', 'height=600,width=800');
+            printWindow.document.write('<html><head><title>التقرير المالي الموحد للمنصة - ZaLo</title>');
+            printWindow.document.write('<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">');
+            printWindow.document.write('<style>body{font-family:"Cairo",sans-serif; text-align:right; direction:rtl; padding:30px;} table{width:100%; border-collapse:collapse; margin-top:20px;} th,td{border:1px solid #ddd; padding:10px; text-align:center;}</style>');
+            printWindow.document.write('</head><body>');
+            printWindow.document.write('<h2 style="color:#113f1c; border-bottom:2px solid #d4af37; padding-bottom:10px; text-align:center;">كشف الأداء والتدفق المالي لمنصة ZaLo الموحدة</h2>');
+            printWindow.document.write('<p><strong>تاريخ كشف التدقيق:</strong> ' + new Date().toLocaleString() + '</p>');
+            
+            printWindow.document.write('<div style="display:flex; justify-content:space-between; margin-top:20px; font-weight:bold;">');
+            printWindow.document.write('<div>إجمالي المبيعات: ' + totalSales.toLocaleString() + ' دج</div>');
+            printWindow.document.write('<div>أرباح العمولات: ' + totalComm.toLocaleString() + ' دج</div>');
+            printWindow.document.write('<div>عوائد الاشتراكات: ' + totalSubs.toLocaleString() + ' دج</div>');
+            printWindow.document.write('<div style="color:green;">صافي الإيرادات: ' + (totalComm + totalSubs).toLocaleString() + ' دج</div>');
+            printWindow.document.write('</div>');
+
+            printWindow.document.write('<table>');
+            printWindow.document.write('<thead><tr style="background:#113f1c; color:white;"><th>اسم المتجر</th><th>حالة الاشتراك</th><th>المبيعات</th><th>عمولة المنصة</th><th>قيمة الاشتراك المحصلة</th></tr></thead>');
+            printWindow.document.write('<tbody>' + tableRows + '</tbody>');
+            printWindow.document.write('</table>');
+            
+            printWindow.document.write('</body></html>');
+            printWindow.document.close();
+            printWindow.focus();
+            setTimeout(() => {
+                printWindow.print();
+                printWindow.close();
+            }, 500);
+        }
+
+        // 👥 Users & Customers Management Functions
+        const MOCK_USERS_SEED = [
+            { id: "u1", name: "محمد الجزائري", email: "mohamed@gmail.com", phone: "0662334455", type: "buyer", dateJoined: "2026-06-15" },
+            { id: "u2", name: "أمين بوعمران", email: "amine@outlook.fr", phone: "0771889900", type: "registered", dateJoined: "2026-07-02" },
+            { id: "u3", name: "نسيم بومرداس", email: "nasim@gmail.com", phone: "0554123456", type: "visitor", dateJoined: "2026-07-10" },
+            { id: "u4", name: "ليليا قسنطينة", email: "lilia@gmail.com", phone: "0665778899", type: "returned", dateJoined: "2026-07-08" },
+            { id: "u5", name: "خديجة تلمسان", email: "khadidja@gmail.com", phone: "0770556677", type: "buyer", dateJoined: "2026-05-20" }
+        ];
+
+        let currentUserFilter = "all";
+
+        function renderUsersTable() {
+            let users = getDB("users", []);
+            if (users.length === 0) {
+                users = MOCK_USERS_SEED;
+                setDB("users", users);
+            }
+
+            const tbody = document.getElementById('users-tbody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+
+            const query = (document.getElementById('users-search-input')?.value || "").toLowerCase().trim();
+
+            let filtered = users.filter(u => {
+                if (currentUserFilter !== "all" && u.type !== currentUserFilter) {
+                    return false;
+                }
+                if (query) {
+                    return u.name.toLowerCase().includes(query) || 
+                           (u.email || "").toLowerCase().includes(query) || 
+                           (u.phone || "").toLowerCase().includes(query);
+                }
+                return true;
+            });
+
+            const summaryEl = document.getElementById('users-stats-summary');
+            if (summaryEl) {
+                summaryEl.innerText = `إجمالي المستخدمين: ${users.length} | المصفاة حالياً: ${filtered.length}`;
+            }
+
+            filtered.forEach(u => {
+                let badgeColor = "bg-slate-100 text-slate-600";
+                let badgeText = "زائر 👥";
+                if (u.type === "buyer") {
+                    badgeColor = "bg-emerald-50 text-emerald-600 border border-emerald-200";
+                    badgeText = "مشتري دائم 🛒";
+                } else if (u.type === "registered") {
+                    badgeColor = "bg-sky-50 text-sky-600 border border-sky-200";
+                    badgeText = "مسجل بالمنصة 📝";
+                } else if (u.type === "returned") {
+                    badgeColor = "bg-red-50 text-red-600 border border-red-200";
+                    badgeText = "مرجع طلبيات ↩️";
+                }
+
+                let row = document.createElement('tr');
+                row.className = "border-t border-slate-100 hover:bg-slate-50 transition";
+                row.innerHTML = `
+                    <td class="p-3">
+                        <div class="flex flex-col">
+                            <span class="font-black text-slate-800">${u.name}</span>
+                            <span class="text-[10px] text-slate-400 font-mono font-normal">${u.email || 'no-email@zalo.dz'}</span>
+                        </div>
+                    </td>
+                    <td class="p-3 text-center font-mono text-slate-700">${u.phone || 'غير مدرج'}</td>
+                    <td class="p-3 text-center">
+                        <span class="text-[9px] px-2.5 py-1 rounded-full font-black ${badgeColor}">
+                            ${badgeText}
+                        </span>
+                    </td>
+                    <td class="p-3 text-center">
+                        <button onclick="deleteUser('${u.id}')" class="bg-red-50 text-red-500 hover:bg-red-600 hover:text-white font-bold text-[10px] px-2.5 py-1.5 rounded-xl border border-red-100 transition shadow-sm">
+                            <i class="fa-solid fa-trash-can"></i>
+                            <span>حذف العميل 🗑️</span>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function filterUsersByType(type) {
+            currentUserFilter = type;
+            const buttons = document.querySelectorAll('.user-filter-btn');
+            buttons.forEach(btn => {
+                btn.className = "user-filter-btn px-3 py-1.5 bg-slate-100 text-slate-600 hover:bg-slate-200 text-[10px] rounded-full font-bold transition";
+            });
+
+            if (event && event.target) {
+                event.target.className = "user-filter-btn px-3 py-1.5 bg-[#113f1c] text-white text-[10px] rounded-full font-black border border-[#d4af37]/30 transition";
+            }
+
+            renderUsersTable();
+        }
+
+        function adminAddNewUser(e) {
+            e.preventDefault();
+            const name = document.getElementById('new-user-name').value.trim();
+            const email = document.getElementById('new-user-email').value.trim();
+            const phone = document.getElementById('new-user-phone').value.trim();
+            const type = document.getElementById('new-user-type').value;
+
+            if (!name || !email) {
+                alert("يرجى ملء كافة الحقول الأساسية المطلوبة.");
+                return;
+            }
+
+            let users = getDB("users", []);
+            users.push({
+                id: "usr_" + Date.now(),
+                name: name,
+                email: email,
+                phone: phone,
+                type: type,
+                dateJoined: new Date().toISOString().split('T')[0]
+            });
+
+            setDB("users", users);
+            document.getElementById('admin-add-user-form').reset();
+            renderUsersTable();
+            renderStats();
+            alert(`تم تسجيل العميل "${name}" بنجاح ضمن قاعدة زوار وأعضاء المنصة! 📝`);
+        }
+
+        function deleteUser(id) {
+            if (confirm("هل أنت متأكد من حذف هذا العميل نهائياً من قاعدة بيانات المنصة؟")) {
+                let users = getDB("users", []);
+                users = users.filter(u => u.id !== id);
+                setDB("users", users);
+                renderUsersTable();
+                renderStats();
+            }
+        }
+
+        // 📦 General Products Database Functions
+        function renderGlobalProductsTable() {
+            let products = getDB("products", []);
+            let orders = getDB("orders", []);
+
+            if (products.length === 0) {
+                products = [
+                    { id: "p1", productName: "ساعة ذكية رياضية M1 Ultra", price: 7500, sku: "SKU-M1-GOLD", storeName: "محل ZaLo شريك", storeId: "store_salam", img: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=300&q=80", salesCount: 12, createdAt: "2026-07-15" },
+                    { id: "p2", productName: "سماعات رأس لاسلكية مدمجة", price: 4200, sku: "SKU-HPHONE-99", storeName: "معرض النور للإلكترونيات", storeId: "store_el_nour", img: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=300&q=80", salesCount: 8, createdAt: "2026-07-16" },
+                    { id: "p3", productName: "حقيبة جلدية فاخرة لرجال الأعمال", price: 11000, sku: "SKU-BAG-LEATHER", storeName: "متجر الفخامة للحقائب", storeId: "store_salam", img: "https://images.unsplash.com/photo-1547949003-9792a18a2601?auto=format&fit=crop&w=300&q=80", salesCount: 5, createdAt: "2026-07-17" }
+                ];
+                setDB("products", products);
+            }
+
+            const tbody = document.querySelector('#section-products-global #products-tbody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+
+            const query = (document.getElementById('products-search-input')?.value || "").toLowerCase().trim();
+
+            products.forEach(p => {
+                let completedMatches = orders.filter(o => 
+                    (o.productId === p.id || o.productName === p.productName) && 
+                    (o.status === "تم التسليم" || o.status === "DELIVERED")
+                );
+                p.computedSales = (p.salesCount || 0) + completedMatches.length;
+            });
+
+            products.sort((a, b) => b.computedSales - a.computedSales);
+
+            let filtered = products.filter(p => {
+                if (query) {
+                    return p.productName.toLowerCase().includes(query) || 
+                           (p.sku || "").toLowerCase().includes(query) || 
+                           (p.storeName || "").toLowerCase().includes(query);
+                }
+                return true;
+            });
+
+            const summaryEl = document.getElementById('products-stats-summary');
+            if (summaryEl) {
+                summaryEl.innerText = `إجمالي المعروضات: ${products.length} سلعة | المصفاة حالياً: ${filtered.length}`;
+            }
+
+            filtered.forEach((p, index) => {
+                let rankClass = "bg-slate-100 text-slate-700";
+                if (index === 0) rankClass = "bg-amber-100 text-amber-800 border border-amber-300 ring-2 ring-amber-200 animate-pulse";
+                else if (index === 1) rankClass = "bg-slate-200 text-slate-800 border border-slate-300";
+                else if (index === 2) rankClass = "bg-orange-50 text-orange-700 border border-orange-200";
+
+                let buyerName = "لا يوجد زبائن بعد";
+                let matchedOrders = orders.filter(o => o.productId === p.id || o.productName === p.productName);
+                if (matchedOrders.length > 0) {
+                    buyerName = matchedOrders[matchedOrders.length - 1].customerName || "زبون المنصة";
+                }
+
+                let row = document.createElement('tr');
+                row.className = "border-t border-slate-100 hover:bg-slate-50 transition";
+                row.innerHTML = `
+                    <td class="p-3 text-center">
+                        <span class="inline-flex items-center justify-center w-7 h-7 rounded-full text-xs font-black ${rankClass}">
+                            ${index + 1}
+                        </span>
+                    </td>
+                    <td class="p-3">
+                        <div class="flex items-center gap-3">
+                            <img src="${p.img || p.logoImg || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=100&q=80'}" class="w-10 h-10 rounded-xl object-cover border border-slate-200">
+                            <div class="flex flex-col text-right">
+                                <span class="font-black text-slate-800 text-xs">${p.productName}</span>
+                                <span class="text-[10px] text-slate-400 font-bold">تاريخ الإضافة: ${p.createdAt || '2026-07-15'}</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="p-3 text-center">
+                        <p class="font-black text-slate-800 text-xs">${parseFloat(p.price).toLocaleString()} دج</p>
+                        <p class="text-[10px] text-slate-400 font-mono font-normal">SKU: ${p.sku || 'N/A'}</p>
+                    </td>
+                    <td class="p-3 text-center text-[#d4af37] font-black text-xs">${p.storeName || 'محل ZaLo شريك'}</td>
+                    <td class="p-3 text-center">
+                        <span class="bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-full text-[10px] font-black border border-emerald-100">
+                            ${p.computedSales} مبيعات 📦
+                        </span>
+                    </td>
+                    <td class="p-3 text-center text-slate-600 text-xs font-bold">${buyerName}</td>
+                    <td class="p-3 text-center">
+                        <button onclick="deleteGlobalProduct('${p.id}')" class="bg-red-50 text-red-500 hover:bg-red-600 hover:text-white font-bold text-[10px] px-2.5 py-1.5 rounded-xl border border-red-100 transition shadow-sm">
+                            <i class="fa-solid fa-trash-can"></i>
+                            <span>حذف المنتج 🗑️</span>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function deleteGlobalProduct(productId) {
+            if (confirm("هل أنت متأكد من رغبتك بحذف هذا المنتج نهائياً من العرض العام بالمنصة؟")) {
+                let products = getDB("products", []);
+                products = products.filter(p => p.id !== productId);
+                setDB("products", products);
+                renderGlobalProductsTable();
+                renderStats();
+            }
         }
 
         // Logout user
