@@ -45,7 +45,28 @@
             padding: 12px 16px !important;
         }
     </style>
-</head>
+
+    <!-- Security Session Guard -->
+    <script>
+        (function() {
+            const token = localStorage.getItem('zalo_token') || localStorage.getItem('zalo_session_jwt');
+            const role = localStorage.getItem('zalo_user_role');
+            if (!token) {
+                console.warn("[Security Guard] No active session found. Redirecting to login.");
+                window.location.href = 'login.html?reason=unauthorized';
+            } else {
+                // Determine required role based on page
+                const isPageAdmin = window.location.pathname.includes('dashboard-admin');
+                const isPageManager = window.location.pathname.includes('dashboard-manager');
+                const isPageStore = window.location.pathname.includes('dashboard-store');
+                
+                if (isPageAdmin && role !== 'admin') window.location.href = 'login.html?reason=forbidden';
+                if (isPageManager && (role !== 'admin' && role !== 'team' && role !== 'manager')) window.location.href = 'login.html?reason=forbidden';
+                if (isPageStore && (role !== 'admin' && role !== 'merchant')) window.location.href = 'login.html?reason=forbidden';
+            }
+        })();
+    </script>
+    </head>
 <body class="min-h-screen flex flex-col justify-between" onload="initManagerDashboardPage()">
 
     <!-- Global Header -->
