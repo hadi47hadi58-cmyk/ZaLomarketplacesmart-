@@ -1,0 +1,327 @@
+<!-- ZaLo Marketplace Careers & Staff Recruitment Portal: 2026-07-17 -->
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بوابة التوظيف والإنضمام لفريق العمل - ZaLo</title>
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Cairo & Great Vibes Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Great+Vibes&display=swap" rel="stylesheet">
+    <!-- ZaLo Custom Stylesheet -->
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        :root {
+            --sky-blue: #1d9bf0;
+            --sky-light: #e0f2fe;
+            --gold: #d4af37;
+            --gold-dark: #b89116;
+            --navy: #102a43;
+            --white: #ffffff;
+            --panel-bg: #f8fafc;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif !important;
+            background: linear-gradient(135deg, var(--sky-light) 0%, #ffffff 100%) !important;
+            color: var(--navy) !important;
+            min-height: 100vh;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+
+    <!-- Global Header -->
+    <header class="sticky top-0 z-50 bg-white/95 border-b-2 border-[#d4af37] w-full py-3 px-6 flex justify-between items-center backdrop-blur-md shadow-sm">
+        <a href="login.html" class="flex items-center gap-1.5 text-xs text-sky-600 hover:text-sky-800 font-bold transition">
+            <i class="fa-solid fa-arrow-right"></i>
+            <span>العودة لتسجيل الدخول</span>
+        </a>
+        
+        <!-- Header Unified Logo -->
+        <div class="flex items-center gap-2">
+            <svg width="34" height="34" viewBox="0 0 100 100" style="flex-shrink: 0;">
+                <path d="M 29,13.6 A 42,42 0 1,0 71,13.6" fill="none" stroke="#d4af37" stroke-width="4.5" stroke-linecap="round" />
+                <path d="M47.5,75 L52.5,75 L52.1,68 L47.9,68 Z" fill="#d4af37" />
+                <path d="M47.9,66 L52.1,66 L51.7,59 L48.3,59 Z" fill="#d4af37" />
+                <path d="M48.3,57 L51.7,57 L51.3,50 L48.7,50 Z" fill="#d4af37" />
+                <path d="M48.7,48 L51.3,48 L51,45 L49,45 Z" fill="#d4af37" />
+                <path d="M49,46 C41,43 33,48 27,56 C35,51 43,49 49,48 Z" fill="#d4af37" />
+                <path d="M49,46 C39,37 30,39 22,45 C32,42 41,43 49,46 Z" fill="#d4af37" />
+                <path d="M51,46 C59,43 67,48 73,56 C65,51 57,49 51,48 Z" fill="#d4af37" />
+                <path d="M51,46 C61,37 70,39 78,45 C68,42 59,43 51,46 Z" fill="#d4af37" />
+                <path d="M50,45 C50,26 45,17 40,14 C47,19 50,31 50,45 Z" fill="#d4af37" />
+                <text x="35" y="62" font-family="'Cairo', sans-serif" font-weight="900" font-size="14" fill="#d4af37" text-anchor="middle">Z</text>
+                <text x="65" y="62" font-family="'Cairo', sans-serif" font-weight="900" font-size="14" fill="#d4af37" text-anchor="middle">L</text>
+            </svg>
+            <span style="font-family: 'Great Vibes', cursive; font-size: 24px; font-weight: normal; color: #d4af37; line-height: 1;">ZaLo</span>
+        </div>
+
+        <a href="index.html" class="bg-sky-50 text-sky-600 border border-sky-200 text-xs px-4 py-1.5 rounded-full hover:bg-sky-600 hover:text-white font-bold transition">
+            <i class="fa-solid fa-house ml-1"></i> الرئيسية
+        </a>
+    </header>
+
+    <main class="flex-1 w-full max-w-2xl mx-auto px-4 py-8 space-y-8">
+        
+        <!-- Main Banner -->
+        <div class="bg-white border border-[#d4af37]/30 p-6 rounded-[24px] shadow-sm relative overflow-hidden text-right">
+            <div class="absolute top-0 left-0 w-32 h-32 bg-sky-200/20 rounded-full blur-3xl"></div>
+            <div class="space-y-2 relative z-10">
+                <span class="text-[10px] text-sky-600 font-extrabold block">بوابة التوظيف الموحدة بالجمهورية</span>
+                <h2 class="text-xl font-black text-slate-800">انضم إلى فريق عمل منصة ZaLo الذكية 💼</h2>
+                <p class="text-xs text-slate-500">نحن نبحث عن الكفاءات الوطنية لتنظيم وتأكيد الطلبيات وتنسيق الشحن والعمليات اللوجستية بين التجار والزبائن عبر الـ 58 ولاية جزائرية.</p>
+            </div>
+        </div>
+
+        <!-- Job Application Form -->
+        <div class="bg-white border border-slate-200 rounded-3xl p-6 space-y-6 shadow-sm text-right">
+            <h3 class="text-sm font-black text-slate-800 border-b border-slate-100 pb-3 flex items-center gap-2">
+                <i class="fa-solid fa-id-card text-sky-500"></i>
+                <span>استمارة طلب التوظيف والإنضمام للكادر</span>
+            </h3>
+
+            <form id="careers-application-form" onsubmit="submitJobApplication(event)" class="space-y-4">
+                
+                <!-- Full Name -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1.5">الاسم الأول *</label>
+                        <input type="text" id="app-firstname" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-sky-400 focus:bg-white font-bold" placeholder="أدخل اسمك الأول">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1.5">اللقب (اسم العائلة) *</label>
+                        <input type="text" id="app-lastname" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-sky-400 focus:bg-white font-bold" placeholder="أدخل اللقب العائلي">
+                    </div>
+                </div>
+
+                <!-- Contact Info -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1.5">البريد الإلكتروني *</label>
+                        <input type="email" id="app-email" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-sky-400 focus:bg-white font-bold" placeholder="example@domain.com">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1.5">رقم الهاتف الجوال *</label>
+                        <input type="tel" id="app-phone" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-sky-400 focus:bg-white font-bold" placeholder="05 / 06 / 07 ...">
+                    </div>
+                </div>
+
+                <!-- Geographic Scope -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1.5">الولاية المترشح لها *</label>
+                        <select id="app-wilaya" required onchange="populateCommunes()" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-sky-400 focus:bg-white font-bold">
+                            <option value="">-- اختر الولاية --</option>
+                            <option value="المنيعة">المنيعة</option>
+                            <option value="غرداية">غرداية</option>
+                            <option value="ورقلة">ورقلة</option>
+                            <option value="الجزائر">الجزائر العاصمة</option>
+                            <option value="وهران">وهران</option>
+                            <option value="قسنطينة">قسنطينة</option>
+                            <option value="سطيف">سطيف</option>
+                            <option value="تيزي وزو">تيزي وزو</option>
+                            <option value="بجاية">بجاية</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1.5">البلدية *</label>
+                        <select id="app-commune" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-sky-400 focus:bg-white font-bold">
+                            <option value="">-- اختر البلدية --</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Desired Role and Job Title -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1.5">الوظيفة المراد شغلها *</label>
+                        <select id="app-role-type" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-sky-400 focus:bg-white font-bold">
+                            <option value="مؤكد طلبيات">مؤكد طلبيات (تأكيد الشحنات هاتفياً)</option>
+                            <option value="منسق ولائي">منسق ولائي (الربط المباشر ببلديات الولاية)</option>
+                            <option value="مراقب مالي">مراقب مالي (مراجعة اشتراكات المتاجر وأرباحها)</option>
+                            <option value="مساعد مشرف / حل النزاعات">مساعد مشرف / حل النزاعات الدعم الفني</option>
+                            <option value="أخرى">أخرى (سأحددها بنفسي بالأسفل)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1.5">اكتب المسمى الوظيفي المفضل (اختياري)</label>
+                        <input type="text" id="app-custom-role-title" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-sky-400 focus:bg-white font-bold" placeholder="مثال: منسق بلدي بحاسي القارة...">
+                    </div>
+                </div>
+
+                <!-- Document Uploads -->
+                <div class="space-y-4 border-t border-dashed border-slate-200 pt-4">
+                    <h4 class="text-xs font-black text-slate-700"><i class="fa-solid fa-cloud-arrow-up text-sky-500 ml-1"></i> رفع الوثائق المطلوبة للترشح (الحد الأقصى 2MB لكل وثيقة)</h4>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <!-- CV Upload -->
+                        <div class="border border-dashed border-slate-200 hover:border-sky-400 rounded-xl p-3 text-center bg-slate-50 transition cursor-pointer relative">
+                            <input type="file" id="file-cv" required onchange="handleFileUpload(this, 'cv-preview', 'cv-label')" class="absolute inset-0 opacity-0 cursor-pointer">
+                            <i class="fa-solid fa-file-pdf text-red-500 text-lg block mb-1"></i>
+                            <span id="cv-label" class="text-[10px] font-bold text-slate-600 block">رفع السيرة الذاتية *</span>
+                            <span id="cv-preview" class="text-[8px] text-emerald-600 font-bold block mt-1 hidden"><i class="fa-solid fa-circle-check"></i> جاهز</span>
+                        </div>
+
+                        <!-- ID Upload -->
+                        <div class="border border-dashed border-slate-200 hover:border-sky-400 rounded-xl p-3 text-center bg-slate-50 transition cursor-pointer relative">
+                            <input type="file" id="file-id" required onchange="handleFileUpload(this, 'id-preview', 'id-label')" class="absolute inset-0 opacity-0 cursor-pointer">
+                            <i class="fa-solid fa-address-card text-sky-500 text-lg block mb-1"></i>
+                            <span id="id-label" class="text-[10px] font-bold text-slate-600 block">بطاقة الهوية الوطنية *</span>
+                            <span id="id-preview" class="text-[8px] text-emerald-600 font-bold block mt-1 hidden"><i class="fa-solid fa-circle-check"></i> جاهز</span>
+                        </div>
+
+                        <!-- Personal Photo -->
+                        <div class="border border-dashed border-slate-200 hover:border-sky-400 rounded-xl p-3 text-center bg-slate-50 transition cursor-pointer relative">
+                            <input type="file" id="file-photo" required onchange="handleFileUpload(this, 'photo-preview', 'photo-label')" class="absolute inset-0 opacity-0 cursor-pointer">
+                            <i class="fa-solid fa-user-tie text-amber-500 text-lg block mb-1"></i>
+                            <span id="photo-label" class="text-[10px] font-bold text-slate-600 block">صورة شخصية رسمية *</span>
+                            <span id="photo-preview" class="text-[8px] text-emerald-600 font-bold block mt-1 hidden"><i class="fa-solid fa-circle-check"></i> جاهز</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cover Letter / Bio -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1.5">نبذة موجزة عن خبراتك وصلاحياتك المقترحة للوظيفة</label>
+                    <textarea id="app-notes" rows="3" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-xs text-slate-800 focus:outline-none focus:border-sky-400 focus:bg-white font-bold" placeholder="صف سبب ترشحك للعمل في ZaLo والمهارات التي تمتلكها..."></textarea>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="w-full bg-sky-500 hover:bg-sky-600 text-white font-bold text-xs py-3 rounded-xl shadow-sm hover:shadow transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-paper-plane"></i>
+                    <span>إرسال طلب التوظيف للرقابة العليا 🚀</span>
+                </button>
+            </form>
+        </div>
+
+    </main>
+
+    <footer class="border-t border-slate-100 py-4 text-center text-xs text-slate-400 bg-white">
+        <p>© 2026 ZaLo Market - جميع الحقوق محفوظة لشركة الزاوية للتجارة والتوصيل.</p>
+    </footer>
+
+    <script>
+        const MOCK_COMMUNES = {
+            "المنيعة": ["المنيعة المركز", "حاسي القارة", "حاسي غانم"],
+            "غرداية": ["غرداية المركز", "العطف", "بني يزقن", "القرارة", "بريان"],
+            "ورقلة": ["ورقلة", "حاسي مسعود", "تقرت", "الرويسات"],
+            "الجزائر": ["الجزائر الوسطى", "باب الواد", "سيدي امحمد", "الشراقة", "المرسى"],
+            "وهران": ["وهران المركز", "بئر الجير", "السانية", "قديل"],
+            "قسنطينة": ["قسنطينة المركز", "الخروب", "حامة بوزيان"],
+            "سطيف": ["سطيف المركز", "العلمة", "عين أرنات"],
+            "تيزي وزو": ["تيزي وزو المركز", "عزازقة", "ذراع بن خدة"],
+            "بجاية": ["بجاية المركز", "أقبو", "سيدي عيش"]
+        };
+
+        function populateCommunes() {
+            const wilaya = document.getElementById("app-wilaya").value;
+            const communeSelect = document.getElementById("app-commune");
+            communeSelect.innerHTML = '<option value="">-- اختر البلدية --</option>';
+            
+            if (wilaya && MOCK_COMMUNES[wilaya]) {
+                MOCK_COMMUNES[wilaya].forEach(c => {
+                    const opt = document.createElement("option");
+                    opt.value = c;
+                    opt.innerText = c;
+                    communeSelect.appendChild(opt);
+                });
+            }
+        }
+
+        // Keep file content as base64 in local state variables
+        const fileData = {
+            cv: "",
+            id: "",
+            photo: ""
+        };
+
+        function handleFileUpload(input, previewId, labelId) {
+            const file = input.files[0];
+            if (!file) return;
+
+            // Limit to 2MB
+            if (file.size > 2 * 1024 * 1024) {
+                alert("حجم الملف كبير جداً! يرجى اختيار ملف بحجم أقل من 2 ميغابايت.");
+                input.value = "";
+                return;
+            }
+
+            const labelEl = document.getElementById(labelId);
+            const previewEl = document.getElementById(previewId);
+
+            labelEl.innerText = file.name;
+            previewEl.classList.remove("hidden");
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const key = input.id.replace('file-', '');
+                fileData[key] = e.target.result; // Store base64 data url safely
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function submitJobApplication(event) {
+            event.preventDefault();
+
+            const firstname = document.getElementById("app-firstname").value.trim();
+            const lastname = document.getElementById("app-lastname").value.trim();
+            const email = document.getElementById("app-email").value.trim();
+            const phone = document.getElementById("app-phone").value.trim();
+            const wilaya = document.getElementById("app-wilaya").value;
+            const commune = document.getElementById("app-commune").value;
+            const roleType = document.getElementById("app-role-type").value;
+            const customTitle = document.getElementById("app-custom-role-title").value.trim();
+            const notes = document.getElementById("app-notes").value.trim();
+
+            const application = {
+                id: "app_" + Date.now(),
+                firstname,
+                lastname,
+                email,
+                phone,
+                wilaya,
+                commune,
+                roleType,
+                customTitle: customTitle || roleType,
+                notes,
+                files: {
+                    cv: fileData.cv || "data:text/plain;base64,TW9jayBDVg==", // fallbacks
+                    id: fileData.id || "data:text/plain;base64,TW9jayBJRCA=",
+                    photo: fileData.photo || "data:text/plain;base64,TW9jayBQaG90bw=="
+                },
+                status: "PENDING", // PENDING, APPROVED, REJECTED
+                dateSubmitted: new Date().toISOString().split('T')[0]
+            };
+
+            // Retrieve current applicants
+            let applications = [];
+            try {
+                applications = JSON.parse(localStorage.getItem("zalo_careers_applications") || "[]");
+            } catch(e) {}
+
+            applications.push(application);
+            localStorage.setItem("zalo_careers_applications", JSON.stringify(applications));
+
+            alert(`✨ تم إرسال طلب توظيفك بنجاح للرقابة العليا!\nرقم الطلب الخاص بك: #${application.id.substring(4, 10).toUpperCase()}\nسيتواصل معك المنسق الإداري قريباً.`);
+            
+            // Reset form
+            document.getElementById("careers-application-form").reset();
+            document.getElementById("cv-preview").classList.add("hidden");
+            document.getElementById("id-preview").classList.add("hidden");
+            document.getElementById("photo-preview").classList.add("hidden");
+            document.getElementById("cv-label").innerText = "رفع السيرة الذاتية *";
+            document.getElementById("id-label").innerText = "بطاقة الهوية الوطنية *";
+            document.getElementById("photo-label").innerText = "صورة شخصية رسمية *";
+            
+            // Redirect to login
+            setTimeout(() => {
+                window.location.href = "login.html";
+            }, 1000);
+        }
+    </script>
+</body>
+</html>

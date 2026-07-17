@@ -191,6 +191,79 @@
     <!-- Shared JS Engine -->
     <script src="js/app.js"></script>
     <script>
+        function getDB(key, fallback) {
+            try {
+                const val = localStorage.getItem(key);
+                return val ? JSON.parse(val) : fallback;
+            } catch (e) {
+                return fallback;
+            }
+        }
+
+        function initManagerDashboardPage() {
+            console.log("[ManagerDashboard] Running dynamic role-based workspace personalization...");
+            
+            const email = localStorage.getItem('zalo_user_email') || 'manager@zalo.dz';
+            const activeStaff = getDB("zalo_active_staff", []);
+            const currentStaff = activeStaff.find(s => s.email.toLowerCase() === email.toLowerCase());
+
+            if (currentStaff) {
+                // Check Suspended state
+                if (currentStaff.status === "SUSPENDED") {
+                    const mainContainer = document.querySelector('main');
+                    mainContainer.innerHTML = `
+                        <div class="bg-red-50 border-2 border-red-300 rounded-3xl p-8 text-center max-w-2xl mx-auto my-12 space-y-4">
+                            <div class="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center text-3xl mx-auto shadow-sm">
+                                <i class="fa-solid fa-user-slash"></i>
+                            </div>
+                            <h2 class="text-xl font-black text-red-800">⚠️ تم تجميد حسابك الإداري مؤقتاً!</h2>
+                            <p class="text-xs text-red-600 font-bold leading-relaxed">
+                                نأسف لإبلاغك بأن المدير العام لمنصة ZaLo قد قام بتعليق وتجميد حسابك الإداري والرقابي مؤقتاً لأسباب تتعلق بالتدقيق الأمني.
+                            </p>
+                            <p class="text-[11px] text-slate-500 font-semibold">
+                                يرجى مراجعة الإدارة العليا للتحقق من الصلاحيات الجغرافية المسندة إليك وإعادة تفعيل الحساب.
+                            </p>
+                            <button onclick="logoutUser()" class="bg-red-600 hover:bg-red-700 text-white font-bold text-xs px-6 py-2.5 rounded-xl transition">
+                                <i class="fa-solid fa-power-off ml-1"></i> تسجيل الخروج والعودة
+                            </button>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Customize UI with current staff info
+                document.getElementById("header-user-name").innerText = `${currentStaff.name} (${currentStaff.customTitle}) 💼`;
+                
+                // Customize welcome description
+                const welcomeDesc = document.querySelector(".text-right.space-y-1 p");
+                if (welcomeDesc) {
+                    welcomeDesc.innerHTML = `<span class="bg-sky-50 text-sky-700 px-2.5 py-1 rounded border border-sky-100 font-black">📍 نطاق صلاحيتك الجغرافي: ولاية ${currentStaff.wilaya} (${currentStaff.commune})</span><br><span class="text-[11px] text-slate-400 block mt-1">🔑 المهام: ${currentStaff.permissions}</span>`;
+                }
+
+                // Customize Welcome header text
+                const welcomeTitle = document.querySelector(".text-right.space-y-1 span");
+                if (welcomeTitle) welcomeTitle.innerText = `مرحباً بك عضواً في الكادر التنفيذي المعتمد`;
+
+                // Customize complaints section header
+                const complaintsHeader = document.querySelector(".p-6.bg-white.border h3");
+                if (complaintsHeader) complaintsHeader.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-red-500 ml-1"></i> مركز الشكاوى والبلاغات الجارية في (${currentStaff.wilaya})`;
+
+                // Filter or customize stats slightly to reflect regional role
+                const statsLabels = document.querySelectorAll(".grid-cols-2 p.text-[10px]");
+                if (statsLabels.length >= 4) {
+                    statsLabels[0].innerText = "المستخدمين النشطين بالولاية";
+                    statsLabels[1].innerText = `مبيعات تجار ولاية ${currentStaff.wilaya}`;
+                    statsLabels[2].innerText = `المحلات المعتمدة بـ ${currentStaff.wilaya}`;
+                    statsLabels[3].innerText = "طلبيات التوصيل بالولاية";
+                }
+            }
+
+            // Load users list using app.js function
+            if (typeof renderManagerUsers === 'function') {
+                renderManagerUsers();
+            }
+        }
+
         function managerTrackOrders() {
             const val = document.getElementById('managerSearchInput').value.trim().toLowerCase();
             const res = document.getElementById('manager-tracking-result');
@@ -230,6 +303,15 @@
                     </div>
                 `;
             }
+        }
+
+        function logoutUser() {
+            localStorage.removeItem('zalo_session_jwt');
+            localStorage.removeItem('zalo_user_role');
+            localStorage.removeItem('zalo_user_email');
+            localStorage.removeItem('zalo_user_name');
+            sessionStorage.removeItem('admin_logged_in_session');
+            window.location.href = 'login.html';
         }
     </script>
 </body>

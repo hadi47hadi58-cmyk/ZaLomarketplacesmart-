@@ -218,6 +218,14 @@
                             <span>المنتجات العامة 📦</span>
                         </div>
                     </button>
+
+                    <button onclick="switchTab('team')" id="btn-tab-team" class="sidebar-tab-btn w-full flex items-center justify-between px-4 py-3 rounded-xl text-right text-xs font-black transition">
+                        <div class="flex items-center gap-2.5">
+                            <i class="fa-solid fa-people-group text-lg w-5 text-[#d4af37]"></i>
+                            <span>إدارة الكادر والتوظيف 💼</span>
+                        </div>
+                        <span id="badge-team-count" class="bg-sky-100 text-sky-700 px-2 py-0.5 rounded-full text-[9px] font-bold">0</span>
+                    </button>
                 </nav>
             </div>
 
@@ -969,6 +977,172 @@
             </div>
         </div>
 
+        <!-- Section 10: Team & Careers Management Tab 💼 -->
+        <div id="section-team" class="space-y-6 hidden animate-fadeIn text-right">
+            
+            <!-- Dashboard Info Header -->
+            <div class="bg-white border-2 border-slate-200 rounded-3xl p-6 relative overflow-hidden shadow-sm flex flex-col md:flex-row justify-between items-center gap-4">
+                <div class="absolute top-0 right-0 w-48 h-48 bg-sky-200/20 rounded-full blur-3xl"></div>
+                <div class="flex items-center gap-4 relative z-10">
+                    <div class="w-14 h-14 rounded-2xl bg-sky-500 text-white flex items-center justify-center text-2xl shadow-sm">
+                        <i class="fa-solid fa-people-group"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-black text-slate-800">إدارة الكادر الإداري وبوابة التوظيف الموحدة</h2>
+                        <p class="text-[10px] text-slate-400 font-bold mt-0.5">عيّن الموظفين، حدد أدوارهم الجغرافية وصلاحياتهم المخصصة، واقبل طلبات العمل الواردة.</p>
+                    </div>
+                </div>
+                <div class="bg-sky-50 border border-sky-300 rounded-2xl p-4 text-right max-w-sm space-y-1 relative z-10">
+                    <span class="text-sky-700 font-extrabold text-[11px] block"><i class="fa-solid fa-user-shield"></i> هيكل صلاحيات ذكي</span>
+                    <p class="text-[9px] text-slate-500 leading-relaxed font-bold">يقوم النظام تلقائياً بتخصيص الواجهات والبيانات لكل موظف بمجرد تسجيل دخوله إلى لوحته الخاصة بناءً على الولاية والبلدية المحددة له.</p>
+                </div>
+            </div>
+
+            <!-- Main Interactive Content Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                
+                <!-- Left Sidebar: Add Staff Member / Custom Role Definition -->
+                <div class="lg:col-span-1 space-y-6">
+                    <!-- Form 1: Add New Staff Member -->
+                    <div class="bg-white border-2 border-slate-200 rounded-3xl p-6 space-y-4 shadow-sm">
+                        <h3 class="text-sm font-black text-slate-800 border-b border-slate-100 pb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-user-plus text-sky-500"></i>
+                            <span>إضافة / تعيين موظف نشط</span>
+                        </h3>
+                        <form id="admin-add-staff-form" onsubmit="addStaffMember(event)" class="space-y-3">
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-500 mb-1">البريد الإلكتروني للموظف *</label>
+                                <input type="email" id="staff-email" required class="w-full bg-slate-50 border border-slate-200 text-xs rounded-xl py-2 px-3 focus:outline-none focus:border-sky-400 font-bold" placeholder="يجب أن يكون مسجلاً بالنظام...">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-500 mb-1">اسم الموظف الكامل *</label>
+                                <input type="text" id="staff-name" required class="w-full bg-slate-50 border border-slate-200 text-xs rounded-xl py-2 px-3 focus:outline-none focus:border-sky-400 font-bold" placeholder="الاسم واللقب...">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-500 mb-1">نوع الرتبة / الوظيفة *</label>
+                                <select id="staff-role" required onchange="handleStaffRoleChange()" class="w-full bg-slate-50 border border-slate-200 text-xs rounded-xl py-2 px-3 focus:outline-none focus:border-sky-400 font-bold">
+                                    <option value="مؤكد طلبيات">مؤكد طلبيات (تأكيد الشحنات)</option>
+                                    <option value="منسق ولائي">منسق ولائي (ربط التاجر والزبون)</option>
+                                    <option value="مراقب مالي">مراقب مالي (مراجعة مبيعات واشتراكات)</option>
+                                    <option value="مساعد مشرف / حل النزاعات">مساعد مشرف / حل النزاعات</option>
+                                    <option value="custom">رتبة وصلاحيات مخصصة (اكتب أدناه)</option>
+                                </select>
+                            </div>
+
+                            <!-- Custom Role & Permissions Fields -->
+                            <div id="custom-role-container" class="hidden space-y-2 bg-amber-50/50 p-3 rounded-2xl border border-amber-100">
+                                <div>
+                                    <label class="block text-[10px] font-bold text-amber-700 mb-1">المسمى الوظيفي المخصص *</label>
+                                    <input type="text" id="staff-custom-title" class="w-full bg-white border border-slate-200 text-xs rounded-xl py-2 px-3 focus:outline-none focus:border-sky-400 font-bold" placeholder="مثال: منسق بلدي رئيسي...">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-amber-700 mb-1">الصلاحيات والمهام المكتوبة *</label>
+                                    <textarea id="staff-custom-permissions" rows="2" class="w-full bg-white border border-slate-200 text-xs rounded-xl py-2 px-3 focus:outline-none focus:border-sky-400 font-bold" placeholder="اكتب مهامه وصلاحياته لكي لا تتقيد برتبة واحدة..."></textarea>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-500 mb-1">نطاق ولاية العمل *</label>
+                                <select id="staff-wilaya" required onchange="populateStaffCommunes()" class="w-full bg-slate-50 border border-slate-200 text-xs rounded-xl py-2 px-3 focus:outline-none focus:border-sky-400 font-bold">
+                                    <option value="كل المنصة">كل المنصة (مركزي)</option>
+                                    <option value="المنيعة">المنيعة</option>
+                                    <option value="غرداية">غرداية</option>
+                                    <option value="ورقلة">ورقلة</option>
+                                    <option value="الجزائر">الجزائر العاصمة</option>
+                                    <option value="وهران">وهران</option>
+                                    <option value="قسنطينة">قسنطينة</option>
+                                    <option value="سطيف">سطيف</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-500 mb-1">نطاق البلدية (اختياري)</label>
+                                <select id="staff-commune" class="w-full bg-slate-50 border border-slate-200 text-xs rounded-xl py-2 px-3 focus:outline-none focus:border-sky-400 font-bold">
+                                    <option value="كل البلديات">كل البلديات</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="w-full bg-sky-500 hover:bg-sky-600 text-white font-black text-xs py-2.5 rounded-xl transition shadow-sm">
+                                <i class="fa-solid fa-check"></i> تفعيل الموظف وإضافته للكادر 🤝
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Mini Metrics Widgets -->
+                    <div class="bg-white border-2 border-slate-200 rounded-3xl p-6 space-y-3 shadow-sm">
+                        <h3 class="text-xs font-black text-slate-800">📊 إحصائيات مراقبة الكادر (اليوم)</h3>
+                        <div class="grid grid-cols-2 gap-3 text-center">
+                            <div class="bg-slate-50 p-3 rounded-2xl border border-slate-100">
+                                <span class="text-[9px] text-slate-400 font-extrabold block">طلبات تم تأكيدها</span>
+                                <span class="text-sm font-black text-slate-800" id="metric-confirmed-orders">38 طلبية</span>
+                            </div>
+                            <div class="bg-slate-50 p-3 rounded-2xl border border-slate-100">
+                                <span class="text-[9px] text-slate-400 font-extrabold block">نزاعات تم حلها</span>
+                                <span class="text-sm font-black text-emerald-600" id="metric-disputes-solved">5 نزاعات</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Contents: Applications and Active Team List -->
+                <div class="lg:col-span-2 space-y-6">
+                    
+                    <!-- Job Applications Portal List -->
+                    <div class="bg-white border-2 border-slate-200 rounded-3xl p-6 space-y-4 shadow-sm">
+                        <div class="flex justify-between items-center border-b border-slate-100 pb-2">
+                            <span class="text-[10px] bg-amber-50 text-amber-700 border border-amber-200 px-2.5 py-0.5 rounded-full font-bold" id="careers-count-badge">0 طلب جديد</span>
+                            <h3 class="text-sm font-black text-slate-800 flex items-center gap-2">
+                                <i class="fa-solid fa-inbox text-amber-500"></i>
+                                <span>طلبات التوظيف والإنضمام الواردة</span>
+                            </h3>
+                        </div>
+                        
+                        <div class="overflow-x-auto w-full">
+                            <table class="w-full text-right text-xs" style="min-width: 500px;">
+                                <thead>
+                                    <tr class="text-slate-500 border-b border-slate-100 font-bold">
+                                        <th class="pb-2">المترشح</th>
+                                        <th class="pb-2">الوظيفة والمنطقة</th>
+                                        <th class="pb-2 text-center">الوثائق والملفات</th>
+                                        <th class="pb-2 text-center">الإجراء المتاح</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="careers-applications-tbody">
+                                    <!-- Populated dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Active Staff List -->
+                    <div class="bg-white border-2 border-slate-200 rounded-3xl p-6 space-y-4 shadow-sm">
+                        <h3 class="text-sm font-black text-slate-800 border-b border-slate-100 pb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-users text-sky-500"></i>
+                            <span>أعضاء الكادر الإداري النشطين بالمنصة</span>
+                        </h3>
+                        
+                        <div class="overflow-x-auto w-full">
+                            <table class="w-full text-right text-xs" style="min-width: 600px;">
+                                <thead>
+                                    <tr class="text-slate-500 border-b border-slate-100 font-bold">
+                                        <th class="pb-2">الموظف / البريد</th>
+                                        <th class="pb-2">الرتبة والصلاحيات</th>
+                                        <th class="pb-2">النطاق الجغرافي</th>
+                                        <th class="pb-2 text-center">الحالة الإدارية</th>
+                                        <th class="pb-2 text-center">التحكم</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="active-staff-tbody">
+                                    <!-- Populated dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
         </main>
 
         <!-- Foot -->
@@ -1066,7 +1240,7 @@
 
         // Sidebar and Tab Switch Helpers
         function switchTab(tabId) {
-            const sections = ['home', 'registrations', 'wilayas', 'notifications', 'secret', 'qr', 'settings-global', 'reports-global', 'users-global', 'products-global'];
+            const sections = ['home', 'registrations', 'wilayas', 'notifications', 'secret', 'qr', 'settings-global', 'reports-global', 'users-global', 'products-global', 'team'];
             sections.forEach(sec => {
                 const el = document.getElementById(`section-${sec}`);
                 if (el) {
@@ -1218,6 +1392,7 @@
             renderFinancialReports();
             renderUsersTable();
             renderGlobalProductsTable();
+            initTeamManagement();
         }
 
         // Render counters
@@ -2265,6 +2440,447 @@
                 setDB("products", products);
                 renderGlobalProductsTable();
                 renderStats();
+            }
+        }
+
+        // ==========================================
+        // TEAM & CAREERS MANAGEMENT CONTROLLER (New!)
+        // ==========================================
+        const MOCK_COMMUNES_GLOBAL = {
+            "المنيعة": ["المنيعة المركز", "حاسي القارة", "حاسي غانم"],
+            "غرداية": ["غرداية المركز", "العطف", "بني يزقن", "القرارة", "بريان"],
+            "ورقلة": ["ورقلة", "حاسي مسعود", "تقرت", "الرويسات"],
+            "الجزائر": ["الجزائر الوسطى", "باب الواد", "سيدي امحمد", "الشراقة", "المرسى"],
+            "وهران": ["وهران المركز", "بئر الجير", "السانية", "قديل"],
+            "قسنطينة": ["قسنطينة المركز", "الخروب", "حامة بوزيان"],
+            "سطيف": ["سطيف المركز", "العلمة", "عين أرنات"],
+        };
+
+        const STANDARD_ROLE_PERMISSIONS = {
+            "مؤكد طلبيات": "الاتصال الهاتفي بالزبائن وتأكيد سلامة العنوان، التحقق من توفر السلعة، وتعديل حالة الطلب لـ (مؤكد).",
+            "منسق ولائي": "توجيه وتوزيع الشحنات المتاحة للتوصيل، ربط تجار الولاية بمناديب التوصيل المحليين، وتسوية شكاوى التأخير.",
+            "مراقب مالي": "مراجعة الاشتراكات والرسوم المقتطعة من التجار، تدقيق أرقام الأرباح والخزينة، ومراقبة حركة الفواتير المكتملة.",
+            "مساعد مشرف / حل النزاعات": "الدعم الفني المباشر، تسوية النزاعات المالية واللوجستية بين البائع والمشتري، وتعديل تقييمات المتاجر."
+        };
+
+        function initTeamManagement() {
+            console.log("[TeamManagement] Initializing team and recruitment tables...");
+            
+            // Seed default active staff if none exist
+            let activeStaff = getDB("zalo_active_staff", []);
+            if (activeStaff.length === 0) {
+                activeStaff = [
+                    {
+                        id: "staff_1",
+                        name: "أسامة بوقرة",
+                        email: "osama@zalo.dz",
+                        role: "مؤكد طلبيات",
+                        customTitle: "مؤكد طلبيات هاتفية",
+                        permissions: STANDARD_ROLE_PERMISSIONS["مؤكد طلبيات"],
+                        wilaya: "المنيعة",
+                        commune: "حاسي القارة",
+                        status: "ACTIVE",
+                        dateCreated: "2026-07-15"
+                    },
+                    {
+                        id: "staff_2",
+                        name: "فضيل كمال",
+                        email: "fadhil@zalo.dz",
+                        role: "منسق ولائي",
+                        customTitle: "المنسق اللوجستي لغرداية",
+                        permissions: STANDARD_ROLE_PERMISSIONS["منسق ولائي"],
+                        wilaya: "غرداية",
+                        commune: "كل البلديات",
+                        status: "ACTIVE",
+                        dateCreated: "2026-07-16"
+                    }
+                ];
+                setDB("zalo_active_staff", activeStaff);
+            }
+
+            // Populate staff communes dropdown initially
+            populateStaffCommunes();
+            
+            // Render Both Tables
+            renderActiveStaffTable();
+            renderCareersApplications();
+        }
+
+        function handleStaffRoleChange() {
+            const roleSelect = document.getElementById("staff-role");
+            const customContainer = document.getElementById("custom-role-container");
+            
+            if (roleSelect.value === "custom") {
+                customContainer.classList.remove("hidden");
+                document.getElementById("staff-custom-title").required = true;
+                document.getElementById("staff-custom-permissions").required = true;
+            } else {
+                customContainer.classList.add("hidden");
+                document.getElementById("staff-custom-title").required = false;
+                document.getElementById("staff-custom-permissions").required = false;
+            }
+        }
+
+        function populateStaffCommunes() {
+            const wilaya = document.getElementById("staff-wilaya").value;
+            const communeSelect = document.getElementById("staff-commune");
+            communeSelect.innerHTML = '<option value="كل البلديات">كل البلديات (نطاق واسع)</option>';
+            
+            if (wilaya && MOCK_COMMUNES_GLOBAL[wilaya]) {
+                MOCK_COMMUNES_GLOBAL[wilaya].forEach(c => {
+                    const opt = document.createElement("option");
+                    opt.value = c;
+                    opt.innerText = c;
+                    communeSelect.appendChild(opt);
+                });
+            }
+        }
+
+        function addStaffMember(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById("staff-email").value.trim();
+            const name = document.getElementById("staff-name").value.trim();
+            const role = document.getElementById("staff-role").value;
+            const wilaya = document.getElementById("staff-wilaya").value;
+            const commune = document.getElementById("staff-commune").value;
+            
+            let customTitle = "";
+            let permissions = "";
+            
+            if (role === "custom") {
+                customTitle = document.getElementById("staff-custom-title").value.trim();
+                permissions = document.getElementById("staff-custom-permissions").value.trim();
+            } else {
+                customTitle = role;
+                permissions = STANDARD_ROLE_PERMISSIONS[role] || "صلاحيات عامة محددة من قبل المدير العام.";
+            }
+
+            // Save to DB
+            const activeStaff = getDB("zalo_active_staff", []);
+            
+            // Avoid duplicate email
+            if (activeStaff.some(s => s.email.toLowerCase() === email.toLowerCase())) {
+                alert("⚠️ عذراً! هذا البريد الإلكتروني مسجل بالفعل لموظف نشط آخر.");
+                return;
+            }
+
+            const newStaff = {
+                id: "staff_" + Date.now(),
+                name,
+                email,
+                role,
+                customTitle,
+                permissions,
+                wilaya,
+                commune,
+                status: "ACTIVE",
+                dateCreated: new Date().toISOString().split('T')[0]
+            };
+
+            activeStaff.push(newStaff);
+            setDB("zalo_active_staff", activeStaff);
+
+            alert(`✨ تم تعيين وتفعيل الموظف (${name}) بنجاح كـ (${customTitle})!`);
+            
+            // Reset form
+            document.getElementById("admin-add-staff-form").reset();
+            document.getElementById("custom-role-container").classList.add("hidden");
+            
+            // Re-render
+            renderActiveStaffTable();
+        }
+
+        function renderActiveStaffTable() {
+            const tbody = document.getElementById("active-staff-tbody");
+            if (!tbody) return;
+
+            const activeStaff = getDB("zalo_active_staff", []);
+            tbody.innerHTML = "";
+
+            if (activeStaff.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="p-6 text-center text-slate-400 font-bold">لا يوجد أي موظف نشط مسجل بالمنصة حالياً.</td>
+                    </tr>
+                `;
+                return;
+            }
+
+            activeStaff.forEach(s => {
+                const statusBadge = s.status === "ACTIVE" 
+                    ? `<span class="bg-emerald-50 text-emerald-600 border border-emerald-200 text-[10px] px-2.5 py-1 rounded-full">نشط ومتصل 🟢</span>`
+                    : `<span class="bg-red-50 text-red-600 border border-red-200 text-[10px] px-2.5 py-1 rounded-full">موقف مؤقتاً 🔴</span>`;
+
+                const toggleBtnText = s.status === "ACTIVE" ? "تجميد الحساب ❄️" : "تنشيط الحساب 🔥";
+                const toggleBtnClass = s.status === "ACTIVE" ? "bg-amber-50 text-amber-600 hover:bg-amber-100 border border-amber-200" : "bg-emerald-50 text-emerald-600 hover:bg-emerald-100 border border-emerald-200";
+
+                let row = document.createElement("tr");
+                row.className = "border-t border-slate-100 hover:bg-slate-50 transition";
+                row.innerHTML = `
+                    <td class="p-3">
+                        <div class="flex flex-col">
+                            <span class="font-black text-slate-800 text-xs">${s.name}</span>
+                            <span class="text-[10px] text-slate-400 font-mono font-normal">${s.email}</span>
+                        </div>
+                    </td>
+                    <td class="p-3 max-w-xs">
+                        <div class="flex flex-col">
+                            <span class="font-black text-slate-700 text-[11px]">${s.customTitle}</span>
+                            <span class="text-[9px] text-slate-400 font-bold leading-tight mt-0.5">${s.permissions}</span>
+                        </div>
+                    </td>
+                    <td class="p-3">
+                        <span class="bg-sky-50 text-sky-700 text-[10px] px-2 py-0.5 rounded font-black border border-sky-100">
+                            📍 ${s.wilaya} (${s.commune || 'كل البلديات'})
+                        </span>
+                    </td>
+                    <td class="p-3 text-center">${statusBadge}</td>
+                    <td class="p-3 text-center">
+                        <div class="flex items-center justify-center gap-1.5">
+                            <button onclick="toggleStaffStatus('${s.id}')" class="${toggleBtnClass} font-bold text-[9px] px-2.5 py-1.5 rounded-xl transition">
+                                ${toggleBtnText}
+                            </button>
+                            <button onclick="deleteStaffMember('${s.id}')" class="bg-red-50 text-red-500 hover:bg-red-600 hover:text-white font-bold text-[9px] px-2.5 py-1.5 rounded-xl border border-red-100 transition shadow-sm">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function toggleStaffStatus(id) {
+            let activeStaff = getDB("zalo_active_staff", []);
+            activeStaff = activeStaff.map(s => {
+                if (s.id === id) {
+                    s.status = s.status === "ACTIVE" ? "SUSPENDED" : "ACTIVE";
+                }
+                return s;
+            });
+            setDB("zalo_active_staff", activeStaff);
+            renderActiveStaffTable();
+        }
+
+        function deleteStaffMember(id) {
+            if (confirm("⚠️ هل أنت متأكد من رغبتك بحذف هذا الموظف نهائياً من المنصة وسحب كافة صلاحياته الجغرافية؟")) {
+                let activeStaff = getDB("zalo_active_staff", []);
+                activeStaff = activeStaff.filter(s => s.id !== id);
+                setDB("zalo_active_staff", activeStaff);
+                renderActiveStaffTable();
+            }
+        }
+
+        function renderCareersApplications() {
+            const tbody = document.getElementById("careers-applications-tbody");
+            if (!tbody) return;
+
+            let applications = [];
+            try {
+                applications = JSON.parse(localStorage.getItem("zalo_careers_applications") || "[]");
+            } catch(e) {}
+
+            tbody.innerHTML = "";
+
+            // Filter for only PENDING ones
+            const pendingApps = applications.filter(a => a.status === "PENDING");
+            
+            // Update Badges
+            document.getElementById("badge-team-count").innerText = pendingApps.length;
+            document.getElementById("careers-count-badge").innerText = `${pendingApps.length} طلب توظيف جديد`;
+
+            if (pendingApps.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="4" class="p-6 text-center text-slate-400 font-bold">لا توجد أي طلبات توظيف واردة معلقة حالياً.</td>
+                    </tr>
+                `;
+                return;
+            }
+
+            pendingApps.forEach(a => {
+                let row = document.createElement("tr");
+                row.className = "border-t border-slate-100 hover:bg-slate-50 transition";
+                row.innerHTML = `
+                    <td class="p-3">
+                        <div class="flex flex-col">
+                            <span class="font-black text-slate-800 text-xs">${a.firstname} ${a.lastname}</span>
+                            <span class="text-[10px] text-slate-400 font-normal mt-0.5">📞 ${a.phone} | ✉️ ${a.email}</span>
+                        </div>
+                    </td>
+                    <td class="p-3">
+                        <div class="flex flex-col">
+                            <span class="font-black text-slate-700 text-[11px]">${a.customTitle}</span>
+                            <span class="text-[9px] text-slate-400 font-bold mt-0.5">📍 ولاية: ${a.wilaya} | ${a.commune}</span>
+                        </div>
+                    </td>
+                    <td class="p-3 text-center">
+                        <button onclick="viewApplicationFiles('${a.id}')" class="bg-sky-50 text-sky-600 hover:bg-sky-600 hover:text-white font-bold text-[10px] px-3 py-1.5 rounded-full border border-sky-100 transition">
+                            <i class="fa-solid fa-folder-open ml-1"></i> عرض السيرة والوثائق 📁
+                        </button>
+                    </td>
+                    <td class="p-3 text-center">
+                        <div class="flex items-center justify-center gap-1.5">
+                            <button onclick="approveApplication('${a.id}')" class="bg-emerald-500 hover:bg-emerald-600 text-white font-black text-[10px] px-3 py-1.5 rounded-xl transition shadow-sm">
+                                <i class="fa-solid fa-check"></i> قبول وترقية 🤝
+                            </button>
+                            <button onclick="rejectApplication('${a.id}')" class="bg-red-50 text-red-500 hover:bg-red-600 hover:text-white font-bold text-[10px] px-2.5 py-1.5 rounded-xl border border-red-100 transition">
+                                <i class="fa-solid fa-xmark"></i> رفض
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function viewApplicationFiles(appId) {
+            let applications = [];
+            try {
+                applications = JSON.parse(localStorage.getItem("zalo_careers_applications") || "[]");
+            } catch(e) {}
+
+            const app = applications.find(a => a.id === appId);
+            if (!app) {
+                alert("لم يتم العثور على طلب التوظيف المحدد!");
+                return;
+            }
+
+            // Create a gorgeous custom modal for documents
+            let modal = document.createElement("div");
+            modal.id = "dynamic-doc-modal";
+            modal.className = "fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4 backdrop-blur-sm animate-fadeIn";
+            modal.style.direction = "rtl";
+            modal.innerHTML = `
+                <div class="bg-white border-2 border-[#d4af37] rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl text-right flex flex-col max-h-[90vh]">
+                    <header class="bg-[#113f1c] text-white py-4 px-6 flex justify-between items-center">
+                        <button onclick="document.getElementById('dynamic-doc-modal').remove()" class="text-white hover:text-red-400 text-lg">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                        <h3 class="text-xs font-black flex items-center gap-2">
+                            <i class="fa-solid fa-folder-open text-[#d4af37]"></i>
+                            <span>فحص وثائق المترشح: ${app.firstname} ${app.lastname}</span>
+                        </h3>
+                    </header>
+                    <div class="p-6 overflow-y-auto space-y-4 flex-1">
+                        <!-- Short bio/notes -->
+                        <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200">
+                            <h4 class="text-[11px] font-black text-slate-700 mb-1"><i class="fa-solid fa-comment-dots text-sky-500 ml-1"></i> رسالة المترشح الذاتية:</h4>
+                            <p class="text-[10px] text-slate-500 font-bold leading-relaxed">${app.notes || 'لا توجد نبذة مضافة من المترشح.'}</p>
+                        </div>
+
+                        <!-- Documents list -->
+                        <div class="space-y-3">
+                            <h4 class="text-[11px] font-black text-slate-700"><i class="fa-solid fa-paperclip text-sky-500 ml-1"></i> الملفات المرفقة:</h4>
+                            
+                            <!-- CV File -->
+                            <div class="border border-dashed border-slate-300 rounded-xl p-3 flex items-center justify-between bg-slate-50">
+                                <div class="flex items-center gap-2">
+                                    <i class="fa-solid fa-file-pdf text-red-500 text-xl"></i>
+                                    <div class="flex flex-col">
+                                        <span class="text-[11px] font-black text-slate-700">السيرة الذاتية (CV)</span>
+                                        <span class="text-[8px] text-slate-400">ملف مصدق للعمل اللوجستي</span>
+                                    </div>
+                                </div>
+                                <a href="${app.files.cv}" download="CV_${app.lastname}.png" class="bg-sky-500 text-white font-bold text-[9px] px-3 py-1 rounded-full hover:bg-sky-600 transition"><i class="fa-solid fa-download"></i> تحميل المستند</a>
+                            </div>
+
+                            <!-- ID CARD -->
+                            <div class="border border-dashed border-slate-300 rounded-xl p-3 flex items-center justify-between bg-slate-50">
+                                <div class="flex items-center gap-2">
+                                    <i class="fa-solid fa-id-card text-sky-600 text-xl"></i>
+                                    <div class="flex flex-col">
+                                        <span class="text-[11px] font-black text-slate-700">بطاقة الهوية الوطنية</span>
+                                        <span class="text-[8px] text-slate-400">صورة المسح الضوئي للبطاقة</span>
+                                    </div>
+                                </div>
+                                <a href="${app.files.id}" download="ID_${app.lastname}.png" class="bg-sky-500 text-white font-bold text-[9px] px-3 py-1 rounded-full hover:bg-sky-600 transition"><i class="fa-solid fa-download"></i> تحميل المستند</a>
+                            </div>
+
+                            <!-- PHOTO -->
+                            <div class="border border-dashed border-slate-300 rounded-xl p-3 flex items-center justify-between bg-slate-50">
+                                <div class="flex items-center gap-2">
+                                    <i class="fa-solid fa-user-tie text-amber-500 text-xl"></i>
+                                    <div class="flex flex-col">
+                                        <span class="text-[11px] font-black text-slate-700">صورة شخصية رسمية</span>
+                                        <span class="text-[8px] text-slate-400">خلفية بيضاء للموظف</span>
+                                    </div>
+                                </div>
+                                <a href="${app.files.photo}" download="PHOTO_${app.lastname}.png" class="bg-sky-500 text-white font-bold text-[9px] px-3 py-1 rounded-full hover:bg-sky-600 transition"><i class="fa-solid fa-download"></i> تحميل المستند</a>
+                            </div>
+                        </div>
+
+                        <!-- Image Preview Box if any base64 exists -->
+                        <div class="border border-slate-100 rounded-2xl p-2 bg-slate-100 text-center">
+                            <span class="text-[9px] text-slate-400 font-bold block mb-1">معاينة مصغرة لملف الهوية / الصورة الشخصية</span>
+                            <img src="${app.files.photo}" class="mx-auto rounded-lg max-h-36 object-contain border border-slate-200 bg-white">
+                        </div>
+                    </div>
+                    <footer class="bg-slate-50 p-4 border-t border-slate-100 flex gap-2 justify-end shrink-0">
+                        <button onclick="document.getElementById('dynamic-doc-modal').remove()" class="bg-slate-200 text-slate-700 font-bold text-xs px-4 py-2 rounded-xl hover:bg-slate-300 transition">إغلاق المراجعة ✖️</button>
+                    </footer>
+                </div>
+            </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        function approveApplication(appId) {
+            let applications = [];
+            try {
+                applications = JSON.parse(localStorage.getItem("zalo_careers_applications") || "[]");
+            } catch(e) {}
+
+            const appIndex = applications.findIndex(a => a.id === appId);
+            if (appIndex === -1) return;
+
+            const app = applications[appIndex];
+            
+            // Promote to Active Staff
+            const activeStaff = getDB("zalo_active_staff", []);
+            
+            // Generate active staff
+            const newStaff = {
+                id: "staff_" + Date.now(),
+                name: `${app.firstname} ${app.lastname}`,
+                email: app.email,
+                role: app.roleType,
+                customTitle: app.customTitle,
+                permissions: STANDARD_ROLE_PERMISSIONS[app.roleType] || "صلاحيات تسييرية إقليمية مخصصة.",
+                wilaya: app.wilaya,
+                commune: app.commune,
+                status: "ACTIVE",
+                dateCreated: new Date().toISOString().split('T')[0]
+            };
+
+            activeStaff.push(newStaff);
+            setDB("zalo_active_staff", activeStaff);
+
+            // Set app status to APPROVED
+            applications[appIndex].status = "APPROVED";
+            localStorage.setItem("zalo_careers_applications", JSON.stringify(applications));
+
+            alert(`✅ تم قبول الترشح بنجاح وتفعيل رتبة الموظف (${newStaff.name}) في ولاية (${newStaff.wilaya})!`);
+            
+            renderActiveStaffTable();
+            renderCareersApplications();
+        }
+
+        function rejectApplication(appId) {
+            if (confirm("هل أنت متأكد من رغبتك برفض هذا الترشح وإرسال إشعار للمترشح؟")) {
+                let applications = [];
+                try {
+                    applications = JSON.parse(localStorage.getItem("zalo_careers_applications") || "[]");
+                } catch(e) {}
+
+                const appIndex = applications.findIndex(a => a.id === appId);
+                if (appIndex !== -1) {
+                    applications[appIndex].status = "REJECTED";
+                    localStorage.setItem("zalo_careers_applications", JSON.stringify(applications));
+                }
+
+                renderCareersApplications();
             }
         }
 

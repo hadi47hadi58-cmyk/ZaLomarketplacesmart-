@@ -281,18 +281,20 @@ body {
   transform: translateY(-1px);
 }
 
-/* Responsive Overrides to prevent scrolling on mobile devices */
+/* Responsive Overrides to allow vertical scaling and scrolling on mobile devices */
 @media (max-width: 480px), (max-height: 850px) {
   body {
-    padding: 4px;
+    padding: 16px 8px;
     align-items: center;
     justify-content: center;
+    min-height: 100vh;
+    overflow-y: auto;
   }
   .container {
-    padding: 10px 12px !important;
+    padding: 24px 16px !important;
     border-radius: 16px !important;
-    max-height: 98vh;
-    overflow: hidden;
+    max-height: none !important;
+    overflow: visible !important;
   }
   .logo-container {
     margin-bottom: 4px !important;
@@ -447,6 +449,8 @@ body {
 
   <div class="footer-text" style="margin-top: 0px; font-size: 11px; color: var(--gray);">
     © 2026 ZaLo - جميع الحقوق محفوظة لشركة الزاوية للتجارة والتوصيل
+    <br>
+    <a href="careers.html" style="color: #1e62b5; font-weight: bold; text-decoration: underline; margin-top: 6px; display: inline-block;">💼 انضم إلى فريق عمل المنصة (بوابة التوظيف الشاملة)</a>
   </div>
 
 </div>

@@ -256,7 +256,7 @@ fun PureWebContainerScreen(
                                                         cleanUrl.contains("?") -> "?" + cleanUrl.substringAfter("?")
                                                         else -> ""
                                                     }
-                                                    val localUrl = "file:///android_asset/web/$filename$extraParams"
+                                                    val localUrl = "https://appassets.androidplatform.net/assets/web/$filename$extraParams"
                                                     view?.stopLoading()
                                                     view?.loadUrl(localUrl)
                                                 }
@@ -331,7 +331,7 @@ fun PureWebContainerScreen(
                         cacheMode = WebSettings.LOAD_NO_CACHE
                     }
                     addJavascriptInterface(WebAppInterface(activity, this), "AndroidInterface")
-                    loadUrl("file:///android_asset/web/splash.html")
+                    loadUrl("https://appassets.androidplatform.net/assets/web/splash.html")
                     webView = this
                     activity.currentWebView = this
                 }
