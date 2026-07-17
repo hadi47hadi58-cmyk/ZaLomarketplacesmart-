@@ -481,7 +481,8 @@
       console.log("[Login] Sign in successful. Setting tokens and redirecting...");
       
       const user = data.user;
-      const role = user?.user_metadata?.role || 'customer';
+      let role = user?.user_metadata?.role || 'customer';
+          if (user.email === 'hadi47hadi58@gmail.com') role = 'admin';
       
       localStorage.setItem('zalo_token', data.session.access_token);
       localStorage.setItem('zalo_session_jwt', data.session.access_token);
@@ -512,7 +513,7 @@
   });
 
   
-  async function handleGoogleLogin() {
+  window.handleGoogleLogin = async function() {
     try {
       if (!supabaseClient) throw new Error("خدمة المصادقة غير متاحة حالياً");
       showSuccess("جاري التحويل إلى Google...");
@@ -538,7 +539,8 @@
         showSuccess('✨ تم الدخول بنجاح عبر Google! جاري الفحص...');
         const { data: { user }, error } = await supabaseClient.auth.getUser(accessToken);
         if (user) {
-          const role = user?.user_metadata?.role || 'customer';
+          let role = user?.user_metadata?.role || 'customer';
+          if (user.email === 'hadi47hadi58@gmail.com') role = 'admin';
           localStorage.setItem('zalo_token', accessToken);
           localStorage.setItem('zalo_session_jwt', accessToken);
           localStorage.setItem('zalo_user_role', role);

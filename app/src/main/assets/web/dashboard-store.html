@@ -197,7 +197,7 @@
         <div class="p-4 border-t border-slate-100 bg-slate-50/50">
             <div class="flex items-center justify-between mb-3 text-right">
                 <div class="flex items-center gap-3">
-                    <img id="sidebar-store-logo-preview" src="https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?auto=format&fit=crop&w=200&q=80" class="w-10 h-10 rounded-xl object-cover border border-[#d4af37]/30">
+                    <img id="sidebar-store-logo-preview" src="assets/icon-192.svg" class="w-10 h-10 rounded-xl object-cover border border-[#d4af37]/30">
                     <div class="space-y-0.5">
                         <h4 class="text-xs font-black text-slate-800" id="sidebar-user-name">ABDELALI.PHONE</h4>
                         <p class="text-[9px] text-slate-400 font-bold" id="sidebar-user-email">merchant@zalo.dz</p>
@@ -242,7 +242,7 @@
             
             <div class="flex items-center gap-4 relative z-10">
                 <!-- Store Image preview placeholder -->
-                <img id="profile-store-image" src="https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?auto=format&fit=crop&w=600&q=80" class="w-16 h-16 rounded-2xl border-2 border-[#d4af37] object-cover shadow-sm">
+                <img id="profile-store-image" src="assets/icon-192.svg" class="w-16 h-16 rounded-2xl border-2 border-[#d4af37] object-cover shadow-sm">
                 <div>
                     <h2 id="profile-store-name" class="text-xl font-black text-slate-800">ABDELALI.PHONE</h2>
                     <div class="flex flex-wrap gap-2 items-center mt-1">
@@ -362,7 +362,7 @@
                         <span class="text-[11px] text-slate-600 font-black block">شعار المتجر (اللوغو الرئيسي)</span>
                         <div class="border-2 border-dashed border-slate-200 hover:border-sky-400 bg-slate-50/50 rounded-2xl p-4 flex flex-col items-center justify-center text-center cursor-pointer relative group h-32 transition">
                             <input type="file" id="logo-input" accept="image/*" onchange="previewImage(this, 'logo-preview')" class="absolute inset-0 opacity-0 cursor-pointer">
-                            <img id="logo-preview" src="https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?auto=format&fit=crop&w=200&q=80" class="w-14 h-14 rounded-xl border border-slate-200 object-cover mb-2 group-hover:scale-105 transition">
+                            <img id="logo-preview" src="assets/icon-192.svg" class="w-14 h-14 rounded-xl border border-slate-200 object-cover mb-2 group-hover:scale-105 transition">
                             <span class="text-[10px] text-sky-500 font-bold"><i class="fa-solid fa-camera"></i> تغيير شعار المتجر</span>
                         </div>
                     </div>
@@ -372,7 +372,7 @@
                         <span class="text-[11px] text-slate-600 font-black block">واجهة المحل (صورة الخلفية)</span>
                         <div class="border-2 border-dashed border-slate-200 hover:border-sky-400 bg-slate-50/50 rounded-2xl p-4 flex flex-col items-center justify-center text-center cursor-pointer relative group h-32 transition">
                             <input type="file" id="cover-input" accept="image/*" onchange="previewImage(this, 'cover-preview')" class="absolute inset-0 opacity-0 cursor-pointer">
-                            <img id="cover-preview" src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=400&q=80" class="w-24 h-14 rounded-xl border border-slate-200 object-cover mb-2 group-hover:scale-105 transition">
+                            <img id="cover-preview" src="assets/icon-192.svg" class="w-24 h-14 rounded-xl border border-slate-200 object-cover mb-2 group-hover:scale-105 transition">
                             <span class="text-[10px] text-sky-500 font-bold"><i class="fa-solid fa-image"></i> تغيير صورة الواجهة</span>
                         </div>
                     </div>
@@ -991,17 +991,17 @@
 
         // Default local merchant settings seed
         const DEFAULT_MERCHANT_SETTINGS = {
-            storeName: "ABDELALI.PHONE",
-            phone: "0666112233",
+            storeName: "",
+            phone: "",
             category: "cat_phones",
-            wilaya: "58 المنيعة",
-            commune: "بلدية المنيعة",
-            fb: "https://facebook.com/abdelali.phone",
+            wilaya: "",
+            commune: "",
+            fb: "",
             ig: "",
             tiktok: "",
             tg: "",
-            logoImg: "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?auto=format&fit=crop&w=200&q=80",
-            coverImg: "https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=600&q=80",
+            logoImg: "assets/icon-192.svg",
+            coverImg: "assets/icon-192.svg",
             workingHours: "08:00 - 22:00",
             vatNumber: "198273615243000"
         };
@@ -1259,7 +1259,7 @@
 
             const pId = "p_" + Date.now();
             
-            let pImg = "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=600&q=80"; // fallback default
+            let pImg = "assets/icon-192.svg"; // fallback default
             if (uploadedAnglesPreview && uploadedAnglesPreview.length > 0) {
                 pImg = uploadedAnglesPreview[0];
             }

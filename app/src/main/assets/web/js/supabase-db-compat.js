@@ -587,7 +587,7 @@ export async function getDocs(queryObj) {
                     category: prod.category,
                     desc: prod.description,
                     stock: prod.stock,
-                    url: prod.imageUrl || "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=600&q=80",
+                    url: prod.imageUrl || "assets/icon-192.svg",
                     isApproved: true,
                     storeID: "101",
                     storeName: "متجر النور للإلكترونيات"

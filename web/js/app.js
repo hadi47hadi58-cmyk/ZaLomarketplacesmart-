@@ -4,29 +4,13 @@
 // Fully localized in Arabic with support for 69 Algerian Wilayas and custom Southern Municipalities
 
 // --- Seed Databases ---
-const SEED_MUNICIPALITIES = [
-    { id: "el-menia", name: "بلدية المنيعة", image: "https://images.unsplash.com/photo-1547814181-79b8c08ecfe8?auto=format&fit=crop&w=600&q=80" },
-    { id: "hassi-el-fhal", name: "بلدية حاسي الفحل", image: "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=600&q=80" },
-    { id: "hassi-gara", name: "بلدية حاسي القارة", image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80" }
-];
+const SEED_MUNICIPALITIES = [];
 
-const SEED_USERS = [
-    { uid: "user_hadi", email: "zinzinochop@gmail.com", name: "الزبون الجزائري الذكي", phone: "0666112233", role: "customer", status: "ACTIVE" },
-    { uid: "user_merchant", email: "merchant@zalo.dz", name: "أحمد بن زكري (تاجر السلام)", phone: "0555334455", role: "merchant", status: "ACTIVE" },
-    { uid: "user_admin", email: "admin@zalo.dz", name: "مسؤول المراجعة والتدقيق", phone: "0770559988", role: "admin", status: "ACTIVE" },
-    { uid: "user_manager", email: "manager@zalo.dz", name: "المدير العام للنظام", phone: "0660447711", role: "manager", status: "ACTIVE" }
-];
+const SEED_USERS = [];
 
 const SEED_STORES = [];
 
-const SEED_CATEGORIES = [
-    { categoryId: "cat_phones", storeId: "store_salam", categoryName: "هواتف" },
-    { categoryId: "cat_electronic", storeId: "store_salam", categoryName: "إلكترونيات" },
-    { categoryId: "cat_parts", storeId: "store_salam", categoryName: "قطع غيار" },
-    { categoryId: "cat_food", storeId: "store_salam", categoryName: "مواد غذائية" },
-    { categoryId: "cat_clothes", storeId: "store_salam", categoryName: "ملابس" },
-    { categoryId: "cat_services", storeId: "store_salam", categoryName: "خدمات" }
-];
+const SEED_CATEGORIES = [];
 
 const SEED_PRODUCTS = [];
 
@@ -523,7 +507,7 @@ function initProductsPage() {
             let card = document.createElement("div");
             card.className = "zalo-card bg-slate-800/50 border border-slate-700 rounded-3xl overflow-hidden p-4 shadow-xl flex flex-col h-full";
             card.innerHTML = `
-                <img src="${p.images ? p.images[0] : 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=300&q=80'}" class="w-full h-44 object-cover rounded-2xl shrink-0" alt="${p.productName}">
+                <img src="${p.images ? p.images[0] : 'assets/icon-192.svg'}" class="w-full h-44 object-cover rounded-2xl shrink-0" alt="${p.productName}">
                 <div class="py-3 flex-1 text-right flex flex-col justify-between">
                     <div>
                         <h5 class="text-base font-black text-white font-bold">${p.productName}</h5>
@@ -672,7 +656,7 @@ function initStoreDashboardPage() {
                 productName: name,
                 price: price,
                 description: desc,
-                images: ["https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=400&q=80"],
+                images: ["assets/icon-192.svg"],
                 stock: stock
             };
 
