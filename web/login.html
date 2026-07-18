@@ -532,23 +532,26 @@
 
   // Check if we are returning from Google Login
   window.addEventListener('load', async () => {
-    // Relying on supabase.auth.onAuthStateChange in supabase-db-compat.js
-    // to handle the session automatically.
-    
-    // Explicit Fallback for OAuth redirects
-    if (window.location.hash && window.location.hash.includes('access_token=')) {
-      console.log("[Login] OAuth Token detected in URL. Waiting for sync...");
-      showSuccess('✨ تم الدخول بنجاح عبر Google! جاري تحويلك...');
-      // Disable login button to prevent duplicate actions
-      loginBtn.disabled = true;
-      loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري التحقق...';
-      
-      // Wait for Supabase to process the token, then force redirect
-      setTimeout(async () => {
-        if (typeof window.handleUserRedirect === 'function') {
-           await window.handleUserRedirect();
+    if (window.location.hash && window.location.hash.includes('access_token')) {
+      const hashParams = new URLSearchParams(window.location.hash.substring(1));
+      const accessToken = hashParams.get('access_token');
+      if (accessToken && supabaseClient) {
+        showSuccess('✨ تم الدخول بنجاح عبر Google! جاري الفحص...');
+        const { data: { user }, error } = await supabaseClient.auth.getUser(accessToken);
+        if (user) {
+          let role = user?.user_metadata?.role || 'customer';
+          if (user.email === 'hadi47hadi58@gmail.com') role = 'admin';
+          localStorage.setItem('zalo_token', accessToken);
+          localStorage.setItem('zalo_session_jwt', accessToken);
+          localStorage.setItem('zalo_user_role', role);
+          localStorage.setItem('zalo_user_email', user.email);
+          
+          if (role === 'admin' || role === 'ADMIN') window.location.href = 'dashboard-admin.html';
+          else if (role === 'merchant' || role === 'MERCHANT') window.location.href = 'dashboard-store.html';
+          else if (role === 'team' || role === 'manager' || role === 'MANAGER') window.location.href = 'dashboard-manager.html';
+          else window.location.href = 'customer-home.html';
         }
-      }, 1500);
+      }
     }
   });
 
