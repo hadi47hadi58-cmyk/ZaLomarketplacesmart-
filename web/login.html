@@ -532,27 +532,8 @@
 
   // Check if we are returning from Google Login
   window.addEventListener('load', async () => {
-    if (window.location.hash && window.location.hash.includes('access_token')) {
-      const hashParams = new URLSearchParams(window.location.hash.substring(1));
-      const accessToken = hashParams.get('access_token');
-      if (accessToken && supabaseClient) {
-        showSuccess('✨ تم الدخول بنجاح عبر Google! جاري الفحص...');
-        const { data: { user }, error } = await supabaseClient.auth.getUser(accessToken);
-        if (user) {
-          let role = user?.user_metadata?.role || 'customer';
-          if (user.email === 'hadi47hadi58@gmail.com') role = 'admin';
-          localStorage.setItem('zalo_token', accessToken);
-          localStorage.setItem('zalo_session_jwt', accessToken);
-          localStorage.setItem('zalo_user_role', role);
-          localStorage.setItem('zalo_user_email', user.email);
-          
-          if (role === 'admin') window.location.href = 'dashboard-admin.html';
-          else if (role === 'merchant') window.location.href = 'dashboard-store.html';
-          else if (role === 'team' || role === 'manager') window.location.href = 'dashboard-manager.html';
-          else window.location.href = 'customer-home.html';
-        }
-      }
-    }
+    // Relying on supabase.auth.onAuthStateChange in supabase-db-compat.js
+    // to handle the session automatically.
   });
 
   function showError(msg) {
