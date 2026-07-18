@@ -534,6 +534,22 @@
   window.addEventListener('load', async () => {
     // Relying on supabase.auth.onAuthStateChange in supabase-db-compat.js
     // to handle the session automatically.
+    
+    // Explicit Fallback for OAuth redirects
+    if (window.location.hash && window.location.hash.includes('access_token=')) {
+      console.log("[Login] OAuth Token detected in URL. Waiting for sync...");
+      showSuccess('✨ تم الدخول بنجاح عبر Google! جاري تحويلك...');
+      // Disable login button to prevent duplicate actions
+      loginBtn.disabled = true;
+      loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري التحقق...';
+      
+      // Wait for Supabase to process the token, then force redirect
+      setTimeout(async () => {
+        if (typeof window.handleUserRedirect === 'function') {
+           await window.handleUserRedirect();
+        }
+      }, 1500);
+    }
   });
 
   function showError(msg) {
