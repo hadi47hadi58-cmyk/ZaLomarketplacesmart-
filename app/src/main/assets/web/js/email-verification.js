@@ -11,7 +11,7 @@ export class EmailVerification {
    */
   static async sendVerificationRequest(email) {
     try {
-      const baseUrl = window.NESTJS_BASE_URL || '/api';
+      const baseUrl = '/api';
       const response = await fetch(`${baseUrl}/auth/email-verification/request`, {
         method: 'POST',
         headers: {
@@ -37,7 +37,7 @@ export class EmailVerification {
    */
   static async verifyEmailToken(token) {
     try {
-      const baseUrl = window.NESTJS_BASE_URL || '/api';
+      const baseUrl = '/api';
       const response = await fetch(`${baseUrl}/auth/email-verification/verify`, {
         method: 'POST',
         headers: {

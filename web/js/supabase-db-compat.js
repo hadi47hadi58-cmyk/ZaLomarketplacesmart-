@@ -200,40 +200,6 @@ export class GoogleAuthProvider {
     static credential(token) { return { token }; }
 }
 
-// NestJS Configuration
-const NESTJS_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-  ? 'http://localhost:3000/api'
-  : (window.location.hostname.endsWith('run.app') || window.location.hostname.includes('google.com')
-     ? `${window.location.origin}/api`
-     : 'https://zalo-smart-backend-service-api.run.app/api');
-
-window.NESTJS_BASE_URL = NESTJS_BASE_URL;
-
-console.log(`[ZaLo Compat Engine] Bridge initialized. NestJS API Endpoint: ${NESTJS_BASE_URL}`);
-
-// Helper to make fetch calls to NestJS
-async function callNestApi(endpoint, method = 'GET', body = null, token = null) {
-    try {
-        const headers = { 'Content-Type': 'application/json' };
-        if (token) {
-            headers['Authorization'] = `Bearer ${token}`;
-        }
-        const options = { method, headers };
-        if (body) {
-            options.body = JSON.stringify(body);
-        }
-        const response = await fetch(`${NESTJS_BASE_URL}/${endpoint}`, options);
-        if (response.ok) {
-            return await response.json();
-        }
-        console.warn(`[ZaLo Compat Engine] NestJS responded with code ${response.status} for ${endpoint}`);
-        return null;
-    } catch (e) {
-        console.warn(`[ZaLo Compat Engine] NestJS endpoint ${endpoint} unreachable:`, e.message);
-        return null;
-    }
-}
-
 // 2. Auth State and Actions
 let lastStateValue = undefined;
 
@@ -423,15 +389,6 @@ export async function signOut() {
 }
 
 export async function signInWithEmailAndPassword(auth, email, password) {
-    // 1. First attempt login with NestJS backend (PostgreSQL database integration)
-    console.log("[ZaLo Compat Engine] Registering login session with NestJS backend...");
-    const nestResult = await callNestApi('auth/login', 'POST', { email, password });
-    if (nestResult && nestResult.access_token) {
-        localStorage.setItem('nestjs_token', nestResult.access_token);
-        localStorage.setItem('nestjs_user', JSON.stringify(nestResult.user));
-        console.log("[ZaLo Compat Engine] NestJS Auth successful.");
-    }
-
     // 2. Perform regular Supabase auth flow
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) throw error;
@@ -446,17 +403,6 @@ export async function signInWithEmailAndPassword(auth, email, password) {
 }
 
 export async function createUserWithEmailAndPassword(auth, email, password) {
-    // 1. Register with NestJS backend as well for unified database mapping
-    console.log("[ZaLo Compat Engine] Registering account on NestJS backend...");
-    await callNestApi('auth/register', 'POST', {
-        name: email.split('@')[0],
-        email,
-        password,
-        role: 'CUSTOMER',
-        wilaya: 'الجزائر',
-        commune: 'المرسى'
-    });
-
     // 2. Create in Supabase
     const { data, error } = await supabase.auth.signUp({ email, password });
     if (error) throw error;
@@ -572,71 +518,10 @@ export async function getDocs(queryObj) {
     const table = queryObj.table || queryObj;
 
     // 1. Try unified NestJS API routing for products catalog
-    if (table === 'products') {
-        console.log("[ZaLo Compat Engine] Fetching products via NestJS REST API...");
-        const nestProducts = await callNestApi('products');
-        if (nestProducts && nestProducts.data) {
-            const docs = nestProducts.data.map(prod => ({
-                id: prod.id,
-                exists: true,
-                exists() { return true; },
-                data: () => ({
-                    id: prod.id,
-                    title: prod.name,
-                    price: prod.price,
-                    category: prod.category,
-                    desc: prod.description,
-                    stock: prod.stock,
-                    url: prod.imageUrl || "assets/icon-192.svg",
-                    isApproved: true,
-                    storeID: "101",
-                    storeName: "متجر النور للإلكترونيات"
-                })
-            }));
-            return {
-                empty: docs.length === 0,
-                docs: docs,
-                size: docs.length,
-                forEach(cb) { docs.forEach(cb); }
-            };
-        }
-    }
+    // (NestJS routing removed - relying on direct Supabase)
 
     // 2. Try NestJS routing for orders list
-    if (table === 'orders') {
-        console.log("[ZaLo Compat Engine] Fetching orders via NestJS REST API...");
-        const token = localStorage.getItem('nestjs_token');
-        if (token) {
-            const nestOrders = await callNestApi('orders', 'GET', null, token);
-            if (nestOrders) {
-                const list = Array.isArray(nestOrders) ? nestOrders : (nestOrders.data || []);
-                const docs = list.map(ord => ({
-                    id: ord.id,
-                    exists: true,
-                    exists() { return true; },
-                    data: () => ({
-                        id: ord.id,
-                        customerName: ord.customerName || "زبون متجر زالو",
-                        total: ord.totalAmount,
-                        paymentMethod: ord.paymentMethod,
-                        paymentStatus: ord.paymentStatus,
-                        status: ord.status === 'SHIPPING' ? 'في الطريق' : ord.status === 'DELIVERED' ? 'تم التسليم' : 'قيد المراجعة',
-                        address: ord.address,
-                        wilaya: ord.wilaya,
-                        commune: ord.commune,
-                        trackingNumber: ord.trackingNumber || "DZ-ZALO-MOCK",
-                        timestamp: ord.timestamp || Date.now()
-                    })
-                }));
-                return {
-                    empty: docs.length === 0,
-                    docs: docs,
-                    size: docs.length,
-                    forEach(cb) { docs.forEach(cb); }
-                };
-            }
-        }
-    }
+    // (NestJS routing removed - relying on direct Supabase)
 
     // Resilient Fallback for merchant_requests
     if (table === 'merchant_requests') {
@@ -994,30 +879,7 @@ export async function addDoc(colRef, data) {
     }
 
     // Intercept checkout to create order in NestJS + PostgreSQL
-    if (colRef.table === 'orders') {
-        const token = localStorage.getItem('nestjs_token');
-        if (token) {
-            console.log("[ZaLo Compat Engine] Routing Order creation to NestJS API...");
-            const orderPayload = {
-                items: [
-                    {
-                        productId: parseInt(data.productID) || 1001,
-                        productName: data.productName || "سلعة زالو الرائعة",
-                        price: parseFloat(data.price) || data.total,
-                        quantity: parseInt(data.qty) || 1
-                    }
-                ],
-                address: data.address || "غير محدد",
-                wilaya: data.wilaya || "الجزائر",
-                commune: data.commune || "المرسى",
-                paymentMethod: data.paymentMethod === 'BaridiMob' ? 'BARIDIMOB' : data.paymentMethod === 'CCP' ? 'CCP' : 'COD'
-            };
-            const result = await callNestApi('orders', 'POST', orderPayload, token);
-            if (result) {
-                console.log("[ZaLo Compat Engine] Order created on NestJS successfully:", result.id);
-            }
-        }
-    }
+    // (NestJS routing removed - relying on direct Supabase)
 
     const cleanData = { ...data };
     const { data: inserted, error } = await supabase
