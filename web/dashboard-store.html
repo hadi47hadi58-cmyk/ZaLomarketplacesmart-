@@ -97,7 +97,7 @@
         window.supabaseClient = supabaseClient;
 
         const session = sessionManager.getSession();
-        if (!session.token || session.role !== 'merchant') {
+        if (!session.token || (session.role !== 'merchant' && session.role !== 'admin')) {
             console.warn('🚨 Access Denied: User role is not merchant. Redirecting to login...');
             window.location.href = 'store-login.html';
         } else {
@@ -109,7 +109,7 @@
     <script>
         (function() {
             const token = localStorage.getItem('zalo_token') || localStorage.getItem('zalo_session_jwt');
-            const role = localStorage.getItem('zalo_user_role');
+            const role = (localStorage.getItem('zalo_user_role') || '').toLowerCase();
             if (!token) {
                 console.warn("[Security Guard] No active session found. Redirecting to login.");
                 window.location.href = 'store-login.html?reason=unauthorized';

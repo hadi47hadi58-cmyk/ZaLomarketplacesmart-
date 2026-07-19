@@ -105,7 +105,7 @@
     <script>
         (function() {
             const token = localStorage.getItem('zalo_token') || localStorage.getItem('zalo_session_jwt');
-            const role = localStorage.getItem('zalo_user_role');
+            const role = (localStorage.getItem('zalo_user_role') || '').toLowerCase();
             if (!token) {
                 console.warn("[Security Guard] No active session found. Redirecting to login.");
                 window.location.href = 'admin-login.html?reason=unauthorized';
