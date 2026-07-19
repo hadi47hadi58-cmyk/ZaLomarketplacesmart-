@@ -289,134 +289,14 @@
         المتابعة بحساب Google
       </button>
 
-
     <div class="register-link">
       ليس لديك حساب؟ <a href="register.html">أنشئ حساباً جديداً</a>
     </div>
     <div class="register-link" style="margin-top: 8px;">
       💼 هل ترغب في الانضمام لفريق عملنا؟ <a href="careers.html" style="color: var(--green); font-weight: bold; text-decoration: underline;">قدم طلب توظيف الآن</a>
     </div>
-
-    <!-- Quick Demo Access Portals for Easy Testing -->
-    <div style="margin-top: 24px; border-top: 1px dashed var(--border); padding-top: 20px;">
-      <h3 style="font-size: 13px; font-weight: 800; color: var(--gold-dark || var(--gold2)); text-align: center; margin-bottom: 12px;">
-        ✨ بوابات الدخول السريع للتجربة والمراجعة
-      </h3>
-      <p style="font-size: 11px; color: var(--text2); text-align: center; margin-bottom: 14px; font-weight: 600;">
-        انقر على أي بوابة للدخول المباشر بالصلاحيات الكاملة دون الحاجة لإنشاء حساب:
-      </p>
-      
-      <div style="display: flex; flex-direction: column; gap: 8px;">
-        <!-- Admin Entry -->
-        <button type="button" onclick="quickLogin('ADMIN')" class="submit-btn" style="background: linear-gradient(135deg, #102a43 0%, #1e3e26 100%); border: 1.5px solid var(--gold); padding: 10px; font-size: 12px; box-shadow: none;">
-          <i class="fa-solid fa-user-shield" style="color: var(--gold);"></i>
-          <span>الدخول المباشر كمدير عام (Super Admin) 👑</span>
-        </button>
-
-        <!-- Merchant Entry -->
-        <button type="button" onclick="quickLogin('MERCHANT')" class="submit-btn" style="background: linear-gradient(135deg, #1d9bf0 0%, #0284c7 100%); border: 1px solid rgba(255,255,255,0.1); padding: 10px; font-size: 12px; box-shadow: none;">
-          <i class="fa-solid fa-store" style="color: #fff;"></i>
-          <span>الدخول المباشر كتاجر (Merchant Dashboard) 📦</span>
-        </button>
-
-        <!-- Executive Manager Entry -->
-        <button type="button" onclick="quickLogin('MANAGER')" class="submit-btn" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); border: 1px solid rgba(255,255,255,0.1); padding: 10px; font-size: 12px; box-shadow: none;">
-          <i class="fa-solid fa-crown" style="color: #fff;"></i>
-          <span>لوحة تتبع الشحنات والبلديات (Manager View) 📍</span>
-        </button>
-
-        <!-- Customer Entry -->
-        <button type="button" onclick="quickLogin('CUSTOMER')" class="submit-btn" style="background: #ffffff; border: 1.5px solid var(--border); color: var(--text); padding: 10px; font-size: 12px; box-shadow: none;">
-          <i class="fa-solid fa-user" style="color: var(--green);"></i>
-          <span>الدخول المباشر كزبون (Customer App) 🛍️</span>
-        </button>
-      </div>
-    </div>
   </div>
 </div>
-
-<script>
-  // Quick Login Mock bypass logic
-  function quickLogin(role) {
-    console.log("[QuickLogin] Activating bypass for role:", role);
-    
-    // Set standard keys
-    const mockToken = "mock_token_jwt_" + Math.random().toString(36).substr(2, 9);
-    localStorage.setItem('zalo_session_jwt', mockToken);
-    localStorage.setItem('zalo_token', mockToken);
-    localStorage.setItem('nestjs_token', mockToken);
-    
-    if (role === 'ADMIN') {
-      localStorage.setItem('zalo_user_role', 'ADMIN');
-      localStorage.setItem('zalo_user_email', 'admin@zalo.dz');
-      localStorage.setItem('zalo_user_name', 'المدير العام');
-      sessionStorage.setItem('admin_logged_in_session', 'true');
-      
-      const activeSession = {
-        uid: "mock-admin-id",
-        email: "admin@zalo.dz",
-        name: "المدير العام",
-        phone: "0555666777",
-        role: "admin",
-        status: "ACTIVE"
-      };
-      localStorage.setItem('zalo_active_session', JSON.stringify(activeSession));
-      
-      window.location.href = 'dashboard-admin.html';
-    } 
-    else if (role === 'MERCHANT') {
-      localStorage.setItem('zalo_user_role', 'MERCHANT');
-      localStorage.setItem('zalo_user_email', 'ahmed@zalo.dz');
-      localStorage.setItem('zalo_user_name', 'أحمد بن زكري (تاجر)');
-      
-      const activeSession = {
-        uid: "mock-merchant-id",
-        email: "ahmed@zalo.dz",
-        name: "أحمد بن زكري (تاجر)",
-        phone: "0698694010",
-        role: "merchant",
-        status: "ACTIVE"
-      };
-      localStorage.setItem('zalo_active_session', JSON.stringify(activeSession));
-      
-      window.location.href = 'dashboard-store.html';
-    }
-    else if (role === 'MANAGER') {
-      localStorage.setItem('zalo_user_role', 'ADMIN');
-      localStorage.setItem('zalo_user_email', 'manager@zalo.dz');
-      localStorage.setItem('zalo_user_name', 'المدير التنفيذي');
-      
-      const activeSession = {
-        uid: "mock-manager-id",
-        email: "manager@zalo.dz",
-        name: "المدير التنفيذي",
-        phone: "0770112233",
-        role: "admin",
-        status: "ACTIVE"
-      };
-      localStorage.setItem('zalo_active_session', JSON.stringify(activeSession));
-      
-      window.location.href = 'dashboard-manager.html';
-    }
-    else { // CUSTOMER
-      localStorage.setItem('zalo_user_role', 'CUSTOMER');
-      localStorage.setItem('zalo_user_email', 'customer@zalo.dz');
-      localStorage.setItem('zalo_user_name', 'عبد الهادي نجم الدين');
-      
-      const activeSession = {
-        uid: "mock-customer-id",
-        email: "customer@zalo.dz",
-        name: "عبد الهادي نجم الدين",
-        phone: "0555001122",
-        role: "customer",
-        status: "ACTIVE"
-      };
-      localStorage.setItem('zalo_active_session', JSON.stringify(activeSession));
-      
-      window.location.href = 'customer-home.html';
-    }
-  }
-</script>
 
 <script type="module">
   import { supabaseClient } from './js/supabase-db-compat.js';

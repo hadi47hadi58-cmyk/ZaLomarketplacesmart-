@@ -53,16 +53,16 @@
             const role = localStorage.getItem('zalo_user_role');
             if (!token) {
                 console.warn("[Security Guard] No active session found. Redirecting to login.");
-                window.location.href = 'login.html?reason=unauthorized';
+                window.location.href = 'customer-login.html?reason=unauthorized';
             } else {
                 // Determine required role based on page
                 const isPageAdmin = window.location.pathname.includes('dashboard-admin');
                 const isPageManager = window.location.pathname.includes('dashboard-manager');
                 const isPageStore = window.location.pathname.includes('dashboard-store');
                 
-                if (isPageAdmin && role !== 'admin') window.location.href = 'login.html?reason=forbidden';
-                if (isPageManager && (role !== 'admin' && role !== 'team' && role !== 'manager')) window.location.href = 'login.html?reason=forbidden';
-                if (isPageStore && (role !== 'admin' && role !== 'merchant')) window.location.href = 'login.html?reason=forbidden';
+                if (isPageAdmin && role !== 'admin') window.location.href = 'customer-login.html?reason=forbidden';
+                if (isPageManager && (role !== 'admin' && role !== 'team' && role !== 'manager')) window.location.href = 'customer-login.html?reason=forbidden';
+                if (isPageStore && (role !== 'admin' && role !== 'merchant')) window.location.href = 'customer-login.html?reason=forbidden';
             }
         })();
     </script>
@@ -338,7 +338,7 @@
             localStorage.removeItem('zalo_user_email');
             localStorage.removeItem('zalo_user_name');
             sessionStorage.removeItem('admin_logged_in_session');
-            window.location.href = 'login.html';
+            window.location.href = 'customer-login.html';
         }
     </script>
 </body>

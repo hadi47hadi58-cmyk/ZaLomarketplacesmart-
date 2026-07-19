@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>إنشاء حساب جديد - ZaLo</title>
+  <title>بوابة التاجر - ZaLo</title>
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#1a5c2a">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -17,8 +17,6 @@
       --green: #0ea5e9; /* Sky Blue replaces green */
       --green-light: #0284c7;
       --green-dark: #0369a1;
-      --emerald: #0ea5e9;
-      --emerald-dark: #0284c7;
       --gold: #d4af37;
       --gold2: #dfb134;
       --bg: #fcfbfa; /* Light elegant cream background */
@@ -158,16 +156,16 @@
     }
 
     .submit-btn {
-      width: 100%; background: var(--emerald);
+      width: 100%; background: var(--green);
       border: 1px solid var(--gold);
       color: #fff; font-family: inherit; font-size: 15px; font-weight: 800;
       padding: 13px; border-radius: 14px; cursor: pointer;
-      box-shadow: 0 8px 24px rgba(45,140,60,0.25);
+      box-shadow: 0 8px 24px rgba(26,92,42,0.25);
       transition: all 0.25s ease;
       display: flex; align-items: center; justify-content: center; gap: 8px;
     }
     .submit-btn:hover {
-      background: var(--emerald-dark); transform: translateY(-1px);
+      background: var(--green-light); transform: translateY(-1px);
     }
     .submit-btn:active { transform: translateY(0); }
     .submit-btn:disabled {
@@ -254,20 +252,12 @@
   </div>
 
   <div class="card">
-    <h2 class="card-title">✨ إنشاء حساب جديد</h2>
+    <h2 class="card-title">🔐 تسجيل الدخول - لوحة التاجر</h2>
 
     <div id="errorMsg" class="error-msg"></div>
     <div id="successMsg" class="success-msg"></div>
 
-    <form id="registerForm">
-      <div class="form-group">
-        <label class="form-label">الاسم الكامل ✍️</label>
-        <div class="input-wrapper">
-          <i class="fa-solid fa-user input-icon"></i>
-          <input type="text" id="fullName" class="form-input" placeholder="الاسم الكامل" required autocomplete="name">
-        </div>
-      </div>
-
+    <form id="loginForm">
       <div class="form-group">
         <label class="form-label">البريد الإلكتروني ✉️</label>
         <div class="input-wrapper">
@@ -277,29 +267,33 @@
       </div>
 
       <div class="form-group">
-        <label class="form-label">رقم الهاتف 📞</label>
-        <div class="input-wrapper">
-          <i class="fa-solid fa-phone input-icon"></i>
-          <input type="tel" id="phone" class="form-input" placeholder="05XX XX XX XX" required autocomplete="tel">
-        </div>
-      </div>
-
-      <div class="form-group">
         <label class="form-label">كلمة المرور 🔑</label>
         <div class="input-wrapper">
           <i class="fa-solid fa-lock input-icon"></i>
-          <input type="password" id="password" class="form-input" placeholder="••••••••" required minlength="6" autocomplete="new-password">
+          <input type="password" id="password" class="form-input" placeholder="••••••••" required autocomplete="current-password">
           <i class="fa-solid fa-eye toggle-pass" id="togglePass"></i>
         </div>
       </div>
 
-      <button type="submit" class="submit-btn" id="registerBtn">
-        أنشئ حسابي ✅
+      <button type="submit" class="submit-btn" id="loginBtn">
+        تسجيل الدخول 🚀
       </button>
     </form>
+      <div style="margin: 20px 0; display: flex; align-items: center; justify-content: center;">
+        <div style="height: 1px; background: var(--border); flex: 1;"></div>
+        <span style="margin: 0 10px; color: var(--text2); font-size: 12px; font-weight: 700;">أو الدخول عبر</span>
+        <div style="height: 1px; background: var(--border); flex: 1;"></div>
+      </div>
+      <button type="button" onclick="handleGoogleLogin()" style="width: 100%; padding: 12px; background: white; border: 2px solid #e2e8f0; border-radius: 12px; font-family: 'Cairo', sans-serif; font-weight: 800; font-size: 14px; color: #1e293b; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s;">
+        <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" style="width: 20px; height: 20px;">
+        المتابعة بحساب Google
+      </button>
 
     <div class="register-link">
-      لديك حساب بالفعل؟ <a href="customer-login.html">تسجيل الدخول الآن</a>
+      ليس لديك حساب؟ <a href="register.html">أنشئ حساباً جديداً</a>
+    </div>
+    <div class="register-link" style="margin-top: 8px;">
+      💼 هل ترغب في الانضمام لفريق عملنا؟ <a href="careers.html" style="color: var(--green); font-weight: bold; text-decoration: underline;">قدم طلب توظيف الآن</a>
     </div>
   </div>
 </div>
@@ -320,138 +314,186 @@
     }
   });
 
-  const form = document.getElementById('registerForm');
+  const form = document.getElementById('loginForm');
   const errorDiv = document.getElementById('errorMsg');
   const successDiv = document.getElementById('successMsg');
-  const registerBtn = document.getElementById('registerBtn');
+  const loginBtn = document.getElementById('loginBtn');
+
+  // Check if already logged in and redirect
+  async function checkActiveSession() {
+    try {
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      if (session && session.user) {
+        showSuccess('لديك جلسة نشطة بالفعل. جاري التوجيه...');
+        await window.handleUserRedirect();
+      }
+    } catch (e) {
+      console.warn("[Login] Session check failed:", e);
+    }
+  }
+  checkActiveSession();
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     errorDiv.style.display = 'none';
     successDiv.style.display = 'none';
-    registerBtn.disabled = true;
-    registerBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري إنشاء الحساب...';
+    loginBtn.disabled = true;
+    loginBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري التحقق...';
 
-    const fullName = document.getElementById('fullName').value.trim();
     const email = document.getElementById('email').value.trim();
-    const phone = document.getElementById('phone').value.trim();
     const password = document.getElementById('password').value;
 
-    if (!fullName || !email || !phone || password.length < 6) {
-      showError('يرجى ملء جميع الحقول بشكل صحيح (كلمة المرور 6 أحرف على الأقل)');
+    if (!email || !password) {
+      showError('يرجى إدخال البريد الإلكتروني وكلمة المرور');
       resetBtn();
       return;
     }
 
     try {
-      console.log("[Register] Attempting sign up in Supabase Auth...");
-      // 1. Create account in Supabase Auth
-      const { data, error } = await supabaseClient.auth.signUp({
-        email: email,
-        password: password,
-        options: {
-          data: { 
-            full_name: fullName, 
-            phone: phone, 
-            role: 'customer' 
-          }
-        }
-      });
-
-      if (error) throw error;
-
-      console.log("[Register] Auth signUp successful. Auto signing in...");
-      
-      // 2. Auto sign in with password to establish session
-      const { data: signInData, error: signInError } = await supabaseClient.auth.signInWithPassword({
+      console.log("[Login] Logging in via Supabase...");
+      const { data, error } = await supabaseClient.auth.signInWithPassword({
         email: email,
         password: password
       });
 
-      if (signInError) {
-        console.warn("[Register] Auto sign in failed, redirecting manually to login:", signInError.message);
-        showSuccess('تم إنشاء حسابك بنجاح! جاري تحويلك لصفحة تسجيل الدخول...');
-        setTimeout(() => {
-          window.location.href = 'customer-login.html';
-        }, 2000);
-        return;
-      }
+      if (error) throw error;
 
-      const user = signInData.user;
+      console.log("[Login] Sign in successful. Setting tokens and redirecting...");
       
-      // 3. Create record in public.profiles or public.users for DB compatibility
-      console.log("[Register] Syncing profile to database...");
-      try {
-        const profileData = {
-          id: user.id,
-          phone: phone,
-          email: email,
-          role: 'customer',
-          updated_at: new Date().toISOString()
-        };
-        
-        await supabaseClient.from('profiles').upsert(profileData);
-        
-        // Also update users table if present
-        try {
-          await supabaseClient.from('users').upsert({
-            supabase_uid: user.id,
-            email: email,
-            role: 'CUSTOMER',
-            phone: phone
-          });
-        } catch (usersErr) {
-          console.warn("[Register] Skipping users table insert:", usersErr.message);
-        }
-
-      } catch (dbErr) {
-        console.warn("[Register] Non-blocking profile synchronization error:", dbErr.message);
-      }
-
-      // Save user role and details in localStorage
-      localStorage.setItem('zalo_user_role', 'customer');
+      const user = data.user;
+      let role = user?.user_metadata?.role || 'customer';
+          if (user.email === 'hadi47hadi58@gmail.com') role = 'admin';
+      
+      localStorage.setItem('zalo_token', data.session.access_token);
+      localStorage.setItem('zalo_session_jwt', data.session.access_token);
+      localStorage.setItem('zalo_user_role', role);
       localStorage.setItem('zalo_user_email', email);
-      localStorage.setItem('zalo_token', signInData.session.access_token);
-      localStorage.setItem('zalo_session_jwt', signInData.session.access_token);
-      
-      const activeSessionUser = {
-        uid: user.id,
-        email: email,
-        name: fullName,
-        phone: phone,
-        role: 'customer',
-        status: 'ACTIVE'
-      };
-      localStorage.setItem('zalo_active_session', JSON.stringify(activeSessionUser));
 
-      showSuccess('✨ تم إنشاء الحساب والدخول بنجاح! جاري التحويل...');
-      
-      setTimeout(() => {
-        window.location.href = 'customer-home.html';
-      }, 1500);
+      showSuccess('✨ تم تسجيل الدخول بنجاح! جاري تحويلك...');
+
+      // Redirect using compatibility routing layer
+      if (typeof window.handleUserRedirect === 'function') {
+        await window.handleUserRedirect();
+      } else {
+        // Fallback redirection logic
+        if (role === 'admin') {
+          window.location.href = 'dashboard-admin.html';
+        } else if (role === 'merchant') {
+          window.location.href = 'dashboard-store.html';
+        } else {
+          window.location.href = 'customer-home.html';
+        }
+      }
 
     } catch (err) {
-      console.error("[Register] Error during registration process:", err);
-      showError(err.message || 'حدث خطأ، حاول مرة أخرى');
+      console.error("[Login] Auth error:", err);
+      showError(err.message || 'فشل تسجيل الدخول، يرجى التحقق من بياناتك');
       resetBtn();
+    }
+  });
+
+  
+  window.handleGoogleLogin = async function() {
+    try {
+      if (!supabaseClient) throw new Error("خدمة المصادقة غير متاحة حالياً");
+      showSuccess("جاري التحويل إلى Google...");
+      
+      // Clean redirect URL: strip any hashes or tokens
+      const redirectUrl = window.location.origin + window.location.pathname;
+      console.log("[Login] Redirecting to Google OAuth with callback URL:", redirectUrl);
+      
+      const { data, error } = await supabaseClient.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: redirectUrl
+        }
+      });
+      if (error) throw error;
+    } catch (err) {
+      console.error("[Login] Google Auth Error:", err);
+      showError(err.message || 'حدث خطأ أثناء محاولة الدخول بواسطة Google');
+    }
+  }
+
+  // Check if we are returning from Google Login
+  window.addEventListener('load', async () => {
+    try {
+      let accessToken = null;
+      let refreshToken = null;
+
+      // Parse hash
+      if (window.location.hash) {
+        const hashStr = window.location.hash.startsWith('#') ? window.location.hash.substring(1) : window.location.hash;
+        const hashParams = new URLSearchParams(hashStr);
+        accessToken = hashParams.get('access_token');
+        refreshToken = hashParams.get('refresh_token');
+      }
+
+      // Parse search query
+      if (!accessToken && window.location.search) {
+        const searchParams = new URLSearchParams(window.location.search);
+        accessToken = searchParams.get('access_token');
+        refreshToken = searchParams.get('refresh_token');
+      }
+
+      if (accessToken && supabaseClient) {
+        showSuccess('✨ تم الدخول بنجاح عبر Google! جاري الفحص والتحقق...');
+        console.log("[Login] Found OAuth Access Token in URL. Invoking setSession...");
+        
+        const { data, error } = await supabaseClient.auth.setSession({
+          access_token: accessToken,
+          refresh_token: refreshToken || ''
+        });
+
+        if (error) throw error;
+
+        const user = data?.user || (await supabaseClient.auth.getUser()).data?.user;
+        if (user) {
+          console.log("[Login] OAuth User verified:", user.email);
+          let role = user?.user_metadata?.role || 'customer';
+          if (user.email === 'hadi47hadi58@gmail.com') role = 'admin';
+          
+          localStorage.setItem('zalo_token', accessToken);
+          localStorage.setItem('zalo_session_jwt', accessToken);
+          localStorage.setItem('zalo_user_role', role);
+          localStorage.setItem('zalo_user_email', user.email);
+          
+          showSuccess('✨ تم تأكيد تسجيل الدخول! جاري التوجيه...');
+          
+          setTimeout(async () => {
+            if (typeof window.handleUserRedirect === 'function') {
+              await window.location.reload(); // Force a clean reload to trigger compat listener cleanly
+            } else {
+              // Fallback
+              const r = role.toUpperCase();
+              if (r === 'ADMIN') window.location.replace('dashboard-admin.html');
+              else if (r === 'MERCHANT') window.location.replace('dashboard-store.html');
+              else window.location.replace('customer-home.html');
+            }
+          }, 500);
+        } else {
+          throw new Error("لم نتمكن من جلب بيانات المستخدم المصادق عليه");
+        }
+      }
+    } catch (err) {
+      console.error("[Login] OAuth verification failed:", err);
+      showError('فشل تسجيل الدخول التلقائي عبر Google: ' + (err.message || 'خطأ غير معروف'));
     }
   });
 
   function showError(msg) {
     errorDiv.textContent = msg;
     errorDiv.style.display = 'block';
-    errorDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
 
   function showSuccess(msg) {
     successDiv.textContent = msg;
     successDiv.style.display = 'block';
-    successDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
 
   function resetBtn() {
-    registerBtn.disabled = false;
-    registerBtn.textContent = 'أنشئ حسابي ✅';
+    loginBtn.disabled = false;
+    loginBtn.textContent = 'تسجيل الدخول 🚀';
   }
 </script>
 

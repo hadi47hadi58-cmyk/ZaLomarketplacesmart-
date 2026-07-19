@@ -7,7 +7,7 @@ const CACHE_NAME = 'zalo-v9';
 const ASSETS = [
   './',
   './index.html',
-  './login.html',
+  './customer-login.html',
   './dashboard-store.html',
   './dashboard-admin.html',
   './customer-home.html',

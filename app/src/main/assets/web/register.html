@@ -299,7 +299,7 @@
     </form>
 
     <div class="register-link">
-      لديك حساب بالفعل؟ <a href="login.html">تسجيل الدخول الآن</a>
+      لديك حساب بالفعل؟ <a href="customer-login.html">تسجيل الدخول الآن</a>
     </div>
   </div>
 </div>
@@ -372,7 +372,7 @@
         console.warn("[Register] Auto sign in failed, redirecting manually to login:", signInError.message);
         showSuccess('تم إنشاء حسابك بنجاح! جاري تحويلك لصفحة تسجيل الدخول...');
         setTimeout(() => {
-          window.location.href = 'login.html';
+          window.location.href = 'customer-login.html';
         }, 2000);
         return;
       }

@@ -64,7 +64,7 @@
       "name": "تسجيل الدخول",
       "short_name": "الدخول",
       "description": "تسجيل الدخول الآمن الموحد لزالو",
-      "url": "login.html",
+      "url": "customer-login.html",
       "icons": [
         {
           "src": "assets/icon-192.svg",

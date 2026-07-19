@@ -135,7 +135,7 @@ function logoutUser() {
         DB.set("active_session", null);
     }
     
-    window.location.href = "login.html";
+    window.location.href = "customer-login.html";
 }
 
 function applySavedTheme() {
@@ -212,7 +212,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (file === "" || file === "index.html") {
         initIndexPage();
-    } else if (file === "login.html") {
+    } else if (file === "customer-login.html") {
         initLoginPage();
     } else if (file === "products.html") {
         initProductsPage();
