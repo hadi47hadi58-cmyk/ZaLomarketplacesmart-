@@ -1,13 +1,16 @@
 // ZaLo Marketplace Smart Sync Update: 2026-07-16
 // ZaLo Smart Multivendor Marketplace - Service Worker (service-worker.js)
-// Version: zalo-v8
+// Version: zalo-v10
 // Manages offline assets caching, dynamic routing, and strict cache-invalidation / update propagation.
 
-const CACHE_NAME = 'zalo-v9';
+const CACHE_NAME = 'zalo-v10';
 const ASSETS = [
   './',
   './index.html',
   './customer-login.html',
+  './admin-login.html',
+  './store-login.html',
+  './staff-login.html',
   './dashboard-store.html',
   './dashboard-admin.html',
   './customer-home.html',

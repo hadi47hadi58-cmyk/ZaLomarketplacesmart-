@@ -47,7 +47,7 @@ export class SessionManager {
     const role = this.getUserRole();
     const path = window.location.pathname;
 
-    const isGuestPage = path.includes('customer-login.html') || path.includes('register-step1.html') || path.includes('register-step2.html') || path.includes('register-step3.html');
+    const isGuestPage = path.includes('-login.html') || path.includes('register-step1.html') || path.includes('register-step2.html') || path.includes('register-step3.html');
     const isProtectedPage = path.includes('dashboard') || path.includes('customer-home.html');
 
     if (isAuth && isGuestPage) {
@@ -95,8 +95,19 @@ export class SessionManager {
     // Clean admin session too
     sessionStorage.removeItem('admin_logged_in_session');
 
-    if (!window.location.pathname.includes('customer-login.html')) {
-      window.location.href = 'customer-login.html';
+    const currentPath = window.location.pathname;
+    let targetLogin = 'customer-login.html';
+    
+    if (currentPath.includes('dashboard-admin')) {
+      targetLogin = 'admin-login.html';
+    } else if (currentPath.includes('dashboard-store')) {
+      targetLogin = 'store-login.html';
+    } else if (currentPath.includes('dashboard-manager')) {
+      targetLogin = 'staff-login.html';
+    }
+
+    if (!currentPath.includes('-login.html')) {
+      window.location.href = targetLogin;
     }
   }
 

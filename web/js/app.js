@@ -135,7 +135,18 @@ function logoutUser() {
         DB.set("active_session", null);
     }
     
-    window.location.href = "customer-login.html";
+    const currentPath = window.location.pathname;
+    let targetLogin = 'customer-login.html';
+    
+    if (currentPath.includes('dashboard-admin')) {
+      targetLogin = 'admin-login.html';
+    } else if (currentPath.includes('dashboard-store')) {
+      targetLogin = 'store-login.html';
+    } else if (currentPath.includes('dashboard-manager')) {
+      targetLogin = 'staff-login.html';
+    }
+
+    window.location.href = targetLogin;
 }
 
 function applySavedTheme() {
@@ -212,7 +223,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (file === "" || file === "index.html") {
         initIndexPage();
-    } else if (file === "customer-login.html") {
+    } else if (file.includes("-login.html")) {
         initLoginPage();
     } else if (file === "products.html") {
         initProductsPage();
