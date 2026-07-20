@@ -244,17 +244,22 @@ fun PureWebContainerScreen(
                                             view?.evaluateJavascript("window.location.href") { fullUrl ->
                                                 val cleanUrl = fullUrl?.removePrefix("\"")?.removeSuffix("\"")
                                                 if (cleanUrl != null && cleanUrl.isNotEmpty() && cleanUrl != "null") {
-                                                    val filename = when {
-                                                        cleanUrl.contains("register-step1.html") -> "register-step1.html"
-                                                        cleanUrl.contains("login-customer.html") -> "login-customer.html"
-                                                        cleanUrl.contains("login.html") -> "login.html"
-                                                        cleanUrl.contains("index.html") -> "index.html"
-                                                        else -> "index.html" // Default callback target
+                                                    val uri = Uri.parse(cleanUrl)
+                                                    val lastSegment = uri.lastPathSegment
+                                                    val filename = if (lastSegment != null && lastSegment.endsWith(".html")) {
+                                                        lastSegment
+                                                    } else {
+                                                        "index.html"
                                                     }
-                                                    val extraParams = when {
-                                                        cleanUrl.contains("#") -> "#" + cleanUrl.substringAfter("#")
-                                                        cleanUrl.contains("?") -> "?" + cleanUrl.substringAfter("?")
-                                                        else -> ""
+                                                    val extraParams = if (cleanUrl.contains(filename)) {
+                                                        cleanUrl.substringAfter(filename)
+                                                    } else {
+                                                        val query = uri.query
+                                                        val fragment = uri.fragment
+                                                        buildString {
+                                                            if (query != null) append("?$query")
+                                                            if (fragment != null) append("#$fragment")
+                                                        }
                                                     }
                                                     val localUrl = "https://appassets.androidplatform.net/assets/web/$filename$extraParams"
                                                     view?.stopLoading()

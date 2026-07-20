@@ -218,12 +218,16 @@ window.onGoogleIdTokenReceived = async function(idToken) {
 
 window.onGoogleIdTokenFailed = function(reason) {
     console.error("[Google Auth] Native Google sign-in failed or cancelled:", reason);
-    const errorDiv = document.getElementById('errorMsg');
+    const errorDiv = document.getElementById('errorMsg') || document.getElementById('error-message');
     let message = 'حدث خطأ أثناء محاولة الدخول بواسطة Google';
-    if (reason === 'cancelled') {
+    if (reason === 'cancelled' || reason === '12501') {
         message = 'تم إلغاء عملية تسجيل الدخول بواسطة Google';
     } else if (reason === 'id_token_null') {
         message = 'فشل الحصول على رمز تعريف جوجل الآمن من السيرفر';
+    } else if (reason === '10' || reason === 'DEVELOPER_ERROR') {
+        message = 'تنبيه المصادقة (خطأ 10): لم يتم تسجيل بصمة SHA-1 الخاصة بك في جوجل كونسول بعد، يرجى المتابعة بملء البيانات يدوياً أو تجربة الدخول السريع للمطورين بالأسفل.';
+    } else {
+        message = `حدث خطأ في مصادقة جوجل (كود: ${reason})`;
     }
     if (errorDiv) {
         errorDiv.textContent = message;
@@ -235,7 +239,77 @@ window.onGoogleIdTokenFailed = function(reason) {
     const loginBtn = document.getElementById('loginBtn');
     if (loginBtn) {
         loginBtn.disabled = false;
-        loginBtn.textContent = 'تسجيل الدخول 🚀';
+        const iconHtml = loginBtn.querySelector('i') ? '<i class="fa-solid fa-right-to-bracket"></i> ' : '';
+        loginBtn.innerHTML = iconHtml + 'تسجيل الدخول 🚀';
+    }
+};
+
+// --- Emergency / Developer Bypass Quick Login ---
+window.triggerEmergencyBypass = function(targetRole) {
+    console.log(`[Emergency Bypass] Initiating emergency bypass for role: ${targetRole}...`);
+    
+    // 1. Determine mock credentials
+    let email = 'hadi47hadi58@gmail.com'; // Default user's email
+    let name = 'مدير عام المنصة';
+    let role = targetRole ? targetRole.toUpperCase() : 'ADMIN';
+    
+    if (role === 'MERCHANT' || role === 'STORE') {
+        role = 'MERCHANT';
+        email = 'merchant@zalo.dz';
+        name = 'متجر تجريبي زالو';
+    } else if (role === 'MANAGER' || role === 'STAFF') {
+        role = 'MANAGER';
+        email = 'manager@zalo.dz';
+        name = 'وكيل التوصيل والعمليات';
+    } else if (role === 'CUSTOMER') {
+        role = 'CUSTOMER';
+        email = 'customer@zalo.dz';
+        name = 'زبون زالو';
+    }
+    
+    const mockToken = "mock_jwt_token_bypass_" + Math.random().toString(36).substring(2);
+    const mockUid = "mock_uid_" + Math.random().toString(36).substring(2);
+    
+    // 2. Set all local storage tokens
+    localStorage.setItem('zalo_session_jwt', mockToken);
+    localStorage.setItem('nestjs_token', mockToken);
+    localStorage.setItem('zalo_user_role', role);
+    localStorage.setItem('zalo_user_email', email);
+    localStorage.setItem('zalo_uid', mockUid);
+    
+    if (role === 'ADMIN') {
+        sessionStorage.setItem('admin_logged_in_session', 'true');
+    }
+    
+    const userObj = {
+        id: mockUid,
+        email: email,
+        name: name
+    };
+    localStorage.setItem('nestjs_user', JSON.stringify(userObj));
+    
+    // Active Session Sync
+    const activeSessionUser = {
+        uid: mockUid,
+        email: email,
+        name: name,
+        phone: "0555123456",
+        role: role.toLowerCase(),
+        status: "ACTIVE"
+    };
+    localStorage.setItem('zalo_active_session', JSON.stringify(activeSessionUser));
+    
+    console.log("[Emergency Bypass] Local storage successfully configured. Routing to dashboard...");
+    
+    // 3. Routing
+    if (role === 'ADMIN') {
+        window.location.replace('dashboard-admin.html');
+    } else if (role === 'MERCHANT') {
+        window.location.replace('dashboard-store.html');
+    } else if (role === 'MANAGER') {
+        window.location.replace('dashboard-manager.html');
+    } else {
+        window.location.replace('customer-home.html');
     }
 };
 
