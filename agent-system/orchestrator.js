@@ -1,6 +1,8 @@
 import 'dotenv/config';
 import { askAgent } from './agents.js';
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import fs from 'fs';
+import path from 'path';
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
@@ -46,30 +48,84 @@ async function orchestrateTask(userTask) {
   results.securityReviewer = await askAgent('securityReviewer', `${reviewContext}\nPlease review for security vulnerabilities.`);
   console.log(`\n🛡️ Security Reviewer:\n${results.securityReviewer}\n`);
 
-  // 4. Final Synthesis
-  console.log('--- Phase 4: Final Synthesis ---');
+  // 4. File Writing Phase (New feature for automatic saving)
+  console.log('--- Phase 4: Automated File Writing ---');
+  const fileWriterPrompt = `
+    Based on the following code and architecture from the team, generate the exact files that need to be created or updated.
+    
+    Backend Code: ${results.backendDev}
+    Frontend Code: ${results.frontendDev}
+    
+    You MUST respond with ONLY a valid JSON array of objects. No markdown formatting, no backticks, no explanations.
+    Format:
+    [
+      {
+        "path": "web/new-page.html",
+        "content": "<html>...</html>"
+      },
+      {
+        "path": "web/js/new-script.js",
+        "content": "..."
+      }
+    ]
+    
+    Paths should be relative to the root directory (e.g., web/... or backend/...).
+  `;
+  
+  const modelFile = genAI.getGenerativeModel({
+    model: 'gemini-1.5-pro',
+    systemInstruction: 'You are an automated file writer. You output ONLY pure JSON. Never use markdown code blocks like ```json',
+  });
+
+  try {
+    const fileResponse = await modelFile.generateContent(fileWriterPrompt);
+    let jsonString = fileResponse.response.text().trim();
+    
+    // Clean up potential markdown formatting if the AI still adds it
+    if (jsonString.startsWith('```json')) jsonString = jsonString.slice(7);
+    if (jsonString.startsWith('```')) jsonString = jsonString.slice(3);
+    if (jsonString.endsWith('```')) jsonString = jsonString.slice(0, -3);
+    
+    const filesToCreate = JSON.parse(jsonString.trim());
+    
+    for (const file of filesToCreate) {
+      // Resolve path relative to the root of the project (parent of agent-system)
+      const fullPath = path.resolve(process.cwd(), '..', file.path);
+      const dir = path.dirname(fullPath);
+      
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+      }
+      
+      fs.writeFileSync(fullPath, file.content, 'utf8');
+      console.log(`✅ Automatically wrote file: ${file.path}`);
+    }
+  } catch (error) {
+    console.error("⚠️ Failed to parse or write files automatically:", error);
+  }
+
+  // 5. Final Synthesis
+  console.log('--- Phase 5: Final Synthesis ---');
   const summaryPrompt = `
     You are the Orchestrator Manager. 
     Summarize the findings of your team into a cohesive final delivery package for the user.
     
     Task: ${userTask}
-    Backend: ${results.backendDev}
-    Frontend: ${results.frontendDev}
     QA Notes: ${results.qaEngineer}
     Security Notes: ${results.securityReviewer}
   `;
 
-  const model = genAI.getGenerativeModel({
+  const modelSummary = genAI.getGenerativeModel({
     model: 'gemini-1.5-pro',
     systemInstruction: 'You are the Orchestrator. Provide a clear, structured summary of the work done by your team.',
   });
 
-  const finalResponse = await model.generateContent(summaryPrompt);
+  const finalResponse = await modelSummary.generateContent(summaryPrompt);
 
   console.log(`\n👑 Orchestrator Final Report:\n${finalResponse.response.text()}\n`);
   return finalResponse.response.text();
 }
 
 // Example Execution (Run this via: node orchestrator.js)
-const task = process.argv[2] || "Add an employee management dashboard with roles and permissions";
+const task = process.argv[2] || "Add a test file to the project";
 orchestrateTask(task).catch(console.error);
