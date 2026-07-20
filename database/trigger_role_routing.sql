@@ -28,7 +28,7 @@ BEGIN
     -- 2. Extract properties from metadata or apply defaults
     user_wilaya := COALESCE(new.raw_user_meta_data->>'wilaya', 'Alger');
     user_commune := COALESCE(new.raw_user_meta_data->>'commune', 'Alger Center');
-    user_phone := COALESCE(new.raw_user_meta_data->>'phone', new.phone);
+    user_phone := NULLIF(COALESCE(new.raw_user_meta_data->>'phone', new.phone), '');
 
     -- 3. Extract metadata type to check role (case-insensitive)
     meta_type := LOWER(COALESCE(

@@ -750,7 +750,7 @@ BEGIN
     -- 2. استخراج بيانات العنوان والهاتف
     user_wilaya := COALESCE(new.raw_user_meta_data->>'wilaya', 'Alger');
     user_commune := COALESCE(new.raw_user_meta_data->>'commune', 'Alger Center');
-    user_phone := COALESCE(new.raw_user_meta_data->>'phone', new.phone);
+    user_phone := NULLIF(COALESCE(new.raw_user_meta_data->>'phone', new.phone), '');
 
     -- 3. تحديد نوع التسجيل لاستخراج الدور الوظيفي للحساب
     meta_type := LOWER(COALESCE(
