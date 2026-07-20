@@ -1,0 +1,14 @@
+{
+  "name": "zalo-agent-system",
+  "version": "1.0.0",
+  "description": "ZaLo Smart Marketplace - Multi-Agent System",
+  "main": "orchestrator.js",
+  "type": "module",
+  "scripts": {
+    "start": "node orchestrator.js"
+  },
+  "dependencies": {
+    "@google/genai": "^0.1.1",
+    "dotenv": "^16.4.5"
+  }
+}
