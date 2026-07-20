@@ -55,7 +55,7 @@ async function orchestrateTask(userTask) {
   `;
 
   const finalResponse = await ai.models.generateContent({
-    model: 'gemini-2.5-pro',
+    model: 'gemini-1.5-pro',
     contents: summaryPrompt,
     config: {
       systemInstruction: 'You are the Orchestrator. Provide a clear, structured summary of the work done by your team.',

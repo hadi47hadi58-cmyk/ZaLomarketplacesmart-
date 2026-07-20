@@ -28,7 +28,7 @@ export async function askAgent(agentRole, taskContext) {
   console.log(`[Agent] Waking up ${agentRole}...`);
   
   const response = await ai.models.generateContent({
-    model: 'gemini-2.5-pro',
+    model: 'gemini-1.5-pro',
     contents: taskContext,
     config: {
       systemInstruction: systemInstruction,

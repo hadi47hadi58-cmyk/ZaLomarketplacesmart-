@@ -17,7 +17,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
 
       - name: Install Dependencies
         working-directory: ./agent-system
@@ -27,4 +27,5 @@ jobs:
         working-directory: ./agent-system
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        run: node orchestrator.js "${{ github.event.inputs.task }}"
+          USER_TASK: ${{ github.event.inputs.task }}
+        run: node orchestrator.js "$USER_TASK"
