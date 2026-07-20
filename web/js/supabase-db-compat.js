@@ -142,12 +142,9 @@ window.handleUserRedirect = async function(providedSession = null) {
     console.log(`[Role Routing] الدور النشط الحالي: ${role} | المسار الحالي: ${currentPath}`);
 
     if (role === 'ADMIN') {
-        // يسمح للمشرف العام بالوصول لجميع اللوحات والتحرك بينها دون تكرار إعادة توجيه إجباري
-        if (isLoginPage) {
+        if (!isAlreadyOnAdmin) {
             console.log("[Role Routing] جاري توجيه المدير إلى صفحة لوحة التحكم الإدارية النهائية (dashboard-admin.html)...");
             window.location.replace('dashboard-admin.html');
-        } else {
-            console.log("[Role Routing] المشرف متواجد حالياً في مسار مسموح له بالكامل.");
         }
     } else if (role === 'MERCHANT') {
         if (!isAlreadyOnDashboard) {
@@ -160,7 +157,7 @@ window.handleUserRedirect = async function(providedSession = null) {
             window.location.replace('dashboard-manager.html');
         }
     } else { // CUSTOMER
-        if (!isAlreadyOnCustomer && (isLoginPage || isAlreadyOnAdmin || isAlreadyOnDashboard || isAlreadyOnManager)) {
+        if (!isAlreadyOnCustomer) {
             console.log("[Role Routing] جاري توجيه الزبون إلى لوحة وبوابة العميل (customer-home.html)...");
             window.location.replace('customer-home.html');
         }

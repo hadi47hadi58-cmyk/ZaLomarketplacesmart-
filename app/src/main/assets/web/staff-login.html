@@ -391,23 +391,6 @@
     }
   }
 
-  // الاستماع التلقائي لحدث تغيير حالة المصادقة من Supabase عند العودة من Google
-  supabaseClient.auth.onAuthStateChange(async (event, session) => {
-    if (event === 'SIGNED_IN' && session) {
-      showSuccess('✨ تم تأكيد تسجيل الدخول! جاري التوجيه...');
-      if (typeof window.handleUserRedirect === 'function') {
-        await window.handleUserRedirect();
-      } else {
-        const path = window.location.pathname;
-        let target = 'customer-home.html';
-        if (path.includes('admin-login')) target = 'dashboard-admin.html';
-        else if (path.includes('store-login')) target = 'dashboard-store.html';
-        else if (path.includes('staff-login')) target = 'dashboard-manager.html';
-        window.location.replace(target);
-      }
-    }
-  });
-
   function showError(msg) {
 
     errorDiv.textContent = msg;
