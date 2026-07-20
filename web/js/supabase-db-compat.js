@@ -137,13 +137,17 @@ window.handleUserRedirect = async function(providedSession = null) {
     const isAlreadyOnDashboard = currentPath.endsWith('dashboard-store.html');
     const isAlreadyOnManager = currentPath.endsWith('dashboard-manager.html');
     const isAlreadyOnCustomer = currentPath.endsWith('customer-home.html');
+    const isLoginPage = currentPath.includes('login') || currentPath.includes('register') || currentPath.endsWith('index.html') || currentPath === '/' || currentPath.endsWith('/');
 
     console.log(`[Role Routing] الدور النشط الحالي: ${role} | المسار الحالي: ${currentPath}`);
 
     if (role === 'ADMIN') {
-        if (!isAlreadyOnAdmin) {
+        // يسمح للمشرف العام بالوصول لجميع اللوحات والتحرك بينها دون تكرار إعادة توجيه إجباري
+        if (isLoginPage) {
             console.log("[Role Routing] جاري توجيه المدير إلى صفحة لوحة التحكم الإدارية النهائية (dashboard-admin.html)...");
             window.location.replace('dashboard-admin.html');
+        } else {
+            console.log("[Role Routing] المشرف متواجد حالياً في مسار مسموح له بالكامل.");
         }
     } else if (role === 'MERCHANT') {
         if (!isAlreadyOnDashboard) {
@@ -156,7 +160,7 @@ window.handleUserRedirect = async function(providedSession = null) {
             window.location.replace('dashboard-manager.html');
         }
     } else { // CUSTOMER
-        if (!isAlreadyOnCustomer) {
+        if (!isAlreadyOnCustomer && (isLoginPage || isAlreadyOnAdmin || isAlreadyOnDashboard || isAlreadyOnManager)) {
             console.log("[Role Routing] جاري توجيه الزبون إلى لوحة وبوابة العميل (customer-home.html)...");
             window.location.replace('customer-home.html');
         }
