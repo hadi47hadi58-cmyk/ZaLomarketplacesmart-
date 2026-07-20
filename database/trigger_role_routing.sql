@@ -83,39 +83,7 @@ BEGIN
         updated_at = NOW()
     WHERE public.users.supabase_uid IS NULL;
 
-    -- Replicate to profiles table for frontend legacy compatibility
-    BEGIN
-        INSERT INTO public.profiles (
-            id,
-            name,
-            email,
-            phone,
-            wilaya,
-            commune,
-            role,
-            status,
-            "createdAt",
-            "updatedAt"
-        ) VALUES (
-            new.id,
-            user_name,
-            new.email,
-            user_phone,
-            user_wilaya,
-            user_commune,
-            LOWER(inferred_role::text),
-            'active',
-            NOW(),
-            NOW()
-        )
-        ON CONFLICT (id) DO UPDATE
-        SET
-            role = LOWER(EXCLUDED.role),
-            "updatedAt" = NOW();
-    EXCEPTION WHEN OTHERS THEN
-        -- If public.profiles table does not exist or has columns mismatch, log and ignore to prevent failure
-        RAISE WARNING 'Profiles table not updated: %', SQLERRM;
-    END;
+    -- Legacy profiles table retired
 
     RETURN NEW;
 END;

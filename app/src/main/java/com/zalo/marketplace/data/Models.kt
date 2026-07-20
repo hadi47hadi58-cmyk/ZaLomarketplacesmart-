@@ -1,4 +1,4 @@
-package com.example.data
+package com.zalo.marketplace.data
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

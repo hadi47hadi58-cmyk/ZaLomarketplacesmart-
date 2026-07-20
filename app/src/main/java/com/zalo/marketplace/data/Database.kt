@@ -1,4 +1,4 @@
-package com.example.data
+package com.zalo.marketplace.data
 
 import android.content.Context
 import androidx.room.Database

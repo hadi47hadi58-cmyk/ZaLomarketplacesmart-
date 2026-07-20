@@ -1,4 +1,4 @@
-package com.example
+package com.zalo.marketplace
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -26,7 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
-import com.example.ui.theme.MyApplicationTheme
+import com.zalo.marketplace.ui.theme.MyApplicationTheme
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions

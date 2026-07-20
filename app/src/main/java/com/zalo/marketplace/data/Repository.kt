@@ -1,4 +1,4 @@
-package com.example.data
+package com.zalo.marketplace.data
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull

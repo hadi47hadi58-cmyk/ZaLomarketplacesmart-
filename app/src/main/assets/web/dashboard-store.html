@@ -1761,11 +1761,14 @@
 
         // Logout
         function logoutUser() {
-            localStorage.removeItem('zalo_session_jwt');
-            localStorage.removeItem('zalo_user_role');
-            localStorage.removeItem('zalo_user_email');
-            localStorage.removeItem('zalo_user_name');
-            window.location.href = 'store-login.html';
+            if (window.sessionManagerInstance) {
+                window.sessionManagerInstance.logoutAndRedirect();
+            } else if (typeof window.logoutUser === 'function') {
+                window.logoutUser();
+            } else {
+                localStorage.clear();
+                window.location.href = 'customer-login.html';
+            }
         }
     </script>
 </body>

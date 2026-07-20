@@ -1,11 +1,11 @@
-package com.example.viewmodel
+package com.zalo.marketplace.viewmodel
 
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.BuildConfig
-import com.example.data.*
+import com.zalo.marketplace.BuildConfig
+import com.zalo.marketplace.data.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch

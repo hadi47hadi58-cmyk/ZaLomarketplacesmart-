@@ -797,39 +797,7 @@ BEGIN
         updated_at = NOW()
     WHERE public.users.supabase_uid IS NULL;
 
-    -- 6. نسخ البيانات في جدول Profiles للتوافق التام مع الواجهة الأمامية القديمة (Legacy Profiles Compatibility)
-    BEGIN
-        INSERT INTO public.profiles (
-            id,
-            name,
-            email,
-            phone,
-            wilaya,
-            commune,
-            role,
-            status,
-            "createdAt",
-            "updatedAt"
-        ) VALUES (
-            new.id,
-            user_name,
-            new.email,
-            user_phone,
-            user_wilaya,
-            user_commune,
-            LOWER(inferred_role::text),
-            'active',
-            NOW(),
-            NOW()
-        )
-        ON CONFLICT (id) DO UPDATE
-        SET
-            role = LOWER(EXCLUDED.role),
-            "updatedAt" = NOW();
-    EXCEPTION WHEN OTHERS THEN
-        -- عدم التسبب بفشل العملية الكلية في حال عدم وجود جدول profiles أو تغيير هيكلي به
-        RAISE WARNING 'Profiles table not updated: %', SQLERRM;
-    END;
+    -- 6. Legacy profiles table retired
 
     RETURN NEW;
 END;
