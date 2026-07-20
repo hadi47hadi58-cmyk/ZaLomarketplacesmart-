@@ -1,14 +1,19 @@
 import 'dotenv/config';
 import { askAgent } from './agents.js';
-import { GoogleGenAI } from '@google/genai';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 /**
  * Orchestrator Agent
  * Breaks down the main task and coordinates the specialized agents.
  */
 async function orchestrateTask(userTask) {
+  if (!process.env.GEMINI_API_KEY) {
+    console.error("Error: GEMINI_API_KEY environment variable is not set.");
+    process.exit(1);
+  }
+
   console.log(`[Orchestrator] Received new task: "${userTask}"\n`);
   
   const results = {};
@@ -54,17 +59,15 @@ async function orchestrateTask(userTask) {
     Security Notes: ${results.securityReviewer}
   `;
 
-  const finalResponse = await ai.models.generateContent({
+  const model = genAI.getGenerativeModel({
     model: 'gemini-1.5-pro',
-    contents: summaryPrompt,
-    config: {
-      systemInstruction: 'You are the Orchestrator. Provide a clear, structured summary of the work done by your team.',
-      temperature: 0.3,
-    }
+    systemInstruction: 'You are the Orchestrator. Provide a clear, structured summary of the work done by your team.',
   });
 
-  console.log(`\n👑 Orchestrator Final Report:\n${finalResponse.text}\n`);
-  return finalResponse.text;
+  const finalResponse = await model.generateContent(summaryPrompt);
+
+  console.log(`\n👑 Orchestrator Final Report:\n${finalResponse.response.text()}\n`);
+  return finalResponse.response.text();
 }
 
 // Example Execution (Run this via: node orchestrator.js)

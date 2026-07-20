@@ -1,7 +1,7 @@
-import { GoogleGenAI } from '@google/genai';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
 // Initialize Gemini API
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 // System Instructions for each specialized agent
 export const AGENT_PROMPTS = {
@@ -27,14 +27,11 @@ export async function askAgent(agentRole, taskContext) {
 
   console.log(`[Agent] Waking up ${agentRole}...`);
   
-  const response = await ai.models.generateContent({
+  const model = genAI.getGenerativeModel({
     model: 'gemini-1.5-pro',
-    contents: taskContext,
-    config: {
-      systemInstruction: systemInstruction,
-      temperature: 0.4,
-    }
+    systemInstruction: systemInstruction,
   });
 
-  return response.text;
+  const response = await model.generateContent(taskContext);
+  return response.response.text();
 }
