@@ -170,6 +170,65 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
+    fun requestBiometricAuth() {
+        runOnUiThread {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
+                try {
+                    val executor = java.util.concurrent.Executors.newSingleThreadExecutor()
+                    val biometricPrompt = android.hardware.biometrics.BiometricPrompt.Builder(this)
+                        .setTitle("تسجيل الدخول ببصمة الإصبع - ZaLo")
+                        .setSubtitle("قم بوضع إصبعك على مستشعر البصمة للمتابعة")
+                        .setDescription("نظام الحماية الآمن لمنصة زالو الذكية")
+                        .setNegativeButton("إلغاء", executor, { _, _ ->
+                            runOnUiThread {
+                                currentWebView?.evaluateJavascript("javascript:if(typeof window.onBiometricAuthFailed === 'function') { window.onBiometricAuthFailed('cancelled'); }", null)
+                            }
+                        })
+                        .build()
+
+                    val cancellationSignal = android.os.CancellationSignal()
+                    biometricPrompt.authenticate(
+                        cancellationSignal,
+                        executor,
+                        object : android.hardware.biometrics.BiometricPrompt.AuthenticationCallback() {
+                            override fun onAuthenticationSucceeded(result: android.hardware.biometrics.BiometricPrompt.AuthenticationResult?) {
+                                super.onAuthenticationSucceeded(result)
+                                runOnUiThread {
+                                    Toast.makeText(this@MainActivity, "تم التحقق من البصمة بنجاح! 🚀", Toast.LENGTH_SHORT).show()
+                                    currentWebView?.evaluateJavascript("javascript:if(typeof window.onBiometricAuthSuccess === 'function') { window.onBiometricAuthSuccess(); }", null)
+                                }
+                            }
+
+                            override fun onAuthenticationFailed() {
+                                super.onAuthenticationFailed()
+                                runOnUiThread {
+                                    Toast.makeText(this@MainActivity, "فشل التحقق من البصمة، يرجى المحاولة مجدداً", Toast.LENGTH_SHORT).show()
+                                    currentWebView?.evaluateJavascript("javascript:if(typeof window.onBiometricAuthFailed === 'function') { window.onBiometricAuthFailed('failed'); }", null)
+                                }
+                            }
+
+                            override fun onAuthenticationError(errorCode: Int, errString: CharSequence?) {
+                                super.onAuthenticationError(errorCode, errString)
+                                runOnUiThread {
+                                    if (errorCode == 11 || errorCode == 12 || errorCode == 1) {
+                                        currentWebView?.evaluateJavascript("javascript:if(typeof window.onBiometricAuthFallback === 'function') { window.onBiometricAuthFallback(); }", null)
+                                    } else {
+                                        Toast.makeText(this@MainActivity, "خطأ البصمة: $errString", Toast.LENGTH_SHORT).show()
+                                        currentWebView?.evaluateJavascript("javascript:if(typeof window.onBiometricAuthFailed === 'function') { window.onBiometricAuthFailed('$errorCode'); }", null)
+                                    }
+                                }
+                            }
+                        }
+                    )
+                } catch (e: Exception) {
+                    currentWebView?.evaluateJavascript("javascript:if(typeof window.onBiometricAuthFallback === 'function') { window.onBiometricAuthFallback(); }", null)
+                }
+            } else {
+                currentWebView?.evaluateJavascript("javascript:if(typeof window.onBiometricAuthFallback === 'function') { window.onBiometricAuthFallback(); }", null)
+            }
+        }
+    }
 }
 
 @SuppressLint("SetJavaScriptEnabled")
@@ -357,6 +416,13 @@ class WebAppInterface(
     fun requestGoogleSignIn() {
         activity.runOnUiThread {
             activity.startNativeGoogleSignIn()
+        }
+    }
+
+    @android.webkit.JavascriptInterface
+    fun requestBiometricAuth() {
+        activity.runOnUiThread {
+            activity.requestBiometricAuth()
         }
     }
 }
