@@ -1,53 +1,40 @@
-// ZaLo Marketplace Smart Sync Update: 2026-07-16
+// ZaLo Marketplace Smart Sync Update: 2026-07-20
 /**
  * ZaLo Smart Algerian Multivendor Marketplace
  * نظام إدارة الجلسات الذكي والتوجيه التلقائي الآمن - Smart Session Manager
  */
-
 export class SessionManager {
   constructor() {
     this.jwtKey = 'zalo_session_jwt';
     this.roleKey = 'zalo_user_role';
+    this.emailKey = 'zalo_user_email';
+    this.nameKey = 'zalo_user_name';
   }
 
-  /**
-   * Checks if user has a valid stored session token.
-   */
   isAuthenticated() {
     const token = localStorage.getItem(this.jwtKey);
-    return !!token && token.length > 5; // Support both mock and real tokens safely
+    return !!token && token.length > 5;
   }
 
-  /**
-   * Retrieves the current session object.
-   */
   getSession() {
     return {
       token: localStorage.getItem(this.jwtKey),
       role: (localStorage.getItem(this.roleKey) || '').toLowerCase(),
-      email: localStorage.getItem('zalo_user_email'),
-      name: localStorage.getItem('zalo_user_name')
+      email: localStorage.getItem(this.emailKey),
+      name: localStorage.getItem(this.nameKey)
     };
   }
 
-  /**
-   * Retrieves the current user's role.
-   */
   getUserRole() {
-    return localStorage.getItem(this.roleKey) || 'CUSTOMER';
+    return (localStorage.getItem(this.roleKey) || 'CUSTOMER').toUpperCase();
   }
 
-  /**
-   * Auto redirects based on session presence.
-   * If on a guest page (login, register) and authenticated, redirect to appropriate home.
-   * If on a protected page (dashboard, profile) and NOT authenticated, redirect to login.
-   */
   handleAutoRedirection() {
     const isAuth = this.isAuthenticated();
     const role = this.getUserRole();
     const path = window.location.pathname;
 
-    const isGuestPage = path.includes('-login.html') || path.includes('register-step1.html') || path.includes('register-step2.html') || path.includes('register-step3.html');
+    const isGuestPage = path.includes('-login.html') || path.includes('register');
     const isProtectedPage = path.includes('dashboard') || path.includes('customer-home.html');
 
     if (isAuth && isGuestPage) {
@@ -59,89 +46,67 @@ export class SessionManager {
     }
   }
 
-  /**
-   * Routes the user to their designated home/dashboard page.
-   */
   redirectToHome(role) {
     const cleanRole = (role || 'CUSTOMER').toUpperCase();
-    
-    // Avoid redirecting if we are already on that target page to prevent redirection loops
     const currentPath = window.location.pathname;
 
     if (cleanRole === 'ADMIN') {
-      if (!currentPath.includes('dashboard-admin.html')) {
-        window.location.href = 'dashboard-admin.html';
-      }
+      if (!currentPath.includes('dashboard-admin.html')) window.location.replace('dashboard-admin.html');
     } else if (cleanRole === 'MERCHANT') {
-      if (!currentPath.includes('dashboard-store.html')) {
-        window.location.href = 'dashboard-store.html';
-      }
+      if (!currentPath.includes('dashboard-store.html')) window.location.replace('dashboard-store.html');
+    } else if (cleanRole === 'MANAGER' || cleanRole === 'TEAM') {
+      if (!currentPath.includes('dashboard-manager.html')) window.location.replace('dashboard-manager.html');
     } else {
-      if (!currentPath.includes('customer-home.html')) {
-        window.location.href = 'customer-home.html';
-      }
+      if (!currentPath.includes('customer-home.html')) window.location.replace('customer-home.html');
     }
   }
 
-  /**
-   * Cleans all credentials and forces redirection to the auth center.
-   */
   logoutAndRedirect() {
-    localStorage.removeItem(this.jwtKey);
-    localStorage.removeItem(this.roleKey);
-    localStorage.removeItem('zalo_user_email');
-    localStorage.removeItem('zalo_user_name');
+    // Clean all session data
+    const keysToRemove = [
+      this.jwtKey, this.roleKey, this.emailKey, this.nameKey,
+      'zalo_token', 'nestjs_token', 'zalo_active_session',
+      'user_email', 'nestjs_user', 'admin_logged_in_session',
+      'loggedInAdminEmail', 'loggedInAdminName', 'zalo_uid'
+    ];
     
-    // Clean admin session too
+    keysToRemove.forEach(k => localStorage.removeItem(k));
     sessionStorage.removeItem('admin_logged_in_session');
+    
+    // Clean Supabase keys
+    for (let i = localStorage.length - 1; i >= 0; i--) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith('sb-') && key.endsWith('-auth-token')) {
+            localStorage.removeItem(key);
+        }
+    }
 
     const currentPath = window.location.pathname;
     let targetLogin = 'customer-login.html';
-    
-    if (currentPath.includes('dashboard-admin')) {
-      targetLogin = 'admin-login.html';
-    } else if (currentPath.includes('dashboard-store')) {
-      targetLogin = 'store-login.html';
-    } else if (currentPath.includes('dashboard-manager')) {
-      targetLogin = 'staff-login.html';
-    }
+    if (currentPath.includes('dashboard-admin')) targetLogin = 'admin-login.html';
+    else if (currentPath.includes('dashboard-store')) targetLogin = 'store-login.html';
+    else if (currentPath.includes('dashboard-manager')) targetLogin = 'staff-login.html';
 
     if (!currentPath.includes('-login.html')) {
-      window.location.href = targetLogin;
+      window.location.replace(targetLogin);
     }
   }
 
-  /**
-   * Starts a secure session by storing user details and token.
-   */
-  startSession(response) {
-    if (!response) return;
-    const token = response.access_token || response.token;
-    const user = response.user || response;
-    const role = user.role || response.role || 'CUSTOMER';
-    const email = user.email || response.email || '';
-    const name = user.name || response.name || '';
-
-    if (token) {
-      localStorage.setItem(this.jwtKey, token);
-    }
-    localStorage.setItem(this.roleKey, role.toUpperCase());
-    localStorage.setItem('zalo_user_email', email);
-    localStorage.setItem('zalo_user_name', name);
-    localStorage.setItem('user_email', email);
-    localStorage.setItem('zalo_user_role', role.toUpperCase());
-
-    if (role.toUpperCase() === 'ADMIN') {
+  startSession(token, role, email, name, uid) {
+    if (token) localStorage.setItem(this.jwtKey, token);
+    if (role) localStorage.setItem(this.roleKey, role.toUpperCase());
+    if (email) localStorage.setItem(this.emailKey, email);
+    if (name) localStorage.setItem(this.nameKey, name);
+    if (uid) localStorage.setItem('zalo_uid', uid);
+    
+    if (role && role.toUpperCase() === 'ADMIN') {
       sessionStorage.setItem('admin_logged_in_session', 'true');
     }
   }
 }
 
-// Instantiate and initiate auto-redirect routines
 window.sessionManagerInstance = new SessionManager();
-
 document.addEventListener('DOMContentLoaded', () => {
   window.sessionManagerInstance.handleAutoRedirection();
 });
-
 export default window.sessionManagerInstance;

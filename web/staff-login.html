@@ -353,32 +353,13 @@
       if (error) throw error;
 
       console.log("[Login] Sign in successful. Setting tokens and redirecting...");
-      
-      const user = data.user;
-      let role = user?.user_metadata?.role || 'customer';
-          if (user.email === 'hadi47hadi58@gmail.com') role = 'admin';
-      
-      localStorage.setItem('zalo_token', data.session.access_token);
-      localStorage.setItem('zalo_session_jwt', data.session.access_token);
-      localStorage.setItem('zalo_user_role', role);
-      localStorage.setItem('zalo_user_email', email);
-
       showSuccess('✨ تم تسجيل الدخول بنجاح! جاري تحويلك...');
 
-      // Redirect using compatibility routing layer
       if (typeof window.handleUserRedirect === 'function') {
-        await window.handleUserRedirect();
+        await window.handleUserRedirect(data.session);
       } else {
-        // Fallback redirection logic
-        if (role === 'admin') {
-          window.location.href = 'dashboard-admin.html';
-        } else if (role === 'merchant') {
-          window.location.href = 'dashboard-store.html';
-        } else {
-          window.location.href = 'customer-home.html';
-        }
+        window.location.reload();
       }
-
     } catch (err) {
       console.error("[Login] Auth error:", err);
       showError(err.message || 'فشل تسجيل الدخول، يرجى التحقق من بياناتك');
