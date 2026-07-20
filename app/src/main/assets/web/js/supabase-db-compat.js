@@ -11,14 +11,16 @@ export { supabase, supabase as supabaseClient, telemetry };
 // --- Automated Role-Based Routing & Session Integration ---
 // دالة التحقق والتوجيه التلقائي للمستخدم بناءً على رتبته (ADMIN, MERCHANT, CUSTOMER)
 // تجلب هذه الدالة الدور مباشرة من جدول public.users مع فحص القائمة البيضاء للمشرفين
-window.handleUserRedirect = async function() {
+window.handleUserRedirect = async function(providedSession = null) {
     console.log("[Role Routing] بدء التحقق من دور المستخدم وتوجيهه...");
     
     // 1. جلب الجلسة الحالية بشكل آمن
-    let session = null;
+    let session = providedSession;
     try {
-        const { data: { session: currentSession } } = await supabase.auth.getSession();
-        session = currentSession;
+        if (!session) {
+            const { data } = await supabase.auth.getSession();
+            session = data.session;
+        }
     } catch (e) {
         console.warn("[Role Routing] فشل في جلب الجلسة النشطة فوريًا:", e.message);
     }
@@ -148,7 +150,7 @@ window.handleUserRedirect = async function() {
 // للحفاظ على التوافق الكامل مع أي أجزاء أخرى تستدعي checkRoleAndRedirect
 window.checkRoleAndRedirect = async function() {
     console.log("[Role Routing] استدعاء مواءمة checkRoleAndRedirect عبر دالة handleUserRedirect الموحدة...");
-    await window.handleUserRedirect();
+    await window.handleUserRedirect(session);
 };
 
 // --- Global Auto-Sync Hook to keep NestJS, local tokens, and Supabase 100% in Sync ---
@@ -169,7 +171,7 @@ supabase.auth.onAuthStateChange(async (event, session) => {
 
         // Immediately trigger automated role check and redirection
         if (event === 'SIGNED_IN' || event === 'INITIAL_SESSION') {
-            await window.handleUserRedirect();
+            await window.handleUserRedirect(session);
         }
     } else if (event === 'SIGNED_OUT') {
         // Logged out

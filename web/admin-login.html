@@ -292,6 +292,7 @@
   </div>
 </div>
 
+<script src="admin-login-debug.js"></script>
 <script type="module">
   import { supabaseClient } from './js/supabase-db-compat.js';
 
@@ -319,7 +320,7 @@
       const { data: { session } } = await supabaseClient.auth.getSession();
       if (session && session.user) {
         showSuccess('لديك جلسة نشطة بالفعل. جاري التوجيه...');
-        await window.handleUserRedirect();
+        await window.handleUserRedirect(session);
       }
     } catch (e) {
       console.warn("[Login] Session check failed:", e);
@@ -367,7 +368,7 @@
 
       // Redirect using compatibility routing layer
       if (typeof window.handleUserRedirect === 'function') {
-        await window.handleUserRedirect();
+        await window.handleUserRedirect(session);
       } else {
         // Fallback redirection logic
         if (role === 'admin') {
@@ -408,7 +409,7 @@
     if (event === 'SIGNED_IN' && session) {
       showSuccess('✨ تم تأكيد تسجيل الدخول! جاري التوجيه...');
       if (typeof window.handleUserRedirect === 'function') {
-        await window.handleUserRedirect();
+        await window.handleUserRedirect(session);
       } else {
         const path = window.location.pathname;
         let target = 'customer-home.html';
@@ -420,7 +421,21 @@
     }
   });
 
-  function showError(msg) {
+  window.addEventListener("DOMContentLoaded", () => { 
+    const searchParams = new URLSearchParams(window.location.search); 
+    if (searchParams.has("reason")) { 
+      const reason = searchParams.get("reason"); 
+      if (reason === "forbidden") showError("ليس لديك صلاحيات لدخول هذه الصفحة"); 
+      if (reason === "unauthorized") showError("يرجى تسجيل الدخول أولاً"); 
+    }
+    const hash = window.location.hash || window.location.search; 
+    if (hash && hash.includes("error=")) { 
+      const params = new URLSearchParams(hash.replace("?", "").replace("#", "")); 
+      const desc = params.get("error_description") || params.get("error"); 
+      showError("حدث خطأ أثناء المصادقة: " + decodeURIComponent(desc).replace(/\+/g, " ")); 
+    } 
+  });
+  function showError(msg) { console.error("[Login Error UI]:", msg);
 
     errorDiv.textContent = msg;
     errorDiv.style.display = 'block';
