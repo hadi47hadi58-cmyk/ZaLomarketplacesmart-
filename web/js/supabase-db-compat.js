@@ -525,12 +525,56 @@ export async function getDoc(docRef) {
 
 export async function getDocs(queryObj) {
     const table = queryObj.table || queryObj;
-
+    
     // 1. Try unified NestJS API routing for products catalog
-    // (NestJS routing removed - relying on direct Supabase)
+    if (table === 'products') {
+        try {
+            const token = localStorage.getItem('zalo_session_jwt') || localStorage.getItem('nestjs_token');
+            const headers = token ? { 'Authorization': 'Bearer ' + token } : {};
+            const res = await fetch((window.NESTJS_API_URL || 'http://localhost:3000/api') + '/products', { headers });
+            if (res.ok) {
+                const result = await res.json();
+                if (result && result.data) {
+                    console.log("[ZaLo Compat] Fetched products from NestJS:", result.data.length);
+                    return {
+                        docs: result.data.map(p => ({
+                            id: p.id,
+                            exists: true,
+                            data: () => p
+                        }))
+                    };
+                }
+            }
+        } catch(e) {
+            console.warn("[ZaLo Compat] NestJS products fetch failed, falling back to Supabase", e);
+        }
+    }
 
     // 2. Try NestJS routing for orders list
-    // (NestJS routing removed - relying on direct Supabase)
+    if (table === 'orders') {
+        try {
+            const token = localStorage.getItem('zalo_session_jwt') || localStorage.getItem('nestjs_token');
+            if (token) {
+                const headers = { 'Authorization': 'Bearer ' + token };
+                const res = await fetch((window.NESTJS_API_URL || 'http://localhost:3000/api') + '/orders', { headers });
+                if (res.ok) {
+                    const result = await res.json();
+                    if (result && result.data) {
+                        console.log("[ZaLo Compat] Fetched orders from NestJS:", result.data.length);
+                        return {
+                            docs: result.data.map(o => ({
+                                id: o.id,
+                                exists: true,
+                                data: () => o
+                            }))
+                        };
+                    }
+                }
+            }
+        } catch(e) {
+            console.warn("[ZaLo Compat] NestJS orders fetch failed, falling back to Supabase", e);
+        }
+    }
 
     // Resilient Fallback for merchant_requests
     if (table === 'merchant_requests') {
@@ -879,17 +923,29 @@ setInterval(syncOfflineQueue, 15000);
 
 
 export async function addDoc(colRef, data) {
-    if (!navigator.onLine) {
-        const tempId = queueOfflineMutation('INSERT', colRef.table, data);
-        return {
-            id: tempId,
-            data: () => ({ id: tempId, ...data })
-        };
-    }
-
     // Intercept checkout to create order in NestJS + PostgreSQL
-    // (NestJS routing removed - relying on direct Supabase)
-
+    if (colRef.table === 'orders') {
+        try {
+            const token = localStorage.getItem('zalo_session_jwt') || localStorage.getItem('nestjs_token');
+            if (token) {
+                const res = await fetch((window.NESTJS_API_URL || 'http://localhost:3000/api') + '/orders', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+                    body: JSON.stringify(data)
+                });
+                if (res.ok) {
+                    const result = await res.json();
+                    return {
+                        id: result.data.id,
+                        data: () => result.data
+                    };
+                }
+            }
+        } catch (e) {
+            console.warn("[ZaLo Compat] NestJS add order failed, falling back to Supabase", e);
+        }
+    }
+    
     const cleanData = { ...data };
     const { data: inserted, error } = await supabase
         .from(colRef.table)
