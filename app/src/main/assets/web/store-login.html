@@ -318,22 +318,27 @@
       </div>
 
       <div class="form-group" id="otpGroup" style="display: none; animation: fadeIn 0.3s ease-out;">
-        <label class="form-label" style="display: flex; justify-content: space-between; align-items: center;">
-          <span>رمز التحقق المرسل 📨</span>
-          <span id="otpCountdown" style="font-size: 11px; color: var(--green); font-weight: bold;"></span>
-        </label>
-        <div class="input-wrapper">
+        <label class="form-label">رمز التحقق 🛡️</label>
+        <div class="input-wrapper" style="position: relative; display: flex; align-items: center;">
           <i class="fa-solid fa-shield-halved input-icon"></i>
-          <input type="text" id="otpCode" class="form-input" placeholder="أدخل الرمز المكون من 6 أرقام" maxlength="6" inputmode="numeric" style="letter-spacing: 4px; text-align: center; font-weight: 800; font-size: 16px;">
-        </div>
-        <div style="text-align: left; margin-top: 6px;">
-          <button type="button" id="resendOtpBtn" style="background: transparent; border: none; color: var(--green); font-family: 'Cairo', sans-serif; font-size: 11px; font-weight: 800; cursor: pointer; text-decoration: underline; display: none;">إعادة إرسال الرمز 🔁</button>
+          <input type="text" id="otpCode" class="form-input" placeholder="أدخل رمز التحقق" maxlength="6" inputmode="numeric" style="padding-left: 130px; font-weight: 800; font-size: 15px;">
+          <button type="button" id="sendOtpInlineBtn" style="position: absolute; left: 8px; top: 50%; transform: translateY(-50%); background: rgba(14, 165, 233, 0.08); border: 1.5px solid rgba(14, 165, 233, 0.2); color: var(--green); font-family: 'Cairo', sans-serif; font-size: 11px; font-weight: 800; padding: 6px 12px; border-radius: 20px; cursor: pointer; transition: all 0.25s; z-index: 10; display: flex; align-items: center; gap: 4px; white-space: nowrap;">
+            أرسل الرمز 📨
+          </button>
         </div>
       </div>
 
       <button type="submit" class="submit-btn" id="loginBtn">
         تسجيل الدخول 🚀
       </button>
+
+      <!-- Privacy Policy Agreement -->
+      <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 15px; font-family: 'Cairo', sans-serif; font-size: 11px; color: var(--text2); direction: rtl;">
+        <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; user-select: none;">
+          <input type="checkbox" checked required style="accent-color: #22c55e; width: 16px; height: 16px; cursor: pointer; border-radius: 4px;">
+          <span>بالمتابعة، فإنك توافق على <a href="privacy.html" target="_blank" style="color: var(--green); text-decoration: underline; font-weight: bold;">سياسة الخصوصية</a> و <a href="terms.html" target="_blank" style="color: var(--green); text-decoration: underline; font-weight: bold;">الشروط والأحكام</a></span>
+        </label>
+      </div>
     </form>
       <div style="margin: 20px 0; display: flex; align-items: center; justify-content: center;">
         <div style="height: 1px; background: var(--border); flex: 1;"></div>
@@ -343,12 +348,6 @@
       <button type="button" onclick="handleGoogleLogin()" style="width: 100%; padding: 12px; background: white; border: 2px solid #e2e8f0; border-radius: 12px; font-family: 'Cairo', sans-serif; font-weight: 800; font-size: 14px; color: #1e293b; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s;">
         <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" style="width: 20px; height: 20px;">
         المتابعة بحساب Google
-      </button>
-
-      <!-- Biometric Login Button -->
-      <button type="button" onclick="window.triggerBiometricAuth()" style="width: 100%; margin-top: 10px; padding: 12px; background: rgba(34, 197, 94, 0.08); border: 2px dashed #22c55e; border-radius: 12px; font-family: 'Cairo', sans-serif; font-weight: 800; font-size: 14px; color: #22c55e; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s;">
-        <i class="fa-solid fa-fingerprint" style="font-size: 18px;"></i>
-        تسجيل الدخول السريع ببصمة الإصبع 🔐
       </button>
 
   </div>
@@ -377,8 +376,7 @@
   const errorDiv = document.getElementById('errorMsg');
   const successDiv = document.getElementById('successMsg');
   const loginBtn = document.getElementById('loginBtn');
-  const resendOtpBtn = document.getElementById('resendOtpBtn');
-  const otpCountdown = document.getElementById('otpCountdown');
+  const sendOtpInlineBtn = document.getElementById('sendOtpInlineBtn');
 
   let currentMode = 'password'; // 'password' or 'otp'
   let otpSent = false;
@@ -406,54 +404,62 @@
       otpGroup.style.display = 'none';
       passwordField.required = true;
       if (otpField) otpField.required = false;
-      loginBtn.innerHTML = 'تسجيل الدخول 🚀';
     } else {
       tabPassword.classList.remove('active');
       tabOtp.classList.add('active');
       passwordGroup.style.display = 'none';
+      otpGroup.style.display = 'block'; // Always show the verification code field when OTP tab is selected!
       passwordField.required = false;
-      
-      if (otpSent) {
-        otpGroup.style.display = 'block';
-        if (otpField) otpField.required = true;
-        loginBtn.innerHTML = 'تأكيد الدخول الآمن 🔐';
-      } else {
-        otpGroup.style.display = 'none';
-        if (otpField) otpField.required = false;
-        loginBtn.innerHTML = 'أرسل رمز الدخول للبريد ✉️';
-      }
+      if (otpField) otpField.required = true;
     }
+    loginBtn.innerHTML = 'تسجيل الدخول 🚀';
   };
 
   function startCountdown() {
     clearInterval(countdownTimer);
     countdownVal = 60;
-    otpCountdown.style.display = 'inline';
-    resendOtpBtn.style.display = 'none';
-    otpCountdown.textContent = `أعد الإرسال خلال (${countdownVal}ث)`;
+    if (sendOtpInlineBtn) {
+      sendOtpInlineBtn.disabled = true;
+      sendOtpInlineBtn.style.background = '#f0fdf4';
+      sendOtpInlineBtn.style.borderColor = '#bbf7d0';
+      sendOtpInlineBtn.style.color = '#16a34a';
+      sendOtpInlineBtn.innerHTML = `تم الإرسال (${countdownVal}ث)`;
+    }
     
     countdownTimer = setInterval(() => {
       countdownVal--;
       if (countdownVal <= 0) {
         clearInterval(countdownTimer);
-        otpCountdown.style.display = 'none';
-        resendOtpBtn.style.display = 'inline-block';
+        resetOtpInlineBtn();
       } else {
-        otpCountdown.textContent = `أعد الإرسال خلال (${countdownVal}ث)`;
+        if (sendOtpInlineBtn) {
+          sendOtpInlineBtn.innerHTML = `تم الإرسال (${countdownVal}ث)`;
+        }
       }
     }, 1000);
+  }
+
+  function resetOtpInlineBtn() {
+    if (sendOtpInlineBtn) {
+      sendOtpInlineBtn.disabled = false;
+      sendOtpInlineBtn.style.background = 'rgba(14, 165, 233, 0.08)';
+      sendOtpInlineBtn.style.borderColor = 'rgba(14, 165, 233, 0.2)';
+      sendOtpInlineBtn.style.color = 'var(--green)';
+      sendOtpInlineBtn.innerHTML = 'إعادة إرسال 🔁';
+    }
   }
 
   async function handleSendOtp() {
     const email = document.getElementById('email').value.trim();
     if (!email || !email.includes('@')) {
       showError('يرجى إدخال بريد إلكتروني صحيح أولاً ✉️');
-      resetBtn();
       return;
     }
 
-    loginBtn.disabled = true;
-    loginBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري إرسال الرمز...';
+    if (sendOtpInlineBtn) {
+      sendOtpInlineBtn.disabled = true;
+      sendOtpInlineBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري الإرسال...';
+    }
     errorDiv.style.display = 'none';
     successDiv.style.display = 'none';
 
@@ -462,26 +468,22 @@
       if (res.success) {
         otpSent = true;
         showSuccess('📥 تم إرسال رمز التحقق (OTP) إلى بريدك بنجاح! يرجى فحصه.');
-        document.getElementById('otpGroup').style.display = 'block';
         const otpField = document.getElementById('otpCode');
         if (otpField) {
-          otpField.required = true;
           otpField.focus();
         }
         startCountdown();
-        loginBtn.innerHTML = 'تأكيد الدخول الآمن 🔐';
       } else {
         throw new Error(res.message);
       }
     } catch (err) {
       showError(err.message || 'فشل إرسال رمز التحقق. يرجى المحاولة مجدداً.');
-    } finally {
-      loginBtn.disabled = false;
+      resetOtpInlineBtn();
     }
   }
 
-  if (resendOtpBtn) {
-    resendOtpBtn.addEventListener('click', handleSendOtp);
+  if (sendOtpInlineBtn) {
+    sendOtpInlineBtn.addEventListener('click', handleSendOtp);
   }
 
   // Check if already logged in and redirect
