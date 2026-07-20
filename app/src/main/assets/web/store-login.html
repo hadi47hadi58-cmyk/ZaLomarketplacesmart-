@@ -371,13 +371,20 @@
   window.handleGoogleLogin = async function() {
     try {
       if (!supabaseClient) throw new Error("خدمة المصادقة غير متاحة حالياً");
-      showSuccess("جاري التحويل إلى Google...");
-      const redirectUrl = window.location.origin + window.location.pathname;
-      const { error } = await supabaseClient.auth.signInWithOAuth({
-        provider: 'google',
-        options: { redirectTo: redirectUrl }
-      });
-      if (error) throw error;
+      showSuccess("جاري بدء تسجيل الدخول الآمن عبر Google...");
+      
+      if (window.AndroidInterface && typeof window.AndroidInterface.requestGoogleSignIn === 'function') {
+        console.log("[Google Auth] Running inside Android WebView. Directing to Native SDK...");
+        window.AndroidInterface.requestGoogleSignIn();
+      } else {
+        console.log("[Google Auth] Running inside Browser. Directing to Web OAuth...");
+        const redirectUrl = window.location.origin + window.location.pathname;
+        const { error } = await supabaseClient.auth.signInWithOAuth({
+          provider: 'google',
+          options: { redirectTo: redirectUrl }
+        });
+        if (error) throw error;
+      }
     } catch (err) {
       console.error("[Login] Google Auth Error:", err);
       showError(err.message || 'حدث خطأ أثناء محاولة الدخول بواسطة Google');

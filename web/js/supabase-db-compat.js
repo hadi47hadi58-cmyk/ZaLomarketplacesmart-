@@ -103,6 +103,21 @@ window.handleUserRedirect = async function(providedSession = null) {
         sessionStorage.setItem('admin_logged_in_session', 'true');
     }
 
+    // مزامنة التوكينات والهوية بشكل متزامن فوري لمنع حلقات إعادة التوجيه
+    if (session) {
+        const token = session.access_token;
+        localStorage.setItem('nestjs_token', token);
+        localStorage.setItem('zalo_session_jwt', token);
+        localStorage.setItem('zalo_user_email', email);
+        
+        const userObj = {
+            id: user.id,
+            email: email,
+            name: user.user_metadata?.full_name || email.split('@')[0] || ''
+        };
+        localStorage.setItem('nestjs_user', JSON.stringify(userObj));
+    }
+
     // 4b. مزامنة الجلسة النشطة بالكامل مع محرك التطبيق المحلي (Shared Engine Sync)
     const activeSessionUser = {
         uid: user.id,
@@ -151,7 +166,76 @@ window.handleUserRedirect = async function(providedSession = null) {
 // للحفاظ على التوافق الكامل مع أي أجزاء أخرى تستدعي checkRoleAndRedirect
 window.checkRoleAndRedirect = async function() {
     console.log("[Role Routing] استدعاء مواءمة checkRoleAndRedirect عبر دالة handleUserRedirect الموحدة...");
-    await window.handleUserRedirect(session);
+    await window.handleUserRedirect();
+};
+
+// --- Native Google Sign-In Callbacks (Unified & Secure) ---
+window.onGoogleIdTokenReceived = async function(idToken) {
+    console.log("[Google Auth] Received Google ID token from Android Native SDK. Logging in to Supabase...");
+    try {
+        if (!supabase) throw new Error("قاعدة البيانات غير متصلة");
+        
+        // Show progress on active UI
+        const successDiv = document.getElementById('successMsg');
+        if (successDiv) {
+            successDiv.textContent = '✨ تم التحقق من حساب Google! جاري تسجيل الدخول...';
+            successDiv.style.display = 'block';
+        }
+        
+        const { data, error } = await supabase.auth.signInWithIdToken({
+            provider: 'google',
+            token: idToken
+        });
+        
+        if (error) throw error;
+        
+        console.log("[Google Auth] Successfully logged in to Supabase using ID token!");
+        
+        if (successDiv) {
+            successDiv.textContent = '✨ تم الدخول بنجاح! جاري توجيهك...';
+        }
+        
+        // Redirect using the unified redirect handler
+        await window.handleUserRedirect(data.session);
+    } catch (err) {
+        console.error("[Google Auth] Failed to authenticate with Supabase:", err);
+        const errorDiv = document.getElementById('errorMsg');
+        if (errorDiv) {
+            errorDiv.textContent = "فشل المصادقة مع السيرفر: " + err.message;
+            errorDiv.style.display = 'block';
+        } else {
+            alert("فشل المصادقة: " + err.message);
+        }
+        // Reset any disabled spinner buttons on the page
+        const loginBtn = document.getElementById('loginBtn');
+        if (loginBtn) {
+            loginBtn.disabled = false;
+            loginBtn.textContent = 'تسجيل الدخول 🚀';
+        }
+    }
+};
+
+window.onGoogleIdTokenFailed = function(reason) {
+    console.error("[Google Auth] Native Google sign-in failed or cancelled:", reason);
+    const errorDiv = document.getElementById('errorMsg');
+    let message = 'حدث خطأ أثناء محاولة الدخول بواسطة Google';
+    if (reason === 'cancelled') {
+        message = 'تم إلغاء عملية تسجيل الدخول بواسطة Google';
+    } else if (reason === 'id_token_null') {
+        message = 'فشل الحصول على رمز تعريف جوجل الآمن من السيرفر';
+    }
+    if (errorDiv) {
+        errorDiv.textContent = message;
+        errorDiv.style.display = 'block';
+    } else {
+        alert(message);
+    }
+    // Reset any disabled spinner buttons on the page
+    const loginBtn = document.getElementById('loginBtn');
+    if (loginBtn) {
+        loginBtn.disabled = false;
+        loginBtn.textContent = 'تسجيل الدخول 🚀';
+    }
 };
 
 // --- Global Auto-Sync Hook to keep NestJS, local tokens, and Supabase 100% in Sync ---
