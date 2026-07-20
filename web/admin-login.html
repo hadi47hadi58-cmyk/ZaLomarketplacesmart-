@@ -291,10 +291,10 @@
 
     <!-- Modern Segmented Control for Login Type -->
     <div class="login-tabs">
-      <button type="button" class="tab-btn active" id="tab-password" onclick="switchLoginTab('password')">
+      <button type="button" class="tab-btn" id="tab-password">
         <i class="fa-solid fa-key"></i> كلمة المرور
       </button>
-      <button type="button" class="tab-btn" id="tab-otp" onclick="switchLoginTab('otp')">
+      <button type="button" class="tab-btn active" id="tab-otp">
         <i class="fa-solid fa-envelope-open"></i> رمز التحقق (OTP)
       </button>
     </div>
@@ -308,20 +308,20 @@
         </div>
       </div>
 
-      <div class="form-group" id="passwordGroup">
+      <div class="form-group" id="passwordGroup" style="display: none;">
         <label class="form-label">كلمة المرور 🔑</label>
         <div class="input-wrapper">
           <i class="fa-solid fa-lock input-icon"></i>
-          <input type="password" id="password" class="form-input" placeholder="••••••••" required autocomplete="current-password">
+          <input type="password" id="password" class="form-input" placeholder="••••••••" autocomplete="current-password">
           <i class="fa-solid fa-eye toggle-pass" id="togglePass"></i>
         </div>
       </div>
 
-      <div class="form-group" id="otpGroup" style="display: none; animation: fadeIn 0.3s ease-out;">
+      <div class="form-group" id="otpGroup" style="animation: fadeIn 0.3s ease-out;">
         <label class="form-label">رمز التحقق 🛡️</label>
         <div class="input-wrapper" style="position: relative; display: flex; align-items: center;">
           <i class="fa-solid fa-shield-halved input-icon"></i>
-          <input type="text" id="otpCode" class="form-input" placeholder="أدخل رمز التحقق" maxlength="6" inputmode="numeric" style="padding-left: 130px; font-weight: 800; font-size: 15px;">
+          <input type="text" id="otpCode" class="form-input" placeholder="أدخل رمز التحقق" maxlength="6" inputmode="numeric" required style="padding-left: 130px; font-weight: 800; font-size: 15px;">
           <button type="button" id="sendOtpInlineBtn" style="position: absolute; left: 8px; top: 50%; transform: translateY(-50%); background: rgba(14, 165, 233, 0.08); border: 1.5px solid rgba(14, 165, 233, 0.2); color: var(--green); font-family: 'Cairo', sans-serif; font-size: 11px; font-weight: 800; padding: 6px 12px; border-radius: 20px; cursor: pointer; transition: all 0.25s; z-index: 10; display: flex; align-items: center; gap: 4px; white-space: nowrap;">
             أرسل الرمز 📨
           </button>
@@ -345,7 +345,7 @@
         <span style="margin: 0 10px; color: var(--text2); font-size: 12px; font-weight: 700;">أو الدخول عبر</span>
         <div style="height: 1px; background: var(--border); flex: 1;"></div>
       </div>
-      <button type="button" onclick="handleGoogleLogin()" style="width: 100%; padding: 12px; background: white; border: 2px solid #e2e8f0; border-radius: 12px; font-family: 'Cairo', sans-serif; font-weight: 800; font-size: 14px; color: #1e293b; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s;">
+      <button type="button" id="googleLoginBtn" style="width: 100%; padding: 12px; background: white; border: 2px solid #e2e8f0; border-radius: 12px; font-family: 'Cairo', sans-serif; font-weight: 800; font-size: 14px; color: #1e293b; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s;">
         <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" style="width: 20px; height: 20px;">
         المتابعة بحساب Google
       </button>
@@ -353,16 +353,16 @@
     <div class="register-link" style="margin-top: 18px; padding-top: 15px; border-top: 1px dashed var(--border); text-align: center;">
       <span style="display: block; font-size: 11px; color: var(--text2); margin-bottom: 8px; font-weight: bold;">🛠️ ممر الدخول السريع الفوري (للمطورين والمشرفين):</span>
       <div style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;">
-        <button type="button" onclick="window.triggerEmergencyBypass('ADMIN')" style="background: rgba(212, 175, 55, 0.1); border: 1.5px solid var(--gold); color: var(--text); padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: all 0.2s;">
+        <button type="button" id="bypassAdminBtn" style="background: rgba(212, 175, 55, 0.1); border: 1.5px solid var(--gold); color: var(--text); padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: all 0.2s;">
           🔑 دخول كمدير عام
         </button>
-        <button type="button" onclick="window.triggerEmergencyBypass('MERCHANT')" style="background: rgba(14, 165, 233, 0.08); border: 1.5px solid var(--green); color: var(--text); padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: all 0.2s;">
+        <button type="button" id="bypassMerchantBtn" style="background: rgba(14, 165, 233, 0.08); border: 1.5px solid var(--green); color: var(--text); padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: all 0.2s;">
           🏪 دخول كتاجر/متجر
         </button>
-        <button type="button" onclick="window.triggerEmergencyBypass('STAFF')" style="background: #f1f5f9; border: 1.5px solid #94a3b8; color: var(--text); padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: all 0.2s;">
+        <button type="button" id="bypassStaffBtn" style="background: #f1f5f9; border: 1.5px solid #94a3b8; color: var(--text); padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: all 0.2s;">
           🛵 دخول كوكيل توصيل
         </button>
-        <button type="button" onclick="window.triggerEmergencyBypass('CUSTOMER')" style="background: #f8fafc; border: 1.5px solid #cbd5e1; color: var(--text); padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: all 0.2s;">
+        <button type="button" id="bypassCustomerBtn" style="background: #f8fafc; border: 1.5px solid #cbd5e1; color: var(--text); padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: all 0.2s;">
           👤 دخول كزبون
         </button>
       </div>
@@ -397,7 +397,7 @@
   const loginBtn = document.getElementById('loginBtn');
   const sendOtpInlineBtn = document.getElementById('sendOtpInlineBtn');
 
-  let currentMode = 'password'; // 'password' or 'otp'
+  let currentMode = 'otp'; // Default mode is 'otp' now
   let otpSent = false;
   let countdownVal = 60;
   let countdownTimer = null;
@@ -417,22 +417,64 @@
     successDiv.style.display = 'none';
 
     if (mode === 'password') {
-      tabPassword.classList.add('active');
-      tabOtp.classList.remove('active');
-      passwordGroup.style.display = 'block';
-      otpGroup.style.display = 'none';
-      passwordField.required = true;
+      if (tabPassword) tabPassword.classList.add('active');
+      if (tabOtp) tabOtp.classList.remove('active');
+      if (passwordGroup) passwordGroup.style.display = 'block';
+      if (otpGroup) otpGroup.style.display = 'none';
+      if (passwordField) passwordField.required = true;
       if (otpField) otpField.required = false;
     } else {
-      tabPassword.classList.remove('active');
-      tabOtp.classList.add('active');
-      passwordGroup.style.display = 'none';
-      otpGroup.style.display = 'block'; // Always show the verification code field when OTP tab is selected!
-      passwordField.required = false;
+      if (tabPassword) tabPassword.classList.remove('active');
+      if (tabOtp) tabOtp.classList.add('active');
+      if (passwordGroup) passwordGroup.style.display = 'none';
+      if (otpGroup) otpGroup.style.display = 'block'; // Always show the verification code field when OTP tab is selected!
+      if (passwordField) passwordField.required = false;
       if (otpField) otpField.required = true;
     }
     loginBtn.innerHTML = 'تسجيل الدخول 🚀';
   };
+
+  // Add click event listeners dynamically for tabs to prevent inline onclick ReferenceErrors
+  const tabPasswordBtn = document.getElementById('tab-password');
+  const tabOtpBtn = document.getElementById('tab-otp');
+  if (tabPasswordBtn) {
+    tabPasswordBtn.addEventListener('click', () => window.switchLoginTab('password'));
+  }
+  if (tabOtpBtn) {
+    tabOtpBtn.addEventListener('click', () => window.switchLoginTab('otp'));
+  }
+
+  // Also bind Google Login button programmatically
+  const googleLoginBtn = document.getElementById('googleLoginBtn');
+  if (googleLoginBtn) {
+    googleLoginBtn.addEventListener('click', () => window.handleGoogleLogin());
+  }
+
+  // Bind Emergency Bypass buttons programmatically
+  const bypassAdminBtn = document.getElementById('bypassAdminBtn');
+  if (bypassAdminBtn) {
+    bypassAdminBtn.addEventListener('click', () => {
+      if (window.triggerEmergencyBypass) window.triggerEmergencyBypass('ADMIN');
+    });
+  }
+  const bypassMerchantBtn = document.getElementById('bypassMerchantBtn');
+  if (bypassMerchantBtn) {
+    bypassMerchantBtn.addEventListener('click', () => {
+      if (window.triggerEmergencyBypass) window.triggerEmergencyBypass('MERCHANT');
+    });
+  }
+  const bypassStaffBtn = document.getElementById('bypassStaffBtn');
+  if (bypassStaffBtn) {
+    bypassStaffBtn.addEventListener('click', () => {
+      if (window.triggerEmergencyBypass) window.triggerEmergencyBypass('STAFF');
+    });
+  }
+  const bypassCustomerBtn = document.getElementById('bypassCustomerBtn');
+  if (bypassCustomerBtn) {
+    bypassCustomerBtn.addEventListener('click', () => {
+      if (window.triggerEmergencyBypass) window.triggerEmergencyBypass('CUSTOMER');
+    });
+  }
 
   function startCountdown() {
     clearInterval(countdownTimer);
@@ -486,10 +528,22 @@
       const res = await EmailVerification.sendCode(email);
       if (res.success) {
         otpSent = true;
-        showSuccess('📥 تم إرسال رمز التحقق (OTP) إلى بريدك بنجاح! يرجى فحصه.');
-        const otpField = document.getElementById('otpCode');
-        if (otpField) {
-          otpField.focus();
+        
+        // Check for local debug mock code to make it easy to login instantly
+        const localCode = localStorage.getItem(`otp_${email.toLowerCase().trim()}`);
+        if (localCode) {
+          showSuccess(`📥 تم إرسال الرمز بنجاح! رمز التجربة هو: ${localCode} (تم نسخه وتعبئته تلقائياً)`);
+          const otpField = document.getElementById('otpCode');
+          if (otpField) {
+            otpField.value = localCode;
+            otpField.focus();
+          }
+        } else {
+          showSuccess('📥 تم إرسال رمز التحقق (OTP) إلى بريدك بنجاح! يرجى فحصه.');
+          const otpField = document.getElementById('otpCode');
+          if (otpField) {
+            otpField.focus();
+          }
         }
         startCountdown();
       } else {
