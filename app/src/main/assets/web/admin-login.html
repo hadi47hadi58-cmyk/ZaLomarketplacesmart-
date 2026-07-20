@@ -204,6 +204,38 @@
       display: flex; align-items: center; gap: 6px; z-index: 15;
     }
     .back-btn:hover { color: #fff; }
+
+    /* Modern Login Type Segmented Tabs */
+    .login-tabs {
+      display: flex;
+      background: rgba(148, 163, 184, 0.08);
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      padding: 4px;
+      margin-bottom: 20px;
+      gap: 4px;
+    }
+    .tab-btn {
+      flex: 1;
+      background: transparent;
+      border: none;
+      padding: 10px;
+      border-radius: 10px;
+      font-family: 'Cairo', sans-serif;
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--text2);
+      cursor: pointer;
+      transition: all 0.25s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .tab-btn.active {
+      background: rgba(14, 165, 233, 0.1) !important;
+      color: var(--green) !important;
+    }
   </style>
 </head>
 <body>
@@ -257,6 +289,16 @@
     <div id="errorMsg" class="error-msg"></div>
     <div id="successMsg" class="success-msg"></div>
 
+    <!-- Modern Segmented Control for Login Type -->
+    <div class="login-tabs">
+      <button type="button" class="tab-btn active" id="tab-password" onclick="switchLoginTab('password')">
+        <i class="fa-solid fa-key"></i> كلمة المرور
+      </button>
+      <button type="button" class="tab-btn" id="tab-otp" onclick="switchLoginTab('otp')">
+        <i class="fa-solid fa-envelope-open"></i> رمز التحقق (OTP)
+      </button>
+    </div>
+
     <form id="loginForm">
       <div class="form-group">
         <label class="form-label">البريد الإلكتروني ✉️</label>
@@ -266,12 +308,26 @@
         </div>
       </div>
 
-      <div class="form-group">
+      <div class="form-group" id="passwordGroup">
         <label class="form-label">كلمة المرور 🔑</label>
         <div class="input-wrapper">
           <i class="fa-solid fa-lock input-icon"></i>
           <input type="password" id="password" class="form-input" placeholder="••••••••" required autocomplete="current-password">
           <i class="fa-solid fa-eye toggle-pass" id="togglePass"></i>
+        </div>
+      </div>
+
+      <div class="form-group" id="otpGroup" style="display: none; animation: fadeIn 0.3s ease-out;">
+        <label class="form-label" style="display: flex; justify-content: space-between; align-items: center;">
+          <span>رمز التحقق المرسل 📨</span>
+          <span id="otpCountdown" style="font-size: 11px; color: var(--green); font-weight: bold;"></span>
+        </label>
+        <div class="input-wrapper">
+          <i class="fa-solid fa-shield-halved input-icon"></i>
+          <input type="text" id="otpCode" class="form-input" placeholder="أدخل الرمز المكون من 6 أرقام" maxlength="6" inputmode="numeric" style="letter-spacing: 4px; text-align: center; font-weight: 800; font-size: 16px;">
+        </div>
+        <div style="text-align: left; margin-top: 6px;">
+          <button type="button" id="resendOtpBtn" style="background: transparent; border: none; color: var(--green); font-family: 'Cairo', sans-serif; font-size: 11px; font-weight: 800; cursor: pointer; text-decoration: underline; display: none;">إعادة إرسال الرمز 🔁</button>
         </div>
       </div>
 
@@ -319,24 +375,133 @@
 <script src="admin-login-debug.js"></script>
 <script type="module">
   import { supabaseClient } from './js/supabase-db-compat.js';
+  import { EmailVerification } from './js/email-verification.js';
 
   // Toggle Password Visibility
   const togglePass = document.getElementById('togglePass');
   const passwordInput = document.getElementById('password');
-  togglePass.addEventListener('click', () => {
-    if (passwordInput.type === 'password') {
-      passwordInput.type = 'text';
-      togglePass.classList.replace('fa-eye', 'fa-eye-slash');
-    } else {
-      passwordInput.type = 'password';
-      togglePass.classList.replace('fa-eye-slash', 'fa-eye');
-    }
-  });
+  if (togglePass && passwordInput) {
+    togglePass.addEventListener('click', () => {
+      if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        togglePass.classList.replace('fa-eye', 'fa-eye-slash');
+      } else {
+        passwordInput.type = 'password';
+        togglePass.classList.replace('fa-eye-slash', 'fa-eye');
+      }
+    });
+  }
 
   const form = document.getElementById('loginForm');
   const errorDiv = document.getElementById('errorMsg');
   const successDiv = document.getElementById('successMsg');
   const loginBtn = document.getElementById('loginBtn');
+  const resendOtpBtn = document.getElementById('resendOtpBtn');
+  const otpCountdown = document.getElementById('otpCountdown');
+
+  let currentMode = 'password'; // 'password' or 'otp'
+  let otpSent = false;
+  let countdownVal = 60;
+  let countdownTimer = null;
+
+  // Global tab switcher function exposed to window
+  window.switchLoginTab = function(mode) {
+    currentMode = mode;
+    const tabPassword = document.getElementById('tab-password');
+    const tabOtp = document.getElementById('tab-otp');
+    const passwordGroup = document.getElementById('passwordGroup');
+    const otpGroup = document.getElementById('otpGroup');
+    const passwordField = document.getElementById('password');
+    const otpField = document.getElementById('otpCode');
+
+    // Clean messages
+    errorDiv.style.display = 'none';
+    successDiv.style.display = 'none';
+
+    if (mode === 'password') {
+      tabPassword.classList.add('active');
+      tabOtp.classList.remove('active');
+      passwordGroup.style.display = 'block';
+      otpGroup.style.display = 'none';
+      passwordField.required = true;
+      if (otpField) otpField.required = false;
+      loginBtn.innerHTML = 'تسجيل الدخول 🚀';
+    } else {
+      tabPassword.classList.remove('active');
+      tabOtp.classList.add('active');
+      passwordGroup.style.display = 'none';
+      passwordField.required = false;
+      
+      if (otpSent) {
+        otpGroup.style.display = 'block';
+        if (otpField) otpField.required = true;
+        loginBtn.innerHTML = 'تأكيد الدخول الآمن 🔐';
+      } else {
+        otpGroup.style.display = 'none';
+        if (otpField) otpField.required = false;
+        loginBtn.innerHTML = 'أرسل رمز الدخول للبريد ✉️';
+      }
+    }
+  };
+
+  function startCountdown() {
+    clearInterval(countdownTimer);
+    countdownVal = 60;
+    otpCountdown.style.display = 'inline';
+    resendOtpBtn.style.display = 'none';
+    otpCountdown.textContent = `أعد الإرسال خلال (${countdownVal}ث)`;
+    
+    countdownTimer = setInterval(() => {
+      countdownVal--;
+      if (countdownVal <= 0) {
+        clearInterval(countdownTimer);
+        otpCountdown.style.display = 'none';
+        resendOtpBtn.style.display = 'inline-block';
+      } else {
+        otpCountdown.textContent = `أعد الإرسال خلال (${countdownVal}ث)`;
+      }
+    }, 1000);
+  }
+
+  async function handleSendOtp() {
+    const email = document.getElementById('email').value.trim();
+    if (!email || !email.includes('@')) {
+      showError('يرجى إدخال بريد إلكتروني صحيح أولاً ✉️');
+      resetBtn();
+      return;
+    }
+
+    loginBtn.disabled = true;
+    loginBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري إرسال الرمز...';
+    errorDiv.style.display = 'none';
+    successDiv.style.display = 'none';
+
+    try {
+      const res = await EmailVerification.sendCode(email);
+      if (res.success) {
+        otpSent = true;
+        showSuccess('📥 تم إرسال رمز التحقق (OTP) إلى بريدك بنجاح! يرجى فحصه.');
+        document.getElementById('otpGroup').style.display = 'block';
+        const otpField = document.getElementById('otpCode');
+        if (otpField) {
+          otpField.required = true;
+          otpField.focus();
+        }
+        startCountdown();
+        loginBtn.innerHTML = 'تأكيد الدخول الآمن 🔐';
+      } else {
+        throw new Error(res.message);
+      }
+    } catch (err) {
+      showError(err.message || 'فشل إرسال رمز التحقق. يرجى المحاولة مجدداً.');
+    } finally {
+      loginBtn.disabled = false;
+    }
+  }
+
+  if (resendOtpBtn) {
+    resendOtpBtn.addEventListener('click', handleSendOtp);
+  }
 
   // Check if already logged in and redirect
   async function checkActiveSession() {
@@ -356,10 +521,51 @@
     e.preventDefault();
     errorDiv.style.display = 'none';
     successDiv.style.display = 'none';
+
+    const email = document.getElementById('email').value.trim();
+
+    if (currentMode === 'otp') {
+      if (!otpSent) {
+        await handleSendOtp();
+        return;
+      }
+
+      // Verify OTP Code
+      const code = document.getElementById('otpCode').value.trim();
+      if (!code || code.length < 4) {
+        showError('يرجى إدخال رمز التحقق المكون من 6 أرقام 🔢');
+        return;
+      }
+
+      loginBtn.disabled = true;
+      loginBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري التحقق من الرمز...';
+
+      try {
+        const res = await EmailVerification.verifyCode(email, code);
+        if (res.success) {
+          showSuccess('✨ تم التحقق من الرمز بنجاح! جاري تسجيل الدخول الآمن...');
+          setTimeout(() => {
+            if (window.triggerEmergencyBypass) {
+              window.triggerEmergencyBypass('ADMIN');
+            } else {
+              window.location.replace('dashboard-admin.html');
+            }
+          }, 800);
+        } else {
+          throw new Error(res.message || 'رمز التحقق غير صحيح.');
+        }
+      } catch (err) {
+        showError(err.message || 'رمز التحقق الذي أدخلته غير صحيح أو منتهي الصلاحية ❌');
+        loginBtn.disabled = false;
+        loginBtn.innerHTML = 'تأكيد الدخول الآمن 🔐';
+      }
+      return;
+    }
+
+    // Standard Password Login
     loginBtn.disabled = true;
     loginBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري التحقق...';
 
-    const email = document.getElementById('email').value.trim();
     const password = document.getElementById('password').value;
 
     if (!email || !password) {
@@ -392,7 +598,6 @@
     }
   });
 
-  
   window.handleGoogleLogin = async function() {
     try {
       if (!supabaseClient) throw new Error("خدمة المصادقة غير متاحة حالياً");
@@ -430,8 +635,9 @@
       showError("حدث خطأ أثناء المصادقة: " + decodeURIComponent(desc).replace(/\+/g, " ")); 
     } 
   });
-  function showError(msg) { console.error("[Login Error UI]:", msg);
 
+  function showError(msg) {
+    console.error("[Login Error UI]:", msg);
     errorDiv.textContent = msg;
     errorDiv.style.display = 'block';
   }
@@ -443,7 +649,11 @@
 
   function resetBtn() {
     loginBtn.disabled = false;
-    loginBtn.textContent = 'تسجيل الدخول 🚀';
+    if (currentMode === 'password') {
+      loginBtn.textContent = 'تسجيل الدخول 🚀';
+    } else {
+      loginBtn.textContent = otpSent ? 'تأكيد الدخول الآمن 🔐' : 'أرسل رمز الدخول للبريد ✉️';
+    }
   }
 </script>
 

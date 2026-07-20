@@ -1277,8 +1277,8 @@ window.showBiometricSimulationModal = function() {
         <div style="background: rgba(30, 41, 59, 0.85); border: 2.5px solid #d4af37; border-radius: 24px; padding: 30px; width: 90%; max-width: 360px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.5); animation: scaleIn 0.3s ease-out; position: relative; overflow: hidden;">
             <div style="position: absolute; top: -50px; left: -50px; width: 100px; height: 100px; background: rgba(212, 175, 55, 0.05); border-radius: 50%;"></div>
             
-            <h3 style="font-size: 18px; font-weight: 800; margin-bottom: 8px; color: #d4af37;">🔐 التحقق الأمني الذكي من الهوية</h3>
-            <p style="font-size: 12px; color: #94a3b8; margin-bottom: 24px;">نظام التعرف على البصمة المشفر لمنصة زالو</p>
+            <h3 style="font-size: 18px; font-weight: 800; margin-bottom: 8px; color: #d4af37;">تحقق من هويتك</h3>
+            <p style="font-size: 12px; color: #cbd5e1; margin-bottom: 24px;">استخدم مقاييسك الحيوية للتأكد من هويتك</p>
             
             <div id="scanner-container" style="position: relative; width: 120px; height: 120px; margin: 0 auto 24px; display: flex; align-items: center; justify-content: center; cursor: pointer;">
                 <div id="pulse-ring" style="position: absolute; width: 110px; height: 110px; border: 2px dashed rgba(34, 197, 94, 0.4); border-radius: 50%; animation: spin 8s linear infinite;"></div>
@@ -1289,7 +1289,7 @@ window.showBiometricSimulationModal = function() {
                 </button>
             </div>
             
-            <div id="biometric-status" style="font-size: 14px; font-weight: 700; color: #cbd5e1; margin-bottom: 20px; height: 40px; transition: all 0.3s;">اضغط مع الاستمرار بالإصبع على الزر الأخضر لبدء التحقق والمطابقة</div>
+            <div id="biometric-status" style="font-size: 14px; font-weight: 700; color: #cbd5e1; margin-bottom: 20px; height: 40px; transition: all 0.3s;">المس اداة استشعار اصبع</div>
             
             <div style="background: rgba(148, 163, 184, 0.1); height: 6px; border-radius: 3px; width: 100%; overflow: hidden; margin-bottom: 24px;">
                 <div id="biometric-progress" style="width: 0%; height: 100%; background: linear-gradient(90deg, #d4af37, #22c55e); transition: width 0.1s linear;"></div>
@@ -1371,7 +1371,7 @@ window.showBiometricSimulationModal = function() {
             triggerBtn.style.boxShadow = '0 0 20px rgba(34, 197, 94, 0.6)';
             pulseRing.style.borderColor = 'rgba(34, 197, 94, 0.4)';
             pulseRing.style.animation = 'spin 8s linear infinite';
-            statusText.innerHTML = 'اضغط مع الاستمرار بالإصبع على الزر الأخضر لبدء التحقق والمطابقة';
+            statusText.innerHTML = 'المس اداة استشعار اصبع';
             statusText.style.color = '#cbd5e1';
         }
     };

@@ -177,9 +177,9 @@ class MainActivity : ComponentActivity() {
                 try {
                     val executor = java.util.concurrent.Executors.newSingleThreadExecutor()
                     val biometricPrompt = android.hardware.biometrics.BiometricPrompt.Builder(this)
-                        .setTitle("تسجيل الدخول ببصمة الإصبع - ZaLo")
-                        .setSubtitle("قم بوضع إصبعك على مستشعر البصمة للمتابعة")
-                        .setDescription("نظام الحماية الآمن لمنصة زالو الذكية")
+                        .setTitle("تحقق من هويتك")
+                        .setSubtitle("استخدم مقاييسك الحيوية للتأكد من هويتك")
+                        .setDescription("المس اداة استشعار اصبع")
                         .setNegativeButton("إلغاء", executor, { _, _ ->
                             runOnUiThread {
                                 currentWebView?.evaluateJavascript("javascript:if(typeof window.onBiometricAuthFailed === 'function') { window.onBiometricAuthFailed('cancelled'); }", null)
