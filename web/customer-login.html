@@ -396,6 +396,7 @@
   }
 
   async function handleSendOtp() {
+    console.log("[Login] handleSendOtp called.");
     const email = document.getElementById('email').value.trim();
     if (!email || !email.includes('@')) {
       showError('يرجى إدخال بريد إلكتروني صحيح أولاً ✉️');
@@ -410,7 +411,9 @@
     successDiv.style.display = 'none';
 
     try {
+      console.log("[Login] Calling EmailVerification.sendCode for:", email);
       const res = await EmailVerification.sendCode(email);
+      console.log("[Login] EmailVerification response:", res);
       if (res.success) {
         otpSent = true;
         
@@ -443,6 +446,7 @@
         throw new Error(res.message);
       }
     } catch (err) {
+      console.error("[Login] handleSendOtp error:", err);
       showError(err.message || 'فشل إرسال رمز التحقق. يرجى المحاولة مجدداً.');
       resetOtpInlineBtn();
     }
@@ -455,8 +459,10 @@
   // Check if already logged in and redirect
   async function checkActiveSession() {
     try {
+      console.log("[Login] Checking active session...");
       const { data: { session } } = await supabaseClient.auth.getSession();
       if (session && session.user) {
+        console.log("[Login] Active session found. Redirecting...");
         showSuccess('لديك جلسة نشطة بالفعل. جاري التوجيه...');
         await window.handleUserRedirect();
       }
@@ -468,12 +474,14 @@
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
+    console.log("[Login] Login form submitted.");
     errorDiv.style.display = 'none';
     successDiv.style.display = 'none';
 
     const email = document.getElementById('email').value.trim();
 
     if (!otpSent) {
+      console.log("[Login] OTP not sent yet, handling send OTP...");
       await handleSendOtp();
       return;
     }
@@ -489,7 +497,9 @@
     loginBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري التحقق من الرمز...';
 
     try {
+      console.log("[Login] Verifying OTP code:", code);
       const res = await EmailVerification.verifyCode(email, code);
+      console.log("[Login] EmailVerification response:", res);
       if (res.success) {
         showSuccess('✨ تم التحقق من الرمز بنجاح! جاري تسجيل الدخول الآمن...');
         setTimeout(() => {
@@ -503,6 +513,7 @@
         throw new Error(res.message || 'رمز التحقق غير صحيح.');
       }
     } catch (err) {
+      console.error("[Login] OTP Verification error:", err);
       showError(err.message || 'رمز التحقق الذي أدخلته غير صحيح أو منتهي الصلاحية ❌');
       loginBtn.disabled = false;
       loginBtn.innerHTML = 'تأكيد الدخول الآمن 🔐';
@@ -510,8 +521,11 @@
   });
 
   window.handleGoogleLogin = async function() {
+    console.log("[Login] handleGoogleLogin called.");
     try {
-      if (!supabaseClient) throw new Error("خدمة المصادقة غير متاحة حالياً");
+      const client = supabaseClient || window.supabase;
+      if (!client) throw new Error("خدمة المصادقة غير متاحة حالياً");
+      
       showSuccess("جاري بدء تسجيل الدخول الآمن عبر Google...");
       
       if (window.AndroidInterface && typeof window.AndroidInterface.requestGoogleSignIn === 'function') {
@@ -520,7 +534,8 @@
       } else {
         console.log("[Google Auth] Running inside Browser. Directing to Web OAuth...");
         const redirectUrl = window.location.origin + window.location.pathname;
-        const { error } = await supabaseClient.auth.signInWithOAuth({
+        console.log("[Google Auth] OAuth redirect URL:", redirectUrl);
+        const { error } = await client.auth.signInWithOAuth({
           provider: 'google',
           options: { redirectTo: redirectUrl }
         });
