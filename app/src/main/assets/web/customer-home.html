@@ -1261,26 +1261,44 @@ body {
 /* ALL WILAYAS GRID STYLING FOR APP */
 .wilayas-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 8px;
-}
-.wilaya-card {
-  background: #ffffff;
-  border: 1px solid var(--bd);
-  border-radius: 10px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px 10px;
   padding: 10px;
-  text-align: center;
-  font-size: 12.5px;
-  font-weight: 700;
-  color: var(--navy);
-  cursor: pointer;
-  transition: all 0.2s;
 }
-.wilaya-card:hover {
-  background: var(--navy);
-  color: #ffffff;
-  border-color: var(--navy);
-  transform: translateY(-1px);
+.wilaya-card-circular {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+.wilaya-card-circular:active {
+  transform: scale(0.95);
+}
+.wilaya-img-circle {
+  width: 85px;
+  height: 85px;
+  border-radius: 50%;
+  border: 3px solid #0c4a6e;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.wilaya-img-circle img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.wilaya-label-new {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--navy);
+  text-align: center;
+  line-height: 1.2;
 }
 </style>
 </head>
@@ -2006,74 +2024,78 @@ window.showScreen = function(screenId) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 };
 
-// Data for new flow
+// Data for new flow (69 Wilayas from images)
 const ALGERIA_WILAYAS = [
-  { id: "01", name: "أدرار", img: "https://images.unsplash.com/photo-1548013146-72479768bbaa?w=400" },
-  { id: "02", name: "الشلف", img: "https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=400" },
-  { id: "03", name: "الأغواط", img: "https://images.unsplash.com/photo-1509316785289-025f5d846b35?w=400" },
-  { id: "04", name: "أم البواقي", img: "https://images.unsplash.com/photo-1541963463532-d68292c34b19?w=400" },
-  { id: "05", name: "باتنة", img: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=400" }, // Timgad style
-  { id: "06", name: "بجاية", img: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=400" }, // Nature/Gouraya
-  { id: "07", name: "بسكرة", img: "https://images.unsplash.com/photo-1548013146-72479768bbaa?w=400" },
-  { id: "08", name: "بشار", img: "https://images.unsplash.com/photo-1542640244-7e672d6cef21?w=400" }, // Desert/Taghit
-  { id: "09", name: "البليدة", img: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=400" }, // Mountains
-  { id: "10", name: "البويرة", img: "https://images.unsplash.com/photo-1519681393784-d120267923af?w=400" },
-  { id: "11", name: "تمنراست", img: "https://images.unsplash.com/photo-1548013146-72479768bbaa?w=400" },
-  { id: "12", name: "تبسة", img: "https://images.unsplash.com/photo-1541963463532-d68292c34b19?w=400" },
-  { id: "13", name: "تلمسان", img: "https://images.unsplash.com/photo-1533929736458-ca588d08c8be?w=400" },
-  { id: "14", name: "تيارت", img: "https://images.unsplash.com/photo-1509316785289-025f5d846b35?w=400" },
-  { id: "15", name: "تيزي وزو", img: "https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=400" },
-  { id: "16", name: "الجزائر", img: "https://images.unsplash.com/photo-1590483734710-5347248e3d6f?w=400" }, // Maqam El Chahid
-  { id: "17", name: "الجلفة", img: "https://images.unsplash.com/photo-1509316785289-025f5d846b35?w=400" },
-  { id: "18", name: "جيجل", img: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400" }, // Sea
-  { id: "19", name: "سطيف", img: "https://images.unsplash.com/photo-1541963463532-d68292c34b19?w=400" },
-  { id: "20", name: "سعيدة", img: "https://images.unsplash.com/photo-1509316785289-025f5d846b35?w=400" },
-  { id: "21", name: "سكيكدة", img: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400" },
-  { id: "22", name: "سيدي بلعباس", img: "https://images.unsplash.com/photo-1541963463532-d68292c34b19?w=400" },
-  { id: "23", name: "عنابة", img: "https://images.unsplash.com/photo-1551632432-c735e7a030bc?w=400" },
-  { id: "24", name: "قالمة", img: "https://images.unsplash.com/photo-1541963463532-d68292c34b19?w=400" },
-  { id: "25", name: "قسنطينة", img: "https://images.unsplash.com/photo-1533230393275-3ab789d36329?w=400" }, // Bridges
-  { id: "26", name: "المدية", img: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=400" },
-  { id: "27", name: "مستغانم", img: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400" },
-  { id: "28", name: "المسيلة", img: "https://images.unsplash.com/photo-1541963463532-d68292c34b19?w=400" },
-  { id: "29", name: "معسكر", img: "https://images.unsplash.com/photo-1509316785289-025f5d846b35?w=400" },
-  { id: "30", name: "ورقلة", img: "https://images.unsplash.com/photo-1548013146-72479768bbaa?w=400" },
-  { id: "31", name: "وهران", img: "https://images.unsplash.com/photo-1541433131-4191c9cc46e9?w=400" }, // Santa Cruz
-  { id: "32", name: "البيض", img: "https://images.unsplash.com/photo-1509316785289-025f5d846b35?w=400" },
-  { id: "33", name: "إليزي", img: "https://images.unsplash.com/photo-1548013146-72479768bbaa?w=400" },
-  { id: "34", name: "برج بوعريريج", img: "https://images.unsplash.com/photo-1541963463532-d68292c34b19?w=400" },
-  { id: "35", name: "بومرداس", img: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400" },
-  { id: "36", name: "الطارف", img: "https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=400" },
-  { id: "37", name: "تندوف", img: "https://images.unsplash.com/photo-1548013146-72479768bbaa?w=400" },
-  { id: "38", name: "تيسمسيلت", img: "https://images.unsplash.com/photo-1509316785289-025f5d846b35?w=400" },
-  { id: "39", name: "الوادي", img: "https://images.unsplash.com/photo-1548013146-72479768bbaa?w=400" },
-  { id: "40", name: "خنشلة", img: "https://images.unsplash.com/photo-1542640244-7e672d6cef21?w=400" },
-  { id: "41", name: "سوق أهراس", img: "https://images.unsplash.com/photo-1541963463532-d68292c34b19?w=400" },
-  { id: "42", name: "تيبازة", img: "https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=400" },
-  { id: "43", name: "ميلة", img: "https://images.unsplash.com/photo-1541963463532-d68292c34b19?w=400" },
-  { id: "44", name: "عين الدفلى", img: "https://images.unsplash.com/photo-1509316785289-025f5d846b35?w=400" },
-  { id: "45", name: "النعامة", img: "https://images.unsplash.com/photo-1509316785289-025f5d846b35?w=400" },
-  { id: "46", name: "عين تموشنت", img: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400" },
-  { id: "47", name: "غرداية", img: "https://images.unsplash.com/photo-1596481682333-87f547c92b21?w=400" }, // M'zab
-  { id: "48", name: "غليزان", img: "https://images.unsplash.com/photo-1509316785289-025f5d846b35?w=400" },
-  { id: "49", name: "تيميمون", img: "https://images.unsplash.com/photo-1548013146-72479768bbaa?w=400" },
-  { id: "50", name: "برج باجي مختار", img: "https://images.unsplash.com/photo-1548013146-72479768bbaa?w=400" },
-  { id: "51", name: "أولاد جلال", img: "https://images.unsplash.com/photo-1509316785289-025f5d846b35?w=400" },
-  { id: "52", name: "بني عباس", img: "https://images.unsplash.com/photo-1548013146-72479768bbaa?w=400" },
-  { id: "53", name: "إن صالح", img: "https://images.unsplash.com/photo-1509316785289-025f5d846b35?w=400" },
-  { id: "54", name: "إن قزام", img: "https://images.unsplash.com/photo-1548013146-72479768bbaa?w=400" },
-  { id: "55", name: "تقرت", img: "https://images.unsplash.com/photo-1548013146-72479768bbaa?w=400" },
-  { id: "56", name: "جانت", img: "https://images.unsplash.com/photo-1548013146-72479768bbaa?w=400" },
-  { id: "57", name: "المغير", img: "https://images.unsplash.com/photo-1509316785289-025f5d846b35?w=400" },
-  { id: "58", name: "المنيعة", img: "https://images.unsplash.com/photo-1509316785289-025f5d846b35?w=400" }
+  { id: "01", name: "ولاية أدرار", img: "https://images.unsplash.com/photo-1548013146-72479768bbaa?w=200" },
+  { id: "02", name: "ولاية الشلف", img: "https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=200" },
+  { id: "03", name: "ولاية الأغواط", img: "https://images.unsplash.com/photo-1509316785289-025f5d846b35?w=200" },
+  { id: "04", name: "ولاية أم البواقي", img: "https://via.placeholder.com/200?text=Oum+El+Bouaghi" },
+  { id: "05", name: "ولاية باتنة", img: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=200" },
+  { id: "06", name: "ولاية بجاية", img: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=200" },
+  { id: "07", name: "ولاية بسكرة", img: "https://images.unsplash.com/photo-1548013146-72479768bbaa?w=200" },
+  { id: "08", name: "ولاية بشار", img: "https://images.unsplash.com/photo-1542640244-7e672d6cef21?w=200" },
+  { id: "09", name: "ولاية البليدة", img: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=200" },
+  { id: "10", name: "ولاية البويرة", img: "https://images.unsplash.com/photo-1519681393784-d120267923af?w=200" },
+  { id: "11", name: "ولاية تمنراست", img: "https://images.unsplash.com/photo-1548013146-72479768bbaa?w=200" },
+  { id: "12", name: "ولاية تبسة", img: "https://images.unsplash.com/photo-1541963463532-d68292c34b19?w=200" },
+  { id: "13", name: "ولاية تلمسان", img: "https://images.unsplash.com/photo-1533929736458-ca588d08c8be?w=200" },
+  { id: "14", name: "ولاية تيارت", img: "https://images.unsplash.com/photo-1509316785289-025f5d846b35?w=200" },
+  { id: "15", name: "ولاية تيزي وزو", img: "https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=200" },
+  { id: "16", name: "ولاية الجزائر", img: "https://images.unsplash.com/photo-1590483734710-5347248e3d6f?w=200" },
+  { id: "17", name: "ولاية الجلفة", img: "https://images.unsplash.com/photo-1509316785289-025f5d846b35?w=200" },
+  { id: "18", name: "ولاية جيجل", img: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=200" },
+  { id: "19", name: "ولاية سطيف", img: "https://images.unsplash.com/photo-1541963463532-d68292c34b19?w=200" },
+  { id: "20", name: "ولاية سعيدة", img: "https://images.unsplash.com/photo-1509316785289-025f5d846b35?w=200" },
+  { id: "21", name: "ولاية سكيكدة", img: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=200" },
+  { id: "22", name: "ولاية سيدي بلعباس", img: "https://images.unsplash.com/photo-1541963463532-d68292c34b19?w=200" },
+  { id: "23", name: "ولاية عنابة", img: "https://images.unsplash.com/photo-1551632432-c735e7a030bc?w=200" },
+  { id: "24", name: "ولاية قالمة", img: "https://via.placeholder.com/200?text=Guelma" },
+  { id: "25", name: "ولاية قسنطينة", img: "https://images.unsplash.com/photo-1533230393275-3ab789d36329?w=200" },
+  { id: "26", name: "ولاية المدية", img: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=200" },
+  { id: "27", name: "ولاية مستغانم", img: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=200" },
+  { id: "28", name: "ولاية المسيلة", img: "https://via.placeholder.com/200?text=M%27Sila" },
+  { id: "29", name: "ولاية معسكر", img: "https://via.placeholder.com/200?text=Mascara" },
+  { id: "30", name: "ولاية ورقلة", img: "https://via.placeholder.com/200?text=Ouargla" },
+  { id: "31", name: "ولاية وهران", img: "https://images.unsplash.com/photo-1541433131-4191c9cc46e9?w=200" },
+  { id: "32", name: "ولاية البيض", img: "https://via.placeholder.com/200?text=El+Bayadh" },
+  { id: "33", name: "ولاية إليزي", img: "https://via.placeholder.com/200?text=Illizi" },
+  { id: "34", name: "ولاية البرج", img: "https://via.placeholder.com/200?text=BBA" },
+  { id: "35", name: "ولاية بومرداس", img: "https://via.placeholder.com/200?text=Boumerdes" },
+  { id: "36", name: "ولاية الطارف", img: "https://via.placeholder.com/200?text=El+Tarf" },
+  { id: "37", name: "ولاية تندوف", img: "https://via.placeholder.com/200?text=Tindouf" },
+  { id: "38", name: "ولاية تيسمسيلت", img: "https://via.placeholder.com/200?text=Tissemsilt" },
+  { id: "39", name: "ولاية الوادي", img: "https://via.placeholder.com/200?text=El+Oued" },
+  { id: "40", name: "ولاية خنشلة", img: "https://via.placeholder.com/200?text=Khenchela" },
+  { id: "41", name: "ولاية سوق أهراس", img: "https://via.placeholder.com/200?text=Souk+Ahras" },
+  { id: "42", name: "ولاية ميلة", img: "https://via.placeholder.com/200?text=Mila" },
+  { id: "43", name: "ولاية عين الدفلى", img: "https://via.placeholder.com/200?text=Ain+Defla" },
+  { id: "44", name: "ولاية النعامة", img: "https://via.placeholder.com/200?text=Naama" },
+  { id: "45", name: "ولاية عين تموشنت", img: "https://via.placeholder.com/200?text=Ain+Temouchent" },
+  { id: "46", name: "ولاية غليزان", img: "https://via.placeholder.com/200?text=Relizane" },
+  { id: "47", name: "ولاية غرداية", img: "https://images.unsplash.com/photo-1596481682333-87f547c92b21?w=200" },
+  { id: "48", name: "ولاية غليزان", img: "https://via.placeholder.com/200?text=Relizane" },
+  { id: "49", name: "ولاية تيميمون", img: "https://via.placeholder.com/200?text=Timimoun" },
+  { id: "50", name: "ولاية برج باجي مختار", img: "https://via.placeholder.com/200?text=BBM" },
+  { id: "51", name: "ولاية بني عباس", img: "https://via.placeholder.com/200?text=Beni+Abbes" },
+  { id: "52", name: "ولاية أولاد جلال", img: "https://via.placeholder.com/200?text=Ouled+Djellal" },
+  { id: "53", name: "ولاية إن صالح", img: "https://via.placeholder.com/200?text=In+Salah" },
+  { id: "54", name: "ولاية إن قزام", img: "https://via.placeholder.com/200?text=In+Guezzam" },
+  { id: "55", name: "ولاية تقرت", img: "https://via.placeholder.com/200?text=Touggourt" },
+  { id: "56", name: "ولاية جانت", img: "https://via.placeholder.com/200?text=Djanet" },
+  { id: "57", name: "ولاية المغير", img: "https://via.placeholder.com/200?text=El+M%27Ghair" },
+  { id: "58", name: "ولاية المنيعة", img: "https://via.placeholder.com/200?text=El+Menia" },
+  { id: "59", name: "ولاية آفلو", img: "https://via.placeholder.com/200?text=Aflou" },
+  { id: "60", name: "ولاية بريكة", img: "https://via.placeholder.com/200?text=Barika" },
+  { id: "61", name: "ولاية القنطرة", img: "https://via.placeholder.com/200?text=El+Kantara" },
+  { id: "62", name: "ولاية بير العاتر", img: "https://via.placeholder.com/200?text=Bir+El+Ater" },
+  { id: "63", name: "ولاية الشريعة", img: "https://via.placeholder.com/200?text=Cherea" },
+  { id: "64", name: "ولاية قصر الشلالة", img: "https://via.placeholder.com/200?text=Ksar+Chellala" },
+  { id: "65", name: "ولاية عين وسارة", img: "https://via.placeholder.com/200?text=Ain+Oussera" },
+  { id: "66", name: "ولاية مسعد", img: "https://via.placeholder.com/200?text=Messaad" },
+  { id: "67", name: "ولاية قصر البخاري", img: "https://via.placeholder.com/200?text=Ksar+Boukhari" },
+  { id: "68", name: "ولاية بوسعادة", img: "https://via.placeholder.com/200?text=Bou+Saada" },
+  { id: "69", name: "ولاية الأبيض", img: "https://via.placeholder.com/200?text=El+Abiodh" }
 ];
-// Fill up to reach exactly 69
-const EXTRA_TITLES = [
-  "بني سليمان", "سور الغزلان", "العلمة", "بوسعادة", "عين وسارة", "مسعد", "الأبيض سيدي الشيخ", "قصر الشلالة", "مغنية", "عزازقة", "تنس"
-];
-for (let i = 0; i < 11; i++) {
-  ALGERIA_WILAYAS.push({ id: (59 + i).toString(), name: EXTRA_TITLES[i], img: "https://via.placeholder.com/400?text=Area+" + encodeURIComponent(EXTRA_TITLES[i]) });
-}
 
 const BALADIYAS = {
   "الجزائر": ["الجزائر الوسطى", "باب الواد", "الحراش", "بئر مراد رايس", "سيدي امحمد", "القبة", "درارية"],
@@ -2105,11 +2127,11 @@ function initWilayaFlow() {
   const container = document.getElementById('wilaya-grid-container');
   if (!container) return;
   container.innerHTML = ALGERIA_WILAYAS.map(w => `
-    <div class="wilaya-card" onclick="selectWilaya('${w.name}')">
-      <div class="wilaya-img-wrapper">
-        <img src="${w.img}" alt="${w.name}">
+    <div class="wilaya-card-circular" onclick="selectWilaya('${w.name}')">
+      <div class="wilaya-img-circle">
+        <img src="${w.img}" alt="${w.name}" onerror="this.src='https://via.placeholder.com/200?text=ZaLo'">
       </div>
-      <div class="wilaya-name">${w.name}</div>
+      <div class="wilaya-label-new">(${w.id}) ${w.name}</div>
     </div>
   `).join('');
 }
