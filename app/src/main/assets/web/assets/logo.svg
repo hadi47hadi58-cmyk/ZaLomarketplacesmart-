@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="100%" height="100%">
+  <defs>
+    <!-- True Metallic Gold Gradient -->
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#b8860b" />
+      <stop offset="25%" stop-color="#ffd700" />
+      <stop offset="50%" stop-color="#fff8dc" />
+      <stop offset="75%" stop-color="#daa520" />
+      <stop offset="100%" stop-color="#8b6508" />
+    </linearGradient>
+    
+    <!-- True Emerald Green Gradient -->
+    <linearGradient id="emerald" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0a3a16" />
+      <stop offset="50%" stop-color="#12632b" />
+      <stop offset="100%" stop-color="#07220d" />
+    </linearGradient>
+  </defs>
+
+  <!-- Outer Ornate Gold Baroque Crest / Scrollwork -->
+  <g id="ornaments" fill="none" stroke="url(#gold)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Ornate top crown / crest -->
+    <path d="M 250,50 C 270,30 290,10 320,30 C 310,50 280,60 250,70 C 220,60 190,50 180,30 C 210,10 230,30 250,50 Z" fill="url(#gold)" opacity="0.9"/>
+    <circle cx="250" cy="18" r="6" fill="url(#gold)"/>
+    
+    <!-- Left flourished wing -->
+    <path d="M 210,75 C 160,60 110,80 100,130 C 90,180 130,220 160,200 C 130,190 120,160 130,140 C 140,120 180,110 210,123" />
+    <path d="M 170,140 C 120,140 90,180 90,230 C 90,280 140,310 170,280 C 140,270 130,240 140,220 C 150,200 180,200 190,215" />
+    <path d="M 180,270 C 130,290 110,350 140,390 C 170,430 210,410 220,360 C 200,360 190,340 195,320 C 200,300 220,290 230,305" />
+
+    <!-- Right flourished wing (Mirrored) -->
+    <path d="M 290,75 C 340,60 390,80 400,130 C 410,180 370,220 340,200 C 370,190 380,160 370,140 C 360,120 320,110 290,123" />
+    <path d="M 330,140 C 380,140 410,180 410,230 C 410,280 360,310 330,280 C 360,270 370,240 360,220 C 350,200 320,200 310,215" />
+    <path d="M 320,270 C 370,290 390,350 360,390 C 330,430 290,410 280,360 C 300,360 310,340 305,320 C 300,300 280,290 270,305" />
+
+    <!-- Leafy bottom supports -->
+    <path d="M 160,370 C 170,420 210,450 250,455 C 290,450 330,420 340,370" />
+    <path d="M 210,430 Q 250,470 290,430" />
+  </g>
+
+  <!-- Inner Medallion: Double Gold Outline & Dark Green Circle -->
+  <circle cx="250" cy="235" r="145" fill="none" stroke="url(#gold)" stroke-width="8"/>
+  <circle cx="250" cy="235" r="135" fill="url(#emerald)" stroke="url(#gold)" stroke-width="2"/>
+  <circle cx="250" cy="235" r="127" fill="none" stroke="url(#gold)" stroke-width="2" stroke-dasharray="10, 5" opacity="0.8"/>
+
+  <!-- Inside Medallion: Palm Trees and ZL in the center -->
+  <g transform="translate(250, 235)">
+    <!-- Palm Left -->
+    <path d="M -15,50 Q -30,10 -45,-30 M -45,-30 Q -65,-25 -85,-10 M -45,-30 Q -70,-35 -80,-30 M -45,-30 Q -60,-55 -40,-65 M -45,-30 Q -35,-55 -15,-60 M -45,-30 Q -30,-45 -20,-30" fill="none" stroke="url(#gold)" stroke-width="4.5" stroke-linecap="round"/>
+    <!-- Palm Right -->
+    <path d="M 15,50 Q 30,10 45,-30 M 45,-30 Q 65,-25 85,-10 M 45,-30 Q 70,-35 80,-30 M 45,-30 Q 60,-55 40,-65 M 45,-30 Q 35,-55 15,-60 M 45,-30 Q 30,-45 20,-30" fill="none" stroke="url(#gold)" stroke-width="4.5" stroke-linecap="round"/>
+
+    <!-- ZL Logo lettering overlay -->
+    <text x="0" y="30" font-family="'Cairo', sans-serif" font-weight="900" font-size="70" fill="url(#gold)" text-anchor="middle" letter-spacing="2" filter="drop-shadow(2px 4px 6px rgba(0,0,0,0.6))">ZL</text>
+  </g>
+
+  <!-- Lower Cartouche (The Gold Plaque Box) -->
+  <g transform="translate(250, 395)">
+    <!-- Decorative Box shadow -->
+    <rect x="-140" y="-35" width="280" height="70" rx="18" ry="18" fill="#1d3d23" stroke="none" transform="translate(0, 5)" opacity="0.5"/>
+    <!-- Main Gold Plaque Box with Golden Borders -->
+    <rect x="-135" y="-30" width="270" height="60" rx="14" ry="14" fill="url(#emerald)" stroke="url(#gold)" stroke-width="6"/>
+    <rect x="-129" y="-24" width="258" height="48" rx="10" ry="10" fill="none" stroke="url(#gold)" stroke-width="1.5" opacity="0.7"/>
+    <!-- Bold Elegant ZaLo text inside plaque -->
+    <text x="0" y="11" font-family="'Cairo', sans-serif" font-weight="900" font-size="34" fill="url(#gold)" text-anchor="middle" letter-spacing="1.5" filter="drop-shadow(1px 2px 2px rgba(0,0,0,0.5))">ZaLo</text>
+  </g>
+
+  <!-- (السوق الذكي) written in elegant golden calligraphic Arabic style underneath -->
+  <text x="250" y="475" font-family="'Cairo', sans-serif" font-weight="800" font-size="28" fill="url(#gold)" text-anchor="middle" filter="drop-shadow(1px 2px 3px rgba(0,0,0,0.4))">(السوق الذكي)</text>
+</svg>
