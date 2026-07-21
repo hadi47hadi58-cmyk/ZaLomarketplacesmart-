@@ -359,6 +359,7 @@
 </div>
 
 <script type="module">
+  console.log("Customer login script starting...");
   import { supabaseClient } from './js/supabase-db-compat.js';
   import { EmailVerification } from './js/email-verification.js';
 
@@ -379,6 +380,7 @@
   let countdownTimer = null;
 
   modeOtpBtn.addEventListener('click', () => {
+    console.log("OTP button clicked");
     currentMode = 'otp';
     modeOtpBtn.classList.add('active');
     modePassBtn.classList.remove('active');
@@ -388,6 +390,7 @@
   });
 
   modePassBtn.addEventListener('click', () => {
+    console.log("Password button clicked");
     currentMode = 'password';
     modeOtpBtn.classList.remove('active');
     modePassBtn.classList.add('active');
@@ -397,6 +400,7 @@
   });
   
   togglePass.addEventListener('click', () => {
+    console.log("Toggle password button clicked");
     const passInput = document.getElementById('password');
     passInput.type = passInput.type === 'password' ? 'text' : 'password';
     togglePass.className = passInput.type === 'password' ? 'fa-solid fa-eye toggle-pass' : 'fa-solid fa-eye-slash toggle-pass';
@@ -405,7 +409,10 @@
   // Also bind Google Login button programmatically
   const googleLoginBtn = document.getElementById('googleLoginBtn');
   if (googleLoginBtn) {
-    googleLoginBtn.addEventListener('click', () => window.handleGoogleLogin());
+    googleLoginBtn.addEventListener('click', () => {
+      console.log("Google login button clicked");
+      window.handleGoogleLogin();
+    });
   }
 
   function startCountdown() {
@@ -589,7 +596,7 @@
   window.handleGoogleLogin = async function() {
     console.log("[Login] handleGoogleLogin called.");
     try {
-      const client = supabaseClient || window.supabase;
+      const client = window.supabaseClient || supabaseClient;
       if (!client) throw new Error("خدمة المصادقة غير متاحة حالياً");
       
       showSuccess("جاري بدء تسجيل الدخول الآمن عبر Google...");
