@@ -331,23 +331,6 @@
         المتابعة بحساب Google
       </button>
 
-    <div class="register-link" style="margin-top: 18px; padding-top: 15px; border-top: 1px dashed var(--border); text-align: center;">
-      <span style="display: block; font-size: 11px; color: var(--text2); margin-bottom: 8px; font-weight: bold;">🛠️ ممر الدخول السريع الفوري (للمطورين والمشرفين):</span>
-      <div style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;">
-        <button type="button" id="bypassAdminBtn" style="background: rgba(212, 175, 55, 0.1); border: 1.5px solid var(--gold); color: var(--text); padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: all 0.2s;">
-          🔑 دخول كمدير عام
-        </button>
-        <button type="button" id="bypassMerchantBtn" style="background: rgba(14, 165, 233, 0.08); border: 1.5px solid var(--green); color: var(--text); padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: all 0.2s;">
-          🏪 دخول كتاجر/متجر
-        </button>
-        <button type="button" id="bypassStaffBtn" style="background: #f1f5f9; border: 1.5px solid #94a3b8; color: var(--text); padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: all 0.2s;">
-          🛵 دخول كوكيل توصيل
-        </button>
-        <button type="button" id="bypassCustomerBtn" style="background: #f8fafc; border: 1.5px solid #cbd5e1; color: var(--text); padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: all 0.2s;">
-          👤 دخول كزبون
-        </button>
-      </div>
-    </div>
 
   </div>
 </div>
@@ -374,31 +357,6 @@
     googleLoginBtn.addEventListener('click', () => window.handleGoogleLogin());
   }
 
-  // Bind Emergency Bypass buttons programmatically
-  const bypassAdminBtn = document.getElementById('bypassAdminBtn');
-  if (bypassAdminBtn) {
-    bypassAdminBtn.addEventListener('click', () => {
-      if (window.triggerEmergencyBypass) window.triggerEmergencyBypass('ADMIN');
-    });
-  }
-  const bypassMerchantBtn = document.getElementById('bypassMerchantBtn');
-  if (bypassMerchantBtn) {
-    bypassMerchantBtn.addEventListener('click', () => {
-      if (window.triggerEmergencyBypass) window.triggerEmergencyBypass('MERCHANT');
-    });
-  }
-  const bypassStaffBtn = document.getElementById('bypassStaffBtn');
-  if (bypassStaffBtn) {
-    bypassStaffBtn.addEventListener('click', () => {
-      if (window.triggerEmergencyBypass) window.triggerEmergencyBypass('STAFF');
-    });
-  }
-  const bypassCustomerBtn = document.getElementById('bypassCustomerBtn');
-  if (bypassCustomerBtn) {
-    bypassCustomerBtn.addEventListener('click', () => {
-      if (window.triggerEmergencyBypass) window.triggerEmergencyBypass('CUSTOMER');
-    });
-  }
 
   function startCountdown() {
     clearInterval(countdownTimer);

@@ -26,7 +26,7 @@ if (handleRedirectStart !== -1 && handleRedirectEnd !== -1) {
     const user = session.user;
     const email = user.email ? user.email.toLowerCase().trim() : '';
     const name = user.user_metadata?.full_name || email.split('@')[0];
-    const AD_LIST = ['zinzinochop@gmail.com','zinochop2024@gmail.com','hadi47hadi58@gmail.com','admin@zalo.dz','admin@zalo.com','manager@zalo.dz','manager@zalo.com'];
+    const AD_LIST = ['zinzinochop@gmail.com','zinochop2024@gmail.com','admin@zalo.dz','admin@zalo.com','manager@zalo.dz','manager@zalo.com'];
     let role = null;
 
     if (AD_LIST.includes(email) || email.endsWith('@zalo-admin.com')) {

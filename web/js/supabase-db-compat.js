@@ -38,7 +38,6 @@ window.handleUserRedirect = async function(providedSession = null) {
     const AD_LIST = [
       'zinzinochop@gmail.com',
       'zinochop2024@gmail.com',
-      'hadi47hadi58@gmail.com',
       'admin@zalo.dz',
       'admin@zalo.com',
       'manager@zalo.dz',
@@ -220,74 +219,6 @@ window.onGoogleIdTokenFailed = function(reason) {
     }
 };
 
-// --- Emergency / Developer Bypass Quick Login ---
-window.triggerEmergencyBypass = function(targetRole) {
-    console.log(`[Emergency Bypass] Initiating emergency bypass for role: ${targetRole}...`);
-    
-    // 1. Determine mock credentials
-    let email = 'hadi47hadi58@gmail.com'; // Default user's email
-    let name = 'مدير عام المنصة';
-    let role = targetRole ? targetRole.toUpperCase() : 'ADMIN';
-    
-    if (role === 'MERCHANT' || role === 'STORE') {
-        role = 'MERCHANT';
-        email = 'merchant@zalo.dz';
-        name = 'متجر تجريبي زالو';
-    } else if (role === 'MANAGER' || role === 'STAFF') {
-        role = 'MANAGER';
-        email = 'manager@zalo.dz';
-        name = 'وكيل التوصيل والعمليات';
-    } else if (role === 'CUSTOMER') {
-        role = 'CUSTOMER';
-        email = 'customer@zalo.dz';
-        name = 'زبون زالو';
-    }
-    
-    const mockToken = "mock_jwt_token_bypass_" + Math.random().toString(36).substring(2);
-    const mockUid = "mock_uid_" + Math.random().toString(36).substring(2);
-    
-    // 2. Set all local storage tokens
-    localStorage.setItem('zalo_session_jwt', mockToken);
-    localStorage.setItem('nestjs_token', mockToken);
-    localStorage.setItem('zalo_user_role', role);
-    localStorage.setItem('zalo_user_email', email);
-    localStorage.setItem('zalo_uid', mockUid);
-    
-    if (role === 'ADMIN') {
-        sessionStorage.setItem('admin_logged_in_session', 'true');
-    }
-    
-    const userObj = {
-        id: mockUid,
-        email: email,
-        name: name
-    };
-    localStorage.setItem('nestjs_user', JSON.stringify(userObj));
-    
-    // Active Session Sync
-    const activeSessionUser = {
-        uid: mockUid,
-        email: email,
-        name: name,
-        phone: "0555123456",
-        role: role.toLowerCase(),
-        status: "ACTIVE"
-    };
-    localStorage.setItem('zalo_active_session', JSON.stringify(activeSessionUser));
-    
-    console.log("[Emergency Bypass] Local storage successfully configured. Routing to dashboard...");
-    
-    // 3. Routing
-    if (role === 'ADMIN') {
-        window.location.replace('dashboard-admin.html');
-    } else if (role === 'MERCHANT') {
-        window.location.replace('dashboard-store.html');
-    } else if (role === 'MANAGER') {
-        window.location.replace('dashboard-manager.html');
-    } else {
-        window.location.replace('customer-home.html');
-    }
-};
 
 // --- Global Auto-Sync Hook to keep NestJS, local tokens, and Supabase 100% in Sync ---
 supabase.auth.onAuthStateChange(async (event, session) => {
