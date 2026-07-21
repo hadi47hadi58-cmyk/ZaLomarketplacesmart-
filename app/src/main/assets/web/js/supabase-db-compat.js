@@ -1083,8 +1083,22 @@ export async function setDoc(docRef, data, options) {
         } catch (e) {
             console.warn("Failed to update merchant_requests in local storage:", e);
         }
+    }
+}
 
-        /* profiles table sync removed */
+export function onSnapshot(ref, callback, errCallback) {
+    let active = true;
+
+    const trigger = async () => {
+        if (!active) return;
+        try {
+            if (ref instanceof FirestoreDocRef) {
+                const snapshot = await getDoc(ref);
+                if (active) callback(snapshot);
+            } else {
+                const snapshot = await getDocs(ref);
+                if (active) callback(snapshot);
+            }
         } catch (err) {
             if (active && errCallback) errCallback(err);
         }
