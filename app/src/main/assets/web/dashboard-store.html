@@ -90,40 +90,28 @@
     
     <!-- Strict Authorization & Session Checking -->
     <script type="module">
-        import sessionManager from './js/session-manager.js';
-        import { supabaseClient } from './js/supabase-db-compat.js';
+        import { supabase } from './js/supabase-config.js';
 
-        // Expose globally for merchant actions
-        window.supabaseClient = supabaseClient;
-
-        const session = sessionManager.getSession();
-        if (!session.token || (session.role !== 'merchant' && session.role !== 'admin')) {
-            console.warn('🚨 Access Denied: User role is not merchant. Redirecting to login...');
-            window.location.href = 'store-login.html';
-        } else {
-            console.log('✅ Welcome Merchant! Your dashboard is authorized and ready.');
-        }
-    </script>
-
-    <!-- Security Session Guard -->
-    <script>
-        (function() {
-            const token = localStorage.getItem('zalo_token') || localStorage.getItem('zalo_session_jwt');
-            const role = (localStorage.getItem('zalo_user_role') || '').toLowerCase();
-            if (!token) {
-                console.warn("[Security Guard] No active session found. Redirecting to login.");
+        async function checkStoreSession() {
+            const { data: { session }, error } = await supabase.auth.getSession();
+            
+            if (error || !session || !session.user) {
+                console.warn('🚨 No session found. Redirecting to login...');
                 window.location.href = 'store-login.html?reason=unauthorized';
-            } else {
-                // Determine required role based on page
-                const isPageAdmin = window.location.pathname.includes('dashboard-admin');
-                const isPageManager = window.location.pathname.includes('dashboard-manager');
-                const isPageStore = window.location.pathname.includes('dashboard-store');
-                
-                if (isPageAdmin && role !== 'admin') window.location.href = 'store-login.html?reason=forbidden';
-                if (isPageManager && (role !== 'admin' && role !== 'team' && role !== 'manager')) window.location.href = 'store-login.html?reason=forbidden';
-                if (isPageStore && (role !== 'admin' && role !== 'merchant')) window.location.href = 'store-login.html?reason=forbidden';
+                return;
             }
-        })();
+
+            // Role check
+            const role = session.user.user_metadata?.role;
+            const allowedRoles = ['admin', 'merchant'];
+            if (!allowedRoles.includes(role)) {
+                console.warn('🚨 Access Denied: Insufficient permissions. Redirecting...');
+                window.location.href = 'store-login.html?reason=forbidden';
+            } else {
+                console.log('✅ Store Session Verified.');
+            }
+        }
+        checkStoreSession();
     </script>
     </head>
 <body class="min-h-screen bg-slate-50 text-[#102a43] flex flex-col lg:flex-row" onload="initOldMerchantDashboard()">
