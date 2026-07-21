@@ -97,37 +97,32 @@ window.handleUserRedirect = async function(providedSession = null) {
     console.log(`[Role Routing] تم تحديث الدور بنجاح: ${role}`);
 
     // 5. التوجيه الذكي لمنع التكرار اللانهائي (Smart Non-Looping Redirects)
-    
-    
-    // فحص المسار الحالي للتأكد من عدم التكرار اللانهائي - مطابقة حقيقية للملفات القديمة الفعالة
-    const isAlreadyOnAdmin = currentPath.endsWith('dashboard-admin.html');
-    const isAlreadyOnDashboard = currentPath.endsWith('dashboard-store.html');
-    const isAlreadyOnManager = currentPath.endsWith('dashboard-manager.html');
-    const isAlreadyOnCustomer = currentPath.endsWith('customer-home.html');
+    const isAlreadyOnAdmin = currentPath.includes('dashboard-admin.html');
+    const isAlreadyOnDashboard = currentPath.includes('dashboard-store.html');
+    const isAlreadyOnManager = currentPath.includes('dashboard-manager.html');
+    const isAlreadyOnCustomer = currentPath.includes('customer-home.html');
     const isLoginPage = currentPath.includes('login') || currentPath.includes('register') || currentPath.endsWith('index.html') || currentPath === '/' || currentPath.endsWith('/');
 
-    console.log(`[Role Routing] الدور النشط الحالي: ${role} | المسار الحالي: ${currentPath}`);
+    console.log(`[Role Routing] الدور النشط الحالي: ${role} | المسار الحالي: ${currentPath} | الصفحة الحالية: ${isAlreadyOnCustomer ? 'بوابة العميل' : isAlreadyOnDashboard ? 'لوحة التاجر' : 'أخرى'}`);
+
+    // لمنع الاختفاء والوميض: إذا كان المستخدم بالفعل في إحدى الصفحات الرئيسية، لا تقم بإعادة التوجيه أبداً
+    if (isAlreadyOnAdmin || isAlreadyOnDashboard || isAlreadyOnManager || isAlreadyOnCustomer) {
+        console.log("[Role Routing] المستخدم موجود بالفعل في إحدى وجهات النظام. تم إيقاف التوجيه التلقائي لمنع التعارض.");
+        return;
+    }
 
     if (role === 'ADMIN') {
-        if (!isAlreadyOnAdmin) {
-            console.log("[Role Routing] جاري توجيه المدير إلى صفحة لوحة التحكم الإدارية النهائية (dashboard-admin.html)...");
-            window.location.replace('dashboard-admin.html');
-        }
+        console.log("[Role Routing] جاري توجيه المدير إلى صفحة لوحة التحكم الإدارية النهائية (dashboard-admin.html)...");
+        window.location.replace('dashboard-admin.html');
     } else if (role === 'MERCHANT') {
-        if (!isAlreadyOnDashboard) {
-            console.log("[Role Routing] جاري توجيه التاجر إلى صفحة لوحة التحكم التجارية (dashboard-store.html)...");
-            window.location.replace('dashboard-store.html');
-        }
+        console.log("[Role Routing] جاري توجيه التاجر إلى صفحة لوحة التحكم التجارية (dashboard-store.html)...");
+        window.location.replace('dashboard-store.html');
     } else if (role === 'MANAGER' || role === 'TEAM') {
-        if (!isAlreadyOnManager) {
-            console.log("[Role Routing] جاري توجيه الموظف إلى صفحة فريق العمل (dashboard-manager.html)...");
-            window.location.replace('dashboard-manager.html');
-        }
+        console.log("[Role Routing] جاري توجيه الموظف إلى صفحة فريق العمل (dashboard-manager.html)...");
+        window.location.replace('dashboard-manager.html');
     } else { // CUSTOMER
-        if (!isAlreadyOnCustomer) {
-            console.log("[Role Routing] جاري توجيه الزبون إلى لوحة وبوابة العميل (customer-home.html)...");
-            window.location.replace('customer-home.html');
-        }
+        console.log("[Role Routing] جاري توجيه الزبون إلى لوحة وبوابة العميل (customer-home.html)...");
+        window.location.replace('customer-home.html');
     }
 };
 
