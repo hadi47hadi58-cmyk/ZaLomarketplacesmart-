@@ -354,8 +354,14 @@
         }
       }
       const [{ supabaseClient }, { EmailVerification }] = await Promise.all([
-        import('./js/supabase-db-compat.js'),
-        import('./js/email-verification.js')
+        import('./js/supabase-db-compat.js').catch(err => {
+            console.error("Failed to import supabase-db-compat:", err);
+            throw new Error("فشل استيراد وحدة Supabase: " + err.message);
+        }),
+        import('./js/email-verification.js').catch(err => {
+            console.error("Failed to import email-verification:", err);
+            throw new Error("فشل استيراد وحدة التحقق: " + err.message);
+        })
       ]);
 
       const form = document.getElementById('loginForm');
