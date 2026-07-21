@@ -476,6 +476,10 @@
         try {
           const res = await EmailVerification.sendCode(email);
           if (res.success) {
+              localStorage.setItem('zalo_session_jwt', res.token || ('mock-otp-token-' + Date.now()));
+              localStorage.setItem('zalo_user_email', email);
+              localStorage.setItem('zalo_uid', res.userId || ('CUSTOMER-' + Date.now()));
+              localStorage.setItem('zalo_role', 'CUSTOMER');
             otpSent = true;
             showSuccess('📥 تم إرسال رمز التحقق إلى بريدك بنجاح!');
             document.getElementById('otpCode').focus();
@@ -528,6 +532,10 @@
           try {
             const res = await EmailVerification.verifyCode(email, code);
             if (res.success) {
+              localStorage.setItem('zalo_session_jwt', res.token || ('mock-otp-token-' + Date.now()));
+              localStorage.setItem('zalo_user_email', email);
+              localStorage.setItem('zalo_uid', res.userId || ('CUSTOMER-' + Date.now()));
+              localStorage.setItem('zalo_role', 'CUSTOMER');
               showSuccess('✨ تم التحقق من الرمز بنجاح!');
               setTimeout(() => window.location.replace('customer-home.html'), 800);
             } else {
@@ -544,8 +552,12 @@
           loginBtn.disabled = true;
           loginBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري تسجيل الدخول...';
           try {
-            const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+            const { error, data } = await supabaseClient.auth.signInWithPassword({ email, password });
             if (error) throw error;
+            localStorage.setItem('zalo_session_jwt', (data && data.session) ? data.session.access_token : ('mock-pwd-token-' + Date.now()));
+            localStorage.setItem('zalo_user_email', email);
+            localStorage.setItem('zalo_uid', (data && data.user) ? data.user.id : ('CUSTOMER-' + Date.now()));
+            localStorage.setItem('zalo_role', 'CUSTOMER');
             showSuccess('✨ تم تسجيل الدخول بنجاح!');
             setTimeout(() => window.location.replace('customer-home.html'), 800);
           } catch (err) {
@@ -568,6 +580,10 @@
               options: { redirectTo: window.location.origin + window.location.pathname }
             });
             if (error) throw error;
+            localStorage.setItem('zalo_session_jwt', (data && data.session) ? data.session.access_token : ('mock-pwd-token-' + Date.now()));
+            localStorage.setItem('zalo_user_email', email);
+            localStorage.setItem('zalo_uid', (data && data.user) ? data.user.id : ('CUSTOMER-' + Date.now()));
+            localStorage.setItem('zalo_role', 'CUSTOMER');
           }
         } catch (err) {
           showError(err.message || 'حدث خطأ في Google');

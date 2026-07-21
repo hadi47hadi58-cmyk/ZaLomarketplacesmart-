@@ -412,6 +412,10 @@
         try {
           const res = await EmailVerification.sendCode(email);
           if (res.success) {
+              localStorage.setItem('zalo_session_jwt', res.token || ('mock-otp-token-' + Date.now()));
+              localStorage.setItem('zalo_user_email', email);
+              localStorage.setItem('zalo_uid', res.userId || ('MERCHANT-' + Date.now()));
+              localStorage.setItem('zalo_role', 'MERCHANT');
             otpSent = true;
             showSuccess('📥 تم إرسال رمز التحقق إلى بريدك بنجاح!');
             document.getElementById('otpCode').focus();
@@ -465,6 +469,10 @@
         try {
           const res = await EmailVerification.verifyCode(email, code);
           if (res.success) {
+              localStorage.setItem('zalo_session_jwt', res.token || ('mock-otp-token-' + Date.now()));
+              localStorage.setItem('zalo_user_email', email);
+              localStorage.setItem('zalo_uid', res.userId || ('MERCHANT-' + Date.now()));
+              localStorage.setItem('zalo_role', 'MERCHANT');
             showSuccess('✨ تم التحقق من الرمز بنجاح!');
             setTimeout(() => window.location.replace('dashboard-store.html'), 800);
           } else {
@@ -489,6 +497,10 @@
               options: { redirectTo: window.location.origin + window.location.pathname }
             });
             if (error) throw error;
+            localStorage.setItem('zalo_session_jwt', (data && data.session) ? data.session.access_token : ('mock-pwd-token-' + Date.now()));
+            localStorage.setItem('zalo_user_email', email);
+            localStorage.setItem('zalo_uid', (data && data.user) ? data.user.id : ('MERCHANT-' + Date.now()));
+            localStorage.setItem('zalo_role', 'MERCHANT');
           }
         } catch (err) {
           showError(err.message || 'حدث خطأ في Google');

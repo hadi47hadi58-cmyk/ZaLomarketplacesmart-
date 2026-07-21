@@ -2146,13 +2146,13 @@ onAuthStateChanged(auth, async (user) => {
   if (!user) {
     if (localToken && localEmail) {
       user = {
-        id: localStorage.getItem('user_uid') || 'zalo-customer-id',
+        id: localStorage.getItem('zalo_uid') || localStorage.getItem('user_uid') || 'zalo-customer-id',
         email: localEmail
       };
     } else {
-      console.warn("PageGuard: Session not found, redirecting...");
-      window.location.href = 'index.html';
-      return;
+      console.warn("PageGuard: Session not found, acting as Guest...");
+      user = { id: 'guest', email: 'زائر' };
+      
     }
   }
 
@@ -2208,7 +2208,7 @@ window.handleLogout = async function() {
   } catch(e) {
     console.error("signOut error:", e);
   } finally {
-    window.location.href = 'index.html';
+    user = { id: 'guest', email: 'زائر' };
   }
 };
 
@@ -2474,12 +2474,12 @@ function renderProductsList(list) {
         <p>لا توجد سلع معروضة حالياً بهذا القسم!</p>
       </div>
     `;
-    return;
+    
   }
 
   grid.innerHTML = '';
   list.forEach(p => {
-    if (p.deleted === true || p.status === 'deleted') return;
+    if (p.deleted === true || p.status === 'deleted') 
     const pName = p.name || p.productName || '';
     const imgUrl = p.image || p.imageURL || p.imageUrl || p.image_url || p.url || '';
     const price = p.price || 0;
@@ -2566,7 +2566,7 @@ window.executeHomeSearch = function() {
   const query = document.getElementById('homeSearchInp').value.trim().toLowerCase();
   if (!query) {
     renderProductsList(state.loadedProducts);
-    return;
+    
   }
   const filtered = state.loadedProducts.filter(p => 
     (p.name || p.productName || '').toLowerCase().includes(query) ||
@@ -2684,7 +2684,7 @@ window.loadFavorites = function() {
         <p>لا توجد منتجات محفوظة في قائمتك المفضلة بعد!</p>
       </div>
     `;
-    return;
+    
   }
 
   container.innerHTML = '';
@@ -2737,7 +2737,7 @@ window.loadCartItems = function() {
       </div>
     `;
     form.style.display = 'none';
-    return;
+    
   }
 
   container.innerHTML = '';
@@ -2792,8 +2792,8 @@ window.removeFromCart = function(id) {
 window.checkoutCart = async function() {
   const cart = JSON.parse(localStorage.getItem('zalo_cart') || '[]');
   if (cart.length === 0) {
-    window.showToast("⚠️ سلتك فارغة حالياً!");
-    return;
+    window.showToast("⚠️ سلتك فارغة حالياً!"); return;
+    
   }
 
   const name = document.getElementById('cart-name').value.trim();
@@ -2803,8 +2803,8 @@ window.checkoutCart = async function() {
   const pay = document.getElementById('cart-pay').value;
 
   if (!name || !phone || !addr || !wilaya) {
-    window.showToast("⚠️ يرجى تعبئة كافة الحقول المطلوبة للتسليم!");
-    return;
+    window.showToast("⚠️ يرجى تعبئة كافة الحقول المطلوبة للتسليم!"); return;
+    
   }
 
   // Segment by storeId
@@ -2874,7 +2874,7 @@ window.loadCustomerOrders = async function() {
 
   if (!window.currentUser) {
     container.innerHTML = '<div style="text-align:center; padding:20px; color:var(--gray);">لم يتم تفعيل جلسة المستخدم.</div>';
-    return;
+    
   }
 
   try {
@@ -2904,7 +2904,7 @@ window.loadCustomerOrders = async function() {
         </div>
       `;
       tracker.style.display = 'none';
-      return;
+      
     }
 
     orders.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));

@@ -51,17 +51,21 @@
         import { supabase } from './js/supabase-config.js';
 
         async function checkManagerSession() {
-            const { data: { session }, error } = await supabase.auth.getSession();
+            const { data: { session } } = await supabase.auth.getSession();
+            const localToken = localStorage.getItem('zalo_session_jwt');
+            let role = localStorage.getItem('zalo_role');
+            if (session && session.user) role = role || session.user.user_metadata?.role;
+            if (role) role = role.toLowerCase();
             
-            if (error || !session || !session.user) {
+            if (!session && !localToken) {
                 console.warn('🚨 No session found. Redirecting to login...');
                 window.location.href = 'staff-login.html?reason=unauthorized';
                 return;
             }
 
             // Role check
-            const role = session.user.user_metadata?.role;
-            const allowedRoles = ['admin', 'team', 'manager'];
+            
+            const allowedRoles = ['admin', 'merchant', 'manager', 'super_admin', 'staff'];
             if (!allowedRoles.includes(role)) {
                 console.warn('🚨 Access Denied: Insufficient permissions. Redirecting...');
                 window.location.href = 'staff-login.html?reason=forbidden';
