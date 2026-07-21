@@ -98,36 +98,12 @@ window.handleUserRedirect = async function(providedSession = null) {
     }
 
     // 4. حفظ الدور بأمان في التخزين المحلي لتسهيل استخدامه في الواجهة الأمامية
-    localStorage.setItem('zalo_user_role', role);
+    // سنعتمد على Supabase Session للتوكن والدور
     if (role === 'ADMIN') {
         sessionStorage.setItem('admin_logged_in_session', 'true');
     }
-
-    // مزامنة التوكينات والهوية بشكل متزامن فوري لمنع حلقات إعادة التوجيه
-    if (session) {
-        const token = session.access_token;
-        localStorage.setItem('nestjs_token', token);
-        localStorage.setItem('zalo_session_jwt', token);
-        localStorage.setItem('zalo_user_email', email);
-        
-        const userObj = {
-            id: user.id,
-            email: email,
-            name: user.user_metadata?.full_name || email.split('@')[0] || ''
-        };
-        localStorage.setItem('nestjs_user', JSON.stringify(userObj));
-    }
-
-    // 4b. مزامنة الجلسة النشطة بالكامل مع محرك التطبيق المحلي (Shared Engine Sync)
-    const activeSessionUser = {
-        uid: user.id,
-        email: email,
-        name: user.user_metadata?.full_name || email.split('@')[0],
-        phone: "0555" + Math.floor(100000 + Math.random() * 900000),
-        role: role.toLowerCase(), // "admin", "merchant", "customer"
-        status: "ACTIVE"
-    };
-    localStorage.setItem('zalo_active_session', JSON.stringify(activeSessionUser));
+    
+    console.log(`[Role Routing] تم تحديث الدور بنجاح: ${role}`);
 
     // 5. التوجيه الذكي لمنع التكرار اللانهائي (Smart Non-Looping Redirects)
     const currentPath = window.location.pathname;

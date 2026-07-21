@@ -414,36 +414,19 @@
       console.log("[Login] Calling EmailVerification.sendCode for:", email);
       const res = await EmailVerification.sendCode(email);
       console.log("[Login] EmailVerification response:", res);
+      
       if (res.success) {
         otpSent = true;
+        showSuccess('📥 تم إرسال رمز التحقق إلى بريدك بنجاح!');
         
-        // Check for local debug mock code to make it easy to login instantly
-        const localCode = localStorage.getItem(`otp_${email.toLowerCase().trim()}`);
-        if (localCode) {
-          showSuccess(`📥 تم إرسال الرمز بنجاح! رمز التجربة هو: ${localCode} (تم نسخه وتعبئته تلقائياً)`);
-          const otpField = document.getElementById('otpCode');
-          if (otpField) {
-            otpField.value = localCode;
-            otpField.focus();
-            
-            // Automatically submit/login!
-            setTimeout(() => {
-              const loginBtn = document.getElementById('loginBtn');
-              if (loginBtn) {
-                loginBtn.click();
-              }
-            }, 1200);
-          }
-        } else {
-          showSuccess('📥 تم إرسال رمز التحقق (OTP) إلى بريدك بنجاح! يرجى فحصه.');
-          const otpField = document.getElementById('otpCode');
-          if (otpField) {
-            otpField.focus();
-          }
+        const otpField = document.getElementById('otpCode');
+        if (otpField) {
+          otpField.focus();
         }
+        
         startCountdown();
       } else {
-        throw new Error(res.message);
+        throw new Error(res.message || 'فشل إرسال الرمز.');
       }
     } catch (err) {
       console.error("[Login] handleSendOtp error:", err);
