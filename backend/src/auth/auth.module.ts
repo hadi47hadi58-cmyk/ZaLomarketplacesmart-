@@ -12,7 +12,7 @@ import { SessionCleanupService } from './session-cleanup.service';
   imports: [
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
-      secret: process.env.JWT_SECRET || 'zalo_smart_jwt_secret_token_123',
+      secret: process.env.SUPABASE_JWT_SECRET,
       signOptions: { expiresIn: '7d' }, // Session expires in 7 days
     }),
   ],
