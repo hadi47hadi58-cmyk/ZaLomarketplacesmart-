@@ -366,7 +366,7 @@
 
   async function init() {
       try {
-        const filesToCheck = ['/js/supabase-db-compat.js', '/js/email-verification.js'];
+        const filesToCheck = ['./js/supabase-db-compat.js', './js/email-verification.js'];
         for (const f of filesToCheck) {
           try {
             const res = await fetch(f, { method: 'HEAD' });
@@ -379,8 +379,8 @@
           }
         }
         const [{ supabaseClient }, { EmailVerification }] = await Promise.all([
-          import('/js/supabase-db-compat.js'),
-          import('/js/email-verification.js')
+          import('./js/supabase-db-compat.js'),
+          import('./js/email-verification.js')
         ]);
 
       console.log("Imports successful");
