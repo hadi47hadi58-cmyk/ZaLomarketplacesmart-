@@ -1844,7 +1844,11 @@ body {
         
         <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--bd); padding-bottom:8px;">
           <span style="font-size:14px; font-weight:900; color:var(--metallic-gold);" id="pd-price">0 دج</span>
-          <span style="font-size:11px; color:var(--gray);" id="pd-store">🏪 شريك معتمد</span>
+          <div style="text-align: left; display: flex; flex-direction: column; align-items: flex-start;">
+            <span style="font-size:11px; color:var(--gray); font-weight: 700;" id="pd-store">🏪 شريك معتمد</span>
+            <span style="font-size:10px; color:var(--gray);" id="pd-wilaya-tag"><i class="fa-solid fa-location-dot"></i> ولاية: الجزائر</span>
+            <span style="font-size:10px; color:var(--gray);" id="pd-category-tag"><i class="fa-solid fa-tags"></i> الصنف: عام</span>
+          </div>
         </div>
 
         <!-- Quantity Selector -->
@@ -2006,32 +2010,57 @@ window.showScreen = function(screenId) {
 const ALGERIA_WILAYAS = [
   { id: "01", name: "أدرار", img: "https://images.unsplash.com/photo-1548013146-72479768bbaa?w=200" },
   { id: "02", name: "الشلف", img: "https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=200" },
+  { id: "03", name: "الأغواط", img: "https://images.unsplash.com/photo-1509316785289-025f5d846b35?w=200" },
+  { id: "04", name: "أم البواقي", img: "https://via.placeholder.com/200?text=Oum+El+Bouaghi" },
+  { id: "05", name: "باتنة", img: "https://images.unsplash.com/photo-1542640244-7e672d6cef21?w=200" },
+  { id: "06", name: "بجاية", img: "https://images.unsplash.com/photo-1551632432-c735e7a030bc?w=200" },
+  { id: "07", name: "بسكرة", img: "https://images.unsplash.com/photo-1548013146-72479768bbaa?w=200" },
+  { id: "08", name: "بشار", img: "https://via.placeholder.com/200?text=Bechar" },
+  { id: "09", name: "البليدة", img: "https://images.unsplash.com/photo-1551632432-c735e7a030bc?w=200" },
+  { id: "10", name: "البويرة", img: "https://via.placeholder.com/200?text=Bouira" },
   { id: "16", name: "الجزائر", img: "https://images.unsplash.com/photo-1551632432-c735e7a030bc?w=200" },
-  { id: "31", name: "وهران", img: "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=200" },
-  { id: "50", name: "المنيعة", img: "https://images.unsplash.com/photo-1509316785289-025f5d846b35?w=200" },
   { id: "19", name: "سطيف", img: "https://images.unsplash.com/photo-1542640244-7e672d6cef21?w=200" },
-  { id: "25", name: "قسنطينة", img: "https://images.unsplash.com/photo-1541963463532-d68292c34b19?w=200" }
+  { id: "25", name: "قسنطينة", img: "https://images.unsplash.com/photo-1541963463532-d68292c34b19?w=200" },
+  { id: "31", name: "وهران", img: "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=200" },
+  { id: "47", name: "غرداية", img: "https://images.unsplash.com/photo-1509316785289-025f5d846b35?w=200" },
+  { id: "50", name: "المنيعة", img: "https://images.unsplash.com/photo-1509316785289-025f5d846b35?w=200" }
 ];
-// Fill up to reach more wilayas as a mock
-for (let i = 8; i <= 69; i++) {
-  if (!ALGERIA_WILAYAS.find(w => parseInt(w.id) === i)) {
-    ALGERIA_WILAYAS.push({ id: i.toString().padStart(2, '0'), name: "ولاية " + i, img: "https://via.placeholder.com/200?text=ZaLo+" + i });
+// Fill up to reach 69 wilayas as requested (official 58 + extra placeholders)
+const ALL_WILAYAS_NAMES = [
+  "أدرار", "الشلف", "الأغواط", "أم البواقي", "باتنة", "بجاية", "بسكرة", "بشار", "البليدة", "البويرة",
+  "تمنراست", "تبسة", "تلمسان", "تيارت", "تيزي وزو", "الجزائر", "الجلفة", "جيجل", "سطيف", "سعيدة",
+  "سكيكدة", "سيدي بلعباس", "عنابة", "قالمة", "قسنطينة", "المدية", "مستغانم", "المسيلة", "معسكر", "ورقلة",
+  "وهران", "البيض", "إليزي", "برج بوعريريج", "بومرداس", "الطارف", "تندوف", "تيسمسيلت", "الوادي", "خنشلة",
+  "سوق أهراس", "تيبازة", "ميلة", "عين الدفلى", "النعامة", "عين تموشنت", "غرداية", "غليزان", "تيميمون", "برج باجي مختار",
+  "أولاد جلال", "بني عباس", "إن صالح", "إن قزام", "تقرت", "جانت", "المغير", "المنيعة"
+];
+for (let i = 0; i < 69; i++) {
+  const name = ALL_WILAYAS_NAMES[i] || `ولاية جديدة ${i + 1}`;
+  if (!ALGERIA_WILAYAS.find(w => w.name === name)) {
+    ALGERIA_WILAYAS.push({ id: (i + 1).toString().padStart(2, '0'), name: name, img: `https://via.placeholder.com/200?text=${encodeURIComponent(name)}` });
   }
 }
 
 const BALADIYAS = {
-  "الجزائر": ["الجزائر الوسطى", "باب الواد", "الحراش", "بئر مراد رايس", "سيدي امحمد"],
+  "الجزائر": ["الجزائر الوسطى", "باب الواد", "الحراش", "بئر مراد رايس", "سيدي امحمد", "القبة", "درارية"],
   "المنيعة": ["المنيعة", "حاسي القارة"],
-  "وهران": ["وهران", "بئر الجير", "السانية"],
-  "default": ["مركز الولاية", "بلدية 1", "بلدية 2"]
+  "وهران": ["وهران", "بئر الجير", "السانية", "أرزيو", "قديل"],
+  "سطيف": ["سطيف", "العلمة", "عين أرنات", "بوقاعة"],
+  "قسنطينة": ["قسنطينة", "الخروب", "حامة بوزيان", "زيغود يوسف"],
+  "غرداية": ["غرداية", "بني يزقن", "بونورة", "القرارة", "متليلي"],
+  "default": ["مركز البلدية", "بلدية 1", "بلدية 2"]
 };
 
 const CATEGORIES_NEW = [
   { name: "قطع غيار السيارات", icon: "⚙️" },
   { name: "مواد غذائية", icon: "🍎" },
   { name: "ملابس وأزياء", icon: "👗" },
-  { name: "إلكترونيات", icon: "📱" },
-  { name: "أثاث ومنزل", icon: "🏠" }
+  { name: "إلكترونيات وهواتف", icon: "📱" },
+  { name: "أثاث ومنزل", icon: "🏠" },
+  { name: "مستلزمات طبية", icon: "🏥" },
+  { name: "أدوات بناء", icon: "🏗️" },
+  { name: "مكتبة وأدوات مدرسية", icon: "📚" },
+  { name: "عطور وتجميل", icon: "💄" }
 ];
 
 // Initialize Wilaya Screen
@@ -2079,36 +2108,32 @@ window.selectBaladiya = function(name) {
 
 window.selectCategoryNew = function(cat) {
   state.selectedCategoryNew = cat;
-  document.getElementById('stores-title-new').innerText = `متاجر ${cat} في ${state.selectedBaladiya}`;
+  document.getElementById('stores-title-new').innerText = `منتجات ${cat} في ${state.selectedBaladiya}`;
   
-  // Find stores (mock logic based on loaded products or static list)
-  const storesSet = new Set();
-  state.loadedProducts.forEach(p => {
-    if (p.storeName || p.store_name) storesSet.add(p.storeName || p.store_name);
+  // Directly show products for this category in the selected baladiya/wilaya
+  // We filter from state.loadedProducts (mocking the search)
+  const filteredProducts = state.loadedProducts.filter(p => {
+    const pCat = p.category || '';
+    return pCat.includes(cat) || cat.includes(pCat) || p.name.includes(cat);
   });
-  
-  const stores = Array.from(storesSet).map(s => ({ name: s, category: cat, location: state.selectedBaladiya }));
-  // Add some mock stores if empty
-  if (stores.length === 0) {
-    stores.push({ name: "متجر الوفاء", category: cat, location: state.selectedBaladiya });
-    stores.push({ name: "مؤسسة النور", category: cat, location: state.selectedBaladiya });
+
+  // If no products found, show some mock products for demonstration
+  if (filteredProducts.length === 0) {
+    for (let i = 1; i <= 4; i++) {
+      filteredProducts.push({
+        id: `mock-${cat}-${i}`,
+        name: `${cat} - عينة ${i}`,
+        price: (Math.random() * 5000 + 500).toFixed(0),
+        image: `https://via.placeholder.com/150?text=${encodeURIComponent(cat)}`,
+        store_name: "متجر الوفاء",
+        wilaya: state.selectedWilaya,
+        baladiya: state.selectedBaladiya,
+        category: cat
+      });
+    }
   }
 
-  const container = document.getElementById('stores-list-container');
-  container.innerHTML = stores.map(s => `
-    <div class="category-item-new" onclick="viewStoreProfile('${s.name}', '${s.category}')">
-      <div style="display: flex; align-items: center; gap: 12px;">
-        <div style="width: 45px; height: 45px; border-radius: 50%; background: #e0f2fe; display: flex; align-items: center; justify-content: center; font-weight: 800; color: var(--navy);">
-          ${s.name.charAt(0)}
-        </div>
-        <div>
-          <div style="font-weight: 800; font-size: 14px;">${s.name}</div>
-          <div style="font-size: 11px; color: var(--gray);">${s.category} • ${s.location}</div>
-        </div>
-      </div>
-      <i class="fa-solid fa-angle-left"></i>
-    </div>
-  `).join('');
+  renderProductsInGrid(filteredProducts, 'stores-list-container');
   showScreen('screen-stores-list');
 };
 
@@ -2148,6 +2173,10 @@ function renderProductsInGrid(prods, containerId) {
       <div class="product-details-mockup">
         <div class="product-name-mockup">${p.name}</div>
         <div class="product-price-mockup">${p.price} دج</div>
+        <div style="font-size: 10px; color: var(--gray); margin-top: 4px; border-top: 1px solid #f1f5f9; padding-top: 4px;">
+          <div style="font-weight: 700; color: var(--navy);"><i class="fa-solid fa-store" style="font-size: 8px;"></i> ${p.store_name || p.storeName || 'متجر غير معروف'}</div>
+          <div><i class="fa-solid fa-location-dot" style="font-size: 8px;"></i> ${p.wilaya || state.selectedWilaya || 'الجزائر'}</div>
+        </div>
       </div>
     </div>
   `).join('');
@@ -2950,15 +2979,25 @@ window.executeHomeSearch = function() {
   renderProductsList(filtered);
 };
 
+window.openProductDetails = function(prodId) {
+  // Find product from either state.loadedProducts or a mock search
+  const prod = state.loadedProducts.find(p => p.id === prodId);
+  if (prod) {
+    window.openProd(prod.id, prod.name, prod.price, prod.image || prod.image_url, prod.emoji, prod.store_id || prod.storeId, prod.store_name || prod.storeName, prod.wilaya, prod.category);
+  }
+};
+
 // Product detail modal
-window.openProd = function(id, name, price, img, emoji, storeId, storeName) {
-  state.selectedProduct = { id, name, price, img, emoji, storeId, storeName };
+window.openProd = function(id, name, price, img, emoji, storeId, storeName, wilaya, category) {
+  state.selectedProduct = { id, name, price, img, emoji, storeId, storeName, wilaya, category };
   state.qty = 1;
 
   document.getElementById('pd-modal-title').textContent = "تفاصيل السلعة المعروضة";
   document.getElementById('pd-name').textContent = name;
-  document.getElementById('pd-price').textContent = price.toLocaleString() + ' دج';
+  document.getElementById('pd-price').textContent = (parseFloat(price) || 0).toLocaleString() + ' دج';
   document.getElementById('pd-store').textContent = `🏪 توفير: ${storeName || 'محل شريك معتمد'}`;
+  document.getElementById('pd-wilaya-tag').innerHTML = `<i class="fa-solid fa-location-dot"></i> ولاية: ${wilaya || state.selectedWilaya || 'الجزائر'}`;
+  document.getElementById('pd-category-tag').innerHTML = `<i class="fa-solid fa-tags"></i> الصنف: ${category || 'عام'}`;
   document.getElementById('qty-v').textContent = '1';
   
   const imgWrap = document.getElementById('pd-img-wrap');
