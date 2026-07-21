@@ -365,11 +365,23 @@
   console.log("Customer login script starting...");
 
   async function init() {
-    try {
-      const [{ supabaseClient }, { EmailVerification }] = await Promise.all([
-        import('./js/supabase-db-compat.js'),
-        import('./js/email-verification.js')
-      ]);
+      try {
+        const filesToCheck = ['/js/supabase-db-compat.js', '/js/email-verification.js'];
+        for (const f of filesToCheck) {
+          try {
+            const res = await fetch(f, { method: 'HEAD' });
+            console.log(`[Diagnostic] ${f} -> HTTP ${res.status}`);
+            if (!res.ok) {
+              throw new Error(`فشل تحميل الملف ${f} — رمز الحالة: ${res.status}`);
+            }
+          } catch (fetchErr) {
+            throw new Error(`تعذّر الوصول للملف ${f}: ${fetchErr.message}`);
+          }
+        }
+        const [{ supabaseClient }, { EmailVerification }] = await Promise.all([
+          import('/js/supabase-db-compat.js'),
+          import('/js/email-verification.js')
+        ]);
 
       console.log("Imports successful");
 
@@ -578,7 +590,12 @@
       function showSuccess(msg) { successDiv.textContent = msg; successDiv.style.display = 'block'; }
     } catch (e) {
       console.error("Initialization failed:", e);
-      document.getElementById('errorMsg').textContent = "تعذّر تحميل خدمة تسجيل الدخول، يرجى تحديث الصفحة أو المحاولة لاحقًا.";
+      const detail = (e && e.message) ? e.message : String(e);
+      const stack = (e && e.stack) ? e.stack.split('\n').slice(0,3).join(' | ') : '';
+      document.getElementById('errorMsg').innerHTML =
+        "⚠️ تعذّر تحميل خدمة تسجيل الدخول.<br>" +
+        "<small style='direction:ltr; display:block; margin-top:6px; font-family:monospace; " +
+        "font-size:10px; word-break:break-all;'>" + detail + "<br>" + stack + "</small>";
       document.getElementById('errorMsg').style.display = 'block';
     }
   }
