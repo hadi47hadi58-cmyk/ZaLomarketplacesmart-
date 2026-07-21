@@ -13,7 +13,9 @@ export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
     auth: {
         persistSession: true,
         autoRefreshToken: true,
-        detectSessionInUrl: true
+        detectSessionInUrl: true,
+        storageKey: 'zalo_auth_session', // موحد لضمان التزامن
+        storage: localStorage
     }
 });
 
