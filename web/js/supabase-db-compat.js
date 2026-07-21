@@ -78,9 +78,13 @@ window.handleUserRedirect = async function(providedSession = null) {
     }
 
     // تعيين الدور الافتراضي كزبون في حال تعذر الحصول على الرتبة من الجداول
+    const currentPath = window.location.pathname;
     if (!role) {
-        role = 'CUSTOMER';
-        console.log("[Role Routing] تعذر حل الرتبة من قاعدة البيانات. الدور الافتراضي: CUSTOMER");
+        if (currentPath.includes("store-login") || currentPath.includes("dashboard-store")) { role = "MERCHANT"; }
+        else if (currentPath.includes("admin-login") || currentPath.includes("dashboard-admin")) { role = "ADMIN"; }
+        else if (currentPath.includes("staff-login") || currentPath.includes("dashboard-manager")) { role = "MANAGER"; }
+        else { role = "CUSTOMER"; }
+        console.log("[Role Routing] تعذر حل الرتبة من قاعدة البيانات. الدور الافتراضي: " + role);
     }
 
     // 4. حفظ الدور بأمان في التخزين المحلي لتسهيل استخدامه في الواجهة الأمامية
@@ -89,10 +93,11 @@ window.handleUserRedirect = async function(providedSession = null) {
         sessionStorage.setItem('admin_logged_in_session', 'true');
     }
     
+    localStorage.setItem("zalo_role", role);
     console.log(`[Role Routing] تم تحديث الدور بنجاح: ${role}`);
 
     // 5. التوجيه الذكي لمنع التكرار اللانهائي (Smart Non-Looping Redirects)
-    const currentPath = window.location.pathname;
+    
     
     // فحص المسار الحالي للتأكد من عدم التكرار اللانهائي - مطابقة حقيقية للملفات القديمة الفعالة
     const isAlreadyOnAdmin = currentPath.endsWith('dashboard-admin.html');
@@ -1125,7 +1130,7 @@ window.onBiometricAuthSuccess = function() {
     }
     
     // Determine the role based on the current page to route appropriately
-    const currentPath = window.location.pathname;
+    
     let targetRole = 'ADMIN'; // Default to admin for general manager
     if (currentPath.includes('store-login') || currentPath.includes('dashboard-store')) {
         targetRole = 'MERCHANT';

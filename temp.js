@@ -698,12 +698,12 @@ function renderProductsList(list) {
         <p>لا توجد سلع معروضة حالياً بهذا القسم!</p>
       </div>
     `;
-    
+    return;
   }
 
   grid.innerHTML = '';
   list.forEach(p => {
-    if (p.deleted === true || p.status === 'deleted') 
+    if (p.deleted === true || p.status === 'deleted') return;
     const pName = p.name || p.productName || '';
     const imgUrl = p.image || p.imageURL || p.imageUrl || p.image_url || p.url || '';
     const price = p.price || 0;
@@ -1016,7 +1016,7 @@ window.removeFromCart = function(id) {
 window.checkoutCart = async function() {
   const cart = JSON.parse(localStorage.getItem('zalo_cart') || '[]');
   if (cart.length === 0) {
-    window.showToast("⚠️ سلتك فارغة حالياً!");
+    window.showToast("⚠️ سلتك فارغة حالياً!"); return;
     
   }
 
@@ -1027,7 +1027,7 @@ window.checkoutCart = async function() {
   const pay = document.getElementById('cart-pay').value;
 
   if (!name || !phone || !addr || !wilaya) {
-    window.showToast("⚠️ يرجى تعبئة كافة الحقول المطلوبة للتسليم!");
+    window.showToast("⚠️ يرجى تعبئة كافة الحقول المطلوبة للتسليم!"); return;
     
   }
 
@@ -1356,7 +1356,7 @@ window.applyActiveWilayaFilter = function() {
     bannerText.textContent = selected === 'الكل' ? 'الكل (توصيل لكافة الولايات)' : selected;
   }
   
-  if (!state.loadedProducts || state.loadedProducts.length === 0) return;
+  if (!state.loadedProducts) return;
   
   if (selected === 'الكل') {
     renderProductsList(state.loadedProducts);
