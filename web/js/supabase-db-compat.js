@@ -34,59 +34,46 @@ window.handleUserRedirect = async function(providedSession = null) {
     const user = session.user;
     const email = user.email ? user.email.toLowerCase().trim() : '';
     
-    // 2. فحص فوري لقائمة المشرفين البيضاء (Admin Whitelist Check)
-    const AD_LIST = [
-      'zinzinochop@gmail.com',
-      'zinochop2024@gmail.com',
-      'admin@zalo.dz',
-      'admin@zalo.com',
-      'manager@zalo.dz',
-      'manager@zalo.com'
-    ];
-
+    // 2. فحص فوري لرتبة المستخدم بناءً على جدول المستخدمين
     let role = null;
+    
+    // 3. محاولة جلب الدور من جدول public.users مع إمكانية التكرار في حال تأخر الاستجابة
+    let retries = 4;
+    while (retries > 0 && !role) {
+        try {
+            // محاولة القراءة من جدول المستخدمين الرئيسي (public.users) المرتبط عبر supabase_uid
+            const { data: dbUser, error: dbError } = await supabase
+                .from('users')
+                .select('role')
+                .eq('supabase_uid', user.id)
+                .maybeSingle();
 
-    if (AD_LIST.includes(email) || email.endsWith('@zalo-admin.com')) {
-        role = 'ADMIN';
-    } else {
-        // 3. محاولة جلب الدور من جدول public.users مع إمكانية التكرار في حال تأخر الاستجابة
-        let retries = 4;
-        while (retries > 0 && !role) {
-            try {
-                // محاولة القراءة من جدول المستخدمين الرئيسي (public.users) المرتبط عبر supabase_uid
-                const { data: dbUser, error: dbError } = await supabase
-                    .from('users')
-                    .select('role')
-                    .eq('supabase_uid', user.id)
-                    .maybeSingle();
-
-                if (dbUser && dbUser.role) {
-                    role = dbUser.role.toUpperCase();
-                    console.log(`[Role Routing] تم جلب الدور بنجاح من جدول المستخدمين الرئيسي: ${role}`);
-                    break;
-                }
-
-                // خطة احتياطية للتوافق: جلب الدور من جدول Profiles القديم
-                const { data: profileUser, error: profError } = await supabase
-                    .from('profiles')
-                    .select('role')
-                    .eq('id', user.id)
-                    .maybeSingle();
-
-                if (profileUser && profileUser.role) {
-                    role = profileUser.role.toUpperCase();
-                    console.log(`[Role Routing] تم جلب الدور بنجاح من جدول الملفات التعريفي الاحتياطي: ${role}`);
-                    break;
-                }
-            } catch (err) {
-                console.warn("[Role Routing] خطأ أثناء الاستعلام عن الرتبة في قاعدة البيانات:", err);
+            if (dbUser && dbUser.role) {
+                role = dbUser.role.toUpperCase();
+                console.log(`[Role Routing] تم جلب الدور بنجاح من جدول المستخدمين الرئيسي: ${role}`);
+                break;
             }
 
-            retries--;
-            if (!role && retries > 0) {
-                console.log(`[Role Routing] لم يكتمل تحديد الرتبة بعد. جاري إعادة المحاولة خلال 500ms... (المتبقي ${retries} محاولات)`);
-                await new Promise(r => setTimeout(r, 500));
+            // خطة احتياطية للتوافق: جلب الدور من جدول Profiles القديم
+            const { data: profileUser, error: profError } = await supabase
+                .from('profiles')
+                .select('role')
+                .eq('id', user.id)
+                .maybeSingle();
+
+            if (profileUser && profileUser.role) {
+                role = profileUser.role.toUpperCase();
+                console.log(`[Role Routing] تم جلب الدور بنجاح من جدول الملفات التعريفي الاحتياطي: ${role}`);
+                break;
             }
+        } catch (err) {
+            console.warn("[Role Routing] خطأ أثناء الاستعلام عن الرتبة في قاعدة البيانات:", err);
+        }
+
+        retries--;
+        if (!role && retries > 0) {
+            console.log(`[Role Routing] لم يكتمل تحديد الرتبة بعد. جاري إعادة المحاولة خلال 500ms... (المتبقي ${retries} محاولات)`);
+            await new Promise(r => setTimeout(r, 500));
         }
     }
 

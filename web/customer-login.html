@@ -363,286 +363,226 @@
 
 <script type="module">
   console.log("Customer login script starting...");
-  
-  import * as supabaseCompat from './js/supabase-db-compat.js';
-  import { EmailVerification } from './js/email-verification.js';
 
-  console.log("Imports successful:", { supabaseCompat, EmailVerification });
+  async function init() {
+    try {
+      const [{ supabaseClient }, { EmailVerification }] = await Promise.all([
+        import('./js/supabase-db-compat.js'),
+        import('./js/email-verification.js')
+      ]);
 
-  const { supabaseClient } = supabaseCompat;
-  console.log("Supabase client:", supabaseClient);
+      console.log("Imports successful");
 
-  const form = document.getElementById('loginForm');
-  const errorDiv = document.getElementById('errorMsg');
-  const successDiv = document.getElementById('successMsg');
-  const loginBtn = document.getElementById('loginBtn');
-  const sendOtpInlineBtn = document.getElementById('sendOtpInlineBtn');
-  const modeOtpBtn = document.getElementById('modeOtpBtn');
-  const modePassBtn = document.getElementById('modePassBtn');
-  const otpGroup = document.getElementById('otpGroup');
-  const passGroup = document.getElementById('passGroup');
-  const togglePass = document.getElementById('togglePass');
+      const form = document.getElementById('loginForm');
+      const errorDiv = document.getElementById('errorMsg');
+      const successDiv = document.getElementById('successMsg');
+      const loginBtn = document.getElementById('loginBtn');
+      const sendOtpInlineBtn = document.getElementById('sendOtpInlineBtn');
+      const modeOtpBtn = document.getElementById('modeOtpBtn');
+      const modePassBtn = document.getElementById('modePassBtn');
+      const otpGroup = document.getElementById('otpGroup');
+      const passGroup = document.getElementById('passGroup');
+      const togglePass = document.getElementById('togglePass');
 
-  let currentMode = 'otp'; 
-  let otpSent = false;
-  let countdownVal = 60;
-  let countdownTimer = null;
+      let currentMode = 'otp'; 
+      let otpSent = false;
+      let countdownVal = 60;
+      let countdownTimer = null;
 
-  modeOtpBtn.addEventListener('click', () => {
-    console.log("OTP button clicked");
-    currentMode = 'otp';
-    modeOtpBtn.classList.add('active');
-    modePassBtn.classList.remove('active');
-    otpGroup.style.display = 'block';
-    passGroup.style.display = 'none';
-    loginBtn.textContent = 'تسجيل الدخول 🚀';
-  });
+      modeOtpBtn.addEventListener('click', () => {
+        console.log("OTP button clicked");
+        currentMode = 'otp';
+        modeOtpBtn.classList.add('active');
+        modePassBtn.classList.remove('active');
+        otpGroup.style.display = 'block';
+        passGroup.style.display = 'none';
+        loginBtn.textContent = 'تسجيل الدخول 🚀';
+      });
 
-  modePassBtn.addEventListener('click', () => {
-    console.log("Password button clicked");
-    currentMode = 'password';
-    modeOtpBtn.classList.remove('active');
-    modePassBtn.classList.add('active');
-    otpGroup.style.display = 'none';
-    passGroup.style.display = 'block';
-    loginBtn.textContent = 'تسجيل الدخول 🚀';
-  });
-  
-  togglePass.addEventListener('click', () => {
-    console.log("Toggle password button clicked");
-    const passInput = document.getElementById('password');
-    passInput.type = passInput.type === 'password' ? 'text' : 'password';
-    togglePass.className = passInput.type === 'password' ? 'fa-solid fa-eye toggle-pass' : 'fa-solid fa-eye-slash toggle-pass';
-  });
+      modePassBtn.addEventListener('click', () => {
+        console.log("Password button clicked");
+        currentMode = 'password';
+        modeOtpBtn.classList.remove('active');
+        modePassBtn.classList.add('active');
+        otpGroup.style.display = 'none';
+        passGroup.style.display = 'block';
+        loginBtn.textContent = 'تسجيل الدخول 🚀';
+      });
+      
+      togglePass.addEventListener('click', () => {
+        console.log("Toggle password button clicked");
+        const passInput = document.getElementById('password');
+        passInput.type = passInput.type === 'password' ? 'text' : 'password';
+        togglePass.className = passInput.type === 'password' ? 'fa-solid fa-eye toggle-pass' : 'fa-solid fa-eye-slash toggle-pass';
+      });
 
-  // Also bind Google Login button programmatically
-  const googleLoginBtn = document.getElementById('googleLoginBtn');
-  if (googleLoginBtn) {
-    googleLoginBtn.addEventListener('click', () => {
-      console.log("Google login button clicked");
-      window.handleGoogleLogin();
-    });
-  }
+      const googleLoginBtn = document.getElementById('googleLoginBtn');
+      if (googleLoginBtn) {
+        googleLoginBtn.addEventListener('click', () => {
+          console.log("Google login button clicked");
+          window.handleGoogleLogin();
+        });
+      }
 
-  function startCountdown() {
-    clearInterval(countdownTimer);
-    countdownVal = 60;
-    if (sendOtpInlineBtn) {
-      sendOtpInlineBtn.disabled = true;
-      sendOtpInlineBtn.style.background = '#f0fdf4';
-      sendOtpInlineBtn.style.borderColor = '#bbf7d0';
-      sendOtpInlineBtn.style.color = '#16a34a';
-      sendOtpInlineBtn.innerHTML = `تم الإرسال (${countdownVal}ث)`;
-    }
-    
-    countdownTimer = setInterval(() => {
-      countdownVal--;
-      if (countdownVal <= 0) {
+      function startCountdown() {
         clearInterval(countdownTimer);
-        resetOtpInlineBtn();
-      } else {
+        countdownVal = 60;
         if (sendOtpInlineBtn) {
+          sendOtpInlineBtn.disabled = true;
+          sendOtpInlineBtn.style.background = '#f0fdf4';
+          sendOtpInlineBtn.style.borderColor = '#bbf7d0';
+          sendOtpInlineBtn.style.color = '#16a34a';
           sendOtpInlineBtn.innerHTML = `تم الإرسال (${countdownVal}ث)`;
         }
-      }
-    }, 1000);
-  }
-
-  function resetOtpInlineBtn() {
-    if (sendOtpInlineBtn) {
-      sendOtpInlineBtn.disabled = false;
-      sendOtpInlineBtn.style.background = 'rgba(14, 165, 233, 0.08)';
-      sendOtpInlineBtn.style.borderColor = 'rgba(14, 165, 233, 0.2)';
-      sendOtpInlineBtn.style.color = 'var(--green)';
-      sendOtpInlineBtn.innerHTML = 'إعادة إرسال 🔁';
-    }
-  }
-
-  async function handleSendOtp() {
-    console.log("[Login] handleSendOtp called.");
-    const email = document.getElementById('email').value.trim();
-    if (!email || !email.includes('@')) {
-      showError('يرجى إدخال بريد إلكتروني صحيح أولاً ✉️');
-      return;
-    }
-
-    if (sendOtpInlineBtn) {
-      sendOtpInlineBtn.disabled = true;
-      sendOtpInlineBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري الإرسال...';
-    }
-    errorDiv.style.display = 'none';
-    successDiv.style.display = 'none';
-
-    try {
-      console.log("[Login] Calling EmailVerification.sendCode for:", email);
-      const res = await EmailVerification.sendCode(email);
-      console.log("[Login] EmailVerification response:", res);
-      
-      if (res.success) {
-        otpSent = true;
-        showSuccess('📥 تم إرسال رمز التحقق إلى بريدك بنجاح!');
         
-        const otpField = document.getElementById('otpCode');
-        if (otpField) {
-          otpField.focus();
-        }
-        
-        startCountdown();
-      } else {
-        throw new Error(res.message || 'فشل إرسال الرمز.');
-      }
-    } catch (err) {
-      console.error("[Login] handleSendOtp error:", err);
-      showError(err.message || 'فشل إرسال رمز التحقق. يرجى المحاولة مجدداً.');
-      resetOtpInlineBtn();
-    }
-  }
-
-  if (sendOtpInlineBtn) {
-    sendOtpInlineBtn.addEventListener('click', handleSendOtp);
-  }
-
-  // Check if already logged in and redirect
-  async function checkActiveSession() {
-    try {
-      console.log("[Login] Checking active session...");
-      const { data: { session } } = await supabaseClient.auth.getSession();
-      if (session && session.user) {
-        console.log("[Login] Active session found. Redirecting...");
-        showSuccess('لديك جلسة نشطة بالفعل. جاري التوجيه...');
-        await window.handleUserRedirect();
-      }
-    } catch (e) {
-      console.warn("[Login] Session check failed:", e);
-    }
-  }
-  checkActiveSession();
-
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    console.log("[Login] Login form submitted.");
-    errorDiv.style.display = 'none';
-    successDiv.style.display = 'none';
-
-    const email = document.getElementById('email').value.trim();
-
-    if (currentMode === 'otp') {
-      if (!otpSent) {
-        console.log("[Login] OTP not sent yet, handling send OTP...");
-        await handleSendOtp();
-        return;
-      }
-
-      // Verify OTP Code
-      const code = document.getElementById('otpCode').value.trim();
-      if (!code || code.length < 4) {
-        showError('يرجى إدخال رمز التحقق المكون من 6 أرقام 🔢');
-        return;
-      }
-
-      loginBtn.disabled = true;
-      loginBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري التحقق من الرمز...';
-
-      try {
-        console.log("[Login] Verifying OTP code:", code);
-        const res = await EmailVerification.verifyCode(email, code);
-        console.log("[Login] EmailVerification response:", res);
-        if (res.success) {
-          showSuccess('✨ تم التحقق من الرمز بنجاح! جاري تسجيل الدخول الآمن...');
-          setTimeout(() => {
-            if (window.triggerEmergencyBypass) {
-              window.triggerEmergencyBypass('CUSTOMER');
-            } else {
-              window.location.replace('customer-home.html');
+        countdownTimer = setInterval(() => {
+          countdownVal--;
+          if (countdownVal <= 0) {
+            clearInterval(countdownTimer);
+            resetOtpInlineBtn();
+          } else {
+            if (sendOtpInlineBtn) {
+              sendOtpInlineBtn.innerHTML = `تم الإرسال (${countdownVal}ث)`;
             }
-          }, 800);
+          }
+        }, 1000);
+      }
+
+      function resetOtpInlineBtn() {
+        if (sendOtpInlineBtn) {
+          sendOtpInlineBtn.disabled = false;
+          sendOtpInlineBtn.style.background = 'rgba(14, 165, 233, 0.08)';
+          sendOtpInlineBtn.style.borderColor = 'rgba(14, 165, 233, 0.2)';
+          sendOtpInlineBtn.style.color = 'var(--green)';
+          sendOtpInlineBtn.innerHTML = 'إعادة إرسال 🔁';
+        }
+      }
+
+      async function handleSendOtp() {
+        console.log("[Login] handleSendOtp called.");
+        const email = document.getElementById('email').value.trim();
+        if (!email || !email.includes('@')) {
+          showError('يرجى إدخال بريد إلكتروني صحيح أولاً ✉️');
+          return;
+        }
+
+        if (sendOtpInlineBtn) {
+          sendOtpInlineBtn.disabled = true;
+          sendOtpInlineBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري الإرسال...';
+        }
+        errorDiv.style.display = 'none';
+        successDiv.style.display = 'none';
+
+        try {
+          const res = await EmailVerification.sendCode(email);
+          if (res.success) {
+            otpSent = true;
+            showSuccess('📥 تم إرسال رمز التحقق إلى بريدك بنجاح!');
+            document.getElementById('otpCode').focus();
+            startCountdown();
+          } else {
+            throw new Error(res.message || 'فشل إرسال الرمز.');
+          }
+        } catch (err) {
+          console.error("[Login] handleSendOtp error:", err);
+          showError(err.message || 'فشل إرسال رمز التحقق. يرجى المحاولة مجدداً.');
+          resetOtpInlineBtn();
+        }
+      }
+
+      if (sendOtpInlineBtn) {
+        sendOtpInlineBtn.addEventListener('click', handleSendOtp);
+      }
+
+      async function checkActiveSession() {
+        try {
+          const { data: { session } } = await supabaseClient.auth.getSession();
+          if (session && session.user) {
+            showSuccess('لديك جلسة نشطة بالفعل. جاري التوجيه...');
+            await window.handleUserRedirect();
+          }
+        } catch (e) {
+          console.warn("[Login] Session check failed:", e);
+        }
+      }
+      checkActiveSession();
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        errorDiv.style.display = 'none';
+        successDiv.style.display = 'none';
+        const email = document.getElementById('email').value.trim();
+
+        if (currentMode === 'otp') {
+          if (!otpSent) {
+            await handleSendOtp();
+            return;
+          }
+          const code = document.getElementById('otpCode').value.trim();
+          if (!code || code.length < 4) {
+            showError('يرجى إدخال رمز التحقق المكون من 6 أرقام 🔢');
+            return;
+          }
+          loginBtn.disabled = true;
+          loginBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري التحقق...';
+          try {
+            const res = await EmailVerification.verifyCode(email, code);
+            if (res.success) {
+              showSuccess('✨ تم التحقق من الرمز بنجاح!');
+              setTimeout(() => window.location.replace('customer-home.html'), 800);
+            } else {
+              throw new Error(res.message || 'رمز التحقق غير صحيح.');
+            }
+          } catch (err) {
+            showError(err.message || 'رمز التحقق غير صحيح ❌');
+            loginBtn.disabled = false;
+            loginBtn.innerHTML = 'تأكيد الدخول الآمن 🔐';
+          }
         } else {
-          throw new Error(res.message || 'رمز التحقق غير صحيح.');
+          const password = document.getElementById('password').value.trim();
+          if (!password) { showError('يرجى إدخال كلمة المرور 🔑'); return; }
+          loginBtn.disabled = true;
+          loginBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري تسجيل الدخول...';
+          try {
+            const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+            if (error) throw error;
+            showSuccess('✨ تم تسجيل الدخول بنجاح!');
+            setTimeout(() => window.location.replace('customer-home.html'), 800);
+          } catch (err) {
+            showError(err.message || 'فشل تسجيل الدخول ❌');
+            loginBtn.disabled = false;
+            loginBtn.innerHTML = 'تسجيل الدخول 🚀';
+          }
         }
-      } catch (err) {
-        console.error("[Login] OTP Verification error:", err);
-        showError(err.message || 'رمز التحقق الذي أدخلته غير صحيح أو منتهي الصلاحية ❌');
-        loginBtn.disabled = false;
-        loginBtn.innerHTML = 'تأكيد الدخول الآمن 🔐';
-      }
-    } else {
-      // Password Mode
-      const password = document.getElementById('password').value.trim();
-      if (!password) {
-        showError('يرجى إدخال كلمة المرور 🔑');
-        return;
-      }
-      
-      loginBtn.disabled = true;
-      loginBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري تسجيل الدخول...';
+      });
 
-      try {
-        console.log("[Login] Signing in with password for:", email);
-        const { data, error } = await supabaseClient.auth.signInWithPassword({
-          email: email,
-          password: password,
-        });
-
-        if (error) throw error;
-        
-        showSuccess('✨ تم تسجيل الدخول بنجاح! جاري التوجيه...');
-        setTimeout(() => {
-            if (window.triggerEmergencyBypass) {
-              window.triggerEmergencyBypass('CUSTOMER');
-            } else {
-              window.location.replace('customer-home.html');
-            }
-        }, 800);
-      } catch (err) {
-        console.error("[Login] Password Login Error:", err);
-        showError(err.message || 'فشل تسجيل الدخول. تأكد من البريد وكلمة المرور ❌');
-        loginBtn.disabled = false;
-        loginBtn.innerHTML = 'تسجيل الدخول 🚀';
+      window.handleGoogleLogin = async function() {
+        try {
+          const client = window.supabaseClient || supabaseClient;
+          showSuccess("جاري بدء تسجيل الدخول الآمن عبر Google...");
+          if (window.AndroidInterface && typeof window.AndroidInterface.requestGoogleSignIn === 'function') {
+            window.AndroidInterface.requestGoogleSignIn();
+          } else {
+            const { error } = await client.auth.signInWithOAuth({
+              provider: 'google',
+              options: { redirectTo: window.location.origin + window.location.pathname }
+            });
+            if (error) throw error;
+          }
+        } catch (err) {
+          showError(err.message || 'حدث خطأ في Google');
+        }
       }
-    }
-  });
 
-  window.handleGoogleLogin = async function() {
-    console.log("[Login] handleGoogleLogin called.");
-    try {
-      const client = window.supabaseClient || supabaseClient;
-      if (!client) throw new Error("خدمة المصادقة غير متاحة حالياً");
-      
-      showSuccess("جاري بدء تسجيل الدخول الآمن عبر Google...");
-      
-      if (window.AndroidInterface && typeof window.AndroidInterface.requestGoogleSignIn === 'function') {
-        console.log("[Google Auth] Running inside Android WebView. Directing to Native SDK...");
-        window.AndroidInterface.requestGoogleSignIn();
-      } else {
-        console.log("[Google Auth] Running inside Browser. Directing to Web OAuth...");
-        const redirectUrl = window.location.origin + window.location.pathname;
-        console.log("[Google Auth] OAuth redirect URL:", redirectUrl);
-        const { error } = await client.auth.signInWithOAuth({
-          provider: 'google',
-          options: { redirectTo: redirectUrl }
-        });
-        if (error) throw error;
-      }
-    } catch (err) {
-      console.error("[Login] Google Auth Error:", err);
-      showError(err.message || 'حدث خطأ أثناء محاولة الدخول بواسطة Google');
+      function showError(msg) { errorDiv.textContent = msg; errorDiv.style.display = 'block'; }
+      function showSuccess(msg) { successDiv.textContent = msg; successDiv.style.display = 'block'; }
+    } catch (e) {
+      console.error("Initialization failed:", e);
+      document.getElementById('errorMsg').textContent = "تعذّر تحميل خدمة تسجيل الدخول، يرجى تحديث الصفحة أو المحاولة لاحقًا.";
+      document.getElementById('errorMsg').style.display = 'block';
     }
   }
-
-  function showError(msg) {
-    errorDiv.textContent = msg;
-    errorDiv.style.display = 'block';
-  }
-
-  function showSuccess(msg) {
-    successDiv.textContent = msg;
-    successDiv.style.display = 'block';
-  }
-
-  function resetBtn() {
-    loginBtn.disabled = false;
-    loginBtn.textContent = otpSent ? 'تأكيد الدخول الآمن 🔐' : 'أرسل رمز الدخول للبريد ✉️';
-  }
+  init();
 </script>
 
 </body>
