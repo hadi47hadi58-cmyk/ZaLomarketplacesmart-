@@ -121,8 +121,11 @@ window.handleUserRedirect = async function(providedSession = null) {
         console.log("[Role Routing] جاري توجيه الموظف إلى صفحة فريق العمل (dashboard-manager.html)...");
         window.location.replace('dashboard-manager.html');
     } else { // CUSTOMER
-        console.log("[Role Routing] جاري توجيه الزبون إلى لوحة وبوابة العميل (customer-home.html)...");
-        window.location.replace('customer-home.html');
+        // للسماح للزوار بتصفح بوابة العميل، نقوم بالتوجيه فقط إذا كنا في صفحة الدخول أو الفهرس
+        if (!isAlreadyOnCustomer && isLoginPage) {
+            console.log("[Role Routing] جاري توجيه الزبون إلى لوحة وبوابة العميل (customer-home.html)...");
+            window.location.replace('customer-home.html');
+        }
     }
 };
 

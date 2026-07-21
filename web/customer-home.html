@@ -16,20 +16,131 @@
   --g3: #0369a1;
   --gold: #d4af37;
   --gold2: #dfb134;
-  --bg: #fcfbfa; /* Light elegant cream background */
+  --bg: #f0f9ff; /* Very light sky blue background */
   --white: #ffffff;
   --text: #0f172a;
   --gray: #64748b;
-  --bd: #cbd5e1;
+  --bd: #e2e8f0;
   --red: #ef4444;
 
   /* Premium theme extensions */
-  --navy: #102a43;
+  --navy: #0c4a6e; /* Deep ocean blue */
   --metallic-gold: #d4af37;
   --premium-green: #0ea5e9;
   --premium-card-bg: #ffffff;
   --premium-text-dark: #0f172a;
   --premium-text-muted: #64748b;
+}
+
+/* New UI Flow Styles */
+.wilaya-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  padding: 16px;
+}
+.wilaya-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+.wilaya-card:active { transform: scale(0.92); }
+.wilaya-img-wrapper {
+  width: 80px;
+  height: 80px;
+  border-radius: 20px;
+  background: var(--white);
+  border: 2px solid var(--bd);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+.wilaya-img-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.wilaya-name {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--navy);
+  text-align: center;
+}
+
+.baladiya-list, .category-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px;
+}
+.baladiya-item, .category-item-new {
+  background: var(--white);
+  padding: 14px 20px;
+  border-radius: 12px;
+  border: 1px solid var(--bd);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.baladiya-item:active, .category-item-new:active {
+  background: #f0f9ff;
+  border-color: var(--g1);
+}
+
+/* Store Profile Styles */
+.store-profile-header {
+  position: relative;
+  width: 100%;
+  background: var(--white);
+}
+.store-cover {
+  width: 100%;
+  height: 160px;
+  background: linear-gradient(135deg, var(--g1), var(--g3));
+  position: relative;
+}
+.store-cover img { width: 100%; height: 100%; object-fit: cover; }
+.store-avatar-container {
+  position: absolute;
+  bottom: -40px;
+  right: 20px;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: var(--white);
+  padding: 4px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+.store-avatar-container img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+.store-info-section {
+  padding: 50px 20px 20px 20px;
+}
+.store-title-new { font-size: 20px; font-weight: 800; color: var(--navy); margin-bottom: 4px; }
+.store-meta-new { font-size: 13px; color: var(--gray); display: flex; align-items: center; gap: 8px; }
+
+.section-header-new {
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.section-header-new h2 { font-size: 18px; font-weight: 800; color: var(--navy); }
+.back-btn-new {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--navy);
+  font-size: 18px;
+  cursor: pointer;
 }
 
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -1304,18 +1415,26 @@ body {
       </div>
     </div>
 
-    <div class="sm-sec">تواصل معنا</div>
-    <div class="smi" onclick="closeSide(); openLink('https://www.facebook.com')">
-      <span class="si" style="color:#1877f2"><i class="fa-brands fa-facebook"></i></span>
-      <div><div class="sn">الصفحة الرسمية على فيسبوك</div></div>
-    </div>
-    <div class="smi" onclick="closeSide(); openLink('https://www.instagram.com')">
-      <span class="si" style="color:#e1306c"><i class="fa-brands fa-instagram"></i></span>
-      <div><div class="sn">الحساب الرسمي على إنستغرام</div></div>
+    <div class="sm-sec">الدعم والمعلومات</div>
+    <div class="smi" onclick="closeSide(); alert('ZaLo Market هي منصة جزائرية تربط المتاجر المحلية بزبائنهم وتوفر خدمات التوصيل الفوري في 69 ولاية كاملة.')">
+      <span class="si" style="color:var(--sky-blue)"><i class="fa-solid fa-circle-info"></i></span>
+      <div>
+        <div class="sn">من نحن</div>
+        <div class="sd">تعرف على قصة ورؤية منصة ZaLo</div>
+      </div>
     </div>
     <div class="smi" onclick="closeSide(); openWA('0698694010', 'مرحباً إدارة ZaLo')">
       <span class="si" style="color:#25d366"><i class="fa-brands fa-whatsapp"></i></span>
       <div><div class="sn">تواصل فوري واتساب</div><div class="sd">0698694010</div></div>
+    </div>
+
+    <div class="sm-sec">الإعدادات والحساب</div>
+    <div class="smi" onclick="closeSide(); window.location.href='customer-login.html'">
+      <span class="si" style="color:var(--brand-green)"><i class="fa-solid fa-right-to-bracket"></i></span>
+      <div>
+        <div class="sn">تسجيل الدخول</div>
+        <div class="sd">إدارة حسابك ومتابعة طلباتك المحفوظة</div>
+      </div>
     </div>
 
     <div class="sm-sec">النظام والصيانة</div>
@@ -1336,8 +1455,83 @@ body {
   </div>
 
 
-  <!-- SCREEN 1: HOME (الرئيسية) -->
-  <div class="screen active" id="screen-home">
+  <!-- SCREEN: WILAYA SELECTION (واجهة الولايات) -->
+  <div class="screen active" id="screen-wilayas">
+    <div class="section-header-new">
+      <h2>اختر ولايتك (69 ولاية)</h2>
+    </div>
+    <div class="wilaya-grid" id="wilaya-grid-container">
+      <!-- Will be populated by JS -->
+    </div>
+  </div>
+
+  <!-- SCREEN: BALADIYA SELECTION (واجهة البلديات) -->
+  <div class="screen" id="screen-baladiyas">
+    <div class="section-header-new">
+      <div class="back-btn-new" onclick="showScreen('screen-wilayas')"><i class="fa-solid fa-arrow-right"></i></div>
+      <h2 id="baladiya-title">اختر البلدية</h2>
+    </div>
+    <div class="baladiya-list" id="baladiya-list-container">
+      <!-- Will be populated by JS -->
+    </div>
+  </div>
+
+  <!-- SCREEN: CATEGORY SELECTION (واجهة التخصصات) -->
+  <div class="screen" id="screen-categories-new">
+    <div class="section-header-new">
+      <div class="back-btn-new" onclick="showScreen('screen-baladiyas')"><i class="fa-solid fa-arrow-right"></i></div>
+      <h2 id="category-title-new">ماذا تبحث في هذه البلدية؟</h2>
+    </div>
+    <div class="category-list" id="category-list-container">
+      <!-- Will be populated by JS -->
+    </div>
+  </div>
+
+  <!-- SCREEN: STORES LIST (واجهة المتاجر) -->
+  <div class="screen" id="screen-stores-list">
+    <div class="section-header-new">
+      <div class="back-btn-new" onclick="showScreen('screen-categories-new')"><i class="fa-solid fa-arrow-right"></i></div>
+      <h2 id="stores-title-new">المتاجر المتوفرة</h2>
+    </div>
+    <div class="category-list" id="stores-list-container" style="gap: 15px;">
+      <!-- Will be populated by JS -->
+    </div>
+  </div>
+
+  <!-- SCREEN: STORE PROFILE (واجهة المتجر - فيسبوك ستايل) -->
+  <div class="screen" id="screen-store-profile">
+    <div class="store-profile-header">
+      <div class="back-btn-new" style="position: absolute; top: 15px; left: 15px; z-index: 10; background: rgba(0,0,0,0.3); border-radius: 50%; color: white;" onclick="showScreen('screen-stores-list')">
+        <i class="fa-solid fa-arrow-left"></i>
+      </div>
+      <div class="store-cover">
+        <img id="store-cover-img" src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=800" alt="Cover">
+      </div>
+      <div class="store-avatar-container">
+        <img id="store-logo-img" src="https://images.unsplash.com/photo-1534723452862-4c874018d66d?w=200" alt="Logo">
+      </div>
+    </div>
+    <div class="store-info-section">
+      <h1 class="store-title-new" id="store-profile-name">اسم المتجر</h1>
+      <div class="store-meta-new">
+        <span id="store-profile-category"><i class="fa-solid fa-tag"></i> تخصص</span>
+        <span id="store-profile-location"><i class="fa-solid fa-location-dot"></i> الموقع</span>
+      </div>
+      <div style="margin-top: 15px; display: flex; gap: 10px;">
+        <button class="btn-p" style="flex: 1; font-size: 12px; height: 38px;"><i class="fa-solid fa-message"></i> مراسلة</button>
+        <button class="btn-s" style="flex: 1; font-size: 12px; height: 38px;"><i class="fa-solid fa-phone"></i> اتصال</button>
+      </div>
+    </div>
+    <div class="screen-title" style="margin-top: 0; background: #fff;">
+      <i class="fa-solid fa-box-open"></i> منتجات المتجر
+    </div>
+    <div class="products-grid-mockup" id="store-products-grid" style="padding: 16px;">
+      <!-- Products will be filtered here -->
+    </div>
+  </div>
+
+  <!-- SCREEN 1: HOME (الرئيسية - ستبقى للمنتجات العامة) -->
+  <div class="screen" id="screen-home">
     <!-- Promo Banner -->
     <div class="banner-mockup">
       <div class="banner-text-content">
@@ -1800,7 +1994,173 @@ const state = {
   qty: 1
 };
 
-// --- AI CHATBOT FUNCTIONALITY ---
+// Sub-screens Navigation
+window.showScreen = function(screenId) {
+  document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
+  const target = document.getElementById(screenId);
+  if (target) target.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+};
+
+// Data for new flow
+const ALGERIA_WILAYAS = [
+  { id: "01", name: "أدرار", img: "https://images.unsplash.com/photo-1548013146-72479768bbaa?w=200" },
+  { id: "02", name: "الشلف", img: "https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=200" },
+  { id: "16", name: "الجزائر", img: "https://images.unsplash.com/photo-1551632432-c735e7a030bc?w=200" },
+  { id: "31", name: "وهران", img: "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=200" },
+  { id: "50", name: "المنيعة", img: "https://images.unsplash.com/photo-1509316785289-025f5d846b35?w=200" },
+  { id: "19", name: "سطيف", img: "https://images.unsplash.com/photo-1542640244-7e672d6cef21?w=200" },
+  { id: "25", name: "قسنطينة", img: "https://images.unsplash.com/photo-1541963463532-d68292c34b19?w=200" }
+];
+// Fill up to reach more wilayas as a mock
+for (let i = 8; i <= 69; i++) {
+  if (!ALGERIA_WILAYAS.find(w => parseInt(w.id) === i)) {
+    ALGERIA_WILAYAS.push({ id: i.toString().padStart(2, '0'), name: "ولاية " + i, img: "https://via.placeholder.com/200?text=ZaLo+" + i });
+  }
+}
+
+const BALADIYAS = {
+  "الجزائر": ["الجزائر الوسطى", "باب الواد", "الحراش", "بئر مراد رايس", "سيدي امحمد"],
+  "المنيعة": ["المنيعة", "حاسي القارة"],
+  "وهران": ["وهران", "بئر الجير", "السانية"],
+  "default": ["مركز الولاية", "بلدية 1", "بلدية 2"]
+};
+
+const CATEGORIES_NEW = [
+  { name: "قطع غيار السيارات", icon: "⚙️" },
+  { name: "مواد غذائية", icon: "🍎" },
+  { name: "ملابس وأزياء", icon: "👗" },
+  { name: "إلكترونيات", icon: "📱" },
+  { name: "أثاث ومنزل", icon: "🏠" }
+];
+
+// Initialize Wilaya Screen
+function initWilayaFlow() {
+  const container = document.getElementById('wilaya-grid-container');
+  if (!container) return;
+  container.innerHTML = ALGERIA_WILAYAS.map(w => `
+    <div class="wilaya-card" onclick="selectWilaya('${w.name}')">
+      <div class="wilaya-img-wrapper">
+        <img src="${w.img}" alt="${w.name}">
+      </div>
+      <div class="wilaya-name">${w.name}</div>
+    </div>
+  `).join('');
+}
+
+window.selectWilaya = function(name) {
+  state.selectedWilaya = name;
+  document.getElementById('baladiya-title').innerText = `بلديات ولاية ${name}`;
+  const list = BALADIYAS[name] || BALADIYAS["default"];
+  const container = document.getElementById('baladiya-list-container');
+  container.innerHTML = list.map(b => `
+    <div class="baladiya-item" onclick="selectBaladiya('${b}')">
+      <span>${b}</span>
+      <i class="fa-solid fa-angle-left"></i>
+    </div>
+  `).join('');
+  showScreen('screen-baladiyas');
+};
+
+window.selectBaladiya = function(name) {
+  state.selectedBaladiya = name;
+  const container = document.getElementById('category-list-container');
+  container.innerHTML = CATEGORIES_NEW.map(c => `
+    <div class="category-item-new" onclick="selectCategoryNew('${c.name}')">
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <span style="font-size: 20px;">${c.icon}</span>
+        <span style="font-weight: 700;">${c.name}</span>
+      </div>
+      <i class="fa-solid fa-angle-left"></i>
+    </div>
+  `).join('');
+  showScreen('screen-categories-new');
+};
+
+window.selectCategoryNew = function(cat) {
+  state.selectedCategoryNew = cat;
+  document.getElementById('stores-title-new').innerText = `متاجر ${cat} في ${state.selectedBaladiya}`;
+  
+  // Find stores (mock logic based on loaded products or static list)
+  const storesSet = new Set();
+  state.loadedProducts.forEach(p => {
+    if (p.storeName || p.store_name) storesSet.add(p.storeName || p.store_name);
+  });
+  
+  const stores = Array.from(storesSet).map(s => ({ name: s, category: cat, location: state.selectedBaladiya }));
+  // Add some mock stores if empty
+  if (stores.length === 0) {
+    stores.push({ name: "متجر الوفاء", category: cat, location: state.selectedBaladiya });
+    stores.push({ name: "مؤسسة النور", category: cat, location: state.selectedBaladiya });
+  }
+
+  const container = document.getElementById('stores-list-container');
+  container.innerHTML = stores.map(s => `
+    <div class="category-item-new" onclick="viewStoreProfile('${s.name}', '${s.category}')">
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <div style="width: 45px; height: 45px; border-radius: 50%; background: #e0f2fe; display: flex; align-items: center; justify-content: center; font-weight: 800; color: var(--navy);">
+          ${s.name.charAt(0)}
+        </div>
+        <div>
+          <div style="font-weight: 800; font-size: 14px;">${s.name}</div>
+          <div style="font-size: 11px; color: var(--gray);">${s.category} • ${s.location}</div>
+        </div>
+      </div>
+      <i class="fa-solid fa-angle-left"></i>
+    </div>
+  `).join('');
+  showScreen('screen-stores-list');
+};
+
+window.viewStoreProfile = function(name, cat) {
+  document.getElementById('store-profile-name').innerText = name;
+  document.getElementById('store-profile-category').innerHTML = `<i class="fa-solid fa-tag"></i> ${cat}`;
+  document.getElementById('store-profile-location').innerHTML = `<i class="fa-solid fa-location-dot"></i> ${state.selectedBaladiya}, ${state.selectedWilaya}`;
+  
+  // Random cover and logo
+  const covers = [
+    "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=800",
+    "https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=800",
+    "https://images.unsplash.com/photo-1534723452862-4c874018d66d?w=800"
+  ];
+  document.getElementById('store-cover-img').src = covers[Math.floor(Math.random() * covers.length)];
+  
+  // Filter products for this store
+  const storeProds = state.loadedProducts.filter(p => (p.storeName || p.store_name) === name);
+  const container = document.getElementById('store-products-grid');
+  
+  if (storeProds.length === 0) {
+    container.innerHTML = `<div style="grid-column: span 2; text-align: center; padding: 40px 0; color: var(--gray);">لا يوجد منتجات معروضة حالياً لهذا المتجر.</div>`;
+  } else {
+    renderProductsInGrid(storeProds, 'store-products-grid');
+  }
+  
+  showScreen('screen-store-profile');
+};
+
+function renderProductsInGrid(prods, containerId) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = prods.map(p => `
+    <div class="product-card-mockup" onclick="window.openProductDetails('${p.id}')">
+      <div class="product-img-wrap-mockup">
+        <img src="${p.image || p.image_url || 'https://via.placeholder.com/150'}" alt="${p.name}">
+      </div>
+      <div class="product-details-mockup">
+        <div class="product-name-mockup">${p.name}</div>
+        <div class="product-price-mockup">${p.price} دج</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// Update initialization to start with Wilaya flow
+const originalInit = window.onload;
+window.onload = function() {
+  if (originalInit) originalInit();
+  initWilayaFlow();
+};
+
+// ... existing code ...
 let chatbotOpen = false;
 let chatHistory = [];
 
@@ -2151,12 +2511,20 @@ onAuthStateChanged(auth, async (user) => {
       };
     } else {
       console.warn("PageGuard: Session not found, acting as Guest...");
-      user = { id: 'guest', email: 'زائر' };
-      
+      user = { id: 'guest', email: 'زائر - ZaLo Guest' };
     }
   }
 
   window.currentUser = user;
+  
+  // Update UI for Guest
+  const emailTag = document.getElementById('drawer-user-email');
+  const idTag = document.getElementById('drawer-user-id');
+  if (emailTag) emailTag.innerText = user.email || 'زائر';
+  if (idTag) idTag.innerText = user.id === 'guest' ? 'GUEST-69' : user.id.substring(0, 8);
+
+  const homeEmail = document.getElementById('customer-email');
+  if (homeEmail) homeEmail.innerText = user.email === 'زائر - ZaLo Guest' ? 'مرحباً بك في ZaLo' : user.email;
   
   // Set customer profile UI details
   document.getElementById('customer-email').textContent = user.email || 'مستخدم ZaLo';
