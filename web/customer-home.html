@@ -2390,7 +2390,8 @@ async function loadProducts() {
   try {
     const rawLocal = localStorage.getItem('zalo_products');
     if (rawLocal) {
-      localProds = JSON.parse(rawLocal);
+      const parsed = JSON.parse(rawLocal);
+      if (Array.isArray(parsed)) localProds = parsed;
     }
   } catch (e) {
     console.error("Failed to parse local products:", e);

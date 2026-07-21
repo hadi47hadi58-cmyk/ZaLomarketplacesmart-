@@ -580,10 +580,8 @@
               options: { redirectTo: window.location.origin + window.location.pathname }
             });
             if (error) throw error;
-            localStorage.setItem('zalo_session_jwt', (data && data.session) ? data.session.access_token : ('mock-pwd-token-' + Date.now()));
-            localStorage.setItem('zalo_user_email', email);
-            localStorage.setItem('zalo_uid', (data && data.user) ? data.user.id : ('CUSTOMER-' + Date.now()));
-            localStorage.setItem('zalo_role', 'CUSTOMER');
+            // Note: Redirection happens automatically. 
+            // Session handling is done in onAuthStateChange.
           }
         } catch (err) {
           showError(err.message || 'حدث خطأ في Google');
