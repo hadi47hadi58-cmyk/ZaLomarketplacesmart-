@@ -1429,7 +1429,7 @@ body {
     </div>
 
     <div class="sm-sec">الإعدادات والحساب</div>
-    <div class="smi" onclick="closeSide(); window.location.href='customer-login.html'">
+    <div class="smi" id="drawer-login-item" onclick="closeSide(); window.location.href='customer-login.html'">
       <span class="si" style="color:var(--brand-green)"><i class="fa-solid fa-right-to-bracket"></i></span>
       <div>
         <div class="sn">تسجيل الدخول</div>
@@ -1447,7 +1447,7 @@ body {
     </div>
 
     <div class="sm-footer">
-      <button class="btn-s" style="color:var(--red); border-color: rgba(239, 68, 68, 0.2); font-weight: 800; background: rgba(239, 68, 68, 0.05);" onclick="handleLogout()">
+      <button class="btn-s" id="drawer-logout-btn" style="color:var(--red); border-color: rgba(239, 68, 68, 0.2); font-weight: 800; background: rgba(239, 68, 68, 0.05); display:none;" onclick="handleLogout()">
         <i class="fa-solid fa-right-from-bracket"></i> تسجيل الخروج الآمن 🚪
       </button>
       <p style="margin-top:12px;">© 2026 ZaLo - بوابة الزبون الموحدة</p>
@@ -1455,8 +1455,8 @@ body {
   </div>
 
 
-  <!-- SCREEN: WILAYA SELECTION (واجهة الولايات) -->
-  <div class="screen active" id="screen-wilayas">
+  <!-- SCREEN 1: HOME (الرئيسية - واجهة الولايات الجديدة) -->
+  <div class="screen active" id="screen-home">
     <div class="section-header-new">
       <h2>اختر ولايتك (69 ولاية)</h2>
     </div>
@@ -1468,7 +1468,7 @@ body {
   <!-- SCREEN: BALADIYA SELECTION (واجهة البلديات) -->
   <div class="screen" id="screen-baladiyas">
     <div class="section-header-new">
-      <div class="back-btn-new" onclick="showScreen('screen-wilayas')"><i class="fa-solid fa-arrow-right"></i></div>
+      <div class="back-btn-new" onclick="showScreen('screen-home')"><i class="fa-solid fa-arrow-right"></i></div>
       <h2 id="baladiya-title">اختر البلدية</h2>
     </div>
     <div class="baladiya-list" id="baladiya-list-container">
@@ -1530,8 +1530,8 @@ body {
     </div>
   </div>
 
-  <!-- SCREEN 1: HOME (الرئيسية - ستبقى للمنتجات العامة) -->
-  <div class="screen" id="screen-home">
+  <!-- SCREEN 6: GENERAL PRODUCTS (المنتجات العامة) -->
+  <div class="screen" id="screen-general-products">
     <!-- Promo Banner -->
     <div class="banner-mockup">
       <div class="banner-text-content">
@@ -2522,6 +2522,12 @@ onAuthStateChanged(auth, async (user) => {
   const idTag = document.getElementById('drawer-user-id');
   if (emailTag) emailTag.innerText = user.email || 'زائر';
   if (idTag) idTag.innerText = user.id === 'guest' ? 'GUEST-69' : user.id.substring(0, 8);
+
+  const isGuest = user.id === 'guest';
+  const loginItem = document.getElementById('drawer-login-item');
+  const logoutBtn = document.getElementById('drawer-logout-btn');
+  if (loginItem) loginItem.style.display = isGuest ? 'flex' : 'none';
+  if (logoutBtn) logoutBtn.style.display = isGuest ? 'none' : 'block';
 
   const homeEmail = document.getElementById('customer-email');
   if (homeEmail) homeEmail.innerText = user.email === 'زائر - ZaLo Guest' ? 'مرحباً بك في ZaLo' : user.email;

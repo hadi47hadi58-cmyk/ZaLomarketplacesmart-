@@ -45,7 +45,7 @@ export class SessionManager {
     const path = window.location.pathname;
 
     const isGuestPage = path.includes('-login.html') || path.includes('register');
-    const isProtectedPage = path.includes('dashboard') || path.includes('customer-home.html');
+    const isProtectedPage = path.includes('dashboard');
 
     if (isAuth && isGuestPage) {
       console.log(`[SessionManager] Authenticated user on guest page. Redirecting to appropriate home.`);
