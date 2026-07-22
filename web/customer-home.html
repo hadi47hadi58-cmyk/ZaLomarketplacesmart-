@@ -2166,14 +2166,24 @@ const CATEGORIES_NEW = [
 function initWilayaFlow() {
   const container = document.getElementById('wilaya-grid-container');
   if (!container) return;
-  container.innerHTML = ALGERIA_WILAYAS.map(w => `
-    <div class="wilaya-card-circular" onclick="selectWilaya('${w.name}')">
-      <div class="wilaya-img-circle">
-        <img src="${w.img}" alt="${w.name}" onerror="this.src='https://via.placeholder.com/200?text=ZaLo'">
+  container.innerHTML = ALGERIA_WILAYAS.map(w => {
+    const hasPrompt = window.ALGERIA_PROMPTS && window.ALGERIA_PROMPTS[w.id];
+    return `
+      <div class="wilaya-card-circular" onclick="selectWilaya('${w.name}')">
+        <div style="position: relative;">
+          <div class="wilaya-img-circle">
+            <img src="${w.img}" alt="${w.name}" onerror="this.src='https://via.placeholder.com/200?text=ZaLo'">
+          </div>
+          ${hasPrompt ? `
+            <div onclick="event.stopPropagation(); openPromptModal('${w.id}')" style="position: absolute; bottom: -2px; right: -2px; background: linear-gradient(135deg, #D4AF37, #AA7C11); color: white; border-radius: 50%; width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; font-size: 11px; border: 2px solid white; box-shadow: 0 3px 8px rgba(0,0,0,0.25); cursor: pointer; z-index: 10;" title="عرض موجه الذكاء الاصطناعي">
+              <i class="fa-solid fa-camera"></i>
+            </div>
+          ` : ''}
+        </div>
+        <div class="wilaya-label-new">(${w.id}) ${w.name}</div>
       </div>
-      <div class="wilaya-label-new">(${w.id}) ${w.name}</div>
-    </div>
-  `).join('');
+    `;
+  }).join('');
 }
 
 window.selectWilaya = function(name) {
