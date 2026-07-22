@@ -2,7 +2,7 @@
 // ZaLo Smart Marketplace - Supabase Client Config (supabase-config.js)
 // Initializing Supabase Client with standard supabase-js.
 
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { createClient } from './supabase.js';
 
 // Supabase Credentials
 const SUPABASE_URL = window.SUPABASE_URL || "https://xwwzadxsqmmxerbolovz.supabase.co";
