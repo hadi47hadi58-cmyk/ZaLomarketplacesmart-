@@ -1489,6 +1489,10 @@ body {
       <div class="back-btn-new" onclick="showScreen('screen-home')"><i class="fa-solid fa-arrow-right"></i></div>
       <h2 id="baladiya-title">اختر البلدية</h2>
     </div>
+    
+    <!-- GORGEOUS LANDMARK CARD BANNER -->
+    <div id="wilaya-detail-banner"></div>
+
     <div class="baladiya-list" id="baladiya-list-container">
       <!-- Will be populated by JS -->
     </div>
@@ -1938,6 +1942,40 @@ body {
     </div>
   </div>
 
+  <!-- MODAL: CREATIVE PROMPT INFO -->
+  <div class="modal-overlay" id="promptModal" onclick="if(event.target===this) this.style.display='none'">
+    <div class="modal-content" style="max-width: 460px; border-radius: 20px; overflow: hidden; display: flex; flex-direction: column; background: #ffffff;">
+      <div class="modal-header" style="background: linear-gradient(135deg, var(--navy, #1e293b), #0f172a); color: white; padding: 18px 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid var(--brand-gold, #D4AF37);">
+        <span style="font-size: 15px; font-weight: 800; display: flex; align-items: center; gap: 8px;">
+          <i class="fa-solid fa-camera-retro" style="color: var(--brand-gold, #FFD700);"></i> بطاقة المعلم وموجه التوليد الذكي
+        </span>
+        <button class="modal-close" style="color: white; opacity: 0.8;" onclick="document.getElementById('promptModal').style.display='none'">✕</button>
+      </div>
+      <div class="modal-body" style="padding: 20px; display: flex; flex-direction: column; gap: 16px; background: #fbfbfb;">
+        <div id="prompt-modal-landmark-info" style="background: #ffffff; border: 1px solid #f0f0f0; border-radius: 12px; padding: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.02);">
+          <!-- Populated dynamically -->
+        </div>
+        
+        <div style="background: #1e293b; color: #f8fafc; border-radius: 12px; padding: 16px; position: relative; direction: ltr; font-family: monospace; font-size: 12px; line-height: 1.6; border: 1px solid #334155;">
+          <div style="font-size: 9px; text-transform: uppercase; letter-spacing: 1px; color: var(--brand-gold, #FFD700); font-weight: bold; margin-bottom: 8px; font-family: sans-serif;">TRAVEL PHOTOGRAPHY PROMPT</div>
+          <div id="prompt-modal-text" style="word-break: break-word;">
+            <!-- Populated dynamically -->
+          </div>
+          <button onclick="copyPromptText()" style="position: absolute; top: 12px; right: 12px; background: rgba(255,255,255,0.1); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 5px; font-family: 'Cairo', sans-serif;" onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'">
+            <i class="fa-solid fa-copy"></i> <span id="copy-text-btn">نسخ الموجه</span>
+          </button>
+        </div>
+
+        <div style="background: #fff8e1; border: 1px solid #ffe082; border-radius: 10px; padding: 12px; display: flex; gap: 10px; align-items: flex-start;">
+          <i class="fa-solid fa-circle-info" style="color: #ffb300; font-size: 16px; margin-top: 2px;"></i>
+          <p style="font-size: 11px; color: #5d4037; font-weight: bold; line-height: 1.5; margin: 0; text-align: right;">
+            استخدم هذا الموجه (Prompt) في محركات توليد الصور بالذكاء الاصطناعي مثل Midjourney أو DALL-E 3 أو Imagen للحصول على صور فوتوغرافية فائقة الجودة تطابق الهوية البصرية الحقيقية للمعالم الجزائرية.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- FLOATING CHATBOT BUTTON -->
   <div class="chatbot-floating-btn" id="chatbot-btn" onclick="toggleChatbot()">
     <i class="fa-solid fa-robot"></i>
@@ -2001,6 +2039,8 @@ import {
   getDoc
 } from "./js/supabase-db-compat.js";
 import { supabase } from "./js/supabase-config.js";
+import { ALGERIA_PROMPTS } from "./js/algeria-prompts.js";
+window.ALGERIA_PROMPTS = ALGERIA_PROMPTS;
 
 // Initialize Compatibility layer
 const app = initializeApp();
@@ -2147,7 +2187,95 @@ window.selectWilaya = function(name) {
       <i class="fa-solid fa-angle-left"></i>
     </div>
   `).join('');
+
+  // Landmark Prompt integration
+  const wilayaObj = ALGERIA_WILAYAS.find(w => w.name === name);
+  const banner = document.getElementById('wilaya-detail-banner');
+  if (banner && wilayaObj) {
+    const promptData = window.ALGERIA_PROMPTS ? window.ALGERIA_PROMPTS[wilayaObj.id] : null;
+    if (promptData) {
+      banner.style.display = 'block';
+      banner.innerHTML = `
+        <div class="wilaya-hero-card" style="margin: 16px; border-radius: 16px; overflow: hidden; background: white; box-shadow: 0 4px 15px rgba(0,0,0,0.06); border: 1px solid #eee; position: relative;">
+          <div style="height: 180px; width: 100%; position: relative; overflow: hidden;">
+            <img src="${wilayaObj.img}" alt="${name}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='https://via.placeholder.com/400?text=${name}'">
+            <div style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0)); padding: 15px; color: white;">
+              <div style="font-size: 13px; opacity: 0.9; font-weight: bold; margin-bottom: 2px;">ولاية ${name} (${wilayaObj.id})</div>
+              <div style="font-size: 16px; font-weight: 800; display: flex; align-items: center; gap: 6px;">
+                <i class="fa-solid fa-landmark" style="color: #FFD700;"></i>
+                <span>${promptData.landmark_ar}</span>
+              </div>
+            </div>
+          </div>
+          <div style="padding: 15px; background: #fafafa; display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+            <div style="font-size: 11.5px; color: #555; line-height: 1.4; flex: 1; text-align: right;">
+              ✨ يتوفر موجه التوليد الاحترافي (Creative Photo Prompt) لتوليد صور مطابقة للهوية الحقيقية بالذكاء الاصطناعي.
+            </div>
+            <button onclick="openPromptModal('${wilayaObj.id}')" style="background: var(--navy, #1e293b); color: white; border: none; padding: 8px 14px; border-radius: 8px; font-weight: 700; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 6px; white-space: nowrap; box-shadow: 0 2px 6px rgba(0,0,0,0.1);">
+              <i class="fa-solid fa-camera-retro"></i>
+              <span>عرض الموجه</span>
+            </button>
+          </div>
+        </div>
+      `;
+    } else {
+      banner.style.display = 'none';
+    }
+  } else if (banner) {
+    banner.style.display = 'none';
+  }
+
   showScreen('screen-baladiyas');
+};
+
+let currentPromptToCopy = "";
+
+window.openPromptModal = function(id) {
+  const promptData = window.ALGERIA_PROMPTS ? window.ALGERIA_PROMPTS[id] : null;
+  const wilayaObj = ALGERIA_WILAYAS.find(w => w.id === id);
+  if (!promptData || !wilayaObj) return;
+
+  currentPromptToCopy = promptData.prompt;
+  
+  const infoContainer = document.getElementById('prompt-modal-landmark-info');
+  infoContainer.innerHTML = `
+    <div style="display: flex; align-items: center; gap: 15px; text-align: right;">
+      <div style="width: 70px; height: 70px; border-radius: 12px; overflow: hidden; border: 2px solid var(--brand-gold);">
+        <img src="${wilayaObj.img}" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='https://via.placeholder.com/150?text=${wilayaObj.name}'">
+      </div>
+      <div>
+        <div style="font-size: 15px; font-weight: 800; color: var(--navy); margin-bottom: 4px;">ولاية ${wilayaObj.name} (${wilayaObj.id})</div>
+        <div style="font-size: 13px; font-weight: 700; color: var(--brand-gold); display: flex; align-items: center; gap: 6px;">
+          <i class="fa-solid fa-monument"></i>
+          <span>المعلم الأثري: ${promptData.landmark_ar}</span>
+        </div>
+      </div>
+    </div>
+  `;
+
+  document.getElementById('prompt-modal-text').innerText = promptData.prompt;
+  
+  // Reset copy button style
+  const btn = document.getElementById('copy-text-btn');
+  if (btn) btn.innerHTML = 'نسخ الموجه';
+  
+  const modal = document.getElementById('promptModal');
+  if (modal) modal.style.display = 'flex';
+};
+
+window.copyPromptText = function() {
+  if (!currentPromptToCopy) return;
+  navigator.clipboard.writeText(currentPromptToCopy).then(() => {
+    const btn = document.getElementById('copy-text-btn');
+    if (btn) {
+      btn.innerHTML = `<i class="fa-solid fa-check" style="color:#4ade80; margin-left: 4px;"></i> تم النسخ بنجاح!`;
+      setTimeout(() => {
+        btn.innerHTML = 'نسخ الموجه';
+      }, 2500);
+    }
+  }).catch(err => {
+    console.error('Failed to copy: ', err);
+  });
 };
 
 window.selectBaladiya = function(name) {
