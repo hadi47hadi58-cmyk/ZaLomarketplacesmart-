@@ -1314,9 +1314,9 @@ body {
     </div>
     
     <!-- Logo -->
-    <a href="customer-home.html" class="logo-mockup" style="display: flex; align-items: center; gap: 6px; text-decoration: none;">
+    <a href="customer-home.html" class="logo-mockup" style="display: flex; align-items: center; justify-content: center; text-decoration: none;">
       <!-- Circular Golden Palm Tree Mini Logo -->
-      <svg width="34" height="34" viewBox="0 0 100 100">
+      <svg width="42" height="42" viewBox="0 0 100 100">
         <!-- Gold Outer Circle with elegant gap at the top -->
         <path d="M 29,13.6 A 42,42 0 1,0 71,13.6" fill="none" stroke="#d4af37" stroke-width="4.5" stroke-linecap="round" />
         
@@ -1345,22 +1345,10 @@ body {
         <text x="35" y="62" font-family="'Cairo', sans-serif" font-weight="900" font-size="14" fill="#d4af37" text-anchor="middle">Z</text>
         <text x="65" y="62" font-family="'Cairo', sans-serif" font-weight="900" font-size="14" fill="#d4af37" text-anchor="middle">L</text>
       </svg>
-      <span class="logo-text" style="font-family: 'Great Vibes', cursive; font-weight: normal; font-size: 26px; color: #d4af37; margin-right: -2px; line-height: 1;">ZaLo</span>
     </a>
-    
-    <!-- Search bar -->
-    <div class="search-bar-mockup">
-      <input type="text" id="homeSearchInp" placeholder="ابحث باسم السلعة..." class="search-input-mockup" onkeypress="window.handleHomeSearch(event)">
-      <i class="fa-solid fa-magnifying-glass search-icon-mockup" onclick="window.executeHomeSearch()"></i>
-    </div>
     
     <!-- Right Actions -->
     <div class="header-icons-mockup">
-      <!-- Cart -->
-      <div class="header-icon-circle" onclick="switchTab('cart')">
-        <i class="fa-solid fa-shopping-cart"></i>
-        <div class="header-icon-badge" id="cart-badge-count" style="display: none;">0</div>
-      </div>
       <!-- Notifications -->
       <div class="header-icon-circle" onclick="openNotificationsModal()">
         <i class="fa-solid fa-bell"></i>
@@ -1778,11 +1766,23 @@ body {
   </div>
 
 
+  <!-- Search Overlay (Fixed above Bottom Navigation Bar) -->
+  <div id="bottom-search-overlay" style="display: none; position: fixed; bottom: 74px; left: 16px; right: 16px; background: white; border-radius: 30px; box-shadow: 0 -4px 25px rgba(0,0,0,0.12); padding: 6px; z-index: 1100; border: 1.5px solid var(--brand-gold, #D4AF37); align-items: center; gap: 8px; direction: rtl; max-width: 468px; margin: 0 auto;">
+    <input type="text" id="homeSearchInp" placeholder="ابحث باسم السلعة..." style="flex: 1; border: none; outline: none; padding: 8px 16px; font-family: 'Cairo', sans-serif; font-size: 13px; text-align: right; background: transparent;" onkeypress="window.handleHomeSearch(event)">
+    <button onclick="window.executeHomeSearch()" style="background: var(--navy, #102a43); color: white; border: none; width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;">
+      <i class="fa-solid fa-magnifying-glass" style="color: var(--brand-gold, #D4AF37); font-size: 14px;"></i>
+    </button>
+  </div>
+
   <!-- Bottom navigation bar -->
   <div class="bnav-mockup">
     <div class="bnav-btn-mockup active" id="bnav-home" onclick="switchTab('home')">
       <i class="fa-solid fa-house"></i>
       <span>الرئيسية</span>
+    </div>
+    <div class="bnav-btn-mockup" id="bnav-search" onclick="window.toggleBottomSearch()">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <span>البحث</span>
     </div>
     <div class="bnav-btn-mockup" id="bnav-cats" onclick="switchTab('cats')">
       <i class="fa-solid fa-folder-open"></i>
@@ -2167,7 +2167,6 @@ function initWilayaFlow() {
   const container = document.getElementById('wilaya-grid-container');
   if (!container) return;
   container.innerHTML = ALGERIA_WILAYAS.map(w => {
-    const hasPrompt = window.ALGERIA_PROMPTS && window.ALGERIA_PROMPTS[w.id];
     return `
       <div class="wilaya-card-circular" onclick="selectWilaya('${w.name}')">
         <div style="position: relative;">
@@ -2179,11 +2178,6 @@ function initWilayaFlow() {
             <!-- Actual image with z-index above fallback -->
             <img src="${w.img}" alt="${w.name}" style="position: relative; z-index: 2; width: 100%; height: 100%; object-fit: cover;" onerror="this.style.display='none'">
           </div>
-          ${hasPrompt ? `
-            <div onclick="event.stopPropagation(); openPromptModal('${w.id}')" style="position: absolute; bottom: -2px; right: -2px; background: linear-gradient(135deg, #D4AF37, #AA7C11); color: white; border-radius: 50%; width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; font-size: 11px; border: 2px solid white; box-shadow: 0 3px 8px rgba(0,0,0,0.25); cursor: pointer; z-index: 10;" title="عرض موجه الذكاء الاصطناعي">
-              <i class="fa-solid fa-camera"></i>
-            </div>
-          ` : ''}
         </div>
         <div class="wilaya-label-new">(${w.id}) ${w.name}</div>
       </div>
@@ -2221,15 +2215,6 @@ window.selectWilaya = function(name) {
                 <span>${promptData.landmark_ar}</span>
               </div>
             </div>
-          </div>
-          <div style="padding: 15px; background: #fafafa; display: flex; align-items: center; justify-content: space-between; gap: 10px;">
-            <div style="font-size: 11.5px; color: #555; line-height: 1.4; flex: 1; text-align: right;">
-              ✨ يتوفر موجه التوليد الاحترافي (Creative Photo Prompt) لتوليد صور مطابقة للهوية الحقيقية بالذكاء الاصطناعي.
-            </div>
-            <button onclick="openPromptModal('${wilayaObj.id}')" style="background: var(--navy, #1e293b); color: white; border: none; padding: 8px 14px; border-radius: 8px; font-weight: 700; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 6px; white-space: nowrap; box-shadow: 0 2px 6px rgba(0,0,0,0.1);">
-              <i class="fa-solid fa-camera-retro"></i>
-              <span>عرض الموجه</span>
-            </button>
           </div>
         </div>
       `;
@@ -2977,12 +2962,40 @@ window.switchTab = function(tabId) {
     bnavBtn.classList.add('active');
   }
 
+  // Hide bottom search overlay if switching away from home
+  if (tabId !== 'home') {
+    const searchOverlay = document.getElementById('bottom-search-overlay');
+    if (searchOverlay) {
+      searchOverlay.style.display = 'none';
+    }
+  }
+
   if (tabId === 'cart') {
     loadCartItems();
   } else if (tabId === 'favs') {
     loadFavorites();
   } else if (tabId === 'orders') {
     loadCustomerOrders();
+  }
+};
+
+// Toggle bottom search input overlay
+window.toggleBottomSearch = function() {
+  const overlay = document.getElementById('bottom-search-overlay');
+  const bnavSearch = document.getElementById('bnav-search');
+  if (!overlay) return;
+
+  if (overlay.style.display === 'none' || overlay.style.display === '') {
+    overlay.style.display = 'flex';
+    window.switchTab('home');
+    if (bnavSearch) bnavSearch.classList.add('active');
+    setTimeout(() => {
+      const inp = document.getElementById('homeSearchInp');
+      if (inp) inp.focus();
+    }, 150);
+  } else {
+    overlay.style.display = 'none';
+    if (bnavSearch) bnavSearch.classList.remove('active');
   }
 };
 
