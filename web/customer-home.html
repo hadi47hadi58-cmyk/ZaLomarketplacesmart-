@@ -2026,75 +2026,75 @@ window.showScreen = function(screenId) {
 
 // Data for new flow (69 Wilayas with real landmarks)
 const ALGERIA_WILAYAS = [
-  { id: "01", name: "أدرار", img: "https://images.unsplash.com/photo-1548013146-72479768bbaa?w=400" }, // Ksar
-  { id: "02", name: "الشلف", img: "https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=400" }, // Coast
-  { id: "03", name: "الأغواط", img: "https://images.unsplash.com/photo-1509316785289-025f5d846b35?w=400" }, // Oasis
-  { id: "04", name: "أم البواقي", img: "https://images.unsplash.com/photo-1541963463532-d68292c34b19?w=400" }, // Atlas
-  { id: "05", name: "باتنة", img: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=400" }, // Timgad
-  { id: "06", name: "بجاية", img: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=400" }, // Gouraya
-  { id: "07", name: "بسكرة", img: "https://images.unsplash.com/photo-1548013146-72479768bbaa?w=400" }, // Palms
-  { id: "08", name: "بشار", img: "https://images.unsplash.com/photo-1542640244-7e672d6cef21?w=400" }, // Taghit
-  { id: "09", name: "البليدة", img: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=400" }, // Chrea
-  { id: "10", name: "البويرة", img: "https://images.unsplash.com/photo-1519681393784-d120267923af?w=400" }, // Tikjda
-  { id: "11", name: "تمنراست", img: "https://images.unsplash.com/photo-1548013146-72479768bbaa?w=400" }, // Hoggar
-  { id: "12", name: "تبسة", img: "https://images.unsplash.com/photo-1541963463532-d68292c34b19?w=400" }, // Arch of Caracalla
-  { id: "13", name: "تلمسان", img: "https://images.unsplash.com/photo-1533929736458-ca588d08c8be?w=400" }, // Mansourah
-  { id: "14", name: "تيارت", img: "https://images.unsplash.com/photo-1509316785289-025f5d846b35?w=400" }, // Jedars
-  { id: "15", name: "تيزي وزو", img: "https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=400" }, // Kabylia
-  { id: "16", name: "الجزائر", img: "https://images.unsplash.com/photo-1590483734710-5347248e3d6f?w=400" }, // Maqam
-  { id: "17", name: "الجلفة", img: "https://images.unsplash.com/photo-1509316785289-025f5d846b35?w=400" }, // Steppe
-  { id: "18", name: "جيجل", img: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400" }, // Cave
-  { id: "19", name: "سطيف", img: "https://images.unsplash.com/photo-1541963463532-d68292c34b19?w=400" }, // Fountain
-  { id: "20", name: "سعيدة", img: "https://images.unsplash.com/photo-1509316785289-025f5d846b35?w=400" }, // Forests
-  { id: "21", name: "سكيكدة", img: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400" }, // Port
-  { id: "22", name: "سيدي بلعباس", img: "https://images.unsplash.com/photo-1541963463532-d68292c34b19?w=400" },
-  { id: "23", name: "عنابة", img: "https://images.unsplash.com/photo-1551632432-c735e7a030bc?w=400" }, // Saint Augustine
-  { id: "24", name: "قالمة", img: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=400" }, // Theater
-  { id: "25", name: "قسنطينة", img: "https://images.unsplash.com/photo-1533230393275-3ab789d36329?w=400" }, // Bridges
-  { id: "26", name: "المدية", img: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=400" },
-  { id: "27", name: "مستغانم", img: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400" },
-  { id: "28", name: "المسيلة", img: "https://images.unsplash.com/photo-1541963463532-d68292c34b19?w=400" }, // Qal'a
-  { id: "29", name: "معسكر", img: "https://images.unsplash.com/photo-1509316785289-025f5d846b35?w=400" },
-  { id: "30", name: "ورقلة", img: "https://images.unsplash.com/photo-1548013146-72479768bbaa?w=400" },
-  { id: "31", name: "وهران", img: "https://images.unsplash.com/photo-1541433131-4191c9cc46e9?w=400" }, // Santa Cruz
-  { id: "32", name: "البيض", img: "https://images.unsplash.com/photo-1509316785289-025f5d846b35?w=400" },
-  { id: "33", name: "إليزي", img: "https://images.unsplash.com/photo-1548013146-72479768bbaa?w=400" }, // Tassili
-  { id: "34", name: "برج بوعريريج", img: "https://images.unsplash.com/photo-1541963463532-d68292c34b19?w=400" },
-  { id: "35", name: "بومرداس", img: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400" },
-  { id: "36", name: "الطارف", img: "https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=400" }, // El Kala
-  { id: "37", name: "تندوف", img: "https://images.unsplash.com/photo-1548013146-72479768bbaa?w=400" },
-  { id: "38", name: "تيسمسيلت", img: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=400" }, // Cedars
-  { id: "39", name: "الوادي", img: "https://images.unsplash.com/photo-1548013146-72479768bbaa?w=400" }, // Domes
-  { id: "40", name: "خنشلة", img: "https://images.unsplash.com/photo-1542640244-7e672d6cef21?w=400" }, // Hammam
-  { id: "41", name: "سوق أهراس", img: "https://images.unsplash.com/photo-1541963463532-d68292c34b19?w=400" }, // Madauros
-  { id: "42", name: "تيبازة", img: "https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=400" }, // Ruins
-  { id: "43", name: "ميلة", img: "https://images.unsplash.com/photo-1541963463532-d68292c34b19?w=400" },
-  { id: "44", name: "عين الدفلى", img: "https://images.unsplash.com/photo-1509316785289-025f5d846b35?w=400" },
-  { id: "45", name: "النعامة", img: "https://images.unsplash.com/photo-1509316785289-025f5d846b35?w=400" },
-  { id: "46", name: "عين تموشنت", img: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400" },
-  { id: "47", name: "غرداية", img: "https://images.unsplash.com/photo-1596481682333-87f547c92b21?w=400" }, // M'zab
-  { id: "48", name: "غليزان", img: "https://images.unsplash.com/photo-1509316785289-025f5d846b35?w=400" },
-  { id: "49", name: "تيميمون", img: "https://images.unsplash.com/photo-1548013146-72479768bbaa?w=400" }, // Red
-  { id: "50", name: "برج باجي مختار", img: "https://images.unsplash.com/photo-1548013146-72479768bbaa?w=400" },
-  { id: "51", name: "أولاد جلال", img: "https://images.unsplash.com/photo-1509316785289-025f5d846b35?w=400" },
-  { id: "52", name: "بني عباس", img: "https://images.unsplash.com/photo-1548013146-72479768bbaa?w=400" },
-  { id: "53", name: "إن صالح", img: "https://images.unsplash.com/photo-1509316785289-025f5d846b35?w=400" },
-  { id: "54", name: "إن قزام", img: "https://images.unsplash.com/photo-1548013146-72479768bbaa?w=400" },
-  { id: "55", name: "تقرت", img: "https://images.unsplash.com/photo-1548013146-72479768bbaa?w=400" },
-  { id: "56", name: "جانت", img: "https://images.unsplash.com/photo-1548013146-72479768bbaa?w=400" },
-  { id: "57", name: "المغير", img: "https://images.unsplash.com/photo-1509316785289-025f5d846b35?w=400" },
-  { id: "58", name: "المنيعة", img: "https://images.unsplash.com/photo-1509316785289-025f5d846b35?w=400" }, // Ksar
-  { id: "59", name: "آفلو", img: "https://images.unsplash.com/photo-1509316785289-025f5d846b35?w=400" },
-  { id: "60", name: "بريكة", img: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=400" },
-  { id: "61", name: "القنطرة", img: "https://images.unsplash.com/photo-1548013146-72479768bbaa?w=400" }, // Bridge
-  { id: "62", name: "بير العاتر", img: "https://images.unsplash.com/photo-1541963463532-d68292c34b19?w=400" },
-  { id: "63", name: "الشريعة", img: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=400" }, // Forest
-  { id: "64", name: "قصر الشلالة", img: "https://images.unsplash.com/photo-1541963463532-d68292c34b19?w=400" },
-  { id: "65", name: "عين وسارة", img: "https://images.unsplash.com/photo-1509316785289-025f5d846b35?w=400" },
-  { id: "66", name: "مسعد", img: "https://images.unsplash.com/photo-1509316785289-025f5d846b35?w=400" },
-  { id: "67", name: "قصر البخاري", img: "https://images.unsplash.com/photo-1541963463532-d68292c34b19?w=400" },
-  { id: "68", name: "بوسعادة", img: "https://images.unsplash.com/photo-1596481682333-87f547c92b21?w=400" }, // Oasis
-  { id: "69", name: "الأبيض سيدي الشيخ", img: "https://images.unsplash.com/photo-1509316785289-025f5d846b35?w=400" }
+  { id: "01", name: "أدرار", img: "images/01.jpg" }, // قصر تيميمون (Generated)
+  { id: "02", name: "الشلف", img: "https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=400" }, // الموقع الأثري
+  { id: "03", name: "الأغواط", img: "https://images.unsplash.com/photo-1509316785289-025f5d846b35?w=400" }, // واحات النخيل
+  { id: "04", name: "أم البواقي", img: "https://images.unsplash.com/photo-1541963463532-d68292c34b19?w=400" }, // ضريح ميدغاسن
+  { id: "05", name: "باتنة", img: "images/05.jpg" }, // تيمجاد (Generated)
+  { id: "06", name: "بجاية", img: "images/06.jpg" }, // يما قوراية (Generated)
+  { id: "07", name: "بسكرة", img: "images/07.jpg" }, // ضريح عقبة بن نافع (Generated)
+  { id: "08", name: "بشار", img: "images/08.jpg" }, // قصر تاغيت (Generated)
+  { id: "09", name: "البليدة", img: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=400" }, // حظيرة الشريعة
+  { id: "10", name: "البويرة", img: "https://images.unsplash.com/photo-1519681393784-d120267923af?w=400" }, // تيكجدة
+  { id: "11", name: "تمنراست", img: "images/11.jpg" }, // جبال الأهقار (Generated)
+  { id: "12", name: "تبسة", img: "images/12.jpg" }, // القوس الروماني (Generated)
+  { id: "13", name: "تلمسان", img: "images/13.jpg" }, // مسجد المنصورة (Generated)
+  { id: "14", name: "تيارت", img: "https://images.unsplash.com/photo-1509316785289-025f5d846b35?w=400" }, // موقع الأجدار
+  { id: "15", name: "تيزي وزو", img: "images/15.jpg" }, // جبال جرجرة (Generated)
+  { id: "16", name: "الجزائر", img: "images/16.jpg" }, // مقام الشهيد (Generated)
+  { id: "17", name: "الجلفة", img: "https://images.unsplash.com/photo-1509316785289-025f5d846b35?w=400" }, // جبال بوكحيل
+  { id: "18", name: "جيجل", img: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400" }, // منارة رأس العافية
+  { id: "19", name: "سطيف", img: "images/19.jpg" }, // عين الفوارة (Generated)
+  { id: "20", name: "سعيدة", img: "https://images.unsplash.com/photo-1509316785289-025f5d846b35?w=400" }, // منطقة تيفريت
+  { id: "21", name: "سكيكدة", img: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400" }, // قصر مريم عزة
+  { id: "22", name: "سيدي بلعباس", img: "https://images.unsplash.com/photo-1541963463532-d68292c34b19?w=400" }, // ساحة الأمير عبد القادر
+  { id: "23", name: "عنابة", img: "images/23.jpg" }, // كنيسة القديس أوغسطين (Generated)
+  { id: "24", name: "قالمة", img: "images/24.jpg" }, // المسرح الروماني (Generated)
+  { id: "25", name: "قسنطينة", img: "images/25.jpg" }, // جسر سيدي مسيد (Generated)
+  { id: "26", name: "المدية", img: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=400" }, // بحيرة الضاية
+  { id: "27", name: "مستغانم", img: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400" }, // ميناء صلامندر
+  { id: "28", name: "المسيلة", img: "images/28.jpg" }, // قلعة بني حماد (Generated)
+  { id: "29", name: "معسكر", img: "https://images.unsplash.com/photo-1509316785289-025f5d846b35?w=400" }, // قرية الأمير عبد القادر
+  { id: "30", name: "ورقلة", img: "https://images.unsplash.com/photo-1548013146-72479768bbaa?w=400" }, // القصر العتيق
+  { id: "31", name: "وهران", img: "images/31.jpg" }, // قلعة سانتا كروز (Generated)
+  { id: "32", name: "البيض", img: "https://images.unsplash.com/photo-1509316785289-025f5d846b35?w=400" }, // واحات مدينة البيض
+  { id: "33", name: "إليزي", img: "https://images.unsplash.com/photo-1548013146-72479768bbaa?w=400" }, // حظيرة الطاسيلي
+  { id: "34", name: "برج بوعريريج", img: "https://images.unsplash.com/photo-1541963463532-d68292c34b19?w=400" }, // منارة البرج التاريخية
+  { id: "35", name: "بومرداس", img: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400" }, // كورنيش بومرداس
+  { id: "36", name: "الطارف", img: "https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=400" }, // حظيرة القالة
+  { id: "37", name: "تندوف", img: "https://images.unsplash.com/photo-1548013146-72479768bbaa?w=400" }, // قصر تندوف العتيق
+  { id: "38", name: "تيسمسيلت", img: "images/38.jpg" }, // حظيرة الأرز الوطنية (Generated)
+  { id: "39", name: "الوادي", img: "images/39.jpg" }, // مدينة الألف قبة (Generated)
+  { id: "40", name: "خنشلة", img: "images/40.jpg" }, // حمام الصالحين (Generated)
+  { id: "41", name: "سوق أهراس", img: "https://images.unsplash.com/photo-1541963463532-d68292c34b19?w=400" }, // موقع مادور الأثري
+  { id: "42", name: "تيبازة", img: "images/42.jpg" }, // الضريح الملكي (Generated)
+  { id: "43", name: "ميلة", img: "https://images.unsplash.com/photo-1541963463532-d68292c34b19?w=400" }, // المدينة القديمة ميلة
+  { id: "44", name: "عين الدفلى", img: "https://images.unsplash.com/photo-1509316785289-025f5d846b35?w=400" }, // جبال الونشريس
+  { id: "45", name: "النعامة", img: "https://images.unsplash.com/photo-1509316785289-025f5d846b35?w=400" }, // النقوش الصخرية
+  { id: "46", name: "عين تموشنت", img: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400" }, // جزيرة رشغول
+  { id: "47", name: "غرداية", img: "images/47.jpg" }, // قصر بني يزقن (Generated)
+  { id: "48", name: "غليزان", img: "https://images.unsplash.com/photo-1509316785289-025f5d846b35?w=400" }, // جبال الظهرة
+  { id: "49", name: "تيميمون", img: "https://images.unsplash.com/photo-1548013146-72479768bbaa?w=400" }, // الواحة الحمراء
+  { id: "50", name: "برج باجي مختار", img: "https://images.unsplash.com/photo-1548013146-72479768bbaa?w=400" }, // واحات برج باجي مختار
+  { id: "51", name: "أولاد جلال", img: "https://images.unsplash.com/photo-1509316785289-025f5d846b35?w=400" }, // واحات أولاد جلال
+  { id: "52", name: "بني عباس", img: "https://images.unsplash.com/photo-1548013146-72479768bbaa?w=400" }, // القصر العتيق
+  { id: "53", name: "عين صالح", img: "https://images.unsplash.com/photo-1509316785289-025f5d846b35?w=400" }, // مزار عين صالح
+  { id: "54", name: "عين قزام", img: "https://images.unsplash.com/photo-1548013146-72479768bbaa?w=400" }, // جبال تاسيلي
+  { id: "55", name: "تقرت", img: "https://images.unsplash.com/photo-1548013146-72479768bbaa?w=400" }, // القصبة العتيقة
+  { id: "56", name: "جانت", img: "images/56.jpg" }, // النقوش الصخرية و تادرارت (Generated)
+  { id: "57", name: "المغير", img: "https://images.unsplash.com/photo-1509316785289-025f5d846b35?w=400" }, // عمارة وادي ريغ
+  { id: "58", name: "المنيعة", img: "images/58.jpg" }, // القصر العتيق (Generated)
+  { id: "59", name: "آفلو", img: "https://images.unsplash.com/photo-1509316785289-025f5d846b35?w=400" }, // جبل عمور
+  { id: "60", name: "بريكة", img: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=400" }, // الآثار الرومانية
+  { id: "61", name: "القنطرة", img: "images/61.jpg" }, // بوابة الصحراء (Generated)
+  { id: "62", name: "بير العاتر", img: "https://images.unsplash.com/photo-1541963463532-d68292c34b19?w=400" }, // بئر العاتر
+  { id: "63", name: "الشريعة", img: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=400" }, // غابات الأرز
+  { id: "64", name: "قصر الشلالة", img: "https://images.unsplash.com/photo-1541963463532-d68292c34b19?w=400" }, // القصر القديم
+  { id: "65", name: "عين وسارة", img: "https://images.unsplash.com/photo-1509316785289-025f5d846b35?w=400" }, // السهوب الرعوية
+  { id: "66", name: "مسعد", img: "https://images.unsplash.com/photo-1509316785289-025f5d846b35?w=400" }, // واحات مسعد
+  { id: "67", name: "قصر البخاري", img: "https://images.unsplash.com/photo-1541963463532-d68292c34b19?w=400" }, // القصر التاريخي
+  { id: "68", name: "بوسعادة", img: "images/68.jpg" }, // جبل كردادة والواحة (Generated)
+  { id: "69", name: "الأبيض سيدي الشيخ", img: "https://images.unsplash.com/photo-1509316785289-025f5d846b35?w=400" } // السوق التقليدي
 ];
 
 const BALADIYAS = {
