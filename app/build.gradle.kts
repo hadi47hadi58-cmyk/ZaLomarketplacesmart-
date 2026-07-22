@@ -210,7 +210,7 @@ tasks.matching { it.name.startsWith("preBuild") }.configureEach {
 tasks.register<Sync>("syncWebAssets") {
     from("$projectDir/../web/")
     into("$projectDir/src/main/assets/web/")
-    include("**/*.html", "**/*.js", "**/*.css", "**/*.json")
+    include("**/*.html", "**/*.js", "**/*.css", "**/*.json", "**/*.jpg", "**/*.jpeg", "**/*.png", "**/*.svg", "**/*.webp", "**/*.gif")
 }
 tasks.named("preBuild") { dependsOn("syncWebAssets") }
 

@@ -72,6 +72,18 @@ self.addEventListener('fetch', (e) => {
     return;
   }
 
+  // Bypass service worker for local images to let WebViewAssetLoader handle them directly from APK assets
+  if (
+    url.pathname.includes('/images/') || 
+    url.pathname.endsWith('.jpg') || 
+    url.pathname.endsWith('.jpeg') || 
+    url.pathname.endsWith('.png') || 
+    url.pathname.endsWith('.webp') || 
+    url.pathname.endsWith('.gif')
+  ) {
+    return;
+  }
+
   // Bypass service worker caching for version.json to ensure accurate updates
   if (url.pathname.endsWith('version.json')) {
     e.respondWith(fetch(e.request));
