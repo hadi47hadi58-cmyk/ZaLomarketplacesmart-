@@ -2171,8 +2171,13 @@ function initWilayaFlow() {
     return `
       <div class="wilaya-card-circular" onclick="selectWilaya('${w.name}')">
         <div style="position: relative;">
-          <div class="wilaya-img-circle">
-            <img src="${w.img}" alt="${w.name}" onerror="this.src='https://via.placeholder.com/200?text=ZaLo'">
+          <div class="wilaya-img-circle" style="background: linear-gradient(135deg, var(--navy, #1e293b), #0f172a); position: relative;">
+            <!-- Premium Fallback Monument Icon in Gold if image is missing -->
+            <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: rgba(212, 175, 55, 0.4); font-size: 26px; z-index: 1;">
+              <i class="fa-solid fa-gopuram"></i>
+            </div>
+            <!-- Actual image with z-index above fallback -->
+            <img src="${w.img}" alt="${w.name}" style="position: relative; z-index: 2; width: 100%; height: 100%; object-fit: cover;" onerror="this.style.display='none'">
           </div>
           ${hasPrompt ? `
             <div onclick="event.stopPropagation(); openPromptModal('${w.id}')" style="position: absolute; bottom: -2px; right: -2px; background: linear-gradient(135deg, #D4AF37, #AA7C11); color: white; border-radius: 50%; width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; font-size: 11px; border: 2px solid white; box-shadow: 0 3px 8px rgba(0,0,0,0.25); cursor: pointer; z-index: 10;" title="عرض موجه الذكاء الاصطناعي">
