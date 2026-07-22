@@ -368,7 +368,8 @@ fun PureWebContainerScreen(
                             return super.onConsoleMessage(consoleMessage)
                         }
                     }
-                    clearCache(true)
+                    // Enable standard WebView caching to make image and asset loading fast
+                    // clearCache(true) // Removed to prevent wiping the cache on every single app launch
                     try {
                         val jsDir = java.io.File(activity.cacheDir, "WebView/Default/HTTP Cache/Code Cache/js")
                         if (!jsDir.exists()) {
@@ -392,7 +393,7 @@ fun PureWebContainerScreen(
                         loadWithOverviewMode = true
                         useWideViewPort = true
                         mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
-                        cacheMode = WebSettings.LOAD_NO_CACHE
+                        cacheMode = WebSettings.LOAD_DEFAULT
                     }
                     addJavascriptInterface(WebAppInterface(activity, this), "AndroidInterface")
                     loadUrl("https://appassets.androidplatform.net/assets/web/splash.html")
