@@ -2176,7 +2176,7 @@ function initWilayaFlow() {
               <i class="fa-solid fa-gopuram"></i>
             </div>
             <!-- Actual image with z-index above fallback -->
-            <img src="${w.img}" alt="${w.name}" style="position: relative; z-index: 2; width: 100%; height: 100%; object-fit: cover;" onerror="this.style.display='none'">
+            <img src="${w.img}?v=zalo-v12" alt="${w.name}" style="position: relative; z-index: 2; width: 100%; height: 100%; object-fit: cover;" onerror="this.style.display='none'">
           </div>
         </div>
         <div class="wilaya-label-new">(${w.id}) ${w.name}</div>
@@ -2207,7 +2207,7 @@ window.selectWilaya = function(name) {
       banner.innerHTML = `
         <div class="wilaya-hero-card" style="margin: 16px; border-radius: 16px; overflow: hidden; background: white; box-shadow: 0 4px 15px rgba(0,0,0,0.06); border: 1px solid #eee; position: relative;">
           <div style="height: 180px; width: 100%; position: relative; overflow: hidden;">
-            <img src="${wilayaObj.img}" alt="${name}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='https://via.placeholder.com/400?text=${name}'">
+            <img src="${wilayaObj.img}?v=zalo-v12" alt="${name}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='https://via.placeholder.com/400?text=${name}'">
             <div style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0)); padding: 15px; color: white;">
               <div style="font-size: 13px; opacity: 0.9; font-weight: bold; margin-bottom: 2px;">ولاية ${name} (${wilayaObj.id})</div>
               <div style="font-size: 16px; font-weight: 800; display: flex; align-items: center; gap: 6px;">
