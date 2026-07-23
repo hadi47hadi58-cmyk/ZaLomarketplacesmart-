@@ -1304,7 +1304,7 @@ body {
 /* Optimized Wilaya selection styles matching mockup */
 .wilaya-grid-new {
   display: grid;
-  grid-template-columns: repeat(4, 1fr) !important;
+  grid-template-columns: repeat(3, 1fr) !important;
   gap: 8px !important;
   padding: 8px 0;
 }
@@ -1331,7 +1331,7 @@ body {
 }
 .wilaya-thumb-square {
   width: 100%;
-  aspect-ratio: 1.15;
+  aspect-ratio: 1 / 1 !important;
   border-radius: 12px;
   overflow: hidden;
   background: #f1f5f9;
@@ -1357,26 +1357,45 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  padding: 12px 6px;
-  border-radius: 16px;
-  border: 1.5px solid rgba(197, 155, 39, 0.35);
-  background: #ffffff;
-  color: #102a43;
+  position: relative;
+  height: 65px;
+  border-radius: 14px;
+  border: 1.5px solid rgba(255,255,255,0.25);
+  background-size: cover;
+  background-position: center;
+  color: #ffffff !important;
   font-family: 'Cairo', sans-serif;
-  font-size: 12px;
-  font-weight: 800;
+  font-size: 11px;
+  font-weight: 900;
   cursor: pointer;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
+.regional-tab-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 1;
+  transition: background 0.25s ease;
+}
+.regional-tab-btn span {
+  position: relative;
+  z-index: 2;
+  text-shadow: 0 2px 6px rgba(0,0,0,0.95);
+  text-align: center;
+  width: 100%;
+}
 .regional-tab-btn:active {
-  transform: scale(0.96);
+  transform: scale(0.95);
 }
 .regional-tab-btn.active {
-  background: #c59b27 !important;
-  color: #ffffff !important;
-  border-color: transparent !important;
-  box-shadow: 0 6px 15px rgba(197, 155, 39, 0.35);
+  border: 2px solid #c59b27 !important;
+  box-shadow: 0 0 15px rgba(197, 155, 39, 0.6) !important;
+}
+.regional-tab-btn.active::before {
+  background: rgba(0, 0, 0, 0.2) !important;
 }
 </style>
 </head>
@@ -1435,16 +1454,7 @@ body {
     </div>
   </div>
 
-  <!-- Active Wilaya Banner -->
-  <div id="active-wilaya-banner" style="background: linear-gradient(90deg, #102a43, #c59b27); color: #ffffff; padding: 10px 16px; font-size: 11.5px; font-weight: 800; display: flex; align-items: center; justify-content: space-between; border-bottom: 2.5px solid var(--brand-gold); text-align: right; direction: rtl;">
-    <div style="display: flex; align-items: center; gap: 8px;">
-      <i class="fa-solid fa-location-dot" style="color: var(--brand-gold); font-size: 14px;"></i>
-      <span>ولاية التسوق الحالية: <strong id="active-wilaya-name" style="color: var(--brand-gold); font-size: 12.5px; background: rgba(255,255,255,0.15); padding: 2px 8px; border-radius: 6px;">الكل (توصيل لكافة الولايات)</strong></span>
-    </div>
-    <button onclick="openChangeWilayaModal()" style="background: #ffffff; color: #102a43; border: none; border-radius: 12px; padding: 5px 12px; font-family: 'Cairo', sans-serif; font-size: 10px; font-weight: 900; cursor: pointer; display: flex; align-items: center; gap: 4px; box-shadow: 0 2px 6px rgba(0,0,0,0.12); transition: all 0.2s;">
-      تغيير الولاية <i class="fa-solid fa-arrows-rotate" style="color: var(--brand-green);"></i>
-    </button>
-  </div>
+
 
   <!-- Sidebar Overlay -->
   <div class="overlay" id="overlay" onclick="closeSide()"></div>
@@ -1542,30 +1552,42 @@ body {
   <!-- SCREEN 1: HOME (الرئيسية - واجهة الولايات الجديدة المحدثة) -->
   <div class="screen active" id="screen-home" style="position: relative; min-height: 100vh; background-color: #f8fafc; direction: rtl;">
     
-    <!-- Hero Banner Section with dynamic backgrounds -->
-    <div id="wilaya-hero-section" style="position: relative; height: 190px; width: 100%; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; padding: 18px 16px; border-bottom-left-radius: 24px; border-bottom-right-radius: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.12);">
-      <!-- Blur/Dark Dynamic Background Image with a stunning default (North region) -->
-      <div id="wilaya-hero-bg" style="position: absolute; inset: 0; background-image: url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=800&fit=crop&q=80'); background-size: cover; background-position: center; filter: brightness(0.4) contrast(1.05); transition: background-image 0.4s ease-in-out; z-index: 1;"></div>
+    <!-- Fast Search Box in place of old active banner -->
+    <div style="background: #102a43; padding: 12px 16px; border-bottom: 2.5px solid var(--brand-gold); box-shadow: 0 4px 10px rgba(0,0,0,0.06); direction: rtl;">
+      <div style="position: relative; width: 100%;">
+        <i class="fa-solid fa-magnifying-glass" style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: var(--navy); font-size: 15px; z-index: 10;"></i>
+        <input type="text" id="wilaya-fast-search" style="width: 100%; height: 44px; border-radius: 22px; border: none; padding: 0 44px 0 16px; font-family: 'Cairo', sans-serif; font-size: 12.5px; font-weight: 700; outline: none; text-align: right; background: #ffffff; color: var(--navy);" placeholder="بحث سريع... (اسم أو رقم الولاية)" oninput="handleWilayaSearch(this.value)">
+      </div>
+    </div>
+
+    <!-- Hero Banner Section with dynamic backgrounds (Cinematic & Ultra-clear) -->
+    <div id="wilaya-hero-section" style="position: relative; height: 160px; width: 100%; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; padding: 18px 16px; border-bottom-left-radius: 24px; border-bottom-right-radius: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.12);">
+      <!-- Cinematic Vivid Background Image -->
+      <div id="wilaya-hero-bg" style="position: absolute; inset: 0; background-image: url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=800&fit=crop&q=80'); background-size: cover; background-position: center; filter: brightness(0.75) contrast(1.15); transition: background-image 0.4s ease-in-out; z-index: 1;"></div>
       
       <!-- Text & Content overlay on top of background -->
       <div style="position: relative; z-index: 2; color: #ffffff; text-align: right; width: 100%;">
-        <div id="wilaya-hero-region-label" style="font-size: 12.5px; font-weight: 800; color: var(--brand-gold, #d4af37); text-shadow: 0 2px 4px rgba(0,0,0,0.5); margin-bottom: 4px; display: flex; align-items: center; gap: 6px;">
-          🏔️ الشمال الجزائري
-        </div>
-        <h1 id="wilaya-hero-title" style="font-size: 19px; font-weight: 900; color: #ffffff; margin: 0 0 12px 0; text-shadow: 0 2px 6px rgba(0,0,0,0.6); font-family: 'Cairo', sans-serif;">
-          بوابة التجارة والتوصيل السريع
-        </h1>
-        
-        <!-- Beautiful White Rounded-Pill Search Box inside the Hero -->
-        <div style="position: relative; width: 100%; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
-          <i class="fa-solid fa-magnifying-glass" style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: var(--navy); font-size: 15px; z-index: 10;"></i>
-          <input type="text" id="wilaya-fast-search" style="width: 100%; height: 46px; border-radius: 23px; border: none; padding: 0 44px 0 16px; font-family: 'Cairo', sans-serif; font-size: 12.5px; font-weight: 700; outline: none; text-align: right; background: #ffffff; color: var(--navy);" placeholder="بحث سريع... (اسم أو رقم الولاية)" oninput="handleWilayaSearch(this.value)">
+        <div id="wilaya-hero-region-label" style="font-size: 22px; font-weight: 900; color: #ffffff; text-shadow: 0 2px 8px rgba(0,0,0,0.9); font-family: 'Cairo', sans-serif;">
+          🏔️ شمال الجزائري
         </div>
       </div>
     </div>
 
+    <!-- Regional Tabbed Control Bar with photo backgrounds instead of icons (Placed above the grid) -->
+    <div class="regional-tabs-container" style="padding: 16px 16px 8px 16px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
+      <button class="regional-tab-btn active" id="tab-north" onclick="switchRegion('north')" style="background-image: url('https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=400&fit=crop&q=80');">
+        <span>شمال الجزائري</span>
+      </button>
+      <button class="regional-tab-btn" id="tab-center" onclick="switchRegion('center')" style="background-image: url('https://images.unsplash.com/photo-1623018035782-b269248df916?w=400&fit=crop&q=80');">
+        <span>وسط الجزائري</span>
+      </button>
+      <button class="regional-tab-btn" id="tab-south" onclick="switchRegion('south')" style="background-image: url('https://images.unsplash.com/photo-1509316785289-025f5d846b35?w=400&fit=crop&q=80');">
+        <span>جنوب الجزائري</span>
+      </button>
+    </div>
+
     <!-- Active State Ribbon -->
-    <div id="selected-state-ribbon" style="margin: 15px 16px 5px 16px; padding: 10px 14px; background: rgba(12, 74, 110, 0.05); border: 1.5px solid rgba(12, 74, 110, 0.08); border-radius: 12px; display: flex; align-items: center; justify-content: space-between; font-size: 12px; font-weight: 800; color: var(--navy);">
+    <div id="selected-state-ribbon" style="margin: 10px 16px 5px 16px; padding: 10px 14px; background: rgba(12, 74, 110, 0.05); border: 1.5px solid rgba(12, 74, 110, 0.08); border-radius: 12px; display: flex; align-items: center; justify-content: space-between; font-size: 12px; font-weight: 800; color: var(--navy);">
       <span>الولايـة المحددّة حالياً: <strong id="selected-state-ribbon-name" style="color: #c59b27;">...</strong></span>
       <span style="font-size: 10px; opacity: 0.9; background: var(--navy); color: white; padding: 2px 6px; border-radius: 4px;">نشط</span>
     </div>
@@ -1588,22 +1610,6 @@ body {
         <div style="font-weight: 800; font-size: 14px; color: var(--navy);">لم نجد أي ولاية بهذا الاسم</div>
         <div style="font-size: 11px; margin-top: 4px;">يرجى التحقق من الكتابة أو كتابة رقم الولاية</div>
       </div>
-    </div>
-
-    <!-- Regional Tabbed Control Bar at the bottom -->
-    <div class="regional-tabs-container" style="padding: 0 16px 24px 16px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
-      <button class="regional-tab-btn active" id="tab-north" onclick="switchRegion('north')">
-        <span style="font-size: 18px;">🏔️</span>
-        <span>الشمال</span>
-      </button>
-      <button class="regional-tab-btn" id="tab-center" onclick="switchRegion('center')">
-        <span style="font-size: 18px;">🏜️</span>
-        <span>الوسط والهضاب</span>
-      </button>
-      <button class="regional-tab-btn" id="tab-south" onclick="switchRegion('south')">
-        <span style="font-size: 18px;">🌴</span>
-        <span>الجنوب</span>
-      </button>
     </div>
 
   </div>
@@ -2113,53 +2119,7 @@ body {
     </div>
   </div>
 
-  <!-- FLOATING CHATBOT BUTTON -->
-  <div class="chatbot-floating-btn" id="chatbot-btn" onclick="toggleChatbot()">
-    <i class="fa-solid fa-robot"></i>
-    <span class="chatbot-pulse"></span>
-  </div>
 
-  <!-- CHATBOT DRAWER/CARD -->
-  <div class="chatbot-drawer" id="chatbot-drawer">
-    <div class="chatbot-header">
-      <div style="display: flex; align-items: center; gap: 10px;">
-        <div class="chatbot-avatar">🌴🤖</div>
-        <div style="text-align: right;">
-          <div class="chatbot-title">مساعد ZaLo الذكي</div>
-          <div class="chatbot-status"><span class="status-dot"></span> متصل الآن • مجيب فوري</div>
-        </div>
-      </div>
-      <button class="chatbot-close-btn" onclick="toggleChatbot()">✕</button>
-    </div>
-    
-    <div class="chatbot-messages" id="chatbot-messages">
-      <!-- Welcome Message -->
-      <div class="chat-msg bot">
-        <div class="chat-msg-text">
-          مرحباً بك يا <span id="chat-user-name">شريكنا</span>! 🌴 أنا مساعدك الذكي في منصة ZaLo. 🤖
-          <br><br>
-          يمكنني مساعدتك في تصفح السوق وشرح أزرار التطبيق، وعرض السلع ذات الأسعار المنخفضة، المتوسطة، أو المرتفعة مع إمكانية الشراء الفوري خطوة بخطوة!
-          <br><br>
-          واش تسحق اليوم؟ اكتب ميزانيتك (مثال: "منتجات بسعر 1500" أو "هاتف بسعر منخفض") وسأعرض لك ما يناسبك فوراً!
-        </div>
-      </div>
-    </div>
-    
-    <!-- Quick recommendations chips -->
-    <div class="chatbot-chips">
-      <div class="chatbot-chip" onclick="sendQuickMessage('شرح أزرار التطبيق وكيف يعمل')">💡 شرح الأزرار</div>
-      <div class="chatbot-chip" onclick="sendQuickMessage('اعرض لي السلع ذات السعر المنخفض')">🪙 سلع منخفضة (أقل من 2000 دج)</div>
-      <div class="chatbot-chip" onclick="sendQuickMessage('اعرض لي السلع ذات السعر المتوسط')">💵 سلع متوسطة (2000 - 10000 دج)</div>
-      <div class="chatbot-chip" onclick="sendQuickMessage('اعرض لي السلع ذات السعر المرتفع')">💎 سلع مرتفعة (فوق 10000 دج)</div>
-    </div>
-
-    <div class="chatbot-input-container">
-      <input type="text" id="chatbot-input" placeholder="اكتب سؤالك أو ميزانيتك هنا..." onkeypress="handleChatbotKey(event)">
-      <button class="chatbot-send-btn" id="chatbot-send-btn" onclick="sendChatbotMessage()">
-        <i class="fa-solid fa-paper-plane"></i>
-      </button>
-    </div>
-  </div>
 
 </div>
 
@@ -2323,10 +2283,10 @@ const REGION_BANNERS = {
 };
 
 const REGION_LABELS = {
-  popular: "⭐ الأكثر شعبية",
-  north: "🏔️ الشمال الجزائري",
-  center: "🏜️ الوسط والهضاب العليا",
-  south: "🌴 الصحراء والجنوب الجزائري"
+  popular: "الولايات الأكثر شعبية",
+  north: "🏔️ شمال الجزائري",
+  center: "🏜️ وسط الجزائري",
+  south: "🌴 جنوب الجزائري"
 };
 
 const POPULAR_WILAYAS = ["16", "31", "25", "19", "23", "09", "05", "13", "06", "07"];
@@ -2380,10 +2340,10 @@ function renderStateSelectionUI() {
           <span>الولايات الأكثر شعبية (الوصول السريع)</span>
         `;
       } else {
-        const regionWord = currentActiveView === 'north' ? 'الشمال' : (currentActiveView === 'center' ? 'الوسط والهضاب' : 'الجنوب');
+        const regionWord = currentActiveView === 'north' ? 'شمال الجزائري' : (currentActiveView === 'center' ? 'وسط الجزائري' : 'جنوب الجزائري');
         headerTitle.innerHTML = `
           <i class="fa-solid fa-map-pin" style="color: var(--brand-gold);"></i>
-          <span>ولايات ${regionWord} (${getRegionCount(currentActiveView)})</span>
+          <span>${regionWord} (${getRegionCount(currentActiveView)})</span>
         `;
       }
     }
