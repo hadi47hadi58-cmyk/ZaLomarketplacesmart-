@@ -1304,11 +1304,12 @@ body {
 /* Optimized Wilaya selection styles matching mockup */
 .wilaya-grid-new {
   display: grid !important;
-  grid-template-rows: repeat(3, auto) !important;
+  grid-template-rows: repeat(3, 115px) !important;
   grid-auto-flow: column !important;
-  grid-auto-columns: minmax(105px, 115px) !important;
+  grid-auto-columns: 110px !important;
   gap: 10px !important;
   padding: 8px 4px 16px 4px !important;
+  height: 370px !important;
   overflow-x: auto !important;
   overflow-y: hidden !important;
   scroll-snap-type: x mandatory !important;
@@ -1317,7 +1318,7 @@ body {
   scrollbar-color: var(--metallic-gold) #f1f5f9;
 }
 .wilaya-grid-new::-webkit-scrollbar {
-  height: 5px;
+  height: 6px;
 }
 .wilaya-grid-new::-webkit-scrollbar-track {
   background: #f1f5f9;
@@ -1332,47 +1333,50 @@ body {
   background: #ffffff !important;
   border: 1.5px solid #e2e8f0 !important;
   border-radius: 14px !important;
-  padding: 8px 6px !important;
+  padding: 6px 4px !important;
   display: flex !important;
   flex-direction: column !important;
   align-items: center !important;
-  gap: 6px !important;
+  justify-content: center !important;
+  gap: 5px !important;
   cursor: pointer !important;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
-  min-width: 105px !important;
+  width: 110px !important;
+  height: 115px !important;
   box-sizing: border-box !important;
 }
 .wilaya-card-square:active {
   transform: scale(0.95);
 }
 .wilaya-card-square.active-state {
-  border-color: #c59b27;
-  background: rgba(197, 155, 39, 0.05);
-  box-shadow: 0 0 0 2px rgba(197, 155, 39, 0.2);
+  border-color: #c59b27 !important;
+  background: rgba(197, 155, 39, 0.08) !important;
+  box-shadow: 0 0 0 2px rgba(197, 155, 39, 0.3) !important;
 }
 .wilaya-thumb-square {
-  width: 100%;
-  aspect-ratio: 1 / 1 !important;
-  border-radius: 12px;
-  overflow: hidden;
-  background: #f1f5f9;
-  position: relative;
+  width: 58px !important;
+  height: 58px !important;
+  border-radius: 50% !important;
+  overflow: hidden !important;
+  background: #f1f5f9 !important;
+  position: relative !important;
+  border: 2px solid rgba(197, 155, 39, 0.3) !important;
 }
 .wilaya-thumb-square img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 12px;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
 }
 .wilaya-name-square {
-  font-size: 11px;
-  font-weight: 800;
-  color: var(--navy);
-  text-align: center;
-  margin-top: 1px;
-  line-height: 1.2;
-  font-family: 'Cairo', sans-serif;
+  font-size: 11.5px !important;
+  font-weight: 800 !important;
+  color: #1e293b !important;
+  text-align: center !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  max-width: 100px !important;
 }
 .regional-tab-btn {
   display: flex;
