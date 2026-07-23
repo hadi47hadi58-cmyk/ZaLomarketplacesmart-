@@ -1568,7 +1568,7 @@ body {
       <!-- Text & Content overlay on top of background -->
       <div style="position: relative; z-index: 2; color: #ffffff; text-align: right; width: 100%;">
         <div id="wilaya-hero-region-label" style="font-size: 22px; font-weight: 900; color: #ffffff; text-shadow: 0 2px 8px rgba(0,0,0,0.9); font-family: 'Cairo', sans-serif;">
-          🏔️ شمال الجزائري
+          شمال الجزائري
         </div>
       </div>
     </div>
@@ -1586,18 +1586,8 @@ body {
       </button>
     </div>
 
-    <!-- Active State Ribbon -->
-    <div id="selected-state-ribbon" style="margin: 10px 16px 5px 16px; padding: 10px 14px; background: rgba(12, 74, 110, 0.05); border: 1.5px solid rgba(12, 74, 110, 0.08); border-radius: 12px; display: flex; align-items: center; justify-content: space-between; font-size: 12px; font-weight: 800; color: var(--navy);">
-      <span>الولايـة المحددّة حالياً: <strong id="selected-state-ribbon-name" style="color: #c59b27;">...</strong></span>
-      <span style="font-size: 10px; opacity: 0.9; background: var(--navy); color: white; padding: 2px 6px; border-radius: 4px;">نشط</span>
-    </div>
-
     <!-- Grid Container with beautiful card components (squared, optimized sizes) -->
     <div style="padding: 10px 16px 20px 16px;">
-      <h3 id="grid-header-title" style="font-size: 13px; font-weight: 900; color: var(--navy); margin: 0 0 12px 0; text-align: right; display: flex; align-items: center; gap: 6px;">
-        <i class="fa-solid fa-map-pin" style="color: var(--brand-gold);"></i>
-        <span>ولايات الشمال</span>
-      </h3>
       
       <!-- Wilaya Grid -->
       <div class="wilaya-grid-new" id="wilaya-grid-container-new">
@@ -2277,16 +2267,16 @@ let currentActiveView = 'north';
 
 const REGION_BANNERS = {
   popular: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=800&fit=crop&q=80",
-  north: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=800&fit=crop&q=80",
-  center: "https://images.unsplash.com/photo-1508919801845-fc2ae1bc2a28?w=800&fit=crop&q=80",
-  south: "https://images.unsplash.com/photo-1473580044384-7ba9967e16a0?w=800&fit=crop&q=80"
+  north: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=1000&fit=crop&q=80",
+  center: "https://images.unsplash.com/photo-1564507592333-c60657eea523?w=1000&fit=crop&q=80",
+  south: "https://images.unsplash.com/photo-1547234935-80c7145ec969?w=1000&fit=crop&q=80"
 };
 
 const REGION_LABELS = {
-  popular: "الولايات الأكثر شعبية",
-  north: "🏔️ شمال الجزائري",
-  center: "🏜️ وسط الجزائري",
-  south: "🌴 جنوب الجزائري"
+  popular: "شمال الجزائري",
+  north: "شمال الجزائري",
+  center: "وسط الجزائري",
+  south: "جنوب الجزائري"
 };
 
 const POPULAR_WILAYAS = ["16", "31", "25", "19", "23", "09", "05", "13", "06", "07"];
@@ -2365,7 +2355,7 @@ function renderStateSelectionUI() {
 
   container.innerHTML = listToRender.map(w => {
     const baseUrl = w.img.split('?')[0];
-    const optimizedImg = `${baseUrl}?fit=crop&w=140&h=110&q=60&fm=webp`;
+    const optimizedImg = `${baseUrl}?fit=crop&w=150&h=150&q=65&fm=webp`;
     
     const isSelected = w.name === activeState;
     const activeClass = isSelected ? 'active-state' : '';
