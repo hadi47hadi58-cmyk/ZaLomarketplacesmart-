@@ -1560,28 +1560,30 @@ body {
       </div>
     </div>
 
-    <!-- Hero Banner Section with dynamic backgrounds (Cinematic & Ultra-clear) -->
-    <div id="wilaya-hero-section" style="position: relative; height: 160px; width: 100%; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; padding: 18px 16px; border-bottom-left-radius: 24px; border-bottom-right-radius: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.12);">
-      <!-- Cinematic Vivid Background Image -->
-      <div id="wilaya-hero-bg" style="position: absolute; inset: 0; background-image: url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=800&fit=crop&q=80'); background-size: cover; background-position: center; filter: brightness(0.75) contrast(1.15); transition: background-image 0.4s ease-in-out; z-index: 1;"></div>
-      
-      <!-- Text & Content overlay on top of background -->
-      <div style="position: relative; z-index: 2; color: #ffffff; text-align: right; width: 100%;">
-        <div id="wilaya-hero-region-label" style="font-size: 22px; font-weight: 900; color: #ffffff; text-shadow: 0 2px 8px rgba(0,0,0,0.9); font-family: 'Cairo', sans-serif;">
-          شمال الجزائري
+    <!-- Hero Banner Section with dynamic backgrounds (Cinematic, Framed & Ultra-clear) -->
+    <div style="padding: 16px 16px 0 16px;">
+      <div id="wilaya-hero-section" style="position: relative; height: 160px; width: 100%; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; padding: 20px; border-radius: 20px; box-shadow: 0 8px 24px rgba(0,0,0,0.12); border: 1.5px solid rgba(255,255,255,0.8);">
+        <!-- Cinematic Vivid Background Image -->
+        <div id="wilaya-hero-bg" style="position: absolute; inset: 0; background-image: url('https://images.unsplash.com/photo-1509316785289-025f5d846b35?w=1000&fit=crop&q=80'); background-size: cover; background-position: center; filter: brightness(0.7) contrast(1.15); transition: background-image 0.5s ease-in-out; z-index: 1;"></div>
+        
+        <!-- Text & Content overlay on top of background -->
+        <div style="position: relative; z-index: 2; color: #ffffff; text-align: right; width: 100%;">
+          <div id="wilaya-hero-region-label" style="font-size: 24px; font-weight: 900; color: #ffffff; text-shadow: 0 2px 10px rgba(0,0,0,0.9); font-family: 'Cairo', sans-serif; letter-spacing: 0.5px;">
+            جنوب الجزائري
+          </div>
         </div>
       </div>
     </div>
 
     <!-- Regional Tabbed Control Bar with photo backgrounds instead of icons (Placed above the grid) -->
     <div class="regional-tabs-container" style="padding: 16px 16px 8px 16px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
-      <button class="regional-tab-btn active" id="tab-north" onclick="switchRegion('north')" style="background-image: url('https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=400&fit=crop&q=80');">
+      <button class="regional-tab-btn" id="tab-north" onclick="switchRegion('north')" style="background-image: url('https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=400&fit=crop&q=80');">
         <span>شمال الجزائري</span>
       </button>
       <button class="regional-tab-btn" id="tab-center" onclick="switchRegion('center')" style="background-image: url('https://images.unsplash.com/photo-1623018035782-b269248df916?w=400&fit=crop&q=80');">
         <span>وسط الجزائري</span>
       </button>
-      <button class="regional-tab-btn" id="tab-south" onclick="switchRegion('south')" style="background-image: url('https://images.unsplash.com/photo-1509316785289-025f5d846b35?w=400&fit=crop&q=80');">
+      <button class="regional-tab-btn active" id="tab-south" onclick="switchRegion('south')" style="background-image: url('https://images.unsplash.com/photo-1509316785289-025f5d846b35?w=400&fit=crop&q=80');">
         <span>جنوب الجزائري</span>
       </button>
     </div>
@@ -2263,13 +2265,13 @@ const WILAYA_REGIONS = {
   "69": "south"
 };
 
-let currentActiveView = 'north'; 
+let currentActiveView = 'south'; 
 
 const REGION_BANNERS = {
-  popular: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=800&fit=crop&q=80",
-  north: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=1000&fit=crop&q=80",
-  center: "https://images.unsplash.com/photo-1564507592333-c60657eea523?w=1000&fit=crop&q=80",
-  south: "https://images.unsplash.com/photo-1547234935-80c7145ec969?w=1000&fit=crop&q=80"
+  popular: "https://images.unsplash.com/photo-1509316785289-025f5d846b35?w=1000&fit=crop&q=80",
+  north: "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=1000&fit=crop&q=80",
+  center: "https://images.unsplash.com/photo-1508919801845-fc2ae1bc2a28?w=1000&fit=crop&q=80",
+  south: "https://images.unsplash.com/photo-1509316785289-025f5d846b35?w=1000&fit=crop&q=80"
 };
 
 const REGION_LABELS = {
@@ -2294,6 +2296,21 @@ function renderStateSelectionUI() {
   const ribbonName = document.getElementById('selected-state-ribbon-name');
   if (ribbonName) {
     ribbonName.textContent = activeState === 'الكل' ? 'الكل (توصيل لكافة الولايات)' : activeState;
+  }
+
+  // Ensure regional tabs reflect the current active view correctly
+  document.querySelectorAll('.regional-tab-btn').forEach(btn => {
+    btn.classList.remove('active');
+  });
+  const activeBtnMap = {
+    north: 'tab-north',
+    center: 'tab-center',
+    south: 'tab-south'
+  };
+  const activeBtnId = activeBtnMap[currentActiveView];
+  if (activeBtnId) {
+    const activeBtn = document.getElementById(activeBtnId);
+    if (activeBtn) activeBtn.classList.add('active');
   }
 
   const heroBg = document.getElementById('wilaya-hero-bg');
