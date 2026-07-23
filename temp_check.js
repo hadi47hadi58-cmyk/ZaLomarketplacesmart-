@@ -382,7 +382,7 @@ window.selectWilaya = function(name) {
       banner.innerHTML = `
         <div class="wilaya-hero-card" style="margin: 16px; border-radius: 16px; overflow: hidden; background: white; box-shadow: 0 4px 15px rgba(0,0,0,0.06); border: 1px solid #eee; position: relative;">
           <div style="height: 180px; width: 100%; position: relative; overflow: hidden;">
-            <img src="${wilayaObj.img}?v=zalo-v12" alt="${name}" loading="lazy" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='https://via.placeholder.com/400?text=${name}'">
+            <img src="${wilayaObj.img}?v=zalo-v12" alt="${name}" loading="lazy" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='./images/wilaya-thumb.jpg'">
             <div style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0)); padding: 15px; color: white;">
               <div style="font-size: 13px; opacity: 0.9; font-weight: bold; margin-bottom: 2px;">ولاية ${name} (${wilayaObj.id})</div>
               <div style="font-size: 16px; font-weight: 800; display: flex; align-items: center; gap: 6px;">
@@ -416,7 +416,7 @@ window.openPromptModal = function(id) {
   infoContainer.innerHTML = `
     <div style="display: flex; align-items: center; gap: 15px; text-align: right;">
       <div style="width: 70px; height: 70px; border-radius: 12px; overflow: hidden; border: 2px solid var(--brand-gold);">
-        <img src="${wilayaObj.img}" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='https://via.placeholder.com/150?text=${wilayaObj.name}'">
+        <img src="${wilayaObj.img}" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='./images/wilaya-thumb.jpg'">
       </div>
       <div>
         <div style="font-size: 15px; font-weight: 800; color: var(--navy); margin-bottom: 4px;">ولاية ${wilayaObj.name} (${wilayaObj.id})</div>
@@ -486,7 +486,7 @@ window.selectCategoryNew = function(cat) {
         id: `mock-${cat}-${i}`,
         name: `${cat} - عينة ${i}`,
         price: (Math.random() * 5000 + 500).toFixed(0),
-        image: `https://via.placeholder.com/150?text=${encodeURIComponent(cat)}`,
+        image: `./images/wilaya-thumb.jpg`,
         store_name: "متجر الوفاء",
         wilaya: state.selectedWilaya,
         baladiya: state.selectedBaladiya,
@@ -530,7 +530,7 @@ function renderProductsInGrid(prods, containerId) {
   container.innerHTML = prods.map(p => `
     <div class="product-card-mockup" onclick="window.openProductDetails('${p.id}')">
       <div class="product-img-wrap-mockup">
-        <img src="${p.image || p.image_url || 'https://via.placeholder.com/150'}" alt="${p.name}">
+        <img src="${p.image || p.image_url || './images/wilaya-thumb.jpg'}" alt="${p.name}">
       </div>
       <div class="product-details-mockup">
         <div class="product-name-mockup">${p.name}</div>
