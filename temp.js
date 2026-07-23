@@ -36,75 +36,75 @@ window.showScreen = function(screenId) {
 
 // Data for new flow (69 Wilayas with real landmarks)
 const ALGERIA_WILAYAS = [
-  { id: "01", name: "أدرار", img: "./images/wilaya-thumb.jpg" }, // قصر تيميمون (Generated)
-  { id: "02", name: "الشلف", img: "./images/wilaya-thumb.jpg" }, // الموقع الأثري
-  { id: "03", name: "الأغواط", img: "./images/wilaya-thumb.jpg" }, // واحات النخيل
-  { id: "04", name: "أم البواقي", img: "./images/wilaya-thumb.jpg" }, // ضريح ميدغاسن
-  { id: "05", name: "باتنة", img: "./images/wilaya-thumb.jpg" }, // تيمجاد (Generated)
-  { id: "06", name: "بجاية", img: "./images/wilaya-thumb.jpg" }, // يما قوراية (Generated)
-  { id: "07", name: "بسكرة", img: "./images/wilaya-thumb.jpg" }, // ضريح عقبة بن نافع (Generated)
-  { id: "08", name: "بشار", img: "./images/wilaya-thumb.jpg" }, // قصر تاغيت (Generated)
-  { id: "09", name: "البليدة", img: "./images/wilaya-thumb.jpg" }, // حظيرة الشريعة
-  { id: "10", name: "البويرة", img: "./images/wilaya-thumb.jpg" }, // تيكجدة
-  { id: "11", name: "تمنراست", img: "./images/wilaya-thumb.jpg" }, // جبال الأهقار (Generated)
-  { id: "12", name: "تبسة", img: "./images/wilaya-thumb.jpg" }, // القوس الروماني (Generated)
-  { id: "13", name: "تلمسان", img: "./images/wilaya-thumb.jpg" }, // مسجد المنصورة (Generated)
-  { id: "14", name: "تيارت", img: "./images/wilaya-thumb.jpg" }, // موقع الأجدار
-  { id: "15", name: "تيزي وزو", img: "./images/wilaya-thumb.jpg" }, // جبال جرجرة (Generated)
-  { id: "16", name: "الجزائر", img: "./images/wilaya-thumb.jpg" }, // مقام الشهيد (Generated)
-  { id: "17", name: "الجلفة", img: "./images/wilaya-thumb.jpg" }, // جبال بوكحيل
-  { id: "18", name: "جيجل", img: "./images/wilaya-thumb.jpg" }, // منارة رأس العافية
-  { id: "19", name: "سطيف", img: "./images/wilaya-thumb.jpg" }, // عين الفوارة (Generated)
-  { id: "20", name: "سعيدة", img: "./images/wilaya-thumb.jpg" }, // منطقة تيفريت
-  { id: "21", name: "سكيكدة", img: "./images/wilaya-thumb.jpg" }, // قصر مريم عزة
-  { id: "22", name: "سيدي بلعباس", img: "./images/wilaya-thumb.jpg" }, // ساحة الأمير عبد القادر
-  { id: "23", name: "عنابة", img: "./images/wilaya-thumb.jpg" }, // كنيسة القديس أوغسطين (Generated)
-  { id: "24", name: "قالمة", img: "./images/wilaya-thumb.jpg" }, // المسرح الروماني (Generated)
-  { id: "25", name: "قسنطينة", img: "./images/wilaya-thumb.jpg" }, // جسر سيدي مسيد (Generated)
-  { id: "26", name: "المدية", img: "./images/wilaya-thumb.jpg" }, // بحيرة الضاية
-  { id: "27", name: "مستغانم", img: "./images/wilaya-thumb.jpg" }, // ميناء صلامندر
-  { id: "28", name: "المسيلة", img: "./images/wilaya-thumb.jpg" }, // قلعة بني حماد (Generated)
-  { id: "29", name: "معسكر", img: "./images/wilaya-thumb.jpg" }, // قرية الأمير عبد القادر
-  { id: "30", name: "ورقلة", img: "./images/wilaya-thumb.jpg" }, // القصر العتيق
-  { id: "31", name: "وهران", img: "./images/wilaya-thumb.jpg" }, // قلعة سانتا كروز (Generated)
-  { id: "32", name: "البيض", img: "./images/wilaya-thumb.jpg" }, // واحات مدينة البيض
-  { id: "33", name: "إليزي", img: "./images/wilaya-thumb.jpg" }, // حظيرة الطاسيلي
-  { id: "34", name: "برج بوعريريج", img: "./images/wilaya-thumb.jpg" }, // منارة البرج التاريخية
-  { id: "35", name: "بومرداس", img: "./images/wilaya-thumb.jpg" }, // كورنيش بومرداس
-  { id: "36", name: "الطارف", img: "./images/wilaya-thumb.jpg" }, // حظيرة القالة
-  { id: "37", name: "تندوف", img: "./images/wilaya-thumb.jpg" }, // قصر تندوف العتيق
-  { id: "38", name: "تيسمسيلت", img: "./images/wilaya-thumb.jpg" }, // حظيرة الأرز الوطنية (Generated)
-  { id: "39", name: "الوادي", img: "./images/wilaya-thumb.jpg" }, // مدينة الألف قبة (Generated)
-  { id: "40", name: "خنشلة", img: "./images/wilaya-thumb.jpg" }, // حمام الصالحين (Generated)
-  { id: "41", name: "سوق أهراس", img: "./images/wilaya-thumb.jpg" }, // موقع مادور الأثري
-  { id: "42", name: "تيبازة", img: "./images/wilaya-thumb.jpg" }, // الضريح الملكي (Generated)
-  { id: "43", name: "ميلة", img: "./images/wilaya-thumb.jpg" }, // المدينة القديمة ميلة
-  { id: "44", name: "عين الدفلى", img: "./images/wilaya-thumb.jpg" }, // جبال الونشريس
-  { id: "45", name: "النعامة", img: "./images/wilaya-thumb.jpg" }, // النقوش الصخرية
-  { id: "46", name: "عين تموشنت", img: "./images/wilaya-thumb.jpg" }, // جزيرة رشغول
-  { id: "47", name: "غرداية", img: "./images/wilaya-thumb.jpg" }, // قصر بني يزقن (Generated)
-  { id: "48", name: "غليزان", img: "./images/wilaya-thumb.jpg" }, // جبال الظهرة
-  { id: "49", name: "تيميمون", img: "./images/wilaya-thumb.jpg" }, // الواحة الحمراء
-  { id: "50", name: "برج باجي مختار", img: "./images/wilaya-thumb.jpg" }, // واحات برج باجي مختار
-  { id: "51", name: "أولاد جلال", img: "./images/wilaya-thumb.jpg" }, // واحات أولاد جلال
-  { id: "52", name: "بني عباس", img: "./images/wilaya-thumb.jpg" }, // القصر العتيق
-  { id: "53", name: "عين صالح", img: "./images/wilaya-thumb.jpg" }, // مزار عين صالح
-  { id: "54", name: "عين قزام", img: "./images/wilaya-thumb.jpg" }, // جبال تاسيلي
-  { id: "55", name: "تقرت", img: "./images/wilaya-thumb.jpg" }, // القصبة العتيقة
-  { id: "56", name: "جانت", img: "./images/wilaya-thumb.jpg" }, // النقوش الصخرية و تادرارت (Generated)
-  { id: "57", name: "المغير", img: "./images/wilaya-thumb.jpg" }, // عمارة وادي ريغ
-  { id: "58", name: "المنيعة", img: "./images/wilaya-thumb.jpg" }, // القصر العتيق (Generated)
-  { id: "59", name: "آفلو", img: "./images/wilaya-thumb.jpg" }, // جبل عمور
-  { id: "60", name: "بريكة", img: "./images/wilaya-thumb.jpg" }, // الآثار الرومانية
-  { id: "61", name: "القنطرة", img: "./images/wilaya-thumb.jpg" }, // بوابة الصحراء (Generated)
-  { id: "62", name: "بير العاتر", img: "./images/wilaya-thumb.jpg" }, // بئر العاتر
-  { id: "63", name: "الشريعة", img: "./images/wilaya-thumb.jpg" }, // غابات الأرز
-  { id: "64", name: "قصر الشلالة", img: "./images/wilaya-thumb.jpg" }, // القصر القديم
-  { id: "65", name: "عين وسارة", img: "./images/wilaya-thumb.jpg" }, // السهوب الرعوية
-  { id: "66", name: "مسعد", img: "./images/wilaya-thumb.jpg" }, // واحات مسعد
-  { id: "67", name: "قصر البخاري", img: "./images/wilaya-thumb.jpg" }, // القصر التاريخي
-  { id: "68", name: "بوسعادة", img: "./images/wilaya-thumb.jpg" }, // جبل كردادة والواحة (Generated)
-  { id: "69", name: "الأبيض سيدي الشيخ", img: "./images/wilaya-thumb.jpg" } // السوق التقليدي
+  { id: "01", name: "أدرار", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png" }, // قصر تيميمون (Generated)
+  { id: "02", name: "الشلف", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png" }, // الموقع الأثري
+  { id: "03", name: "الأغواط", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png" }, // واحات النخيل
+  { id: "04", name: "أم البواقي", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png" }, // ضريح ميدغاسن
+  { id: "05", name: "باتنة", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png" }, // تيمجاد (Generated)
+  { id: "06", name: "بجاية", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png" }, // يما قوراية (Generated)
+  { id: "07", name: "بسكرة", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png" }, // ضريح عقبة بن نافع (Generated)
+  { id: "08", name: "بشار", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png" }, // قصر تاغيت (Generated)
+  { id: "09", name: "البليدة", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png" }, // حظيرة الشريعة
+  { id: "10", name: "البويرة", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png" }, // تيكجدة
+  { id: "11", name: "تمنراست", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png" }, // جبال الأهقار (Generated)
+  { id: "12", name: "تبسة", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png" }, // القوس الروماني (Generated)
+  { id: "13", name: "تلمسان", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png" }, // مسجد المنصورة (Generated)
+  { id: "14", name: "تيارت", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png" }, // موقع الأجدار
+  { id: "15", name: "تيزي وزو", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png" }, // جبال جرجرة (Generated)
+  { id: "16", name: "الجزائر", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png" }, // مقام الشهيد (Generated)
+  { id: "17", name: "الجلفة", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png" }, // جبال بوكحيل
+  { id: "18", name: "جيجل", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png" }, // منارة رأس العافية
+  { id: "19", name: "سطيف", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png" }, // عين الفوارة (Generated)
+  { id: "20", name: "سعيدة", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png" }, // منطقة تيفريت
+  { id: "21", name: "سكيكدة", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png" }, // قصر مريم عزة
+  { id: "22", name: "سيدي بلعباس", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png" }, // ساحة الأمير عبد القادر
+  { id: "23", name: "عنابة", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png" }, // كنيسة القديس أوغسطين (Generated)
+  { id: "24", name: "قالمة", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png" }, // المسرح الروماني (Generated)
+  { id: "25", name: "قسنطينة", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png" }, // جسر سيدي مسيد (Generated)
+  { id: "26", name: "المدية", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png" }, // بحيرة الضاية
+  { id: "27", name: "مستغانم", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png" }, // ميناء صلامندر
+  { id: "28", name: "المسيلة", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png" }, // قلعة بني حماد (Generated)
+  { id: "29", name: "معسكر", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png" }, // قرية الأمير عبد القادر
+  { id: "30", name: "ورقلة", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png" }, // القصر العتيق
+  { id: "31", name: "وهران", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png" }, // قلعة سانتا كروز (Generated)
+  { id: "32", name: "البيض", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png" }, // واحات مدينة البيض
+  { id: "33", name: "إليزي", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png" }, // حظيرة الطاسيلي
+  { id: "34", name: "برج بوعريريج", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png" }, // منارة البرج التاريخية
+  { id: "35", name: "بومرداس", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png" }, // كورنيش بومرداس
+  { id: "36", name: "الطارف", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png" }, // حظيرة القالة
+  { id: "37", name: "تندوف", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png" }, // قصر تندوف العتيق
+  { id: "38", name: "تيسمسيلت", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png" }, // حظيرة الأرز الوطنية (Generated)
+  { id: "39", name: "الوادي", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png" }, // مدينة الألف قبة (Generated)
+  { id: "40", name: "خنشلة", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png" }, // حمام الصالحين (Generated)
+  { id: "41", name: "سوق أهراس", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png" }, // موقع مادور الأثري
+  { id: "42", name: "تيبازة", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png" }, // الضريح الملكي (Generated)
+  { id: "43", name: "ميلة", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png" }, // المدينة القديمة ميلة
+  { id: "44", name: "عين الدفلى", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png" }, // جبال الونشريس
+  { id: "45", name: "النعامة", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png" }, // النقوش الصخرية
+  { id: "46", name: "عين تموشنت", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png" }, // جزيرة رشغول
+  { id: "47", name: "غرداية", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png" }, // قصر بني يزقن (Generated)
+  { id: "48", name: "غليزان", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png" }, // جبال الظهرة
+  { id: "49", name: "تيميمون", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png" }, // الواحة الحمراء
+  { id: "50", name: "برج باجي مختار", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png" }, // واحات برج باجي مختار
+  { id: "51", name: "أولاد جلال", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png" }, // واحات أولاد جلال
+  { id: "52", name: "بني عباس", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png" }, // القصر العتيق
+  { id: "53", name: "عين صالح", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png" }, // مزار عين صالح
+  { id: "54", name: "عين قزام", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png" }, // جبال تاسيلي
+  { id: "55", name: "تقرت", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png" }, // القصبة العتيقة
+  { id: "56", name: "جانت", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png" }, // النقوش الصخرية و تادرارت (Generated)
+  { id: "57", name: "المغير", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png" }, // عمارة وادي ريغ
+  { id: "58", name: "المنيعة", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png" }, // القصر العتيق (Generated)
+  { id: "59", name: "آفلو", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png" }, // جبل عمور
+  { id: "60", name: "بريكة", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png" }, // الآثار الرومانية
+  { id: "61", name: "القنطرة", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png" }, // بوابة الصحراء (Generated)
+  { id: "62", name: "بير العاتر", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png" }, // بئر العاتر
+  { id: "63", name: "الشريعة", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png" }, // غابات الأرز
+  { id: "64", name: "قصر الشلالة", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png" }, // القصر القديم
+  { id: "65", name: "عين وسارة", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png" }, // السهوب الرعوية
+  { id: "66", name: "مسعد", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png" }, // واحات مسعد
+  { id: "67", name: "قصر البخاري", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png" }, // القصر التاريخي
+  { id: "68", name: "بوسعادة", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png" }, // جبل كردادة والواحة (Generated)
+  { id: "69", name: "الأبيض سيدي الشيخ", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png" } // السوق التقليدي
 ];
 
 const BALADIYAS = {
@@ -189,10 +189,10 @@ const WILAYA_REGIONS = {
 let currentActiveView = 'south'; 
 
 const REGION_BANNERS = {
-  popular: "./images/hero-center.jpg",
-  north: "./images/hero-north.jpg",
-  center: "./images/hero-center.jpg",
-  south: "./images/hero-south.jpg"
+  popular: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/Gharda%C3%AFa_-_Vue_g%C3%A9n%C3%A9rale.jpg/800px-Gharda%C3%AFa_-_Vue_g%C3%A9n%C3%A9rale.jpg",
+  north: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Algiers_and_its_bay.jpg/800px-Algiers_and_its_bay.jpg",
+  center: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/Gharda%C3%AFa_-_Vue_g%C3%A9n%C3%A9rale.jpg/800px-Gharda%C3%AFa_-_Vue_g%C3%A9n%C3%A9rale.jpg",
+  south: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Tassili_n%27Ajjer_-_Algeria.jpg/800px-Tassili_n%27Ajjer_-_Algeria.jpg"
 };
 
 const REGION_LABELS = {
@@ -292,7 +292,7 @@ function renderStateSelectionUI() {
   }
 
   container.innerHTML = listToRender.map(w => {
-    const imgUrl = w.img || './images/wilaya-thumb.jpg';
+    const imgUrl = w.img || 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png';
     const baseUrl = imgUrl.split('?')[0];
     const optimizedImg = `${baseUrl}?fit=crop&w=200&h=200&q=80`;
     
@@ -307,7 +307,7 @@ function renderStateSelectionUI() {
           </div>
         ` : ''}
         <div class="wilaya-thumb-square">
-          <img src="${optimizedImg}" alt="${w.name}" loading="lazy" onerror="this.onerror=null; this.src='./images/wilaya-thumb.jpg';">
+          <img src="${optimizedImg}" alt="${w.name}" loading="lazy" onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png';">
         </div>
         <div class="wilaya-name-square">${w.name} (${w.id})</div>
       </div>
@@ -382,7 +382,7 @@ window.selectWilaya = function(name) {
       banner.innerHTML = `
         <div class="wilaya-hero-card" style="margin: 16px; border-radius: 16px; overflow: hidden; background: white; box-shadow: 0 4px 15px rgba(0,0,0,0.06); border: 1px solid #eee; position: relative;">
           <div style="height: 180px; width: 100%; position: relative; overflow: hidden;">
-            <img src="${wilayaObj.img}?v=zalo-v12" alt="${name}" loading="lazy" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='https://via.placeholder.com/400?text=${name}'">
+            <img src="${wilayaObj.img}?v=zalo-v12" alt="${name}" loading="lazy" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png'">
             <div style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0)); padding: 15px; color: white;">
               <div style="font-size: 13px; opacity: 0.9; font-weight: bold; margin-bottom: 2px;">ولاية ${name} (${wilayaObj.id})</div>
               <div style="font-size: 16px; font-weight: 800; display: flex; align-items: center; gap: 6px;">
@@ -416,7 +416,7 @@ window.openPromptModal = function(id) {
   infoContainer.innerHTML = `
     <div style="display: flex; align-items: center; gap: 15px; text-align: right;">
       <div style="width: 70px; height: 70px; border-radius: 12px; overflow: hidden; border: 2px solid var(--brand-gold);">
-        <img src="${wilayaObj.img}" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='https://via.placeholder.com/150?text=${wilayaObj.name}'">
+        <img src="${wilayaObj.img}" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png'">
       </div>
       <div>
         <div style="font-size: 15px; font-weight: 800; color: var(--navy); margin-bottom: 4px;">ولاية ${wilayaObj.name} (${wilayaObj.id})</div>
@@ -486,7 +486,7 @@ window.selectCategoryNew = function(cat) {
         id: `mock-${cat}-${i}`,
         name: `${cat} - عينة ${i}`,
         price: (Math.random() * 5000 + 500).toFixed(0),
-        image: `https://via.placeholder.com/150?text=${encodeURIComponent(cat)}`,
+        image: `https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png`,
         store_name: "متجر الوفاء",
         wilaya: state.selectedWilaya,
         baladiya: state.selectedBaladiya,
@@ -506,9 +506,9 @@ window.viewStoreProfile = function(name, cat) {
   
   // Random cover and logo
   const covers = [
-    "./images/wilaya-thumb.jpg",
-    "./images/wilaya-thumb.jpg",
-    "./images/wilaya-thumb.jpg"
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png",
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png",
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png"
   ];
   document.getElementById('store-cover-img').src = covers[Math.floor(Math.random() * covers.length)];
   
@@ -530,7 +530,7 @@ function renderProductsInGrid(prods, containerId) {
   container.innerHTML = prods.map(p => `
     <div class="product-card-mockup" onclick="window.openProductDetails('${p.id}')">
       <div class="product-img-wrap-mockup">
-        <img src="${p.image || p.image_url || 'https://via.placeholder.com/150'}" alt="${p.name}">
+        <img src="${p.image || p.image_url || 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png'}" alt="${p.name}">
       </div>
       <div class="product-details-mockup">
         <div class="product-name-mockup">${p.name}</div>
@@ -1199,9 +1199,9 @@ async function loadProducts() {
 
   let remoteProds = [];
   try {
-    const { data, error } = await supabase
-      .from('products')
-      .select('*');
+    const fetchPromise = supabase.from('products').select('*');
+    const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 5000));
+    const { data, error } = await Promise.race([fetchPromise, timeoutPromise]);
     
     if (!error && data) {
       remoteProds = data;
