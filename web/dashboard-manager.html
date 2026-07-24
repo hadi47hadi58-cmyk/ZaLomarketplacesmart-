@@ -341,7 +341,7 @@
             }
         }
 
-                                async function logoutUser() {
+                                window.logoutUser = async function() {
             localStorage.clear();
             sessionStorage.clear();
             if (typeof supabase !== 'undefined' && supabase.auth) {

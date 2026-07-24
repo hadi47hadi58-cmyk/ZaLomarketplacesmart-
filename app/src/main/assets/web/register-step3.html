@@ -31,10 +31,10 @@
     }
     .container {
       width: 100%;
-      max-width:  320px; zoom: 0.85;
+      max-width:   320px; zoom: 0.85; zoom: 0.85;
       background: white;
       border-radius: 16px;
-      padding: 32px 24px;
+      padding:  20px 16px;
       box-shadow: 0 10px 40px rgba(26,92,42,0.15);
     }
     .header {
@@ -335,45 +335,13 @@
   <div class="error-msg" id="errorMsg"></div>
 
   <form onsubmit="completeRegistration(event)" id="step3Form">
-    <div class="form-group">
-      <label for="email">البريد الإلكتروني حساب الدخول *</label>
-      <input 
-        type="email" 
-        id="email" 
-        placeholder="example@gmail.com"
-        required
-      >
-    </div>
-
-    <div class="form-group">
-      <label for="password">كلمة المرور *</label>
-      <input 
-        type="password" 
-        id="password" 
-        placeholder="••••••••"
-        minlength="8"
-        required
-      >
-    </div>
-
-    <div class="form-group">
-      <label for="confirmPassword">تأكيد كلمة المرور *</label>
-      <input 
-        type="password" 
-        id="confirmPassword" 
-        placeholder="••••••••"
-        required
-      >
-    </div>
+    
 
     <!-- Merchant documents and credentials segment -->
     <div id="merchantSection" class="merchant-section" style="display: none;">
       <h3 style="font-size: 14px; font-weight: 800; color: #1a5c2a; margin-bottom: 12px; border-bottom: 2px solid #1a5c2a; padding-bottom: 4px; display: inline-flex; align-items: center; gap: 4px;">🏪 تفعيل المتجر والمستندات الأمنية</h3>
       
-      <div class="form-group">
-        <label for="storeName">🏪 الاسم التجاري للمحل / العلامة التجارية *</label>
-        <input type="text" id="storeName" placeholder="مثال: ميكرو تك باتنة">
-      </div>
+      
 
       <div class="form-group">
         <label for="category">📁 تخصص فئة النشاط التجاري *</label>
@@ -550,28 +518,12 @@
 
   window.completeRegistration = async function(e) {
     e.preventDefault();
-
-    const email = document.getElementById('email').value.trim().toLowerCase();
-    const password = document.getElementById('password').value;
-    const confirmPassword = document.getElementById('confirmPassword').value;
+    
     const errorMsg = document.getElementById('errorMsg');
     const submitBtn = document.getElementById('submitBtn');
     const loading = document.getElementById('loading');
 
-    // Validation
-    if (password !== confirmPassword) {
-      errorMsg.textContent = 'كلمات المرور غير متطابقة';
-      errorMsg.classList.add('show');
-      return;
-    }
-
-    if (password.length < 8) {
-      errorMsg.textContent = 'كلمة المرور يجب أن تكون 8 أحرف على الأقل';
-      errorMsg.classList.add('show');
-      return;
-    }
-
-    let storeName = '';
+    let storeName = sessionStorage.getItem('reg_storeName') || '';
     let category = '';
     let storeType = 'registered';
     let getB64 = id => document.getElementById(id)?.dataset?.base64 || '';
@@ -583,41 +535,20 @@
     let idBack = '';
     let rcnum = '';
 
-    if (userType === 'merchant') {
-      storeName = document.getElementById('storeName').value.trim();
-      category = document.getElementById('category').value;
-      storeType = window._stype || 'registered';
-      
-      logoB64 = getB64('f-logo');
-      frontFile = getB64('f-front');
-      rcFile = storeType === 'registered' ? getB64('f-rc') : '';
-      idFront = storeType === 'registered' ? getB64('f-idfront') : getB64('f-idf');
-      idBack = storeType === 'free' ? getB64('f-honor') : ''; // honorary declaration for free merchants
-      rcnum = storeType === 'registered' ? document.getElementById('rcNumber').value.trim() : '';
+    category = document.getElementById('category')?.value || 'عام';
+    storeType = window._stype || 'registered';
+    
+    logoB64 = getB64('f-logo');
+    frontFile = getB64('f-front');
+    rcFile = storeType === 'registered' ? getB64('f-rc') : '';
+    idFront = storeType === 'registered' ? getB64('f-idfront') : getB64('f-idf');
+    idBack = storeType === 'free' ? getB64('f-honor') : ''; 
+    rcnum = storeType === 'registered' ? document.getElementById('rcNumber')?.value.trim() : '';
 
-      if (!storeName || !category) {
-        errorMsg.textContent = 'الرجاء كتابة الاسم التجاري وتحديد فئة النشاط أولاً';
-        errorMsg.classList.add('show');
-        return;
-      }
-
-      if (!logoB64) {
-        errorMsg.textContent = 'شعار المتجر مطلوب لتهيئته للزبائن';
-        errorMsg.classList.add('show');
-        return;
-      }
-
-      if (storeType === 'registered' && (!rcFile || !idFront || !rcnum)) {
-        errorMsg.textContent = 'يرجى تقديم السجل التجاري، الوجه الأمامي للهوية، ورقم القيد للتاجر المرخص';
-        errorMsg.classList.add('show');
-        return;
-      }
-
-      if (storeType === 'free' && (!idFront || !idBack)) {
-        errorMsg.textContent = 'يرجى تقديم نسخة التصريح الشرفي وصورة الهوية كتاجر حر';
-        errorMsg.classList.add('show');
-        return;
-      }
+    if (!logoB64) {
+      errorMsg.textContent = 'شعار المتجر مطلوب لتهيئته للزبائن';
+      errorMsg.classList.add('show');
+      return;
     }
 
     submitBtn.disabled = true;
@@ -625,24 +556,16 @@
     errorMsg.classList.remove('show');
 
     try {
-      // Create user in Supabase Auth with metadata so the trigger can deduce their role
-      const { data, error: signUpError } = await supabase.auth.signUp({
-        email: email,
-        password: password,
-        options: {
-          data: {
-            full_name: fullName,
-            phone: phone,
-            wilaya: wilaya,
-            commune: commune,
-            type: userType
-          }
-        }
-      });
-      if (signUpError) throw signUpError;
-      const uid = data.user.id;
-
-      // Save user data in Supabase Profiles table
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      if (sessionError || !session) {
+        throw new Error("جلسة غير صالحة. الرجاء تسجيل الدخول مجددا.");
+      }
+      
+      const uid = session.user.id;
+      const email = session.user.email;
+      const fullName = sessionStorage.getItem('reg_fullName') || session.user.user_metadata?.full_name || '';
+      
+      // Update profile
       const { error: profileError } = await supabase.from('profiles').upsert({
         id: uid,
         name: fullName,
@@ -650,41 +573,52 @@
         phone: phone,
         wilaya: wilaya,
         commune: commune,
-        role: userType,
+        role: 'merchant',
         status: 'active',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
+        updated_at: new Date().toISOString()
       });
-      if (profileError) {
-        console.warn("Profiles upsert warning:", profileError.message);
+
+      if (profileError) console.warn("Profiles upsert warning:", profileError.message);
+
+      const rnum = 'REG-' + Date.now().toString().slice(-6);
+      
+      // Save to merchant_requests
+      const reqPayload = {
+        user_id: uid,
+        store_name: storeName,
+        category: category,
+        wilaya: wilaya,
+        commune: commune,
+        status: 'PENDING',
+        rc_number: rcnum,
+        logo: logoB64,
+        id_front: idFront,
+        id_back: idBack,
+        rc_doc: rcFile,
+        front_image: frontFile,
+        merchant_type: storeType
+      };
+      
+      const { error: reqError } = await supabase.from('merchant_requests').insert(reqPayload);
+      if (reqError) {
+        console.warn("Requests insert warning:", reqError.message);
       }
+      
+      window.showToast?.("تم رفع ملفك وطلبك للتاجر بنجاح!") || alert("تم بنجاح!");
+      
+      setTimeout(() => {
+        window.location.href = 'customer-home.html';
+      }, 1500);
 
-      // If merchant, create shop request and shop document
-      if (userType === 'merchant') {
-        const rnum = 'REG-' + Date.now().toString().slice(-6);
-
-        // 1. Save to local storage fallback for legacy frontend compatibility (shops)
-        const shopPayload = {
-          id: uid,
-          storeName: storeName,
-          ownerName: fullName,
-          email: email,
-          phone: phone,
-          whatsapp: phone,
-          wilaya: wilaya,
-          commune: commune,
-          address: commune + ' - ' + wilaya,
-          category: category,
-          workHours: '08:00 - 20:00',
-          description: 'شريك شبكة ZaLo المعتمد والموثق جغرافياً لخدمة زبائن ولاية ' + wilaya,
-          rcNumber: rcnum,
-          storeType: storeType,
-          logoURL: logoB64 || '',
-          frontURL: frontFile || '',
-          status: 'active',
-          subscription: 'basic',
-          createdAt: new Date().toISOString()
-        };
+    } catch (error) {
+      console.error(error);
+      errorMsg.textContent = error.message || 'حدث خطأ، الرجاء المحاولة مرة أخرى';
+      errorMsg.classList.add('show');
+      submitBtn.disabled = false;
+    } finally {
+      loading.classList.remove('show');
+    }
+  };
 
         try {
           const fallbackShops = JSON.parse(localStorage.getItem('zalo_fallback_shops') || '[]');
