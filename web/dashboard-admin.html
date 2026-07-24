@@ -2957,8 +2957,14 @@
         }
 
         // Logout user
-                function logoutUser() {
+                                async function logoutUser() {
             localStorage.clear();
+            sessionStorage.clear();
+            if (typeof supabase !== 'undefined' && supabase.auth) {
+                try {
+                    await supabase.auth.signOut();
+                } catch(e){}
+            }
             window.location.href = 'customer-login.html';
         }
     </script>

@@ -671,42 +671,33 @@
   <form id="step1Form" onsubmit="handleNextStep(event)">
     
     <!-- Email Verification Fields -->
+    <!-- Replaced with Full Name and Store Name -->
     <div class="form-group">
-      <label for="email">البريد الإلكتروني</label>
-      <div style="display: flex; gap: 8px;">
-        <div class="input-wrapper" style="flex: 1; margin-bottom: 0;">
-          <input 
-            type="text" 
-            id="email" 
-            placeholder="example@zalo.dz"
-            required
-            autocomplete="email"
-          >
-          <i class="fa-solid fa-envelope field-icon" style="top: 50%;"></i>
-        </div>
-        <button type="button" id="send-verification-btn" class="btn btn-next" style="width: auto; padding: 0 16px; min-height: 48px; margin: 0; background: var(--primary-light); font-size: 13px;">
-          إرسال الرمز
-        </button>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label for="verification-code">رمز التحقق</label>
-      <div style="display: flex; gap: 8px;">
-        <div class="input-wrapper" style="flex: 1; margin-bottom: 0;">
-          <input 
-            type="text" 
-            id="verification-code" 
-            placeholder="أدخل رمز التحقق..."
-          >
-          <i class="fa-solid fa-shield-halved field-icon" style="top: 50%;"></i>
-        </div>
-        <button type="button" id="verify-code-btn" class="btn btn-next" style="width: auto; padding: 0 20px; min-height: 48px; margin: 0; background: var(--primary-dark); font-size: 13px;">
-          تأكيد
-        </button>
+      <label for="fullName">الاسم الكامل ✍️</label>
+      <div class="input-wrapper">
+        <input 
+          type="text" 
+          id="fullName" 
+          placeholder="الاسم الكامل"
+          required
+        >
+        <i class="fa-solid fa-user field-icon"></i>
       </div>
     </div>
     
+    <div class="form-group">
+      <label for="storeName">اسم المحل / المتجر 🏪</label>
+      <div class="input-wrapper">
+        <input 
+          type="text" 
+          id="storeName" 
+          placeholder="اسم متجرك"
+          required
+        >
+        <i class="fa-solid fa-store field-icon"></i>
+      </div>
+    </div>
+
     <!-- Phone Field -->
     <div class="form-group">
       <label for="phone">رقم الهاتف الجوال</label>
@@ -1278,24 +1269,20 @@
   window.handleNextStep = async function(event) {
     event.preventDefault();
     
-    if (!currentUser) {
-      window.showStatus("جلسة المصادقة منتهية، يرجى تسجيل الدخول أولاً.", "error");
-      return;
-    }
-    
+    const fullName = document.getElementById('fullName').value.trim();
+    const storeName = document.getElementById('storeName').value.trim();
     const phone = document.getElementById('phone').value.trim();
     const wilaya = document.getElementById('wilaya').value;
     const commune = document.getElementById('commune').value.trim();
     
-    if (!phone || !wilaya || !commune) {
+    if (!fullName || !storeName || !phone || !wilaya || !commune) {
       window.showStatus("يرجى ملء جميع الحقول الإلزامية واختيار الولاية.", "error");
       return;
     }
     
-    // Exact Algerian phone standard check
     const cleanPhone = phone.replace(/[\s\-()]/g, '');
     if (!/^(05|06|07|02|03|04|09|\+213)[0-9]{8,11}$/.test(cleanPhone)) {
-      window.showStatus("يرجى إدخال رقم هاتف جزائري صالح (مثال: 0698694010).", "error");
+      window.showStatus("يرجى إدخال رقم هاتف جزائري صالح.", "error");
       return;
     }
 
@@ -1303,47 +1290,37 @@
     if (nextBtn) {
       nextBtn.disabled = true;
       const span = nextBtn.querySelector('span');
-      if (span) span.textContent = 'جاري الحفظ والتحقق...';
+      if (span) span.textContent = 'جاري الحفظ...';
     }
     
     try {
-      const profileData = {
-        id: currentUser.id,
-        phone: cleanPhone,
-        wilaya: wilaya,
-        commune: commune,
-        updated_at: new Date().toISOString()
-      };
-      
-      // Auto include verified email address
-      if (currentUser.email) {
-        profileData.email = currentUser.email;
+      if (typeof currentUser !== 'undefined' && currentUser) {
+        const profileData = {
+          id: currentUser.id,
+          phone: cleanPhone,
+          wilaya: wilaya,
+          commune: commune,
+          updated_at: new Date().toISOString()
+        };
+        const { error: upsertError } = await supabase.from('profiles').upsert(profileData);
+        if (upsertError) console.warn("Profile update warning:", upsertError);
       }
       
-      // Database update using upsert adhering to RLS policies
-      const { error: upsertError } = await supabase
-        .from('profiles')
-        .upsert(profileData);
-        
-      if (upsertError) {
-        throw upsertError;
-      }
-      
-      // Sync with local session cache
+      // Save to sessionStorage
+      sessionStorage.setItem('reg_fullName', fullName);
+      sessionStorage.setItem('reg_storeName', storeName);
       sessionStorage.setItem('reg_phone', cleanPhone);
       sessionStorage.setItem('reg_wilaya', wilaya);
       sessionStorage.setItem('reg_commune', commune);
       
-      window.showStatus("تم حفظ وحفظ بيانات الخطوة الأولى بنجاح! جاري تحويلك...", "success");
-      
-      // Redirect to step 2 after a tiny delay for visual confirmation
+      window.showStatus("تم حفظ بيانات الخطوة الأولى بنجاح! جاري تحويلك...", "success");
       setTimeout(() => {
         window.location.href = 'register-step2.html';
-      }, 1500);
+      }, 1000);
       
     } catch (err) {
-      console.error("Supabase Profile Sync failed:", err);
-      window.showStatus("فشل تحديث البيانات الشخصية: " + (err.message || "خطأ داخلي في الخادم"), "error");
+      console.error("Step 1 Error:", err);
+      window.showStatus("فشل حفظ البيانات.", "error");
       if (nextBtn) {
         nextBtn.disabled = false;
         const span = nextBtn.querySelector('span');

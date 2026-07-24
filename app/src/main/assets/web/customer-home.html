@@ -3125,6 +3125,7 @@ window.handleLogout = async function() {
     console.error("signOut error:", e);
   } finally {
     user = { id: 'guest', email: 'زائر' };
+    window.location.href = 'customer-login.html';
   }
 };
 
@@ -3172,9 +3173,7 @@ async function syncMerchantRequestStatus(user) {
 }
 
 // Open merchant modal
-window.applyForMerchant = function() {
-  document.getElementById('merchantModal').style.display = 'block';
-};
+window.applyForMerchant = function() { window.location.href = 'register-step1.html'; };
 
 // Submit partner application
 document.getElementById('merchantRequestForm').addEventListener('submit', async (e) => {
