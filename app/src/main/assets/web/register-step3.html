@@ -31,7 +31,7 @@
     }
     .container {
       width: 100%;
-      max-width: 450px;
+      max-width:  320px; zoom: 0.85;
       background: white;
       border-radius: 16px;
       padding: 32px 24px;
@@ -406,78 +406,88 @@
         </div>
       </div>
 
-      <!-- Docs for registered merchant -->
-      <div id="docs-r">
-        <div class="ibox">📋 <strong>الملف الرسمي للتاجر المرخص:</strong> يرجى رفع سجل الهيئة مع بطاقة التعريف الوطنية وشعار متجرك المعتمد.</div>
-        
-        <div class="form-group">
-          <label>📄 نسخة السجل التجاري * (PDF أو صورة واضحة)</label>
-          <div class="file-box" id="fb-rc">
-            <input type="file" id="f-rc" accept=".pdf,image/*" onchange="filePick(this,'fb-rc','fl-rc')">
-            <div class="fbi">📄</div>
-            <div class="fbl" id="fl-rc">اضغط هنا لرفع مستند السجل</div>
-            <div class="fbh">PDF أو صورة واضحة</div>
+      <!-- Docs sections (Collapsible) -->
+      <button type="button" class="upload-btn" onclick="toggleSection('docs-container')">
+        <span><i class="fa-solid fa-folder-open"></i> تحميل الوثائق التجارية (إلزامي)</span>
+        <i class="fa-solid fa-chevron-down"></i>
+      </button>
+
+      <div id="docs-container" class="hidden-section">
+        <!-- Docs for registered merchant -->
+        <div id="docs-r">
+          <div class="ibox">📋 <strong>الملف الرسمي:</strong> نسخة من السجل التجاري مع بطاقة التعريف.</div>
+          
+          <div class="form-group">
+            <label>📄 نسخة السجل التجاري * (اختياري إن لم يتوفر حالياً)</label>
+            <div class="file-box" id="fb-rc">
+              <input type="file" id="f-rc" accept=".pdf,image/*" onchange="filePick(this,'fb-rc','fl-rc')">
+              <div class="fbi">📄</div>
+              <div class="fbl" id="fl-rc">مستند السجل التجاري</div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>🪪 بطاقة الهوية الوطنية *</label>
+            <div class="file-box" id="fb-idfront">
+              <input type="file" id="f-idfront" accept="image/*" onchange="filePick(this,'fb-idfront','fl-idfront')">
+              <div class="fbi">🪪</div>
+              <div class="fbl" id="fl-idfront">الوجه الأمامي للبطاقة</div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>🔢 رقم قيد السجل التجاري</label>
+            <input type="text" id="rcNumber" placeholder="مثال: 00-12345678">
           </div>
         </div>
 
-        <div class="form-group">
-          <label>🪪 بطاقة الهوية الوطنية * (الوجه الأمامي)</label>
-          <div class="file-box" id="fb-idfront">
-            <input type="file" id="f-idfront" accept="image/*" onchange="filePick(this,'fb-idfront','fl-idfront')">
-            <div class="fbi">🪪</div>
-            <div class="fbl" id="fl-idfront">الوجه الأمامي للبطاقة</div>
+        <!-- Docs for free merchant -->
+        <div id="docs-f" style="display: none;">
+          <div class="ibox">🪪 <strong>تاجر المهن الحرة:</strong> بطاقة الهوية وتصريح شرفي.</div>
+          
+          <div class="form-group">
+            <label>✍️ تصريح شرفي *</label>
+            <div class="file-box" id="fb-honor">
+              <input type="file" id="f-honor" accept=".pdf,image/*" onchange="filePick(this,'fb-honor','fl-honor')">
+              <div class="fbi">✍️</div>
+              <div class="fbl" id="fl-honor">رفع التصريح الشرفي</div>
+            </div>
           </div>
-        </div>
-
-        <div class="form-group">
-          <label>🔢 رقم وتاريخ قيد السجل التجاري رسمي *</label>
-          <input type="text" id="rcNumber" placeholder="مثال: 00-12345678">
-        </div>
-      </div>
-
-      <!-- Docs for free merchant -->
-      <div id="docs-f" style="display: none;">
-        <div class="ibox">🪪 <strong>تاجر المهن الحرة والعائلية:</strong> مستند بطاقة الهوية الوطنية مع رفع تصريح شرفي لممارسة نشاط تجاري.</div>
-        
-        <div class="form-group">
-          <label>✍️ تصريح شرفي لممارسة نشاط تجاري * (صورة أو PDF)</label>
-          <div class="file-box" id="fb-honor">
-            <input type="file" id="f-honor" accept=".pdf,image/*" onchange="filePick(this,'fb-honor','fl-honor')">
-            <div class="fbi">✍️</div>
-            <div class="fbl" id="fl-honor">اضغط هنا لرفع التصريح الشرفي للنشاط الجاري</div>
-            <div class="fbh">تعهد خطي أو تصريح بممارسة نشاط بالتوقيع</div>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label>🪪 بطاقة الهوية الوطنية * (الوجه الأمامي)</label>
-          <div class="file-box" id="fb-idf">
-            <input type="file" id="f-idf" accept="image/*" onchange="filePick(this,'fb-idf','fl-idf')">
-            <div class="fbi">🪪</div>
-            <div class="fbl" id="fl-idf">رفع الوجه الأمامي للبطاقة الوطنية</div>
+          <div class="form-group">
+            <label>🪪 بطاقة الهوية الوطنية *</label>
+            <div class="file-box" id="fb-idf">
+              <input type="file" id="f-idf" accept="image/*" onchange="filePick(this,'fb-idf','fl-idf')">
+              <div class="fbi">🪪</div>
+              <div class="fbl" id="fl-idf">الوجه الأمامي للبطاقة</div>
+            </div>
           </div>
         </div>
       </div>
 
       <!-- Common Assets -->
-      <div class="form-group" style="margin-top: 12px;">
-        <label>🖼️ الشعار التجاري لمتجرك الخاص * (مهم جداً)</label>
-        <div class="file-box" id="fb-logo">
-          <input type="file" id="f-logo" accept="image/*" onchange="filePick(this,'fb-logo','fl-logo')">
-          <div class="fbi">🖼️</div>
-          <div class="fbl" id="fl-logo">اضغط لاختيار صورة الشعار</div>
-        </div>
-      </div>
+      <button type="button" class="upload-btn" onclick="toggleSection('images-container')">
+        <span><i class="fa-solid fa-images"></i> رفع صورة (شعار - صورة واجهة محل)</span>
+        <i class="fa-solid fa-chevron-down"></i>
+      </button>
 
-      <div class="form-group">
-        <label>📸 صورة واجهة المحل أو ورشة الانتاج (اختياري)</label>
-        <div class="file-box" id="fb-front">
-          <input type="file" id="f-front" accept="image/*" onchange="filePick(this,'fb-front','fl-front')">
-          <div class="fbi">📸</div>
+      <div id="images-container" class="hidden-section">
+        <div class="form-group">
+          <label>🖼️ الشعار التجاري *</label>
+          <div class="file-box" id="fb-logo">
+            <input type="file" id="f-logo" accept="image/*" onchange="filePick(this,'fb-logo','fl-logo')">
+            <div class="fbi">🖼️</div>
+            <div class="fbl" id="fl-logo">اختيار صورة الشعار</div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>📸 صورة واجهة المحل (اختياري)</label>
+          <div class="file-box" id="fb-front">
+            <input type="file" id="f-front" accept="image/*" onchange="filePick(this,'fb-front','fl-front')">
+            <div class="fbi">📸</div>
           <div class="fbl" id="fl-front">صورة تميز واجهة متجرك</div>
         </div>
       </div>
-    </div>
+      </div> <!-- close images-container -->
+    </div> <!-- close fieldsGrid -->
 
     <div class="buttons">
       <button type="button" class="btn btn-back" onclick="goToStep2()">← رجوع</button>
