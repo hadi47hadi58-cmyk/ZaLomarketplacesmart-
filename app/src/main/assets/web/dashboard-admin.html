@@ -1969,7 +1969,34 @@
             printWindow.document.write('<h2 style="color:#113f1c;">منصة ZaLo الجزائرية الموحدة</h2>');
             printWindow.document.write('<div class="print-card">' + printArea.innerHTML + '</div>');
             printWindow.document.write('<p style="font-size:12px; color:#666;">امسح الرمز للتسوق أو الانضمام كتاجر شريك</p>');
-            printWindow.document.write('</body></html>');
+            printWindow.document.write('
+        let isMobileMode = false;
+        function toggleResponsiveMode() {
+            isMobileMode = !isMobileMode;
+            const mainContainer = document.querySelector('main');
+            const icon = document.getElementById('responsive-icon');
+            if (!mainContainer || !icon) return;
+            if (isMobileMode) {
+                mainContainer.classList.remove('max-w-7xl');
+                mainContainer.classList.add('max-w-md');
+                mainContainer.style.borderLeft = '1px solid #e2e8f0';
+                mainContainer.style.borderRight = '1px solid #e2e8f0';
+                mainContainer.style.margin = '0 auto';
+                mainContainer.style.backgroundColor = '#ffffff';
+                icon.classList.remove('fa-mobile-screen-button');
+                icon.classList.add('fa-desktop');
+            } else {
+                mainContainer.classList.remove('max-w-md');
+                mainContainer.classList.add('max-w-7xl');
+                mainContainer.style.borderLeft = 'none';
+                mainContainer.style.borderRight = 'none';
+                mainContainer.style.backgroundColor = 'transparent';
+                icon.classList.remove('fa-desktop');
+                icon.classList.add('fa-mobile-screen-button');
+            }
+        }
+
+</body></html>');
             printWindow.document.close();
             printWindow.focus();
             setTimeout(() => {
@@ -2158,7 +2185,34 @@
             printWindow.document.write('<tr><td>صافي دخل التاجر المتبقي</td><td style="color:green; font-weight:bold;">' + (salesTotal - comm).toLocaleString() + ' دج</td></tr>');
             printWindow.document.write('</tbody></table>');
             printWindow.document.write('<p style="margin-top:30px; font-size:11px; text-align:center; color:#888;">منصة ZaLo ديزاد - نظام التدقيق الإداري والمالي الموحد</p>');
-            printWindow.document.write('</body></html>');
+            printWindow.document.write('
+        let isMobileMode = false;
+        function toggleResponsiveMode() {
+            isMobileMode = !isMobileMode;
+            const mainContainer = document.querySelector('main');
+            const icon = document.getElementById('responsive-icon');
+            if (!mainContainer || !icon) return;
+            if (isMobileMode) {
+                mainContainer.classList.remove('max-w-7xl');
+                mainContainer.classList.add('max-w-md');
+                mainContainer.style.borderLeft = '1px solid #e2e8f0';
+                mainContainer.style.borderRight = '1px solid #e2e8f0';
+                mainContainer.style.margin = '0 auto';
+                mainContainer.style.backgroundColor = '#ffffff';
+                icon.classList.remove('fa-mobile-screen-button');
+                icon.classList.add('fa-desktop');
+            } else {
+                mainContainer.classList.remove('max-w-md');
+                mainContainer.classList.add('max-w-7xl');
+                mainContainer.style.borderLeft = 'none';
+                mainContainer.style.borderRight = 'none';
+                mainContainer.style.backgroundColor = 'transparent';
+                icon.classList.remove('fa-desktop');
+                icon.classList.add('fa-mobile-screen-button');
+            }
+        }
+
+</body></html>');
             printWindow.document.close();
             printWindow.focus();
             setTimeout(() => {
@@ -2221,7 +2275,34 @@
             printWindow.document.write('<tbody>' + tableRows + '</tbody>');
             printWindow.document.write('</table>');
             
-            printWindow.document.write('</body></html>');
+            printWindow.document.write('
+        let isMobileMode = false;
+        function toggleResponsiveMode() {
+            isMobileMode = !isMobileMode;
+            const mainContainer = document.querySelector('main');
+            const icon = document.getElementById('responsive-icon');
+            if (!mainContainer || !icon) return;
+            if (isMobileMode) {
+                mainContainer.classList.remove('max-w-7xl');
+                mainContainer.classList.add('max-w-md');
+                mainContainer.style.borderLeft = '1px solid #e2e8f0';
+                mainContainer.style.borderRight = '1px solid #e2e8f0';
+                mainContainer.style.margin = '0 auto';
+                mainContainer.style.backgroundColor = '#ffffff';
+                icon.classList.remove('fa-mobile-screen-button');
+                icon.classList.add('fa-desktop');
+            } else {
+                mainContainer.classList.remove('max-w-md');
+                mainContainer.classList.add('max-w-7xl');
+                mainContainer.style.borderLeft = 'none';
+                mainContainer.style.borderRight = 'none';
+                mainContainer.style.backgroundColor = 'transparent';
+                icon.classList.remove('fa-desktop');
+                icon.classList.add('fa-mobile-screen-button');
+            }
+        }
+
+</body></html>');
             printWindow.document.close();
             printWindow.focus();
             setTimeout(() => {
@@ -2876,17 +2957,42 @@
         }
 
         // Logout user
-        function logoutUser() {
-            if (window.sessionManagerInstance) {
-                window.sessionManagerInstance.logoutAndRedirect();
-            } else if (typeof window.logoutUser === 'function') {
-                window.logoutUser();
-            } else {
+                function logoutUser() {
+            localStorage.clear();
+            window.location.href = 'customer-login.html';
+        } else {
                 localStorage.clear();
                 window.location.href = 'customer-login.html';
             }
         }
     </script>
+
+
+        let isMobileMode = false;
+        function toggleResponsiveMode() {
+            isMobileMode = !isMobileMode;
+            const mainContainer = document.querySelector('main');
+            const icon = document.getElementById('responsive-icon');
+            if (!mainContainer || !icon) return;
+            if (isMobileMode) {
+                mainContainer.classList.remove('max-w-7xl');
+                mainContainer.classList.add('max-w-md');
+                mainContainer.style.borderLeft = '1px solid #e2e8f0';
+                mainContainer.style.borderRight = '1px solid #e2e8f0';
+                mainContainer.style.margin = '0 auto';
+                mainContainer.style.backgroundColor = '#ffffff';
+                icon.classList.remove('fa-mobile-screen-button');
+                icon.classList.add('fa-desktop');
+            } else {
+                mainContainer.classList.remove('max-w-md');
+                mainContainer.classList.add('max-w-7xl');
+                mainContainer.style.borderLeft = 'none';
+                mainContainer.style.borderRight = 'none';
+                mainContainer.style.backgroundColor = 'transparent';
+                icon.classList.remove('fa-desktop');
+                icon.classList.add('fa-mobile-screen-button');
+            }
+        }
 
 </body>
 </html>
