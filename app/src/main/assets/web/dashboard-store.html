@@ -195,9 +195,9 @@
                 <i class="fa-solid fa-money-bill-trend-up text-[#d4af37]"></i>
                 <span>التقرير المالي للمبيعات 📈</span>
             </button>
-                    <button onclick="window.location.href='register-step1.html'" class="sidebar-tab-btn">
-                <i class="fa-solid fa-store text-[#d4af37]"></i>
-                <span class="font-bold">تسجيل كتاجر</span>
+            <button onclick="openAddBranchModal()" class="sidebar-tab-btn">
+                <i class="fa-solid fa-sitemap text-[#d4af37]"></i>
+                <span class="font-bold">تسجيل تاجر (فروع وسلاسل) 🏢</span>
             </button>
         </nav>
 
@@ -1804,8 +1804,131 @@
                 icon.classList.remove('fa-desktop');
                 icon.classList.add('fa-mobile-screen-button');
             }
+        window.openAddBranchModal = function() {
+            const parentStore = localStorage.getItem('zalo_active_store') || sessionStorage.getItem('merchant_store_name') || 'المتجر الرئيسي';
+            const input = document.getElementById('branchParentStore');
+            if (input) input.value = parentStore;
+            const modal = document.getElementById('addBranchModal');
+            if (modal) modal.classList.remove('hidden');
         };
 
+        window.closeAddBranchModal = function() {
+            const modal = document.getElementById('addBranchModal');
+            if (modal) modal.classList.add('hidden');
+        };
+
+        window.handleSaveBranch = async function(e) {
+            e.preventDefault();
+            const parentStore = document.getElementById('branchParentStore').value;
+            const branchName = document.getElementById('branchName').value.trim();
+            const category = document.getElementById('branchCategory').value;
+            const wilaya = document.getElementById('branchWilaya').value.trim();
+            const commune = document.getElementById('branchCommune').value.trim();
+            const phone = document.getElementById('branchPhone').value.trim();
+            const manager = document.getElementById('branchManager').value.trim();
+
+            const branchData = {
+                id: 'branch_' + Date.now(),
+                parent_store: parentStore,
+                store_name: branchName,
+                category: category,
+                wilaya: wilaya,
+                commune: commune,
+                phone: phone,
+                manager: manager,
+                status: 'APPROVED',
+                created_at: new Date().toISOString()
+            };
+
+            try {
+                if (typeof supabase !== 'undefined' && supabase.from) {
+                    await supabase.from('merchant_requests').insert({
+                        store_name: branchName + " (" + parentStore + ")",
+                        category: category,
+                        wilaya: wilaya,
+                        commune: commune,
+                        status: 'APPROVED',
+                        merchant_type: 'branch'
+                    });
+                }
+            } catch(err) {
+                console.warn("Branch save error:", err);
+            }
+
+            let branches = JSON.parse(localStorage.getItem('zalo_store_branches') || '[]');
+            branches.push(branchData);
+            localStorage.setItem('zalo_store_branches', JSON.stringify(branches));
+
+            alert("✅ تم إضافة الفرع / السلسلة (" + branchName + ") بنجاح للتاجر الرئيسي!");
+            closeAddBranchModal();
+        };
 </script>
+
+<!-- Branch/Chain Modal -->
+<div id="addBranchModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-100 space-y-4 text-right" dir="rtl">
+        <div class="flex justify-between items-center border-b pb-3">
+            <h3 class="text-base font-black text-slate-800 flex items-center gap-2">
+                <i class="fa-solid fa-sitemap text-[#d4af37]"></i>
+                <span>تسجيل تاجر (إضافة فرع / سلسلة جديدة)</span>
+            </h3>
+            <button onclick="closeAddBranchModal()" class="text-slate-400 hover:text-red-500 font-bold text-lg">✕</button>
+        </div>
+
+        <form id="addBranchForm" onsubmit="handleSaveBranch(event)" class="space-y-3">
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">المتجر الرئيسي التابع له</label>
+                <input type="text" id="branchParentStore" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-600" readonly>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">اسم الفرع / السلسلة الجديدة *</label>
+                <input type="text" id="branchName" placeholder="مثال: فرع وهران - حي الصباح" required class="w-full border border-slate-300 rounded-xl px-3 py-2 text-xs font-bold focus:border-[#0ea5e9] outline-none">
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">تخصص الفرع *</label>
+                <select id="branchCategory" required class="w-full border border-slate-300 rounded-xl px-3 py-2 text-xs font-bold focus:border-[#0ea5e9] outline-none">
+                    <option value="هواتف وإلكترونيات">📱 هواتف وإلكترونيات</option>
+                    <option value="أثاث ومنزل">🛋️ أثاث ومنزل</option>
+                    <option value="ملابس وأزياء">👗 ملابس وأزياء</option>
+                    <option value="مواد غذائية">🛒 مواد غذائية</option>
+                    <option value="سيارات وقطع غيار">🚗 سيارات وقطع غيار</option>
+                    <option value="خدمات ومهن حرة">🛠️ خدمات ومهن حرة</option>
+                </select>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">الولاية *</label>
+                    <input type="text" id="branchWilaya" placeholder="مثال: 31 - وهران" required class="w-full border border-slate-300 rounded-xl px-3 py-2 text-xs font-bold outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">البلدية *</label>
+                    <input type="text" id="branchCommune" placeholder="مثال: وهران" required class="w-full border border-slate-300 rounded-xl px-3 py-2 text-xs font-bold outline-none">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">رقم هاتف الفرع *</label>
+                <input type="tel" id="branchPhone" placeholder="0658000000" required class="w-full border border-slate-300 rounded-xl px-3 py-2 text-xs font-bold outline-none">
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">اسم مسؤول الفرع</label>
+                <input type="text" id="branchManager" placeholder="الاسم واللقب للمسؤول" class="w-full border border-slate-300 rounded-xl px-3 py-2 text-xs font-bold outline-none">
+            </div>
+
+            <div class="pt-2 flex gap-2">
+                <button type="submit" class="flex-1 bg-gradient-to-r from-[#0ea5e9] to-[#0284c7] text-white py-2.5 rounded-xl font-bold text-xs hover:shadow-lg transition">
+                    🚀 حفظ وإضافة الفرع
+                </button>
+                <button type="button" onclick="closeAddBranchModal()" class="px-4 bg-slate-100 text-slate-700 py-2.5 rounded-xl font-bold text-xs hover:bg-slate-200">
+                    إلغاء
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
 </body>
 </html>
