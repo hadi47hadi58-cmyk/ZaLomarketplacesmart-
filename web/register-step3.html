@@ -717,10 +717,27 @@
         }
       }
 
-      // Save session and redirect
+      // Save session and store settings
       localStorage.setItem('user_uid', uid);
       localStorage.setItem('user_email', email);
       localStorage.setItem('user_role', userType);
+      localStorage.setItem('zalo_user_role', userType);
+      if (storeName) {
+        localStorage.setItem('zalo_active_store', storeName);
+        sessionStorage.setItem('merchant_store_name', storeName);
+        
+        const newStoreSettings = {
+          storeName: storeName,
+          phone: phone,
+          wilaya: wilaya,
+          commune: commune,
+          logoImg: logoB64 || "assets/icon-192.svg",
+          coverImg: frontFile || "assets/icon-192.svg",
+          workingHours: "08:00 - 22:00",
+          vatNumber: rcnum || "198273615243000"
+        };
+        localStorage.setItem('zalo_merchant_store_settings', JSON.stringify(newStoreSettings));
+      }
       sessionStorage.setItem('user_logged_in', 'true');
 
       // Clear registration data

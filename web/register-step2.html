@@ -607,10 +607,56 @@
         console.warn("Merchant request insert warning:", me);
       }
 
+      // Save local fallback record for merchant request (used by dashboard-admin.html and dashboard-manager.html)
+      const newLocalRequest = {
+        id: 'req_' + Date.now(),
+        user_id: uid,
+        store_name: storeName,
+        name: storeName,
+        owner_name: fullName,
+        owner: fullName,
+        email: email,
+        phone: phone,
+        wilaya: wilaya,
+        commune: commune,
+        category: category,
+        merchant_type: storeType,
+        rc_number: rcnum,
+        status: 'APPROVED',
+        created_at: new Date().toISOString()
+      };
+
+      let localReqs = [];
+      try {
+        localReqs = JSON.parse(localStorage.getItem('zalo_local_merchant_requests') || '[]');
+      } catch (e) { localReqs = []; }
+      localReqs.unshift(newLocalRequest);
+      localStorage.setItem('zalo_local_merchant_requests', JSON.stringify(localReqs));
+
+      // Save merchant store settings for dashboard-store.html
+      const newStoreSettings = {
+        storeName: storeName,
+        phone: phone,
+        category: category,
+        wilaya: wilaya,
+        commune: commune,
+        fb: "", ig: "", tiktok: "", tg: "",
+        logoImg: logoB64 || "assets/icon-192.svg",
+        coverImg: frontFile || "assets/icon-192.svg",
+        workingHours: "08:00 - 22:00",
+        vatNumber: rcnum || "198273615243000"
+      };
+      localStorage.setItem('zalo_merchant_store_settings', JSON.stringify(newStoreSettings));
+
       // Set local sessions
       localStorage.setItem('zalo_user_role', 'merchant');
       localStorage.setItem('zalo_active_store', storeName);
       sessionStorage.setItem('merchant_store_name', storeName);
+      sessionStorage.setItem('reg_storeName', storeName);
+      sessionStorage.setItem('reg_fullName', fullName);
+      sessionStorage.setItem('reg_phone', phone);
+      sessionStorage.setItem('reg_wilaya', wilaya);
+      sessionStorage.setItem('reg_commune', commune);
 
       showStatus("تم تفعيل حساب التاجر وإنشاء المتجر بنجاح! جاري التوجيه...", "success");
 

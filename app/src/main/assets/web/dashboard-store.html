@@ -207,7 +207,7 @@
                 <div class="flex items-center gap-3">
                     <img id="sidebar-store-logo-preview" src="assets/icon-192.svg" class="w-10 h-10 rounded-xl object-cover border border-[#d4af37]/30">
                     <div class="space-y-0.5">
-                        <h4 class="text-xs font-black text-slate-800" id="sidebar-user-name">ABDELALI.PHONE</h4>
+                        <h4 class="text-xs font-black text-slate-800" id="sidebar-user-name">متجر ZaLo</h4>
                         <p class="text-[9px] text-slate-400 font-bold" id="sidebar-user-email">merchant@zalo.dz</p>
                     </div>
                 </div>
@@ -274,9 +274,9 @@
                 <!-- Store Image preview placeholder -->
                 <img id="profile-store-image" src="assets/icon-192.svg" class="w-16 h-16 rounded-2xl border-2 border-[#d4af37] object-cover shadow-sm">
                 <div>
-                    <h2 id="profile-store-name" class="text-xl font-black text-slate-800">ABDELALI.PHONE</h2>
+                    <h2 id="profile-store-name" class="text-xl font-black text-slate-800">متجر ZaLo</h2>
                     <div class="flex flex-wrap gap-2 items-center mt-1">
-                        <span id="profile-store-wilaya" class="text-[10px] bg-sky-50 text-sky-600 border border-sky-100 px-2.5 py-0.5 rounded-full font-bold">المركز الاقتصادي: 58 المنيعة</span>
+                        <span id="profile-store-wilaya" class="text-[10px] bg-sky-50 text-sky-600 border border-sky-100 px-2.5 py-0.5 rounded-full font-bold">المركز الاقتصادي: الجزائر</span>
                         <span class="text-[10px] bg-emerald-50 text-emerald-600 border border-emerald-100 px-2.5 py-0.5 rounded-full font-bold">المتجر يستقبل الطلبات الآن (مفتوح)</span>
                     </div>
                 </div>
@@ -874,7 +874,7 @@
                 <!-- Highly styled printable invoice matching Algerian standard -->
                 <div class="border-b-2 border-slate-300 pb-4 flex justify-between items-center">
                     <div>
-                        <h4 class="text-lg font-black text-slate-900" id="inv-store-name">ABDELALI.PHONE</h4>
+                        <h4 class="text-lg font-black text-slate-900" id="inv-store-name">متجر ZaLo</h4>
                         <p class="text-[10px] text-slate-400 mt-1" id="inv-store-info">العنوان: المنيعة، الجزائر | هاتف: 0666112233</p>
                     </div>
                     <div class="text-left">
@@ -938,22 +938,19 @@
 
     <!-- State management script -->
     <script>
-        // Tab switching logic for responsive layout
-        function switchTab(tabId) {
-            // Hide all tab sections
+        // Global Tab switching logic
+        window.switchTab = function(tabId) {
             const sections = ['home', 'settings', 'products', 'orders', 'qr', 'reports'];
             sections.forEach(s => {
                 const secEl = document.getElementById('section-' + s);
                 if (secEl) secEl.classList.add('hidden');
             });
 
-            // Show active tab section
             const activeSec = document.getElementById('section-' + tabId);
             if (activeSec) {
                 activeSec.classList.remove('hidden');
             }
 
-            // Update tab button active states
             sections.forEach(s => {
                 const btnEl = document.getElementById('btn-tab-' + s);
                 if (btnEl) btnEl.classList.remove('active');
@@ -961,7 +958,6 @@
             const activeBtn = document.getElementById('btn-tab-' + tabId);
             if (activeBtn) activeBtn.classList.add('active');
 
-            // Close mobile sidebar on transition
             const sidebar = document.getElementById('zalo-sidebar');
             const overlay = document.getElementById('sidebar-overlay');
             if (sidebar && window.innerWidth < 1024) {
@@ -969,10 +965,10 @@
                 sidebar.classList.remove('flex');
                 if (overlay) overlay.classList.add('hidden');
             }
-        }
+        };
 
-        // Toggle mobile sidebar
-        function toggleSidebarMobile() {
+        // Global Toggle mobile sidebar
+        window.toggleSidebarMobile = function() {
             const sidebar = document.getElementById('zalo-sidebar');
             const overlay = document.getElementById('sidebar-overlay');
             if (sidebar) {
@@ -986,7 +982,7 @@
                     if (overlay) overlay.classList.add('hidden');
                 }
             }
-        }
+        };
 
         // DB keys
         const DB_KEY_PREFIX = "zalo_";
@@ -1015,57 +1011,97 @@
             vatNumber: "198273615243000"
         };
 
-        function initOldMerchantDashboard() {
-            // Seed merchant settings if not exists
+        window.initOldMerchantDashboard = function() {
+            // Read active store details from registration session or local storage
+            const activeStoreName = sessionStorage.getItem('reg_storeName') || localStorage.getItem('zalo_active_store') || sessionStorage.getItem('merchant_store_name') || "";
+            const activePhone = sessionStorage.getItem('reg_phone') || "";
+            const activeWilaya = sessionStorage.getItem('reg_wilaya') || "";
+            const activeCommune = sessionStorage.getItem('reg_commune') || "";
+            const activeOwner = sessionStorage.getItem('reg_fullName') || "";
+
             let settings = getDB("merchant_store_settings", DEFAULT_MERCHANT_SETTINGS);
+
+            if (activeStoreName) settings.storeName = activeStoreName;
+            if (activePhone) settings.phone = activePhone;
+            if (activeWilaya) settings.wilaya = activeWilaya;
+            if (activeCommune) settings.commune = activeCommune;
+
+            if (!settings.storeName) settings.storeName = "متجر ZaLo";
+            if (!settings.wilaya) settings.wilaya = "الجزائر";
+
             setDB("merchant_store_settings", settings);
 
-            // Set inputs
-            document.getElementById('settings-store-name').value = settings.storeName;
-            document.getElementById('settings-phone').value = settings.phone;
-            document.getElementById('settings-category').value = settings.category;
-            document.getElementById('settings-wilaya').value = settings.wilaya;
-            document.getElementById('settings-commune').value = settings.commune;
-            document.getElementById('settings-fb').value = settings.fb || '';
-            document.getElementById('settings-ig').value = settings.ig || '';
-            document.getElementById('settings-tiktok').value = settings.tiktok || '';
-            document.getElementById('settings-tg').value = settings.tg || '';
+            // Set input values
+            const inputName = document.getElementById('settings-store-name');
+            if (inputName) inputName.value = settings.storeName;
+            const inputPhone = document.getElementById('settings-phone');
+            if (inputPhone) inputPhone.value = settings.phone;
+            const inputCat = document.getElementById('settings-category');
+            if (inputCat) inputCat.value = settings.category || "cat_phones";
+            const inputWilaya = document.getElementById('settings-wilaya');
+            if (inputWilaya) inputWilaya.value = settings.wilaya;
+            const inputCommune = document.getElementById('settings-commune');
+            if (inputCommune) inputCommune.value = settings.commune;
+
+            const inputFb = document.getElementById('settings-fb');
+            if (inputFb) inputFb.value = settings.fb || '';
+            const inputIg = document.getElementById('settings-ig');
+            if (inputIg) inputIg.value = settings.ig || '';
+            const inputTiktok = document.getElementById('settings-tiktok');
+            if (inputTiktok) inputTiktok.value = settings.tiktok || '';
+            const inputTg = document.getElementById('settings-tg');
+            if (inputTg) inputTg.value = settings.tg || '';
             
-            // New settings fields
-            document.getElementById('settings-hours').value = settings.workingHours || "08:00 - 22:00";
-            document.getElementById('settings-vat').value = settings.vatNumber || "198273615243000";
+            const inputHours = document.getElementById('settings-hours');
+            if (inputHours) inputHours.value = settings.workingHours || "08:00 - 22:00";
+            const inputVat = document.getElementById('settings-vat');
+            if (inputVat) inputVat.value = settings.vatNumber || "198273615243000";
             
-            // Auto-generate a beautiful shareable store URL
+            // Shareable store URL
             const storeUrlInput = document.getElementById('settings-store-url');
             if (storeUrlInput) {
                 const cleanName = settings.storeName.toLowerCase().replace(/[^a-z0-9]/g, '');
-                storeUrlInput.value = `https://zalo.dz/store/${cleanName || 'phone'}`;
+                storeUrlInput.value = `https://zalo.dz/store/${cleanName || 'zalo'}`;
             }
 
-            // Set image previews
-            document.getElementById('logo-preview').src = settings.logoImg;
-            document.getElementById('cover-preview').src = settings.coverImg;
-            document.getElementById('profile-store-image').src = settings.logoImg;
-            document.getElementById('profile-store-name').innerText = settings.storeName;
-            document.getElementById('profile-store-wilaya').innerText = "المركز الاقتصادي: " + settings.wilaya;
+            // Image previews
+            if (settings.logoImg) {
+                const logoPrev = document.getElementById('logo-preview');
+                if (logoPrev) logoPrev.src = settings.logoImg;
+                const profImg = document.getElementById('profile-store-image');
+                if (profImg) profImg.src = settings.logoImg;
+                const sidebarLogo = document.getElementById('sidebar-store-logo-preview');
+                if (sidebarLogo) sidebarLogo.src = settings.logoImg;
+            }
+            if (settings.coverImg) {
+                const coverPrev = document.getElementById('cover-preview');
+                if (coverPrev) coverPrev.src = settings.coverImg;
+            }
 
-            // Sync with sidebar
-            const sidebarLogo = document.getElementById('sidebar-store-logo-preview');
-            if (sidebarLogo) sidebarLogo.src = settings.logoImg;
+            const profileName = document.getElementById('profile-store-name');
+            if (profileName) profileName.innerText = settings.storeName;
+
+            const profileWilaya = document.getElementById('profile-store-wilaya');
+            if (profileWilaya) profileWilaya.innerText = "المركز الاقتصادي: " + settings.wilaya + (settings.commune ? (" - " + settings.commune) : "");
+
             const sidebarName = document.getElementById('sidebar-user-name');
             if (sidebarName) sidebarName.innerText = settings.storeName;
 
-            // Load counts
-            updateCounters();
+            const invName = document.getElementById('inv-store-name');
+            if (invName) invName.innerText = settings.storeName;
 
-            // Render customized components locally to guarantee requested features
+            const invInfo = document.getElementById('inv-store-info');
+            if (invInfo) invInfo.innerText = `العنوان: ${settings.wilaya}، الجزائر | هاتف: ${settings.phone || '0658000000'}`;
+
+            const sidebarEmail = document.getElementById('sidebar-user-email');
+            if (sidebarEmail && activeOwner) sidebarEmail.innerText = activeOwner;
+
+            updateCounters();
             renderMerchantProducts();
             renderMerchantOrders();
-
-            // Initialize QR and Financial Reports modules
             initMerchantQR();
             renderMerchantFinancialReports();
-        }
+        };
 
         // Live image previews
         function previewImage(input, previewId) {

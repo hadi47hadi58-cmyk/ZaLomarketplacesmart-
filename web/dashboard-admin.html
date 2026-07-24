@@ -1265,7 +1265,7 @@
         }
 
         // Sidebar and Tab Switch Helpers
-        function switchTab(tabId) {
+        window.switchTab = function(tabId) {
             const sections = ['home', 'registrations', 'wilayas', 'notifications', 'secret', 'qr', 'settings-global', 'reports-global', 'users-global', 'products-global', 'team'];
             sections.forEach(sec => {
                 const el = document.getElementById(`section-${sec}`);
@@ -1294,9 +1294,9 @@
                 sidebar.classList.remove("flex");
                 if (overlay) overlay.classList.add("hidden");
             }
-        }
+        };
 
-        function toggleSidebarMobile() {
+        window.toggleSidebarMobile = function() {
             const sidebar = document.getElementById("zalo-sidebar");
             const overlay = document.getElementById("sidebar-overlay");
             if (sidebar) {
@@ -1310,7 +1310,7 @@
                     if (overlay) overlay.classList.add("hidden");
                 }
             }
-        }
+        };
 
         // List of all Algerian Wilayas with additional performance indicators
         const ALGERIAN_WILAYAS = [
@@ -1714,21 +1714,41 @@
                 console.error("Error fetching live merchant requests:", e);
             }
 
-            const mappedLiveRequests = liveRequests.map(r => {
-                let mappedStatus = "PENDING";
-                if (r.status === "approved" || r.status === "active" || r.status === "APPROVED") mappedStatus = "APPROVED";
+            let zaloLocalReqs = [];
+            try {
+                zaloLocalReqs = JSON.parse(localStorage.getItem('zalo_local_merchant_requests') || '[]');
+            } catch (e) { zaloLocalReqs = []; }
+
+            let zaloMerchantReqs = [];
+            try {
+                zaloMerchantReqs = JSON.parse(localStorage.getItem('zalo_merchant_requests') || '[]');
+            } catch (e) { zaloMerchantReqs = []; }
+
+            const allRequests = [...liveRequests, ...zaloLocalReqs, ...zaloMerchantReqs];
+
+            const mappedLiveRequests = allRequests.map(r => {
+                let mappedStatus = "APPROVED";
+                if (r.status === "pending" || r.status === "PENDING") mappedStatus = "PENDING";
                 if (r.status === "suspended" || r.status === "SUSPENDED" || r.status === "rejected") mappedStatus = "SUSPENDED";
-                
+                if (r.status === "approved" || r.status === "active" || r.status === "APPROVED") mappedStatus = "APPROVED";
+
+                const storeName = r.store_name || r.storeName || r.name || "متجر جديد";
+                const ownerName = r.owner_name || r.ownerName || r.owner || r.name || (r.email ? r.email.split('@')[0] : "تاجر جديد");
+                const phone = r.phone || "0658000000";
+                const wilaya = r.wilaya || r.location || "الجزائر";
+                const cat = r.category || "عام";
+                const rcNum = r.rc_number || r.rcNumber || (r.id ? String(r.id).substring(0, 8) : "RC-APPROVED");
+
                 return {
-                    id: r.id,
-                    name: r.storeName || r.name || "متجر جديد",
-                    owner: r.ownerName || r.email?.split('@')[0] || "تاجر جديد",
+                    id: r.id || ('req_' + Math.random()),
+                    name: storeName,
+                    owner: ownerName,
                     email: r.email || "",
-                    phone: r.phone || "",
-                    location: r.wilaya ? `${r.wilaya}` : "غير محدد",
-                    regCode: r.rcNumber || r.id?.substring(0, 8) || "RC-PENDING",
-                    category: r.category || "عام",
-                    activityType: r.storeType === "registered" ? "بيع منتجات" : "تقديم خدمات",
+                    phone: phone,
+                    location: wilaya,
+                    regCode: rcNum,
+                    category: cat,
+                    activityType: (r.merchant_type === "registered" || r.storeType === "registered") ? "بيع منتجات" : "تقديم خدمات",
                     status: mappedStatus,
                     isLive: true
                 };
@@ -1736,7 +1756,7 @@
 
             let mergedStores = [...localStores];
             mappedLiveRequests.forEach(live => {
-                const existingIdx = mergedStores.findIndex(st => st.id === live.id || st.name.trim() === live.name.trim());
+                const existingIdx = mergedStores.findIndex(st => (st.id && st.id === live.id) || (st.name && st.name.trim() === live.name.trim()));
                 if (existingIdx !== -1) {
                     mergedStores[existingIdx] = { ...mergedStores[existingIdx], ...live };
                 } else {
@@ -1745,6 +1765,22 @@
             });
 
             setDB("stores_list_old", mergedStores);
+
+            // Update badge counts
+            const badgeCount = document.getElementById('badge-registrations-count');
+            if (badgeCount) badgeCount.innerText = mergedStores.length;
+
+            // Dynamically update ALGERIAN_WILAYAS active store counts
+            if (typeof ALGERIAN_WILAYAS !== 'undefined' && Array.isArray(ALGERIAN_WILAYAS)) {
+                ALGERIAN_WILAYAS.forEach(w => {
+                    const count = mergedStores.filter(st => st.location && (st.location.includes(w.name) || st.location.startsWith(w.code))).length;
+                    if (count > 0) {
+                        w.activeStores = count;
+                        w.activeMerchants = count;
+                    }
+                });
+                renderWilayaTable();
+            }
 
             mergedStores.forEach(s => {
                 let statusBadge = s.status === "APPROVED" ? "bg-emerald-50 border border-emerald-200 text-emerald-700" : "bg-amber-50 border border-amber-200 text-amber-700";
