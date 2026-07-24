@@ -120,14 +120,14 @@
     }
     .form-label {
       display: block; font-size: 13px; font-weight: 700;
-      color: var(--gold2); margin-bottom: 2px;
+      color: var(--gold2); margin-bottom: 1px;
     }
     .input-wrapper {
       position: relative;
     }
     .input-icon {
       position: absolute; right: 14px; top: 50%;
-      transform: translateY(-50%); color: var(--text2); font-size: 14px;
+      transform: translateY(-50%); color: var(--text2); font-size: 10px;
     }
     .form-input {
       width: 100%;
@@ -135,7 +135,7 @@
       border: 1px solid var(--border);
       border-radius: 14px;
       padding: 12px 38px 12px 14px;
-      color: var(--text); font-family: inherit; font-size: 14px;
+      color: var(--text); font-family: inherit; font-size: 10px;
       transition: all 0.25s ease;
       text-align: right;
     }
@@ -148,7 +148,7 @@
     .toggle-pass {
       position: absolute; left: 14px; top: 50%;
       transform: translateY(-50%); color: var(--text2);
-      cursor: pointer; font-size: 14px;
+      cursor: pointer; font-size: 10px;
       padding: 4px; z-index: 10;
     }
     .toggle-pass:hover {
@@ -158,7 +158,7 @@
     .submit-btn {
       width: 100%; background: var(--green);
       border: 1px solid var(--gold);
-      color: #fff; font-family: inherit; font-size: 15px; font-weight: 800;
+      color: #fff; font-family: inherit; font-size: 9px; font-weight: 800;
       padding: 13px; border-radius: 14px; cursor: pointer;
       box-shadow: 0 8px 24px rgba(26,92,42,0.25);
       transition: all 0.25s ease;
@@ -189,7 +189,7 @@
     }
 
     .register-link {
-      text-align: center; margin-top: 16px; font-size: 14px; color: var(--text2);
+      text-align: center; margin-top: 16px; font-size: 10px; color: var(--text2);
     }
     .register-link a {
       color: var(--gold2); font-weight: 700; text-decoration: none; margin-right: 4px;
@@ -266,8 +266,8 @@
 
 
 <div class="wrapper">
-  <div class="logo-area" onclick="window.location.href='customer-home.html'" title="العودة للرئيسية" style="text-align: center; margin-bottom: 2px; cursor: pointer; display: flex; flex-direction: column; align-items: center;">
-    <svg width="40" height="40" viewBox="0 0 100 100" style="margin-bottom: 0px;">
+  <div class="logo-area" onclick="window.location.href='customer-home.html'" title="العودة للرئيسية" style="text-align: center; margin-bottom: 1px; cursor: pointer; display: flex; flex-direction: column; align-items: center;">
+    <svg width="28" height="28" viewBox="0 0 100 100" style="margin-bottom: 0px;">
       <path d="M 29,13.6 A 42,42 0 1,0 71,13.6" fill="none" stroke="#d4af37" stroke-width="2.5" stroke-linecap="round" />
       <path d="M47.5,75 L52.5,75 L52.1,68 L47.9,68 Z" fill="#d4af37" />
       <path d="M47.9,66 L52.1,66 L51.7,59 L48.3,59 Z" fill="#d4af37" />
@@ -284,8 +284,8 @@
       <text x="35" y="62" font-family="'Cairo', sans-serif" font-weight="900" font-size="14" fill="#d4af37" text-anchor="middle">Z</text>
       <text x="65" y="62" font-family="'Cairo', sans-serif" font-weight="900" font-size="14" fill="#d4af37" text-anchor="middle">L</text>
     </svg>
-    <div style="font-family: 'Great Vibes', cursive; font-size: 22px; color: #d4af37; line-height: 0.9; margin-top: -2px;">ZaLo</div>
-    <div style="font-family: 'Cairo', sans-serif; font-size: 9px; font-weight: 800; color: #d4af37; letter-spacing: 0.5px;">السوق الذكي</div>
+    <div style="font-family: 'Great Vibes', cursive; font-size: 16px; color: #d4af37; line-height: 0.9; margin-top: -2px;">ZaLo</div>
+    <div style="font-family: 'Cairo', sans-serif; font-size: 7px; font-weight: 800; color: #d4af37; letter-spacing: 0.5px;">السوق الذكي</div>
 
   </div>
 
@@ -326,8 +326,8 @@
         <label class="form-label" id="otpLabel">رمز التحقق 🛡️</label>
         <div class="input-wrapper" style="position: relative; display: flex; align-items: center;">
           <i class="fa-solid fa-shield-halved input-icon"></i>
-          <input type="text" id="otpCode" class="form-input" placeholder="أدخل رمز التحقق" maxlength="6" inputmode="numeric" style="padding-left: 130px; font-weight: 800; font-size: 15px;">
-          <button type="button" id="sendOtpInlineBtn" style="position: absolute; left: 8px; top: 50%; transform: translateY(-50%); background: rgba(14, 165, 233, 0.08); border: 1.5px solid rgba(14, 165, 233, 0.2); color: var(--green); font-family: 'Cairo', sans-serif; font-size: 11px; font-weight: 800; padding: 6px 12px; border-radius: 20px; cursor: pointer; transition: all 0.25s; z-index: 10; display: flex; align-items: center; gap: 4px; white-space: nowrap;">
+          <input type="text" id="otpCode" class="form-input" placeholder="أدخل رمز التحقق" maxlength="6" inputmode="numeric" style="padding-left: 90px; font-weight: 800; font-size: 9px;">
+          <button type="button" id="sendOtpInlineBtn" style="position: absolute; left: 8px; top: 50%; transform: translateY(-50%); background: rgba(14, 165, 233, 0.08); border: 1.5px solid rgba(14, 165, 233, 0.2); color: var(--green); font-family: 'Cairo', sans-serif; font-size: 9px; font-weight: 800; padding: 3px 8px; border-radius: 20px; cursor: pointer; transition: all 0.25s; z-index: 10; display: flex; align-items: center; gap: 4px; white-space: nowrap;">
             أرسل الرمز 📨
           </button>
         </div>
@@ -338,20 +338,20 @@
       </button>
 
       <!-- Privacy Policy Agreement -->
-      <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 15px; font-family: 'Cairo', sans-serif; font-size: 11px; color: var(--text2); direction: rtl;">
+      <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 15px; font-family: 'Cairo', sans-serif; font-size: 9px; color: var(--text2); direction: rtl;">
         <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; user-select: none;">
           <input type="checkbox" checked required style="accent-color: #22c55e; width: 16px; height: 16px; cursor: pointer; border-radius: 4px;">
           <span>بالمتابعة، فإنك توافق على <a href="privacy.html" target="_blank" style="color: var(--green); text-decoration: underline; font-weight: bold;">سياسة الخصوصية</a> و <a href="terms.html" target="_blank" style="color: var(--green); text-decoration: underline; font-weight: bold;">الشروط والأحكام</a></span>
         </label>
       </div>
     </form>
-      <div style="margin: 6px 0; display: flex; align-items: center; justify-content: center;">
+      <div style="margin: 3px 0; display: flex; align-items: center; justify-content: center;">
         <div style="height: 1px; background: var(--border); flex: 1;"></div>
         <span style="margin: 0 10px; color: var(--text2); font-size: 12px; font-weight: 700;">أو الدخول عبر</span>
         <div style="height: 1px; background: var(--border); flex: 1;"></div>
       </div>
-      <button type="button" id="googleLoginBtn" style="width: 100%; padding: 12px; background: white; border: 2px solid #e2e8f0; border-radius: 12px; font-family: 'Cairo', sans-serif; font-weight: 800; font-size: 14px; color: #1e293b; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s;">
-        <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" style="width: 20px; height: 20px;">
+      <button type="button" id="googleLoginBtn" style="width: 100%; padding: 12px; background: white; border: 2px solid #e2e8f0; border-radius: 12px; font-family: 'Cairo', sans-serif; font-weight: 800; font-size: 10px; color: #1e293b; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s;">
+        <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" style="width: 14px; height: 14px;">
         المتابعة بحساب Google
       </button>
 
@@ -361,10 +361,10 @@
     <div class="register-link" style="margin-top: 8px;">
       ليس لديك حساب؟ <a href="register.html">أنشئ حساباً جديداً</a>
     </div>
-    <div class="register-link" style="margin-top: 4px; border-top: 1px dashed var(--bd); padding-top: 15px;">
+    <div class="register-link" style="margin-top: 2px; border-top: 1px dashed var(--bd); padding-top: 15px;">
       <a href="customer-home.html" style="color: var(--navy); font-weight: 800; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px;">تخطي والتسوق كزائر 🛍️ <i class="fa-solid fa-angle-left"></i></a>
     </div>
-    <div class="register-link" style="margin-top: 4px;">
+    <div class="register-link" style="margin-top: 2px;">
       💼 هل ترغب في الانضمام لفريق عملنا؟ <a href="careers.html" style="color: var(--green); font-weight: bold; text-decoration: underline;">قدم طلب توظيف الآن</a>
     </div>
   </div>
