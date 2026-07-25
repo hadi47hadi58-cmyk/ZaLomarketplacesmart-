@@ -7,6 +7,7 @@
   <title>ZaLo Smart - إكمال التسجيل (الخطوة 2)</title>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <script src="js/categories.js"></script>
   <style>
     :root {
       --primary: #0ea5e9;
@@ -347,27 +348,18 @@
   <div id="statusBox" class="status-box"></div>
 
   <form id="step2Form" onsubmit="handleStep2Submit(event)">
-    <!-- Category Selection -->
+    <!-- Category & Subcategory Selection -->
     <div class="form-group">
-      <label for="category">📁 تخصص فئة النشاط التجاري *</label>
+      <label for="category">📁 التخصص العام للنشاط التجاري *</label>
       <select id="category" required>
-        <option value="" disabled selected>اختر تخصص النشاط...</option>
-        <option value="هواتف وإلكترونيات">📱 هواتف وإلكترونيات</option>
-        <option value="أثاث ومنزل">🛋️ أثاث ومنزل</option>
-        <option value="ملابس وأزياء">👗 ملابس وأزياء</option>
-        <option value="أحذية وحقائب">👟 أحذية وحقائب</option>
-        <option value="مواد غذائية">🛒 مواد غذائية</option>
-        <option value="ألعاب وهدايا">🎁 ألعاب وهدايا</option>
-        <option value="سيارات وقطع غيار">🚗 سيارات وقطع غيار</option>
-        <option value="رياضية ولياقة">⚽ رياضية ولياقة</option>
-        <option value="عقارات كراء وبيع">🏠 عقارات كراء وبيع</option>
-        <option value="صحة ومكملات غذائية">💊 صحة ومكملات غذائية</option>
-        <option value="خردوات ومواد بناء">🧱 خردوات ومواد بناء</option>
-        <option value="أدوات ومعدات">🔧 أدوات ومعدات</option>
-        <option value="تجميل وعناية">💄 تجميل وعناية</option>
-        <option value="كتب وقرطاسية">📚 كتب وقرطاسية</option>
-        <option value="خدمات ومهن حرة">🛠️ خدمات ومهن حرة</option>
-        <option value="أخرى">✨ أخرى</option>
+        <!-- Populated dynamically by categories.js -->
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="subcategory">🏷️ الفرع / التخصص الفرعي *</label>
+      <select id="subcategory" required disabled>
+        <option value="">-- اختر التخصص العام أولاً --</option>
       </select>
     </div>
 
@@ -476,6 +468,14 @@
 
 <script type="module">
   import { supabase } from './js/supabase-config.js';
+
+  if (window.setupDynamicCategorySelects) {
+    window.setupDynamicCategorySelects('category', 'subcategory');
+  } else {
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.setupDynamicCategorySelects) window.setupDynamicCategorySelects('category', 'subcategory');
+    });
+  }
 
   window._stype = 'registered';
 

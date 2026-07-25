@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>تسجيل جديد - الخطوة 3</title>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <script src="js/categories.js"></script>
   <style>
     :root {
       --green: #0ea5e9; /* Sky Blue replaces green */
@@ -344,25 +345,16 @@
       
 
       <div class="form-group">
-        <label for="category">📁 تخصص فئة النشاط التجاري *</label>
-        <select class="fsel" id="category">
-          <option value="">اختر التخصص...</option>
-          <option>هواتف وإلكترونيات</option>
-          <option>أثاث ومنزل</option>
-          <option>ملابس وأزياء</option>
-          <option>أحذية وحقائب</option>
-          <option>مواد غذائية</option>
-          <option>ألعاب وهدايا</option>
-          <option>سيارات وقطع غيار</option>
-          <option>رياضية ولياقة</option>
-          <option>عقارات كراء وبيع</option>
-          <option>صحة ومكملات غذائية</option>
-          <option>خردوات ومواد بناء</option>
-          <option>أدوات ومعدات</option>
-          <option>تجميل وعناية</option>
-          <option>كتب وقرطاسية</option>
-          <option>خدمات ومهن حرة</option>
-          <option>أخرى</option>
+        <label for="category">📁 التخصص العام للنشاط التجاري *</label>
+        <select class="fsel" id="category" required>
+          <!-- Populated dynamically -->
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="subcategory">🏷️ الفرع / التخصص الفرعي *</label>
+        <select class="fsel" id="subcategory" required disabled>
+          <option value="">-- اختر التخصص العام أولاً --</option>
         </select>
       </div>
 
@@ -480,6 +472,10 @@
   const wilaya = sessionStorage.getItem('reg_wilaya') || '';
   const commune = sessionStorage.getItem('reg_commune') || '';
 
+  if (window.setupDynamicCategorySelects) {
+    window.setupDynamicCategorySelects('category', 'subcategory');
+  }
+
   // Handle showing additional merchant fields
   if (userType === 'merchant') {
     const sect = document.getElementById('merchantSection');
@@ -536,6 +532,7 @@
     let rcnum = '';
 
     category = document.getElementById('category')?.value || 'عام';
+    const subcategory = document.getElementById('subcategory')?.value || '';
     storeType = window._stype || 'registered';
     
     logoB64 = getB64('f-logo');
@@ -587,6 +584,7 @@
         user_id: uid,
         store_name: storeName,
         category: category,
+        subcategory: subcategory,
         wilaya: wilaya,
         commune: commune,
         status: 'PENDING',

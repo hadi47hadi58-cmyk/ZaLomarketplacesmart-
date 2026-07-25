@@ -7,6 +7,7 @@
 <title>بوابة الزبون - ZaLo</title>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Great+Vibes&display=swap" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<script src="js/categories.js"></script>
 <style>
 :root {
   --brand-green: #0ea5e9; /* Sky Blue replaces green */
@@ -1639,26 +1640,7 @@ body {
 
     <!-- Category horizontal slider -->
     <div class="categories-container-mockup" id="categories-slider">
-      <div class="category-item-mockup" onclick="filterHomeProducts('هواتف وإلكترونيات', this)">
-        <div class="category-circle-mockup">📱</div>
-        <span class="category-label-mockup">الالكترونيات</span>
-      </div>
-      <div class="category-item-mockup" onclick="filterHomeProducts('ملابس وأزياء', this)">
-        <div class="category-circle-mockup">👗</div>
-        <span class="category-label-mockup">موضة</span>
-      </div>
-      <div class="category-item-mockup" onclick="filterHomeProducts('مواد غذائية', this)">
-        <div class="category-circle-mockup">🍎</div>
-        <span class="category-label-mockup">غذائية</span>
-      </div>
-      <div class="category-item-mockup" onclick="filterHomeProducts('أثاث ومنزل', this)">
-        <div class="category-circle-mockup">🏠</div>
-        <span class="category-label-mockup">منزل</span>
-      </div>
-      <div class="category-item-mockup" onclick="filterHomeProducts('كتب ومستلزمات', this)">
-        <div class="category-circle-mockup">📚</div>
-        <span class="category-label-mockup">كتب</span>
-      </div>
+      <!-- Dynamic main categories populated via JS -->
     </div>
 
     <div class="screen-title">
@@ -2600,44 +2582,79 @@ window.copyPromptText = function() {
 window.selectBaladiya = function(name) {
   state.selectedBaladiya = name;
   const container = document.getElementById('category-list-container');
-  container.innerHTML = CATEGORIES_NEW.map(c => `
-    <div class="category-item-new" onclick="selectCategoryNew('${c.name}')">
-      <div style="display: flex; align-items: center; gap: 12px;">
-        <span style="font-size: 20px;">${c.icon}</span>
-        <span style="font-weight: 700;">${c.name}</span>
+  if (!container) return;
+  
+  const titleEl = document.getElementById('category-title-new');
+  if (titleEl) titleEl.innerHTML = `<i class="fa-solid fa-shapes text-sky-500 ml-2"></i> اختر التخصص العام في ${name}`;
+  
+  const mainCats = window.ZALO_CATEGORIES || [];
+  container.innerHTML = mainCats.map(c => `
+    <div class="category-item-new" onclick="selectMainCategoryNew('${c.name}')" style="display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; background: white; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 10px; cursor: pointer; transition: all 0.2s ease;">
+      <div style="display: flex; align-items: center; gap: 14px;">
+        <span style="font-size: 22px; background: #f0f9ff; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 12px; border: 1px solid #bae6fd;">${c.emoji}</span>
+        <div>
+          <span style="font-weight: 800; font-size: 13.5px; color: #0f172a; display: block;">${c.name}</span>
+          <span style="font-size: 11px; color: #0ea5e9; font-weight: 600;">${(c.subcategories || []).length} تخصص فرعي</span>
+        </div>
       </div>
-      <i class="fa-solid fa-angle-left"></i>
+      <i class="fa-solid fa-chevron-left" style="color: #94a3b8; font-size: 14px;"></i>
     </div>
   `).join('');
   showScreen('screen-categories-new');
 };
 
-window.selectCategoryNew = function(cat) {
-  state.selectedCategoryNew = cat;
-  document.getElementById('stores-title-new').innerText = `منتجات ${cat} في ${state.selectedBaladiya}`;
+window.selectMainCategoryNew = function(mainCatName) {
+  state.selectedMainCategory = mainCatName;
+  const subs = window.getSubcategories(mainCatName);
   
-  // Directly show products for this category in the selected baladiya/wilaya
-  // We filter from state.loadedProducts (mocking the search)
-  const filteredProducts = state.loadedProducts.filter(p => {
-    const pCat = p.category || '';
-    return pCat.includes(cat) || cat.includes(pCat) || p.name.includes(cat);
-  });
+  const titleEl = document.getElementById('category-title-new');
+  if (titleEl) titleEl.innerHTML = `<i class="fa-solid fa-diagram-project text-sky-500 ml-2"></i> فروع ${mainCatName}`;
+  
+  const container = document.getElementById('category-list-container');
+  if (!container) return;
 
-  // If no products found, show some mock products for demonstration
-  if (filteredProducts.length === 0) {
-    for (let i = 1; i <= 4; i++) {
-      filteredProducts.push({
-        id: `mock-${cat}-${i}`,
-        name: `${cat} - عينة ${i}`,
-        price: (Math.random() * 5000 + 500).toFixed(0),
-        image: `https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png`,
-        store_name: "متجر الوفاء",
-        wilaya: state.selectedWilaya,
-        baladiya: state.selectedBaladiya,
-        category: cat
-      });
-    }
-  }
+  let html = `
+    <div onclick="selectSubCategoryNew('جميع فروع ${mainCatName}', '${mainCatName}')" style="background: linear-gradient(135deg, #0284c7, #0369a1); color: white; padding: 14px 16px; border-radius: 16px; margin-bottom: 12px; cursor: pointer; display: flex; align-items: center; justify-content: space-between; font-weight: 800; font-size: 13px; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);">
+      <span><i class="fa-solid fa-border-all ml-2"></i> استعرض جميع المعروضات في ${mainCatName}</span>
+      <i class="fa-solid fa-arrow-left"></i>
+    </div>
+  `;
+
+  html += subs.map(sub => `
+    <div class="category-item-new" onclick="selectSubCategoryNew('${sub}', '${mainCatName}')" style="display: flex; align-items: center; justify-content: space-between; padding: 13px 16px; background: white; border-radius: 14px; border: 1px solid #e2e8f0; margin-bottom: 8px; cursor: pointer;">
+      <span style="font-weight: 700; font-size: 13px; color: #1e293b;"><i class="fa-solid fa-tag text-sky-500 ml-2" style="font-size: 11px;"></i> ${sub}</span>
+      <i class="fa-solid fa-angle-left text-slate-400"></i>
+    </div>
+  `).join('');
+
+  html += `
+    <button onclick="selectBaladiya('${state.selectedBaladiya}')" style="width: 100%; margin-top: 10px; background: #f1f5f9; color: #475569; border: none; padding: 12px; border-radius: 12px; font-weight: 700; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
+      <i class="fa-solid fa-arrow-right"></i> العودة لقائمة التخصصات العامة
+    </button>
+  `;
+
+  container.innerHTML = html;
+};
+
+window.selectSubCategoryNew = function(subCatName, mainCatName) {
+  state.selectedCategoryNew = subCatName;
+  state.selectedMainCategory = mainCatName;
+  const storesTitle = document.getElementById('stores-title-new');
+  if (storesTitle) storesTitle.innerText = `منتجات ${subCatName} في ${state.selectedBaladiya || state.selectedWilaya || 'المنطقة'}`;
+
+  // Filter real loaded products without fake dummy generation
+  const filteredProducts = (state.loadedProducts || []).filter(p => {
+    const pCat = (p.category || '').toLowerCase();
+    const pSub = (p.subcategory || p.sub_category || '').toLowerCase();
+    const targetSub = subCatName.toLowerCase();
+    const targetMain = (mainCatName || '').toLowerCase();
+
+    const matchesCat = pCat.includes(targetMain) || pCat.includes(targetSub) || pSub.includes(targetSub) || targetSub.includes('جميع فروع');
+    const matchesWilaya = !state.selectedWilaya || (p.wilaya && p.wilaya.includes(state.selectedWilaya));
+    const matchesBaladiya = !state.selectedBaladiya || (p.baladiya && p.baladiya.includes(state.selectedBaladiya)) || (p.commune && p.commune.includes(state.selectedBaladiya));
+
+    return matchesCat && (matchesWilaya || matchesBaladiya);
+  });
 
   renderProductsInGrid(filteredProducts, 'stores-list-container');
   showScreen('screen-stores-list');
@@ -2671,6 +2688,24 @@ window.viewStoreProfile = function(name, cat) {
 
 function renderProductsInGrid(prods, containerId) {
   const container = document.getElementById(containerId);
+  if (!container) return;
+
+  if (!prods || prods.length === 0) {
+    container.innerHTML = `
+      <div style="grid-column: 1 / -1; width: 100%; text-align: center; padding: 40px 20px; background: white; border-radius: 20px; border: 1px solid #e2e8f0; margin: 10px 0;">
+        <i class="fa-solid fa-box-open" style="font-size: 38px; color: #cbd5e1; margin-bottom: 12px; display: block;"></i>
+        <h3 style="font-size: 14px; font-weight: 800; color: #1e293b; margin-bottom: 6px;">لا توجد معروضات حالياً في هذا الفرع بـ ${state.selectedBaladiya || state.selectedWilaya || 'هذه المنطقة'}</h3>
+        <p style="font-size: 12px; color: #64748b; line-height: 1.6; max-width: 320px; margin: 0 auto 16px;">
+          إذا كنت تاجرًا أو مزود خدمات في هذه المنطقة، يمكنك تسجيل متجرك وإضافة معروضاتك بسهولة لتظهر للزبائن هنا.
+        </p>
+        <button onclick="applyForMerchant()" style="background: linear-gradient(135deg, #0284c7, #0369a1); color: white; border: none; padding: 10px 20px; border-radius: 12px; font-weight: 700; font-size: 12px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;">
+          <i class="fa-solid fa-shop"></i> انضم كتاجر الآن
+        </button>
+      </div>
+    `;
+    return;
+  }
+
   container.innerHTML = prods.map(p => `
     <div class="product-card-mockup" onclick="window.openProductDetails('${p.id}')">
       <div class="product-img-wrap-mockup">

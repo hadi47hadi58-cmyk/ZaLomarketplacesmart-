@@ -13,6 +13,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Great+Vibes&display=swap" rel="stylesheet">
     <!-- ZaLo Custom Stylesheet -->
     <link rel="stylesheet" href="css/style.css">
+    <script src="js/categories.js"></script>
     <style>
         :root {
             --sky-blue: #1d9bf0;
@@ -459,13 +460,15 @@
                     <!-- Dropdowns from old dashboard -->
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                         <div>
-                            <label class="block text-[11px] text-slate-600 font-black mb-1">قسم وصنف المنتجات الرئيسي *</label>
+                            <label class="block text-[11px] text-slate-600 font-black mb-1">قسم وصنف النشاط الرئيسي *</label>
                             <select id="settings-category" class="w-full bg-slate-50 border border-slate-200 text-[11px] rounded-xl py-2.5 px-3 focus:outline-none focus:border-sky-400 font-black text-slate-800">
-                                <option value="cat_phones">هواتف وإلكترونيات</option>
-                                <option value="cat_parts">قطع غيار المركبات</option>
-                                <option value="cat_food">مواد غذائية وتوابل</option>
-                                <option value="cat_clothes">ملابس وأزياء</option>
-                                <option value="cat_services">خدمات شحن وصيانة</option>
+                                <!-- Populated dynamically -->
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] text-slate-600 font-black mb-1">الفرع / التخصص الفرعي *</label>
+                            <select id="settings-subcategory" class="w-full bg-slate-50 border border-slate-200 text-[11px] rounded-xl py-2.5 px-3 focus:outline-none focus:border-sky-400 font-black text-slate-800" disabled>
+                                <option value="">-- اختر التخصص العام أولاً --</option>
                             </select>
                         </div>
                         <div>
@@ -570,15 +573,19 @@
                         </div>
                     </div>
 
-                    <div>
-                        <label class="block text-[11px] text-slate-600 font-bold mb-1">تصنيف وصنف السلعة:</label>
-                        <select id="prod-category" class="w-full bg-slate-50 border border-slate-200 text-xs text-slate-800 rounded-xl py-2 px-3 focus:outline-none focus:border-sky-400 font-bold">
-                            <option value="cat_phones">هواتف وملحقاتها</option>
-                            <option value="cat_electronic">إلكترونيات</option>
-                            <option value="cat_parts">قطع غيار</option>
-                            <option value="cat_food">مواد غذائية</option>
-                            <option value="cat_clothes">ملابس</option>
-                        </select>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 bg-slate-50 p-2.5 rounded-2xl border border-slate-200">
+                        <div>
+                            <label class="block text-[10px] text-slate-700 font-bold mb-1">📁 التخصص العام للسلعة *</label>
+                            <select id="prod-main-category" class="w-full bg-white border border-slate-200 text-xs text-slate-800 rounded-xl py-2 px-2 focus:outline-none focus:border-sky-400 font-bold">
+                                <!-- Populated dynamically -->
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] text-slate-700 font-bold mb-1">🏷️ الفرع / التخصص الفرعي *</label>
+                            <select id="prod-sub-category" class="w-full bg-white border border-slate-200 text-xs text-slate-800 rounded-xl py-2 px-2 focus:outline-none focus:border-sky-400 font-bold" disabled>
+                                <option value="">-- اختر التخصص العام أولاً --</option>
+                            </select>
+                        </div>
                     </div>
 
                     <!-- NEW: Angles Upload & Video Upload inputs -->
@@ -1367,12 +1374,16 @@
                 pImg = uploadedAnglesPreview[0];
             }
 
+            const mainCatVal = document.getElementById('prod-main-category')?.value || document.getElementById('prod-category')?.value || 'عام';
+            const subCatVal = document.getElementById('prod-sub-category')?.value || '';
+
             const newProd = {
                 productId: pId,
                 productName: document.getElementById('prod-name').value.trim(),
                 price: parseFloat(document.getElementById('prod-price').value),
                 stock: parseInt(document.getElementById('prod-stock').value),
-                category: document.getElementById('prod-category').value,
+                category: mainCatVal,
+                subcategory: subCatVal,
                 description: document.getElementById('prod-desc').value.trim(),
                 sku: document.getElementById('prod-sku').value.trim(),
                 weight: parseFloat(document.getElementById('prod-weight').value) || 0.1,
@@ -1393,7 +1404,8 @@
                         name: newProd.productName,
                         price: newProd.price,
                         stock: newProd.stock,
-                        category: newProd.category,
+                        category: mainCatVal,
+                        subcategory: subCatVal,
                         description: newProd.description,
                         sku: newProd.sku,
                         weight: newProd.weight,
