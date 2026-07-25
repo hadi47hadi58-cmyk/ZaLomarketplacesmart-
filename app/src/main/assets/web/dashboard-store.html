@@ -91,24 +91,35 @@
     <!-- Strict Authorization & Session Checking -->
     <script type="module">
         import { supabase } from './js/supabase-config.js';
+        window.supabaseClient = supabase;
+        window.supabase = supabase;
 
         async function checkStoreSession() {
             const { data: { session } } = await supabase.auth.getSession();
             const localToken = localStorage.getItem('zalo_session_jwt');
-            let role = localStorage.getItem('zalo_role');
-            if (session && session.user) role = role || session.user.user_metadata?.role;
+            let role = localStorage.getItem('zalo_role') || 
+                       localStorage.getItem('zalo_user_role') || 
+                       localStorage.getItem('user_role') || 
+                       localStorage.getItem('role') || '';
+
+            if (session && session.user) {
+                role = role || session.user.user_metadata?.role || session.user.user_metadata?.user_type || 'merchant';
+            }
             if (role) role = role.toLowerCase();
-            
-            if (!session && !localToken) {
+
+            const activeStore = localStorage.getItem('zalo_active_store') || sessionStorage.getItem('merchant_store_name');
+            const merchantStatus = localStorage.getItem('zalo_merchant_status');
+
+            if (!session && !localToken && !activeStore) {
                 console.warn('🚨 No session found. Redirecting to login...');
                 window.location.href = 'store-login.html?reason=unauthorized';
                 return;
             }
 
-            // Role check
-            
-            const allowedRoles = ['admin', 'merchant', 'super_admin'];
-            if (!allowedRoles.includes(role)) {
+            const allowedRoles = ['admin', 'merchant', 'super_admin', 'seller', 'store'];
+            const isAllowed = allowedRoles.includes(role) || !!activeStore || merchantStatus === 'approved';
+
+            if (!isAllowed) {
                 console.warn('🚨 Access Denied: Insufficient permissions. Redirecting...');
                 window.location.href = 'store-login.html?reason=forbidden';
             } else {
@@ -1397,8 +1408,11 @@
         function deleteMerchantProduct(productId) {
             if (confirm("هل أنت متأكد من حذف هذه السلعة من المتجر؟")) {
                 let products = getDB("products", []);
-                let filtered = products.filter(p => p.productId !== productId);
+                let filtered = products.filter(p => p.productId !== productId && p.id !== productId);
                 setDB("products", filtered);
+                if (window.supabaseClient) {
+                    window.supabaseClient.from('products').delete().eq('id', productId).then(() => {}).catch(() => {});
+                }
                 renderMerchantProducts();
                 updateCounters();
             }

@@ -87,6 +87,8 @@
     <!-- Strict Authorization & Session Checking -->
     <script type="module">
         import { supabase } from './js/supabase-config.js';
+        window.supabaseClient = supabase;
+        window.supabase = supabase;
 
         async function checkAdminSession() {
             const { data: { session } } = await supabase.auth.getSession();
