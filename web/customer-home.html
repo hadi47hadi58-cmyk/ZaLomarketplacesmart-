@@ -3093,39 +3093,22 @@ onAuthStateChanged(auth, async (user) => {
 });
 
 // Logout handler (Anti-loop secure logout)
-window.handleLogout = async function() {
+window.logoutUser = window.handleLogout = async function() {
   try {
     console.log("Logout: Clearing all tokens...");
-    localStorage.removeItem('zalo_local_session');
-    localStorage.removeItem('zalo_token');
-    localStorage.removeItem('zalo_session_jwt');
-    localStorage.removeItem('zalo_user_role');
-    localStorage.removeItem('zalo_user_email');
-    localStorage.removeItem('zalo_active_session');
-    localStorage.removeItem('nestjs_token');
-    localStorage.removeItem('nestjs_user');
-    localStorage.removeItem('user_uid');
-    localStorage.removeItem('user_email');
-    localStorage.removeItem('zalo_uid');
-    localStorage.removeItem('zalo_user_name');
-    localStorage.removeItem('zalo_role');
-    
     try {
-      for (let i = localStorage.length - 1; i >= 0; i--) {
-        const key = localStorage.key(i);
-        if (key && (key.startsWith('sb-') || key.includes('supabase'))) {
-          localStorage.removeItem(key);
-        }
+      if (typeof window.supabaseClient !== 'undefined' && window.supabaseClient.auth) {
+        await window.supabaseClient.auth.signOut().catch(() => {});
+      } else if (typeof supabase !== 'undefined' && supabase.auth) {
+        await supabase.auth.signOut().catch(() => {});
       }
     } catch(e) {}
-    
+    localStorage.clear();
     sessionStorage.clear();
-    await supabase.auth.signOut();
   } catch(e) {
     console.error("signOut error:", e);
   } finally {
-    user = { id: 'guest', email: 'زائر' };
-    window.location.href = 'customer-login.html';
+    window.location.replace('customer-login.html');
   }
 };
 

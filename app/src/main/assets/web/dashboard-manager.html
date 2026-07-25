@@ -341,20 +341,23 @@
             }
         }
 
-                                window.logoutUser = async function() {
-            localStorage.clear();
-            sessionStorage.clear();
-            if (typeof supabase !== 'undefined' && supabase.auth) {
-                try {
-                    await supabase.auth.signOut();
-                } catch(e){}
-            }
-            window.location.href = 'customer-login.html';
-        }
-    </script>
+        window.logoutUser = window.handleLogout = async function() {
+            try {
+                if (typeof window.supabaseClient !== 'undefined' && window.supabaseClient.auth) {
+                    await window.supabaseClient.auth.signOut().catch(() => {});
+                } else if (typeof supabase !== 'undefined' && supabase.auth) {
+                    await supabase.auth.signOut().catch(() => {});
+                }
+            } catch(e){}
+            try {
+                localStorage.clear();
+                sessionStorage.clear();
+            } catch(e){}
+            window.location.replace('staff-login.html');
+        };
 
         let isMobileMode = false;
-        function toggleResponsiveMode() {
+        window.toggleResponsiveMode = function() {
             isMobileMode = !isMobileMode;
             const mainContainer = document.querySelector('main');
             const icon = document.getElementById('responsive-icon');
@@ -377,7 +380,8 @@
                 icon.classList.remove('fa-desktop');
                 icon.classList.add('fa-mobile-screen-button');
             }
-        }
+        };
+    </script>
 
 </body>
 </html>

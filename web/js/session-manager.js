@@ -16,26 +16,36 @@ export class SessionManager {
 
   async isAuthenticated() {
     const session = await this.getSupabaseSession();
-    return !!session && !!session.user;
+    const hasLocalSession = !!localStorage.getItem('user_uid') || 
+                            !!localStorage.getItem('zalo_user_role') || 
+                            !!localStorage.getItem('zalo_role') || 
+                            sessionStorage.getItem('user_logged_in') === 'true' || 
+                            sessionStorage.getItem('admin_logged_in_session') === 'true';
+    return (!!session && !!session.user) || hasLocalSession;
   }
 
   async getSessionData() {
     const session = await this.getSupabaseSession();
-    if (!session || !session.user) return null;
-    
-    // Extract role from app_metadata or user_metadata
-    const role = session.user.app_metadata?.role || session.user.user_metadata?.role || 'CUSTOMER';
+    const role = await this.getUserRole();
     return {
-      token: session.access_token,
+      token: session?.access_token || 'local_session',
       role: role.toLowerCase(),
-      email: session.user.email,
-      name: session.user.user_metadata?.full_name || ''
+      email: session?.user?.email || localStorage.getItem('user_email') || 'merchant@zalo.dz',
+      name: session?.user?.user_metadata?.full_name || localStorage.getItem('zalo_active_store') || ''
     };
   }
 
   async getUserRole() {
     const session = await this.getSupabaseSession();
-    const role = session?.user?.app_metadata?.role || session?.user?.user_metadata?.role || 'CUSTOMER';
+    const localRole = localStorage.getItem('zalo_user_role') || localStorage.getItem('zalo_role');
+    let role = session?.user?.app_metadata?.role || session?.user?.user_metadata?.role || localRole;
+    if (!role) {
+      const path = window.location.pathname;
+      if (path.includes('dashboard-store') || path.includes('store-login')) role = 'MERCHANT';
+      else if (path.includes('dashboard-admin') || path.includes('admin-login')) role = 'ADMIN';
+      else if (path.includes('dashboard-manager') || path.includes('staff-login')) role = 'MANAGER';
+      else role = 'CUSTOMER';
+    }
     return role.toUpperCase();
   }
 
@@ -60,9 +70,15 @@ export class SessionManager {
     const cleanRole = (role || 'CUSTOMER').toUpperCase();
     const currentPath = window.location.pathname;
 
+    // Prevent redirect loop if user is already on a dashboard matching their intended section
+    if (currentPath.includes('dashboard-admin.html') && cleanRole === 'ADMIN') return;
+    if (currentPath.includes('dashboard-store.html') && (cleanRole === 'MERCHANT' || localStorage.getItem('zalo_user_role') === 'merchant')) return;
+    if (currentPath.includes('dashboard-manager.html') && (cleanRole === 'MANAGER' || cleanRole === 'TEAM')) return;
+    if (currentPath.includes('customer-home.html') && cleanRole === 'CUSTOMER') return;
+
     if (cleanRole === 'ADMIN') {
       if (!currentPath.includes('dashboard-admin.html')) window.location.replace('dashboard-admin.html');
-    } else if (cleanRole === 'MERCHANT') {
+    } else if (cleanRole === 'MERCHANT' || localStorage.getItem('zalo_user_role') === 'merchant') {
       if (!currentPath.includes('dashboard-store.html')) window.location.replace('dashboard-store.html');
     } else if (cleanRole === 'MANAGER' || cleanRole === 'TEAM') {
       if (!currentPath.includes('dashboard-manager.html')) window.location.replace('dashboard-manager.html');
@@ -72,17 +88,16 @@ export class SessionManager {
   }
 
   async logoutAndRedirect() {
-    if (window.supabaseClient) {
-      await window.supabaseClient.auth.signOut();
-    }
-    
-    // Clear legacy keys if any
-    for (let i = localStorage.length - 1; i >= 0; i--) {
-        const key = localStorage.key(i);
-        if (key && (key.startsWith('zalo_') || key.startsWith('sb-'))) {
-            localStorage.removeItem(key);
-        }
-    }
+    try {
+      if (window.supabaseClient && window.supabaseClient.auth) {
+        await window.supabaseClient.auth.signOut().catch(() => {});
+      }
+    } catch(e){}
+
+    try {
+      localStorage.clear();
+      sessionStorage.clear();
+    } catch(e){}
 
     const currentPath = window.location.pathname;
     let targetLogin = 'customer-login.html';
