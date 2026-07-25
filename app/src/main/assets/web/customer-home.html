@@ -3119,12 +3119,12 @@ async function syncMerchantRequestStatus(user) {
   if (!btn || !container) return;
 
   // Local fallback state check
-  const localRole = localStorage.getItem('zalo_user_role') || sessionStorage.getItem('zalo_user_role');
-  const localStatus = localStorage.getItem('zalo_merchant_status');
+  const localRole = (localStorage.getItem('zalo_user_role') || sessionStorage.getItem('zalo_user_role') || '').toLowerCase();
+  const localStatus = (localStorage.getItem('zalo_merchant_status') || '').toLowerCase();
   const activeStore = localStorage.getItem('zalo_active_store') || sessionStorage.getItem('merchant_store_name');
 
-  let isApproved = (localRole === 'MERCHANT' || localStatus === 'approved' || localStatus === 'APPROVED' || !!activeStore);
-  let isPending = (localStatus === 'pending');
+  let isApproved = (localStatus === 'approved' || localStatus === 'active' || localRole === 'merchant');
+  let isPending = (localStatus === 'pending') || (!isApproved && !!activeStore);
 
   try {
     if (user && user.id && typeof supabase !== 'undefined' && supabase.from) {
@@ -3138,6 +3138,7 @@ async function syncMerchantRequestStatus(user) {
         if (requests.status === 'pending') {
           isPending = true;
           isApproved = false;
+          localStorage.setItem('zalo_merchant_status', 'pending');
         } else if (requests.status === 'approved' || requests.status === 'active' || requests.status === 'APPROVED') {
           isApproved = true;
           isPending = false;
@@ -3181,11 +3182,10 @@ async function syncMerchantRequestStatus(user) {
 
 // Global apply / enter merchant dashboard router
 window.applyForMerchant = function() {
-  const role = localStorage.getItem('zalo_user_role') || sessionStorage.getItem('zalo_user_role');
-  const status = localStorage.getItem('zalo_merchant_status');
-  const activeStore = localStorage.getItem('zalo_active_store') || sessionStorage.getItem('merchant_store_name');
+  const role = (localStorage.getItem('zalo_user_role') || sessionStorage.getItem('zalo_user_role') || '').toLowerCase();
+  const status = (localStorage.getItem('zalo_merchant_status') || 'pending').toLowerCase();
 
-  if (role === 'MERCHANT' || status === 'approved' || status === 'APPROVED' || !!activeStore) {
+  if (status === 'approved' || status === 'active' || role === 'merchant' || role === 'admin' || role === 'super_admin') {
     window.location.href = 'dashboard-store.html';
   } else if (status === 'pending') {
     alert('⏳ طلبك للانضمام كتاجر قيد الدراسة والتدقيق من طرف إدارة منصة ZaLo.');

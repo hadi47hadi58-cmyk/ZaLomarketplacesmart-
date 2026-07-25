@@ -649,7 +649,8 @@
       localStorage.setItem('zalo_merchant_store_settings', JSON.stringify(newStoreSettings));
 
       // Set local sessions
-      localStorage.setItem('zalo_user_role', 'merchant');
+      localStorage.setItem('zalo_merchant_status', 'pending');
+      localStorage.setItem('zalo_user_role', 'customer');
       localStorage.setItem('zalo_active_store', storeName);
       sessionStorage.setItem('merchant_store_name', storeName);
       sessionStorage.setItem('reg_storeName', storeName);
@@ -658,10 +659,10 @@
       sessionStorage.setItem('reg_wilaya', wilaya);
       sessionStorage.setItem('reg_commune', commune);
 
-      showStatus("تم تفعيل حساب التاجر وإنشاء المتجر بنجاح! جاري التوجيه...", "success");
+      showStatus("تم إرسال طلب الشراكة وإنشاء المتجر بنجاح! طلبك الآن قيد المراجعة لدى الإدارة...", "success");
 
       setTimeout(() => {
-        window.location.href = 'dashboard-store.html';
+        window.location.href = 'customer-home.html?merchant_pending=true';
       }, 1200);
 
     } catch (err) {

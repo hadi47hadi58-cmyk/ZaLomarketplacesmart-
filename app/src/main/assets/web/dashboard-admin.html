@@ -1757,10 +1757,10 @@
             const allRequests = [...liveRequests, ...zaloLocalReqs, ...zaloMerchantReqs];
 
             const mappedLiveRequests = allRequests.map(r => {
-                let mappedStatus = "APPROVED";
-                if (r.status === "pending" || r.status === "PENDING") mappedStatus = "PENDING";
-                if (r.status === "suspended" || r.status === "SUSPENDED" || r.status === "rejected") mappedStatus = "SUSPENDED";
+                let mappedStatus = "PENDING";
                 if (r.status === "approved" || r.status === "active" || r.status === "APPROVED") mappedStatus = "APPROVED";
+                if (r.status === "suspended" || r.status === "SUSPENDED" || r.status === "rejected") mappedStatus = "SUSPENDED";
+                if (r.status === "pending" || r.status === "PENDING") mappedStatus = "PENDING";
 
                 const storeName = r.store_name || r.storeName || r.name || "متجر جديد";
                 const ownerName = r.owner_name || r.ownerName || r.owner || r.name || (r.email ? r.email.split('@')[0] : "تاجر جديد");

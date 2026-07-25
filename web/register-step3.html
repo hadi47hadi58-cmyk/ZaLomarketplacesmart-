@@ -720,8 +720,16 @@
       // Save session and store settings
       localStorage.setItem('user_uid', uid);
       localStorage.setItem('user_email', email);
-      localStorage.setItem('user_role', userType);
-      localStorage.setItem('zalo_user_role', userType);
+      
+      if (userType === 'merchant') {
+        localStorage.setItem('zalo_merchant_status', 'pending');
+        localStorage.setItem('user_role', 'customer');
+        localStorage.setItem('zalo_user_role', 'customer');
+      } else {
+        localStorage.setItem('user_role', userType);
+        localStorage.setItem('zalo_user_role', userType);
+      }
+
       if (storeName) {
         localStorage.setItem('zalo_active_store', storeName);
         sessionStorage.setItem('merchant_store_name', storeName);
@@ -747,8 +755,8 @@
       sessionStorage.removeItem('reg_wilaya');
       sessionStorage.removeItem('reg_commune');
 
-      // Redirect
-      const redirectUrl = userType === 'merchant' ? 'dashboard-store.html' : 'customer-home.html';
+      // Redirect - merchants go to customer-home to wait for admin approval
+      const redirectUrl = userType === 'merchant' ? 'customer-home.html?merchant_pending=true' : 'customer-home.html';
       window.location.href = redirectUrl;
 
     } catch (err) {

@@ -108,10 +108,29 @@
             if (role) role = role.toLowerCase();
 
             const activeStore = localStorage.getItem('zalo_active_store') || sessionStorage.getItem('merchant_store_name');
-            const merchantStatus = localStorage.getItem('zalo_merchant_status');
+            let merchantStatus = localStorage.getItem('zalo_merchant_status') || 'pending';
 
-            if (merchantStatus === 'pending' && role !== 'admin' && role !== 'super_admin') {
-                alert('⏳ حسابك كتاجر ما زال قيد الدراسة والتدقيق من طرف إدارة منصة ZaLo. سيتم تفعيل لوحة التحكم فور موافقة المدير.');
+            // If admin or super_admin, allow immediately
+            if (role === 'admin' || role === 'super_admin') {
+                console.log('✅ Admin bypass for store dashboard.');
+                return;
+            }
+
+            // Verify with Supabase if possible
+            if (session && session.user && typeof supabase !== 'undefined' && supabase.from) {
+                try {
+                    const { data: req } = await supabase.from('merchant_requests').select('status').eq('id', session.user.id).maybeSingle();
+                    if (req && req.status) {
+                        merchantStatus = req.status;
+                        localStorage.setItem('zalo_merchant_status', req.status);
+                    }
+                } catch (e) {
+                    console.warn("Could not verify merchant status online:", e);
+                }
+            }
+
+            if (merchantStatus !== 'approved' && merchantStatus !== 'active' && merchantStatus !== 'APPROVED') {
+                alert('⏳ حسابك كتاجر قيد الدراسة والتدقيق من طرف إدارة منصة ZaLo.\nسيتم تفعيل لوحة التحكم فور موافقة المدير العام.');
                 window.location.href = 'customer-home.html';
                 return;
             }
