@@ -116,7 +116,7 @@
 <body class="min-h-screen bg-slate-50 text-[#102a43]" onload="initOldAdminDashboard()">
 
     <!-- Sidebar Overlay (for mobile drawer background dim) -->
-    <div id="sidebar-overlay" onclick="toggleSidebarMobile()" class="fixed inset-0 bg-black/50 z-40 hidden lg:hidden backdrop-blur-sm"></div>
+    <div id="sidebar-overlay" onclick="closeSidebar()" class="fixed inset-0 bg-black/60 z-40 hidden backdrop-blur-sm cursor-pointer transition-opacity"></div>
 
     <div class="min-h-screen flex flex-col lg:flex-row w-full">
         
@@ -125,7 +125,7 @@
             <div class="flex flex-col h-full overflow-y-auto">
                 <!-- Sidebar Header Logo -->
                 <div class="p-6 border-b border-slate-100 flex flex-col items-center gap-3 bg-gradient-to-b from-slate-50 to-white relative">
-                    <button onclick="toggleSidebarMobile()" class="lg:hidden absolute top-4 left-4 text-slate-400 hover:text-red-500 text-lg">
+                    <button onclick="closeSidebar()" class="lg:hidden absolute top-4 left-4 text-slate-400 hover:text-red-500 text-lg p-1 transition cursor-pointer" title="إغلاق القائمة">
                         <i class="fa-solid fa-xmark"></i>
                     </button>
                     <svg width="48" height="48" viewBox="0 0 100 100">
@@ -1289,43 +1289,57 @@
                 }
             });
 
-            // Close mobile sidebar if open
+            if (window.innerWidth < 1024) {
+                window.closeSidebar();
+            }
+        };
+
+        // Explicit Sidebar Management for Desktop & Mobile
+        window.openSidebar = function() {
             const sidebar = document.getElementById("zalo-sidebar");
             const overlay = document.getElementById("sidebar-overlay");
-            if (sidebar && !sidebar.classList.contains("hidden") && window.innerWidth < 1024) {
+            if (!sidebar) return;
+
+            sidebar.style.display = "flex";
+            sidebar.classList.remove("hidden", "lg:hidden");
+            sidebar.classList.add("flex", "lg:flex");
+
+            if (overlay && window.innerWidth < 1024) {
+                overlay.style.display = "block";
+                overlay.classList.remove("hidden");
+            }
+        };
+
+        window.closeSidebar = function() {
+            const sidebar = document.getElementById("zalo-sidebar");
+            const overlay = document.getElementById("sidebar-overlay");
+            if (!sidebar) return;
+
+            if (window.innerWidth < 1024) {
+                sidebar.style.display = "none";
                 sidebar.classList.add("hidden");
                 sidebar.classList.remove("flex");
-                if (overlay) overlay.classList.add("hidden");
+            } else {
+                sidebar.style.display = "none";
+                sidebar.classList.add("lg:hidden");
+                sidebar.classList.remove("lg:flex");
+            }
+
+            if (overlay) {
+                overlay.style.display = "none";
+                overlay.classList.add("hidden");
             }
         };
 
         window.toggleSidebarMobile = window.toggleSidebar = function() {
             const sidebar = document.getElementById("zalo-sidebar");
-            const overlay = document.getElementById("sidebar-overlay");
             if (!sidebar) return;
 
-            const isHidden = sidebar.classList.contains("hidden") || 
-                             sidebar.classList.contains("lg:hidden") || 
-                             window.getComputedStyle(sidebar).display === "none";
-
-            if (isHidden) {
-                sidebar.classList.remove("hidden");
-                sidebar.classList.remove("lg:hidden");
-                sidebar.classList.add("flex");
-                sidebar.classList.add("lg:flex");
-                if (overlay) {
-                    overlay.classList.remove("hidden");
-                    overlay.classList.add("block");
-                }
+            const computedDisplay = window.getComputedStyle(sidebar).display;
+            if (computedDisplay === "none" || sidebar.style.display === "none") {
+                window.openSidebar();
             } else {
-                sidebar.classList.add("hidden");
-                sidebar.classList.add("lg:hidden");
-                sidebar.classList.remove("flex");
-                sidebar.classList.remove("lg:flex");
-                if (overlay) {
-                    overlay.classList.add("hidden");
-                    overlay.classList.remove("block");
-                }
+                window.closeSidebar();
             }
         };
 

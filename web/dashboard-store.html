@@ -121,7 +121,7 @@
 <body class="min-h-screen bg-slate-50 text-[#102a43] flex flex-col lg:flex-row" onload="initOldMerchantDashboard()">
 
     <!-- Mobile Sidebar Backdrop Overlay -->
-    <div id="sidebar-overlay" class="fixed inset-0 bg-black/50 z-40 hidden lg:hidden" onclick="toggleSidebarMobile()"></div>
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black/60 z-40 hidden backdrop-blur-sm cursor-pointer transition-opacity" onclick="closeSidebar()"></div>
 
     <!-- Sidebar Element -->
     <aside id="zalo-sidebar" class="w-64 bg-white border-l border-slate-200 flex flex-col shrink-0 z-50 fixed lg:sticky top-0 right-0 h-screen hidden lg:flex transition-all duration-300 shadow-2xl lg:shadow-none">
@@ -150,7 +150,7 @@
                         <span class="text-[9px] text-slate-400 font-extrabold mt-1">بوابة التاجر</span>
                     </div>
                 </div>
-                <button onclick="toggleSidebarMobile()" class="lg:hidden text-slate-500 hover:text-slate-800 text-xl">
+                <button onclick="closeSidebar()" class="lg:hidden text-slate-500 hover:text-slate-800 text-xl p-1 rounded-lg hover:bg-slate-100 transition cursor-pointer" title="إغلاق القائمة">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
@@ -958,43 +958,57 @@
             const activeBtn = document.getElementById('btn-tab-' + tabId);
             if (activeBtn) activeBtn.classList.add('active');
 
-            const sidebar = document.getElementById('zalo-sidebar');
-            const overlay = document.getElementById('sidebar-overlay');
-            if (sidebar && window.innerWidth < 1024) {
-                sidebar.classList.add('hidden');
-                sidebar.classList.remove('flex');
-                if (overlay) overlay.classList.add('hidden');
+            if (window.innerWidth < 1024) {
+                window.closeSidebar();
             }
         };
 
-        // Global Toggle sidebar (Desktop & Mobile)
-        window.toggleSidebarMobile = window.toggleSidebar = function() {
+        // Explicit Sidebar Management for Desktop & Mobile
+        window.openSidebar = function() {
             const sidebar = document.getElementById('zalo-sidebar');
             const overlay = document.getElementById('sidebar-overlay');
             if (!sidebar) return;
 
-            const isHidden = sidebar.classList.contains('hidden') || 
-                             sidebar.classList.contains('lg:hidden') || 
-                             window.getComputedStyle(sidebar).display === 'none';
+            sidebar.style.display = 'flex';
+            sidebar.classList.remove('hidden', 'lg:hidden');
+            sidebar.classList.add('flex', 'lg:flex');
 
-            if (isHidden) {
-                sidebar.classList.remove('hidden');
-                sidebar.classList.remove('lg:hidden');
-                sidebar.classList.add('flex');
-                sidebar.classList.add('lg:flex');
-                if (overlay) {
-                    overlay.classList.remove('hidden');
-                    overlay.classList.add('block');
-                }
-            } else {
+            if (overlay && window.innerWidth < 1024) {
+                overlay.style.display = 'block';
+                overlay.classList.remove('hidden');
+            }
+        };
+
+        window.closeSidebar = function() {
+            const sidebar = document.getElementById('zalo-sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            if (!sidebar) return;
+
+            if (window.innerWidth < 1024) {
+                sidebar.style.display = 'none';
                 sidebar.classList.add('hidden');
-                sidebar.classList.add('lg:hidden');
                 sidebar.classList.remove('flex');
+            } else {
+                sidebar.style.display = 'none';
+                sidebar.classList.add('lg:hidden');
                 sidebar.classList.remove('lg:flex');
-                if (overlay) {
-                    overlay.classList.add('hidden');
-                    overlay.classList.remove('block');
-                }
+            }
+
+            if (overlay) {
+                overlay.style.display = 'none';
+                overlay.classList.add('hidden');
+            }
+        };
+
+        window.toggleSidebarMobile = window.toggleSidebar = function() {
+            const sidebar = document.getElementById('zalo-sidebar');
+            if (!sidebar) return;
+
+            const computedDisplay = window.getComputedStyle(sidebar).display;
+            if (computedDisplay === 'none' || sidebar.style.display === 'none') {
+                window.openSidebar();
+            } else {
+                window.closeSidebar();
             }
         };
 
