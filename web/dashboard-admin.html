@@ -1795,6 +1795,7 @@
             });
 
             setDB("stores_list_old", mergedStores);
+            renderStats();
 
             // Update badge counts
             const badgeCount = document.getElementById('badge-registrations-count');
@@ -2424,13 +2425,36 @@
         }
 
         // 📦 General Products Database Functions
-        function renderGlobalProductsTable() {
+        async function renderGlobalProductsTable() {
             let products = getDB("products", []);
             let orders = getDB("orders", []);
 
-            if (products.length === 0) {
-                products = [];
-                setDB("products", products);
+            try {
+                if (window.supabaseClient) {
+                    const { data: remoteProds } = await window.supabaseClient.from('products').select('*');
+                    if (remoteProds && Array.isArray(remoteProds) && remoteProds.length > 0) {
+                        remoteProds.forEach(rp => {
+                            const pId = rp.id || rp.productId;
+                            const pName = rp.productName || rp.name || 'منتج';
+                            const exists = products.some(lp => (lp.id && lp.id === pId) || (lp.productId && lp.productId === pId) || (lp.productName === pName));
+                            if (!exists) {
+                                products.push({
+                                    id: pId,
+                                    productId: pId,
+                                    productName: pName,
+                                    price: rp.price || 0,
+                                    stock: rp.stock || 0,
+                                    category: rp.category || 'عام',
+                                    storeName: rp.storeName || 'متجر شريك',
+                                    status: rp.status || 'نشط'
+                                });
+                            }
+                        });
+                        setDB("products", products);
+                    }
+                }
+            } catch (err) {
+                console.warn("Could not sync products from Supabase:", err);
             }
 
             const tbody = document.querySelector('#section-products-global #products-tbody');

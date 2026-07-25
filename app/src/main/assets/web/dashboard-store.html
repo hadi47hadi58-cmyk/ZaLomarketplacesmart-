@@ -110,6 +110,12 @@
             const activeStore = localStorage.getItem('zalo_active_store') || sessionStorage.getItem('merchant_store_name');
             const merchantStatus = localStorage.getItem('zalo_merchant_status');
 
+            if (merchantStatus === 'pending' && role !== 'admin' && role !== 'super_admin') {
+                alert('⏳ حسابك كتاجر ما زال قيد الدراسة والتدقيق من طرف إدارة منصة ZaLo. سيتم تفعيل لوحة التحكم فور موافقة المدير.');
+                window.location.href = 'customer-home.html';
+                return;
+            }
+
             if (!session && !localToken && !activeStore) {
                 console.warn('🚨 No session found. Redirecting to login...');
                 window.location.href = 'store-login.html?reason=unauthorized';
