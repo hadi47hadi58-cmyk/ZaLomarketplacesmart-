@@ -262,8 +262,8 @@
             <!-- Header with Hamburger for mobile and top info -->
             <header class="sticky top-0 z-30 bg-white/95 border-b-2 border-[#d4af37] w-full py-3 px-6 flex justify-between items-center backdrop-blur-md shadow-sm">
                 <div class="flex items-center gap-3">
-                    <button onclick="toggleSidebarMobile()" class="text-slate-800 hover:text-[#d4af37] text-xl p-2 focus:outline-none rounded-xl hover:bg-slate-100 transition flex items-center justify-center cursor-pointer" title="تبديل الشريط الجانبي">
-                        <i class="fa-solid fa-bars"></i>
+                    <button onclick="toggleSidebarMobile()" class="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-[#d4af37] flex items-center justify-center transition shadow-sm cursor-pointer border border-slate-200/60 focus:outline-none" title="تبديل الشريط الجانبي">
+                        <i class="fa-solid fa-bars text-base"></i>
                     </button>
                     <a href="customer-home.html" class="hidden sm:flex items-center gap-1.5 text-xs text-sky-600 hover:text-sky-800 font-bold transition">
                         <i class="fa-solid fa-house"></i>
@@ -276,6 +276,9 @@
                 </div>
 
                 <div class="flex items-center gap-3">
+                    <button onclick="toggleResponsiveMode()" class="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-[#d4af37] flex items-center justify-center transition shadow-sm cursor-pointer border border-slate-200/60 focus:outline-none" title="تغيير وضع العرض (هاتف / كومبيوتر)">
+                        <i class="fa-solid fa-mobile-screen-button text-base" id="responsive-icon"></i>
+                    </button>
                     <div class="text-right hidden sm:block">
                         <span id="header-user-name" class="text-xs font-black block text-slate-800">المدير العام</span>
                         <span id="header-user-email" class="text-[9px] text-slate-400 font-bold block">admin@zalo.dz</span>
@@ -1315,15 +1318,9 @@
             const overlay = document.getElementById("sidebar-overlay");
             if (!sidebar) return;
 
-            if (window.innerWidth < 1024) {
-                sidebar.style.display = "none";
-                sidebar.classList.add("hidden");
-                sidebar.classList.remove("flex");
-            } else {
-                sidebar.style.display = "none";
-                sidebar.classList.add("lg:hidden");
-                sidebar.classList.remove("lg:flex");
-            }
+            sidebar.style.display = "none";
+            sidebar.classList.add("hidden", "lg:hidden");
+            sidebar.classList.remove("flex", "lg:flex");
 
             if (overlay) {
                 overlay.style.display = "none";
@@ -2036,34 +2033,7 @@
             printWindow.document.write('<h2 style="color:#113f1c;">منصة ZaLo الجزائرية الموحدة</h2>');
             printWindow.document.write('<div class="print-card">' + printArea.innerHTML + '</div>');
             printWindow.document.write('<p style="font-size:12px; color:#666;">امسح الرمز للتسوق أو الانضمام كتاجر شريك</p>');
-            printWindow.document.write('
-        let isMobileMode = false;
-        function toggleResponsiveMode() {
-            isMobileMode = !isMobileMode;
-            const mainContainer = document.querySelector('main');
-            const icon = document.getElementById('responsive-icon');
-            if (!mainContainer || !icon) return;
-            if (isMobileMode) {
-                mainContainer.classList.remove('max-w-7xl');
-                mainContainer.classList.add('max-w-md');
-                mainContainer.style.borderLeft = '1px solid #e2e8f0';
-                mainContainer.style.borderRight = '1px solid #e2e8f0';
-                mainContainer.style.margin = '0 auto';
-                mainContainer.style.backgroundColor = '#ffffff';
-                icon.classList.remove('fa-mobile-screen-button');
-                icon.classList.add('fa-desktop');
-            } else {
-                mainContainer.classList.remove('max-w-md');
-                mainContainer.classList.add('max-w-7xl');
-                mainContainer.style.borderLeft = 'none';
-                mainContainer.style.borderRight = 'none';
-                mainContainer.style.backgroundColor = 'transparent';
-                icon.classList.remove('fa-desktop');
-                icon.classList.add('fa-mobile-screen-button');
-            }
-        }
-
-</body></html>');
+            printWindow.document.write('</body></html>');
             printWindow.document.close();
             printWindow.focus();
             setTimeout(() => {
@@ -2252,34 +2222,7 @@
             printWindow.document.write('<tr><td>صافي دخل التاجر المتبقي</td><td style="color:green; font-weight:bold;">' + (salesTotal - comm).toLocaleString() + ' دج</td></tr>');
             printWindow.document.write('</tbody></table>');
             printWindow.document.write('<p style="margin-top:30px; font-size:11px; text-align:center; color:#888;">منصة ZaLo ديزاد - نظام التدقيق الإداري والمالي الموحد</p>');
-            printWindow.document.write('
-        let isMobileMode = false;
-        function toggleResponsiveMode() {
-            isMobileMode = !isMobileMode;
-            const mainContainer = document.querySelector('main');
-            const icon = document.getElementById('responsive-icon');
-            if (!mainContainer || !icon) return;
-            if (isMobileMode) {
-                mainContainer.classList.remove('max-w-7xl');
-                mainContainer.classList.add('max-w-md');
-                mainContainer.style.borderLeft = '1px solid #e2e8f0';
-                mainContainer.style.borderRight = '1px solid #e2e8f0';
-                mainContainer.style.margin = '0 auto';
-                mainContainer.style.backgroundColor = '#ffffff';
-                icon.classList.remove('fa-mobile-screen-button');
-                icon.classList.add('fa-desktop');
-            } else {
-                mainContainer.classList.remove('max-w-md');
-                mainContainer.classList.add('max-w-7xl');
-                mainContainer.style.borderLeft = 'none';
-                mainContainer.style.borderRight = 'none';
-                mainContainer.style.backgroundColor = 'transparent';
-                icon.classList.remove('fa-desktop');
-                icon.classList.add('fa-mobile-screen-button');
-            }
-        }
-
-</body></html>');
+            printWindow.document.write('</body></html>');
             printWindow.document.close();
             printWindow.focus();
             setTimeout(() => {
@@ -2341,35 +2284,7 @@
             printWindow.document.write('<thead><tr style="background:#113f1c; color:white;"><th>اسم المتجر</th><th>حالة الاشتراك</th><th>المبيعات</th><th>عمولة المنصة</th><th>قيمة الاشتراك المحصلة</th></tr></thead>');
             printWindow.document.write('<tbody>' + tableRows + '</tbody>');
             printWindow.document.write('</table>');
-            
-            printWindow.document.write('
-        let isMobileMode = false;
-        function toggleResponsiveMode() {
-            isMobileMode = !isMobileMode;
-            const mainContainer = document.querySelector('main');
-            const icon = document.getElementById('responsive-icon');
-            if (!mainContainer || !icon) return;
-            if (isMobileMode) {
-                mainContainer.classList.remove('max-w-7xl');
-                mainContainer.classList.add('max-w-md');
-                mainContainer.style.borderLeft = '1px solid #e2e8f0';
-                mainContainer.style.borderRight = '1px solid #e2e8f0';
-                mainContainer.style.margin = '0 auto';
-                mainContainer.style.backgroundColor = '#ffffff';
-                icon.classList.remove('fa-mobile-screen-button');
-                icon.classList.add('fa-desktop');
-            } else {
-                mainContainer.classList.remove('max-w-md');
-                mainContainer.classList.add('max-w-7xl');
-                mainContainer.style.borderLeft = 'none';
-                mainContainer.style.borderRight = 'none';
-                mainContainer.style.backgroundColor = 'transparent';
-                icon.classList.remove('fa-desktop');
-                icon.classList.add('fa-mobile-screen-button');
-            }
-        }
-
-</body></html>');
+            printWindow.document.write('</body></html>');
             printWindow.document.close();
             printWindow.focus();
             setTimeout(() => {
@@ -3044,24 +2959,34 @@
             isMobileMode = !isMobileMode;
             const mainContainer = document.querySelector('main');
             const icon = document.getElementById('responsive-icon');
-            if (!mainContainer || !icon) return;
+            if (!mainContainer) return;
+
             if (isMobileMode) {
                 mainContainer.classList.remove('max-w-7xl');
-                mainContainer.classList.add('max-w-md');
-                mainContainer.style.borderLeft = '1px solid #e2e8f0';
-                mainContainer.style.borderRight = '1px solid #e2e8f0';
-                mainContainer.style.margin = '0 auto';
+                mainContainer.classList.add('max-w-sm');
+                mainContainer.style.borderLeft = '2px solid #d4af37';
+                mainContainer.style.borderRight = '2px solid #d4af37';
+                mainContainer.style.borderRadius = '1.5rem';
+                mainContainer.style.margin = '1rem auto';
+                mainContainer.style.boxShadow = '0 25px 50px -12px rgba(0, 0, 0, 0.25)';
                 mainContainer.style.backgroundColor = '#ffffff';
-                icon.classList.remove('fa-mobile-screen-button');
-                icon.classList.add('fa-desktop');
+                if (icon) {
+                    icon.classList.remove('fa-mobile-screen-button');
+                    icon.classList.add('fa-desktop');
+                }
             } else {
-                mainContainer.classList.remove('max-w-md');
+                mainContainer.classList.remove('max-w-sm');
                 mainContainer.classList.add('max-w-7xl');
                 mainContainer.style.borderLeft = 'none';
                 mainContainer.style.borderRight = 'none';
+                mainContainer.style.borderRadius = '0';
+                mainContainer.style.margin = '0 auto';
+                mainContainer.style.boxShadow = 'none';
                 mainContainer.style.backgroundColor = 'transparent';
-                icon.classList.remove('fa-desktop');
-                icon.classList.add('fa-mobile-screen-button');
+                if (icon) {
+                    icon.classList.remove('fa-desktop');
+                    icon.classList.add('fa-mobile-screen-button');
+                }
             }
         };
     </script>

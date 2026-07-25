@@ -3118,45 +3118,81 @@ async function syncMerchantRequestStatus(user) {
   const container = document.getElementById('application-status-container');
   if (!btn || !container) return;
 
-  try {
-    const { data: requests, error } = await supabase
-      .from('merchant_requests')
-      .select('*')
-      .eq('id', user.id)
-      .maybeSingle();
+  // Local fallback state check
+  const localRole = localStorage.getItem('zalo_user_role') || sessionStorage.getItem('zalo_user_role');
+  const localStatus = localStorage.getItem('zalo_merchant_status');
+  const activeStore = localStorage.getItem('zalo_active_store') || sessionStorage.getItem('merchant_store_name');
 
-    if (requests) {
-      if (requests.status === 'pending') {
-        btn.disabled = true;
-        btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> طلبك قيد المراجعة...`;
-        container.style.display = 'block';
-        container.style.color = '#d4af37';
-        container.innerHTML = '⏳ تم إيداع طلب الشراكة بنجاح وهو قيد الدراسة والتدقيق من قبل الإدارة العليا.';
-      } else if (requests.status === 'approved' || requests.status === 'active') {
-        localStorage.setItem('zalo_user_role', 'MERCHANT');
-        btn.disabled = true;
-        btn.innerHTML = `<i class="fa-solid fa-circle-check"></i> شريك معتمد`;
-        container.style.display = 'block';
-        container.style.color = '#16a34a';
-        container.innerHTML = `
-          <div style="margin-bottom: 8px;">✅ حسابك نشط ومعتمد كتاجر!</div>
-          <button onclick="window.location.href='dashboard-store.html'" class="btn-p" style="background:#1d9bf0; font-size:12px; height:38px;">
-            <i class="fa-solid fa-gauge"></i> الدخول للوحة التحكم 📦
-          </button>
-        `;
+  let isApproved = (localRole === 'MERCHANT' || localStatus === 'approved' || localStatus === 'APPROVED' || !!activeStore);
+  let isPending = (localStatus === 'pending');
+
+  try {
+    if (user && user.id && typeof supabase !== 'undefined' && supabase.from) {
+      const { data: requests } = await supabase
+        .from('merchant_requests')
+        .select('*')
+        .eq('id', user.id)
+        .maybeSingle();
+
+      if (requests) {
+        if (requests.status === 'pending') {
+          isPending = true;
+          isApproved = false;
+        } else if (requests.status === 'approved' || requests.status === 'active' || requests.status === 'APPROVED') {
+          isApproved = true;
+          isPending = false;
+          localStorage.setItem('zalo_user_role', 'MERCHANT');
+          localStorage.setItem('zalo_merchant_status', 'approved');
+        }
       }
-    } else {
-      btn.disabled = false;
-      btn.innerHTML = `<i class="fa-solid fa-briefcase"></i> تقديم طلب انضمام كتاجر شريك`;
-      container.style.display = 'none';
     }
   } catch(e) {
-    console.warn("Could not sync requests status:", e);
+    console.warn("Could not sync requests status from Supabase:", e);
+  }
+
+  if (isApproved) {
+    btn.disabled = false;
+    btn.style.background = 'linear-gradient(135deg, #113f1c 0%, #1e5a2a 100%)';
+    btn.style.color = '#ffffff';
+    btn.style.border = '1px solid #d4af37';
+    btn.onclick = function() { window.location.href = 'dashboard-store.html'; };
+    btn.innerHTML = `<i class="fa-solid fa-store" style="color:#d4af37;"></i> الدخول إلى لوحة التحكم للتاجر 📦`;
+    container.style.display = 'block';
+    container.style.color = '#16a34a';
+    container.innerHTML = `✅ حسابك نشط ومعتمد كتاجر! اضغط على الزر أعلاه للانتقال المباشر إلى لوحة إدارة متجرك.`;
+  } else if (isPending) {
+    btn.disabled = false;
+    btn.style.background = '#f59e0b';
+    btn.style.color = '#ffffff';
+    btn.onclick = function() { alert('⏳ تم إيداع طلب الشراكة بنجاح وهو قيد الدراسة والتدقيق من قبل الإدارة العليا لمنصة ZaLo.'); };
+    btn.innerHTML = `<i class="fa-solid fa-clock"></i> طلبك قيد المراجعة والتدقيق ⏳`;
+    container.style.display = 'block';
+    container.style.color = '#d4af37';
+    container.innerHTML = `⏳ تم استلام ملف انضمامك بنجاح وهو الآن قيد الدراسة. سنقوم بإشعارك فور تفعيل المتجر.`;
+  } else {
+    btn.disabled = false;
+    btn.style.background = 'var(--metallic-gold)';
+    btn.style.color = '#070a08';
+    btn.onclick = function() { window.location.href = 'register-step1.html'; };
+    btn.innerHTML = `<i class="fa-solid fa-briefcase"></i> تقديم طلب انضمام كتاجر شريك`;
+    container.style.display = 'none';
   }
 }
 
-// Open merchant modal
-window.applyForMerchant = function() { window.location.href = 'register-step1.html'; };
+// Global apply / enter merchant dashboard router
+window.applyForMerchant = function() {
+  const role = localStorage.getItem('zalo_user_role') || sessionStorage.getItem('zalo_user_role');
+  const status = localStorage.getItem('zalo_merchant_status');
+  const activeStore = localStorage.getItem('zalo_active_store') || sessionStorage.getItem('merchant_store_name');
+
+  if (role === 'MERCHANT' || status === 'approved' || status === 'APPROVED' || !!activeStore) {
+    window.location.href = 'dashboard-store.html';
+  } else if (status === 'pending') {
+    alert('⏳ طلبك للانضمام كتاجر قيد الدراسة والتدقيق من طرف إدارة منصة ZaLo.');
+  } else {
+    window.location.href = 'register-step1.html';
+  }
+};
 
 // Submit partner application
 document.getElementById('merchantRequestForm').addEventListener('submit', async (e) => {

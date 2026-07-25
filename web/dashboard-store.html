@@ -225,8 +225,8 @@
         <!-- Top bar with mobile toggle -->
                 <header class="bg-white border-b border-slate-200 py-3 px-4 flex justify-between items-center lg:sticky top-0 z-30 shadow-sm shrink-0 relative">
             <div class="flex items-center gap-3 w-1/3">
-                <button onclick="toggleSidebarMobile()" class="text-slate-600 hover:text-slate-900 text-xl p-2 rounded-xl hover:bg-slate-100 transition flex items-center justify-center cursor-pointer" title="تبديل الشريط الجانبي">
-                    <i class="fa-solid fa-bars"></i>
+                <button onclick="toggleSidebarMobile()" class="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-[#d4af37] flex items-center justify-center transition shadow-sm cursor-pointer border border-slate-200/60 focus:outline-none" title="تبديل الشريط الجانبي">
+                    <i class="fa-solid fa-bars text-base"></i>
                 </button>
                 <span class="hidden lg:inline-flex text-[10px] bg-emerald-50 text-emerald-600 border border-emerald-200 px-3 py-1 rounded-full font-bold">بوابة التاجر</span>
             </div>
@@ -253,8 +253,8 @@
             </div>
             
             <div class="flex items-center justify-end gap-2 w-1/3">
-                <button onclick="toggleResponsiveMode()" class="text-slate-500 hover:text-slate-800 bg-slate-100 hover:bg-slate-200 w-8 h-8 rounded-full flex items-center justify-center transition shadow-sm" title="تغيير وضع العرض">
-                    <i class="fa-solid fa-mobile-screen-button" id="responsive-icon"></i>
+                <button onclick="toggleResponsiveMode()" class="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-[#d4af37] flex items-center justify-center transition shadow-sm cursor-pointer border border-slate-200/60 focus:outline-none" title="تغيير وضع العرض (هاتف / كومبيوتر)">
+                    <i class="fa-solid fa-mobile-screen-button text-base" id="responsive-icon"></i>
                 </button>
                 <span class="lg:hidden text-[9px] bg-emerald-50 text-emerald-600 border border-emerald-200 px-2 py-0.5 rounded-full font-bold">التاجر</span>
             </div>
@@ -984,15 +984,9 @@
             const overlay = document.getElementById('sidebar-overlay');
             if (!sidebar) return;
 
-            if (window.innerWidth < 1024) {
-                sidebar.style.display = 'none';
-                sidebar.classList.add('hidden');
-                sidebar.classList.remove('flex');
-            } else {
-                sidebar.style.display = 'none';
-                sidebar.classList.add('lg:hidden');
-                sidebar.classList.remove('lg:flex');
-            }
+            sidebar.style.display = 'none';
+            sidebar.classList.add('hidden', 'lg:hidden');
+            sidebar.classList.remove('flex', 'lg:flex');
 
             if (overlay) {
                 overlay.style.display = 'none';
@@ -1853,25 +1847,36 @@
             isMobileMode = !isMobileMode;
             const mainContainer = document.querySelector('main');
             const icon = document.getElementById('responsive-icon');
-            if (!mainContainer || !icon) return;
+            if (!mainContainer) return;
+
             if (isMobileMode) {
                 mainContainer.classList.remove('max-w-7xl');
-                mainContainer.classList.add('max-w-md');
-                mainContainer.style.borderLeft = '1px solid #e2e8f0';
-                mainContainer.style.borderRight = '1px solid #e2e8f0';
-                mainContainer.style.margin = '0 auto';
+                mainContainer.classList.add('max-w-sm');
+                mainContainer.style.borderLeft = '2px solid #d4af37';
+                mainContainer.style.borderRight = '2px solid #d4af37';
+                mainContainer.style.borderRadius = '1.5rem';
+                mainContainer.style.margin = '1rem auto';
+                mainContainer.style.boxShadow = '0 25px 50px -12px rgba(0, 0, 0, 0.25)';
                 mainContainer.style.backgroundColor = '#ffffff';
-                icon.classList.remove('fa-mobile-screen-button');
-                icon.classList.add('fa-desktop');
+                if (icon) {
+                    icon.classList.remove('fa-mobile-screen-button');
+                    icon.classList.add('fa-desktop');
+                }
             } else {
-                mainContainer.classList.remove('max-w-md');
+                mainContainer.classList.remove('max-w-sm');
                 mainContainer.classList.add('max-w-7xl');
                 mainContainer.style.borderLeft = 'none';
                 mainContainer.style.borderRight = 'none';
+                mainContainer.style.borderRadius = '0';
+                mainContainer.style.margin = '0 auto';
+                mainContainer.style.boxShadow = 'none';
                 mainContainer.style.backgroundColor = 'transparent';
-                icon.classList.remove('fa-desktop');
-                icon.classList.add('fa-mobile-screen-button');
+                if (icon) {
+                    icon.classList.remove('fa-desktop');
+                    icon.classList.add('fa-mobile-screen-button');
+                }
             }
+        };
         window.openAddBranchModal = function() {
             const parentStore = localStorage.getItem('zalo_active_store') || sessionStorage.getItem('merchant_store_name') || 'المتجر الرئيسي';
             const input = document.getElementById('branchParentStore');
