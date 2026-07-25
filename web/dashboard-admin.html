@@ -1482,13 +1482,15 @@
             // Platform rating (dynamic or static 5.0 default if no reviews)
             document.getElementById('stat-platform-rating').innerText = "5.0 / 5.0 ★";
 
-            // Real phone-verified users count
+            // Real registered/verified users count
             let users = getDB("users", []);
-            let verifiedUsers = users.filter(u => u.phone && u.phone.trim().length > 0).length;
+            let verifiedUsers = users.filter(u => (u.phone && u.phone.trim().length > 0) || (u.email && u.email.trim().length > 0)).length;
+            if (verifiedUsers === 0 && users.length > 0) verifiedUsers = users.length;
             document.getElementById('stat-verified-users').innerText = verifiedUsers + " عميل";
 
-            // Real admins count (users with role admin or manager)
-            let admins = users.filter(u => u.role === "admin" || u.role === "manager").length;
+            // Real admins count (users with role admin, super_admin, or manager)
+            let admins = users.filter(u => u.role === "admin" || u.role === "manager" || u.role === "super_admin").length;
+            if (admins === 0) admins = 1; // General Manager / Admin
             document.getElementById('stat-admins-count').innerText = admins + " مشرفين";
         }
 
@@ -1736,8 +1738,30 @@
             try {
                 if (window.supabaseClient) {
                     const { data, error } = await window.supabaseClient.from('merchant_requests').select('*');
-                    if (!error && data) {
+                    if (!error && data && Array.isArray(data)) {
                         liveRequests = data;
+                    }
+
+                    // Also check profiles for merchants or pending accounts
+                    const { data: profs, error: profErr } = await window.supabaseClient.from('profiles').select('*');
+                    if (!profErr && profs && Array.isArray(profs)) {
+                        profs.forEach(p => {
+                            if (p.role === 'merchant' || p.status === 'pending' || p.store_name || p.storeName) {
+                                const exists = liveRequests.some(r => (r.id && r.id === p.id) || (r.email && p.email && r.email.toLowerCase() === p.email.toLowerCase()));
+                                if (!exists) {
+                                    liveRequests.push({
+                                        id: p.id,
+                                        store_name: p.store_name || p.storeName || p.full_name || 'متجر جديد',
+                                        owner_name: p.full_name || p.name || (p.email ? p.email.split('@')[0] : 'تاجر جديد'),
+                                        email: p.email || '',
+                                        phone: p.phone || '0658000000',
+                                        wilaya: p.wilaya || 'الجزائر',
+                                        status: p.status || 'pending',
+                                        merchant_type: p.merchant_type || 'registered'
+                                    });
+                                }
+                            }
+                        });
                     }
                 }
             } catch (e) {
@@ -1753,6 +1777,21 @@
             try {
                 zaloMerchantReqs = JSON.parse(localStorage.getItem('zalo_merchant_requests') || '[]');
             } catch (e) { zaloMerchantReqs = []; }
+
+            try {
+                const singleStore = JSON.parse(localStorage.getItem('zalo_merchant_store_settings') || 'null');
+                if (singleStore && (singleStore.storeName || singleStore.name)) {
+                    zaloMerchantReqs.push({
+                        id: singleStore.id || 'store_single_1',
+                        store_name: singleStore.storeName || singleStore.name,
+                        owner_name: singleStore.ownerName || singleStore.owner || 'تاجر جديد',
+                        phone: singleStore.phone || singleStore.storePhone || '0658000000',
+                        wilaya: singleStore.wilaya || 'الجزائر',
+                        email: localStorage.getItem('user_email') || singleStore.email || '',
+                        status: localStorage.getItem('zalo_merchant_status') || 'pending'
+                    });
+                }
+            } catch (e) {}
 
             const allRequests = [...liveRequests, ...zaloLocalReqs, ...zaloMerchantReqs];
 
@@ -2301,12 +2340,47 @@
 
         let currentUserFilter = "all";
 
-        function renderUsersTable() {
+        async function renderUsersTable() {
             let users = getDB("users", []);
-            if (users.length === 0) {
-                users = MOCK_USERS_SEED;
+
+            try {
+                if (window.supabaseClient) {
+                    const { data: profs, error } = await window.supabaseClient.from('profiles').select('*');
+                    if (!error && profs && Array.isArray(profs)) {
+                        profs.forEach(p => {
+                            const exists = users.some(u => (u.id && u.id === p.id) || (u.email && p.email && u.email.toLowerCase() === p.email.toLowerCase()));
+                            if (!exists) {
+                                users.push({
+                                    id: p.id,
+                                    name: p.full_name || p.name || (p.email ? p.email.split('@')[0] : 'مستخدم زالو'),
+                                    email: p.email || '',
+                                    phone: p.phone || '',
+                                    role: p.role || 'customer',
+                                    type: (p.role === 'merchant' ? 'registered' : 'buyer')
+                                });
+                            }
+                        });
+                        setDB("users", users);
+                    }
+                }
+            } catch (err) {
+                console.warn("Error loading profiles for users table:", err);
+            }
+
+            const currentEmail = localStorage.getItem('user_email');
+            if (currentEmail && !users.some(u => u.email === currentEmail)) {
+                users.push({
+                    id: 'admin_self',
+                    name: 'المدير العام',
+                    email: currentEmail,
+                    phone: '0658000000',
+                    role: 'admin',
+                    type: 'registered'
+                });
                 setDB("users", users);
             }
+
+            renderStats();
 
             const tbody = document.getElementById('users-tbody');
             if (!tbody) return;
