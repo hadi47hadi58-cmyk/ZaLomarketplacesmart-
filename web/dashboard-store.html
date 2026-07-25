@@ -297,6 +297,22 @@
             </div>
         </header>
 
+        <!-- MERCHANT APPROVAL BANNER -->
+        <div id="merchant-approved-banner" class="mx-6 mt-4 p-3.5 bg-gradient-to-r from-emerald-600 to-teal-700 text-white rounded-2xl shadow-md flex items-center justify-between text-xs font-bold text-right border border-emerald-400">
+            <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center shrink-0">
+                    <i class="fa-solid fa-circle-check text-amber-300 text-lg"></i>
+                </div>
+                <div>
+                    <span class="block text-amber-300 font-extrabold text-[11px]">حسابك معتمد ونشط رسمياً 🎉</span>
+                    <span class="text-white/95 text-[11px]">تم فحص وثائقك وموافقة المدير العام على متجرك. يمكنك الآن التحكم بمنتجاتك، إضافة العروض، وتلقي الطلبات المباشرة!</span>
+                </div>
+            </div>
+            <button onclick="document.getElementById('merchant-approved-banner').remove()" class="text-white/80 hover:text-white text-sm mr-2">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
     <!-- Main Content Grid -->
     <main class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6 overflow-y-auto">
 

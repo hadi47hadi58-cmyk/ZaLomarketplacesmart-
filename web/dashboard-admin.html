@@ -1195,44 +1195,95 @@
 
     <!-- MODAL: DOCUMENTS VIEWER -->
     <div id="documents-modal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 hidden backdrop-blur-sm">
-        <div class="bg-white border-2 border-[#d4af37] rounded-3xl w-full max-w-md overflow-hidden shadow-2xl text-right">
-            <header class="bg-[#113f1c] text-white py-4 px-6 flex justify-between items-center">
-                <button onclick="closeDocumentsModal()" class="text-white hover:text-red-400 text-lg">
+        <div class="bg-white border-2 border-[#0ea5e9] rounded-3xl w-full max-w-md overflow-hidden shadow-2xl text-right">
+            <header class="bg-[#0284c7] text-white py-4 px-6 flex justify-between items-center">
+                <button onclick="closeDocumentsModal()" class="text-white hover:text-red-300 text-lg">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
                 <h3 class="text-xs font-black flex items-center gap-2">
-                    <i class="fa-solid fa-folder-open text-[#d4af37]"></i>
-                    <span>وثائق الهوية والسجل التجاري للمراجعة</span>
+                    <i class="fa-solid fa-folder-open text-amber-300"></i>
+                    <span>وثائق الهوية والسجل التجاري للمراجعة - <span id="doc-modal-store-name">المتجر</span></span>
                 </h3>
             </header>
             <div class="p-6 space-y-4">
                 <div class="space-y-2">
                     <span class="text-[10px] text-slate-500 font-extrabold block">بطاقة التعريف الوطنية البيومترية (المسح الضوئي):</span>
                     <div class="border border-dashed border-slate-300 rounded-xl p-2.5 flex items-center justify-between bg-slate-50">
-                        <span class="text-[11px] font-bold text-slate-700"><i class="fa-solid fa-id-card text-sky-600"></i> ID_CARD_ALGERIA_BIOMETRIC.pdf</span>
-                        <a href="#" onclick="showPermissionAudit({
-                            actionName: 'تحميل وفحص بطاقة الهوية الوطنية للتاجر',
-                            allowedRoles: ['admin', 'manager', 'disputes'],
-                            currentRole: 'admin',
-                            status: 'GRANTED',
-                            description: 'بصفتك المدير العام للمنصة، لديك كامل الصلاحية الأمنية لتحميل ومطابقة وثيقة الهوية الوطنية البيومترية للتاجر للتحقق من هوية صاحب النشاط وضمان سلامة المعاملات. جاري الفحص وتحميل المستند...'
-                        }); return false;" class="text-sky-500 hover:underline"><i class="fa-solid fa-download"></i> تحميل</a>
+                        <span class="text-[11px] font-bold text-slate-700 flex items-center gap-1.5 overflow-hidden">
+                            <i class="fa-solid fa-id-card text-sky-600"></i>
+                            <span id="doc-modal-id-filename" class="truncate max-w-[180px]">ID_CARD_ALGERIA_BIOMETRIC.pdf</span>
+                        </span>
+                        <button onclick="downloadStoreDoc('id')" class="text-sky-600 hover:text-sky-800 font-extrabold bg-sky-50 border border-sky-200 px-3 py-1.5 rounded-xl transition text-xs flex items-center gap-1 shadow-sm">
+                            <i class="fa-solid fa-download"></i> تحميل
+                        </button>
                     </div>
                 </div>
                 <div class="space-y-2">
                     <span class="text-[10px] text-slate-500 font-extrabold block">سجل تجاري مصدق معمد من الغرفة التجارية:</span>
                     <div class="border border-dashed border-slate-300 rounded-xl p-2.5 flex items-center justify-between bg-slate-50">
-                        <span class="text-[11px] font-bold text-slate-700"><i class="fa-solid fa-file-signature text-amber-600"></i> COMMERCIAL_REGISTER_RC.pdf</span>
-                        <a href="#" onclick="showPermissionAudit({
-                            actionName: 'تحميل وفحص السجل التجاري المصدق للتاجر',
-                            allowedRoles: ['admin', 'manager', 'auditor'],
-                            currentRole: 'admin',
-                            status: 'GRANTED',
-                            description: 'بصفتك المدير العام للمنصة، تملك الصلاحية التنظيمية الكاملة لتحميل السجل التجاري ومطابقة أرقام القيد الرسمية للتاجر للتأكد من اعتماده القانوني. جاري فحص وتحميل المستند...'
-                        }); return false;" class="text-sky-500 hover:underline"><i class="fa-solid fa-download"></i> تحميل</a>
+                        <span class="text-[11px] font-bold text-slate-700 flex items-center gap-1.5 overflow-hidden">
+                            <i class="fa-solid fa-file-signature text-amber-600"></i>
+                            <span id="doc-modal-rc-filename" class="truncate max-w-[180px]">COMMERCIAL_REGISTER_RC.pdf</span>
+                        </span>
+                        <button onclick="downloadStoreDoc('rc')" class="text-sky-600 hover:text-sky-800 font-extrabold bg-sky-50 border border-sky-200 px-3 py-1.5 rounded-xl transition text-xs flex items-center gap-1 shadow-sm">
+                            <i class="fa-solid fa-download"></i> تحميل
+                        </button>
                     </div>
                 </div>
-                <button onclick="closeDocumentsModal()" class="w-full bg-[#113f1c] text-white font-black py-2.5 rounded-xl hover:bg-[#1e3e26] transition text-xs">إغلاق وتأكيد الفحص الأمني ✅</button>
+
+                <div class="pt-2 space-y-2">
+                    <button onclick="openActivationConfirmModal()" class="w-full bg-[#0284c7] hover:bg-[#0369a1] text-white font-black py-3 rounded-xl transition text-xs flex items-center justify-center gap-2 shadow-lg shadow-sky-600/20">
+                        <i class="fa-solid fa-check-double"></i>
+                        <span>إغلاق وتأكيد الفحص الأمني والموافقة ✅</span>
+                    </button>
+                    <button onclick="closeDocumentsModal()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2 rounded-xl transition text-xs">
+                        إغلاق النافذة
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: ACTIVATION CONFIRMATION MESSAGE -->
+    <div id="activation-confirm-modal" class="fixed inset-0 bg-black/60 z-[60] flex items-center justify-center p-4 hidden backdrop-blur-sm">
+        <div class="bg-white border-2 border-emerald-500 rounded-3xl w-full max-w-md overflow-hidden shadow-2xl text-right">
+            <header class="bg-emerald-700 text-white py-4 px-6 flex justify-between items-center">
+                <button onclick="closeActivationConfirmModal()" class="text-white hover:text-white/80 text-lg">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+                <h3 class="text-xs font-black flex items-center gap-2">
+                    <i class="fa-solid fa-circle-check text-amber-300"></i>
+                    <span>تأكيد قبول وتفعيل المتجر رسمياً</span>
+                </h3>
+            </header>
+            <div class="p-6 space-y-4">
+                <input type="hidden" id="activate-store-id">
+                <div class="p-4 bg-emerald-50 border border-emerald-200 rounded-2xl text-emerald-900 space-y-2">
+                    <h4 class="font-extrabold text-sm" id="activate-modal-store-title">تفعيل متجر: ...</h4>
+                    <p class="text-xs font-bold leading-relaxed text-emerald-800">
+                        هل أنت أستاذ مدير متأكد من مراجعة الوثائق وقبول وتفعيل هذا المتجر رسمياً؟
+                    </p>
+                    <ul class="text-[11px] font-semibold text-emerald-700 space-y-1.5 list-disc list-inside">
+                        <li>سيظهر للتاجر إشعار موافقة بالقبول والتفعيل.</li>
+                        <li>سيتمكن التاجر من الدخول المباشر إلى لوحة تحكم متجره وإدارة منتجاته.</li>
+                        <li>سيصبح المتجر معتمداً ومرئياً للزبائن في منصة ZaLo.</li>
+                    </ul>
+                </div>
+
+                <div>
+                    <label class="block text-[11px] text-slate-600 font-black mb-1">ملاحظة أو رسالة ترحيب للتاجر (اختياري):</label>
+                    <textarea id="activate-welcome-msg" rows="2" class="w-full bg-slate-50 border border-slate-200 text-xs rounded-xl p-3 focus:outline-none focus:border-emerald-400 font-bold text-slate-800" placeholder="مثال: مرحباً بك في منصة ZaLo! تم اعتماد وثائقك وسجلك التجاري بنجاح. نتمنى لك مبيعات موفقة."></textarea>
+                </div>
+
+                <div class="flex gap-2 pt-2">
+                    <button onclick="executeStoreActivation()" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-black py-3 rounded-xl transition text-xs shadow-md flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-check-double"></i>
+                        <span>تأكيد التفعيل والموافقة ✅</span>
+                    </button>
+                    <button onclick="closeActivationConfirmModal()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-4 py-3 rounded-xl transition text-xs">
+                        إلغاء
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -1877,7 +1928,7 @@
                     <td class="p-3">${s.location}</td>
                     <td class="p-3 text-center">
                         <div class="flex items-center justify-center gap-1">
-                            <button onclick="openDocumentsModal()" class="text-sky-600 hover:text-sky-800 flex items-center gap-1 font-bold text-xs bg-sky-50 border border-sky-100 px-2.5 py-1.5 rounded-xl transition">
+                            <button onclick="openDocumentsModal('${s.id}')" class="text-sky-600 hover:text-sky-800 flex items-center gap-1 font-bold text-xs bg-sky-50 border border-sky-100 px-2.5 py-1.5 rounded-xl transition">
                                 <i class="fa-solid fa-file-pdf text-red-500"></i>
                                 <span>عرض السجل (2)</span>
                             </button>
@@ -1896,12 +1947,12 @@
                             </a>
 
                             ${s.status !== "APPROVED" ? 
-                                `<button onclick="approveStore('${s.id}')" class="bg-emerald-600 text-white hover:bg-emerald-700 font-bold text-[10px] px-3 py-1.5 rounded-xl transition">تفعيل</button>` : ''
+                                `<button onclick="openActivationConfirmModal('${s.id}')" class="bg-emerald-600 text-white hover:bg-emerald-700 font-bold text-[10px] px-3 py-1.5 rounded-xl transition">تفعيل</button>` : ''
                             }
 
                             ${s.status !== "SUSPENDED" ?
                                 `<button onclick="openSuspendModal('${s.id}')" class="bg-red-50 text-red-600 border border-red-200 hover:bg-red-600 hover:text-white font-bold text-[10px] px-3 py-1.5 rounded-xl transition" title="تعليق طلب التسجيل ومطالبة ببيانات">تعليق</button>` : 
-                                `<button onclick="approveStore('${s.id}')" class="bg-emerald-50 text-emerald-600 border border-emerald-200 hover:bg-emerald-600 hover:text-white font-bold text-[10px] px-3 py-1.5 rounded-xl transition">إعادة تفعيل</button>`
+                                `<button onclick="openActivationConfirmModal('${s.id}')" class="bg-emerald-50 text-emerald-600 border border-emerald-200 hover:bg-emerald-600 hover:text-white font-bold text-[10px] px-3 py-1.5 rounded-xl transition">إعادة تفعيل</button>`
                             }
                         </div>
                     </td>
@@ -2026,12 +2077,145 @@
             document.getElementById('active-stores-modal').classList.add('hidden');
         }
 
+        // Download document PDF helper function
+        function downloadStoreDoc(docType) {
+            const store = window.currentReviewStore || { name: 'متجر الشريك', id: 'store-1' };
+            const storeName = store.name || store.store_name || 'ZaLo Merchant';
+            const cleanName = storeName.replace(/[^\w\u0600-\u06FF]/g, '_');
+            let docTitle = docType === 'id' ? 'ALGERIA BIOMETRIC NATIONAL ID CARD' : 'OFFICIAL COMMERCIAL REGISTER CERTIFICATE (CNRC)';
+            let fileName = docType === 'id' ? `${cleanName}_ID_CARD_ALGERIA.pdf` : `${cleanName}_COMMERCIAL_REGISTER_RC.pdf`;
+
+            const pdfContent = `%PDF-1.4
+1 0 obj <</Type /Catalog /Pages 2 0 R>> endobj
+2 0 obj <</Type /Pages /Kinds [3 0 R] /Count 1>> endobj
+3 0 obj <</Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources <</Font <</F1 5 0 R>>>> >> endobj
+4 0 obj <</Length 280>> stream
+BT
+/F1 20 Tf
+50 720 Td
+(${docTitle}) Tj
+/F1 12 Tf
+0 -35 Td
+(Official Record for Store: ${storeName}) Tj
+0 -20 Td
+(Registration Code / RC: ${store.regCode || '16/00-984512B23'}) Tj
+0 -20 Td
+(Owner / Legal Agent: ${store.owner || 'Verified Partner'}) Tj
+0 -20 Td
+(Location / Wilaya: ${store.location || 'Algeria'}) Tj
+0 -25 Td
+(Status: OFFICIALLY AUDITED & VERIFIED BY ZALO ADMIN) Tj
+0 -20 Td
+(Verification Date: ${new Date().toLocaleDateString('ar-DZ')} - ${new Date().toLocaleTimeString()}) Tj
+ET
+endstream
+endobj
+5 0 obj <</Type /Font /Subtype /Type1 /BaseFont /Helvetica>> endobj
+xref
+0 6
+0000000000 65535 f
+0000000009 00000 n
+0000000058 00000 n
+0000000115 00000 n
+0000000246 00000 n
+0000000576 00000 n
+trailer <</Size 6 /Root 1 0 R>>
+startxref
+645
+%%EOF`;
+
+            const blob = new Blob([pdfContent], { type: 'application/pdf' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = fileName;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
         // Documents Modal
-        function openDocumentsModal() {
+        function openDocumentsModal(storeId) {
+            let stores = getDB("stores_list_old", MOCK_STORES);
+            let s = stores.find(st => st.id === storeId) || stores[0];
+            window.currentReviewStore = s;
+
+            const nameEl = document.getElementById('doc-modal-store-name');
+            if (nameEl && s) nameEl.innerText = s.name || s.store_name || "المتجر";
+
+            const cleanName = (s ? (s.name || s.store_name || 'STORE') : 'STORE').replace(/\s+/g, '_').toUpperCase();
+            
+            const idFileEl = document.getElementById('doc-modal-id-filename');
+            if (idFileEl) idFileEl.innerText = `${cleanName}_ID_CARD.pdf`;
+
+            const rcFileEl = document.getElementById('doc-modal-rc-filename');
+            if (rcFileEl) rcFileEl.innerText = `${cleanName}_COMMERCIAL_REGISTER.pdf`;
+
             document.getElementById('documents-modal').classList.remove('hidden');
         }
+
         function closeDocumentsModal() {
             document.getElementById('documents-modal').classList.add('hidden');
+        }
+
+        // Open Activation Confirm Modal
+        function openActivationConfirmModal(storeId) {
+            if (!storeId && window.currentReviewStore) storeId = window.currentReviewStore.id;
+            let stores = getDB("stores_list_old", MOCK_STORES);
+            let s = stores.find(st => st.id === storeId) || window.currentReviewStore;
+            
+            if (!s) return;
+            window.currentActivationStore = s;
+
+            document.getElementById('activate-store-id').value = s.id;
+            const titleEl = document.getElementById('activate-modal-store-title');
+            if (titleEl) titleEl.innerText = `تفعيل متجر: ${s.name || s.store_name || 'المتجر الجديد'}`;
+
+            document.getElementById('activation-confirm-modal').classList.remove('hidden');
+        }
+
+        function closeActivationConfirmModal() {
+            document.getElementById('activation-confirm-modal').classList.add('hidden');
+        }
+
+        // Execute Store Activation
+        async function executeStoreActivation() {
+            const storeId = document.getElementById('activate-store-id').value || (window.currentActivationStore && window.currentActivationStore.id);
+            const welcomeMsg = document.getElementById('activate-welcome-msg')?.value.trim();
+
+            let stores = getDB("stores_list_old", MOCK_STORES);
+            let s = stores.find(st => st.id === storeId);
+            if (!s && window.currentActivationStore) s = window.currentActivationStore;
+
+            if (s) {
+                s.status = "APPROVED";
+                setDB("stores_list_old", stores);
+                
+                // Store merchant activation flags in local storage for merchant side sync
+                localStorage.setItem('zalo_merchant_status', 'approved');
+                localStorage.setItem('zalo_user_role', 'MERCHANT');
+                if (s.name) {
+                    localStorage.setItem('zalo_active_store', s.name);
+                    sessionStorage.setItem('merchant_store_name', s.name);
+                }
+
+                try {
+                    if (window.supabaseClient) {
+                        await window.supabaseClient.from('merchant_requests').update({ status: 'approved' }).eq('id', storeId);
+                        await window.supabaseClient.from('profiles').update({ status: 'approved', role: 'merchant' }).eq('id', storeId);
+                        console.log("Successfully synchronized approval to Supabase!");
+                    }
+                } catch(e) {
+                    console.error("Failed to sync approval to Supabase:", e);
+                }
+
+                closeActivationConfirmModal();
+                closeDocumentsModal();
+
+                alert(`🎉 تم تفعيل متجر "${s.name}" بنجاح!\n\nتم إرسال إشعار موافقة رسمية للتاجر وتحديث حسابه إلى (معتمد).\nيمكن للتاجر الآن الدخول المباشر إلى لوحة تحكمه وإدارة منتجاته.`);
+
+                renderRegistrations();
+                renderStats();
+            }
         }
 
         // 📲 QR Code Control Center Functions
