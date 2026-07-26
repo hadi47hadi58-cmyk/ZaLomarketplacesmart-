@@ -1964,25 +1964,34 @@
         // Approve store
         async function approveStore(id) {
             let stores = getDB("stores_list_old", MOCK_STORES);
-            let s = stores.find(st => st.id === id);
+            let s = stores.find(st => st.id === id || st.email === id);
+            
+            try {
+                if (window.supabaseClient) {
+                    await window.supabaseClient.from('merchant_requests').update({ status: 'approved' }).or(`id.eq.${id},user_id.eq.${id},email.eq.${id}`);
+                    await window.supabaseClient.from('profiles').update({ status: 'approved', role: 'merchant' }).or(`id.eq.${id},email.eq.${id}`);
+                    await window.supabaseClient.from('users').update({ role: 'MERCHANT' }).or(`id.eq.${id},email.eq.${id}`);
+                    console.log("Successfully synchronized approval to Supabase!");
+                }
+            } catch(e) {
+                console.error("Failed to sync approval to Supabase:", e);
+            }
+
             if (s) {
                 s.status = "APPROVED";
-                setDB("stores_list_old", stores);
-                
-                try {
-                    if (window.supabaseClient) {
-                        await window.supabaseClient.from('merchant_requests').update({ status: 'approved' }).eq('id', id);
-                        await window.supabaseClient.from('profiles').update({ status: 'approved', role: 'merchant' }).eq('id', id);
-                        console.log("Successfully synchronized approval to Supabase!");
-                    }
-                } catch(e) {
-                    console.error("Failed to sync approval to Supabase:", e);
-                }
-
-                alert(`تم قبول وتفعيل متجر "${s.name}" بنجاح وجعله مرئياً للجمهور الجزائري! ✅`);
-                renderRegistrations();
-                renderStats();
+            } else {
+                s = {
+                    id: id,
+                    name: "متجر معتمد جديد",
+                    status: "APPROVED"
+                };
+                stores.unshift(s);
             }
+            setDB("stores_list_old", stores);
+
+            alert(`تم قبول وتفعيل متجر "${s.name || s.store_name || 'التاجر'}" بنجاح وجعله مرئياً للجمهور! ✅`);
+            renderRegistrations();
+            renderStats();
         }
 
         // Open Suspend Modal
@@ -2183,39 +2192,50 @@ startxref
             const welcomeMsg = document.getElementById('activate-welcome-msg')?.value.trim();
 
             let stores = getDB("stores_list_old", MOCK_STORES);
-            let s = stores.find(st => st.id === storeId);
+            let s = stores.find(st => st.id === storeId || st.email === storeId);
             if (!s && window.currentActivationStore) s = window.currentActivationStore;
+
+            try {
+                if (window.supabaseClient) {
+                    const targetKey = storeId || (s && (s.id || s.email));
+                    if (targetKey) {
+                        await window.supabaseClient.from('merchant_requests').update({ status: 'approved' }).or(`id.eq.${targetKey},user_id.eq.${targetKey},email.eq.${targetKey}`);
+                        await window.supabaseClient.from('profiles').update({ status: 'approved', role: 'merchant' }).or(`id.eq.${targetKey},email.eq.${targetKey}`);
+                        await window.supabaseClient.from('users').update({ role: 'MERCHANT' }).or(`id.eq.${targetKey},email.eq.${targetKey}`);
+                        console.log("Successfully synchronized approval to Supabase!");
+                    }
+                }
+            } catch(e) {
+                console.error("Failed to sync approval to Supabase:", e);
+            }
 
             if (s) {
                 s.status = "APPROVED";
-                setDB("stores_list_old", stores);
-                
-                // Store merchant activation flags in local storage for merchant side sync
-                localStorage.setItem('zalo_merchant_status', 'approved');
-                localStorage.setItem('zalo_user_role', 'MERCHANT');
-                if (s.name) {
-                    localStorage.setItem('zalo_active_store', s.name);
-                    sessionStorage.setItem('merchant_store_name', s.name);
-                }
-
-                try {
-                    if (window.supabaseClient) {
-                        await window.supabaseClient.from('merchant_requests').update({ status: 'approved' }).eq('id', storeId);
-                        await window.supabaseClient.from('profiles').update({ status: 'approved', role: 'merchant' }).eq('id', storeId);
-                        console.log("Successfully synchronized approval to Supabase!");
-                    }
-                } catch(e) {
-                    console.error("Failed to sync approval to Supabase:", e);
-                }
-
-                closeActivationConfirmModal();
-                closeDocumentsModal();
-
-                alert(`🎉 تم تفعيل متجر "${s.name}" بنجاح!\n\nتم إرسال إشعار موافقة رسمية للتاجر وتحديث حسابه إلى (معتمد).\nيمكن للتاجر الآن الدخول المباشر إلى لوحة تحكمه وإدارة منتجاته.`);
-
-                renderRegistrations();
-                renderStats();
+            } else {
+                s = {
+                    id: storeId,
+                    name: "متجر معتمد جديد",
+                    status: "APPROVED"
+                };
+                stores.unshift(s);
             }
+            setDB("stores_list_old", stores);
+            
+            // Store merchant activation flags in local storage
+            localStorage.setItem('zalo_merchant_status', 'approved');
+            localStorage.setItem('zalo_user_role', 'MERCHANT');
+            if (s.name) {
+                localStorage.setItem('zalo_active_store', s.name);
+                sessionStorage.setItem('merchant_store_name', s.name);
+            }
+
+            closeActivationConfirmModal();
+            closeDocumentsModal();
+
+            alert(`🎉 تم تفعيل متجر "${s.name || 'التاجر'}" بنجاح!\n\nتم تحديث حسابه إلى (معتمد) على السحابة وجميع الأجهزة.\nيمكن للتاجر الآن الدخول المباشر إلى لوحة تحكمه وإدارة منتجاته.`);
+
+            renderRegistrations();
+            renderStats();
         }
 
         // 📲 QR Code Control Center Functions

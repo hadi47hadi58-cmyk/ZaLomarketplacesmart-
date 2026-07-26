@@ -3175,12 +3175,15 @@ async function syncMerchantRequestStatus(user) {
   } catch(e) {}
 
   try {
-    if (user && user.id && typeof supabase !== 'undefined' && supabase.from) {
+    if (user && (user.id || user.email) && typeof supabase !== 'undefined' && supabase.from) {
+      const emailQuery = user.email ? `,email.eq.${user.email}` : '';
+      const uidQuery = user.id ? `id.eq.${user.id},user_id.eq.${user.id}` : 'id.neq.null';
+
       // 1. Check merchant_requests
       const { data: requests } = await supabase
         .from('merchant_requests')
         .select('*')
-        .or(`id.eq.${user.id},user_id.eq.${user.id}`)
+        .or(`${uidQuery}${emailQuery}`)
         .maybeSingle();
 
       if (requests) {
@@ -3189,16 +3192,21 @@ async function syncMerchantRequestStatus(user) {
           isPending = false;
           localStorage.setItem('zalo_user_role', 'MERCHANT');
           localStorage.setItem('zalo_merchant_status', 'approved');
+          if (requests.store_name || requests.storeName) {
+            localStorage.setItem('zalo_active_store', requests.store_name || requests.storeName);
+            sessionStorage.setItem('merchant_store_name', requests.store_name || requests.storeName);
+          }
         } else if (requests.status === 'pending' || requests.status === 'PENDING') {
           if (!isApproved) isPending = true;
         }
       }
 
       // 2. Check profiles
+      const profQuery = user.id ? `id.eq.${user.id}` : `email.eq.${user.email}`;
       const { data: prof } = await supabase
         .from('profiles')
-        .select('role, status')
-        .eq('id', user.id)
+        .select('*')
+        .or(`${profQuery}${emailQuery}`)
         .maybeSingle();
 
       if (prof) {
@@ -3207,6 +3215,10 @@ async function syncMerchantRequestStatus(user) {
           isPending = false;
           localStorage.setItem('zalo_user_role', 'MERCHANT');
           localStorage.setItem('zalo_merchant_status', 'approved');
+          if (prof.store_name || prof.storeName || prof.name) {
+            localStorage.setItem('zalo_active_store', prof.store_name || prof.storeName || prof.name);
+            sessionStorage.setItem('merchant_store_name', prof.store_name || prof.storeName || prof.name);
+          }
         }
       }
     }
@@ -3489,13 +3501,15 @@ async function loadProducts() {
     productId: p.productId || p.id,
     name: p.name || p.productName || 'سلعة ZaLo',
     productName: p.productName || p.name || 'سلعة ZaLo',
-    price: p.price || 0,
-    stock: p.stock || 0,
+    price: parseFloat(p.price) || 0,
+    stock: parseInt(p.stock) || 0,
     category: p.category || 'عام',
     description: p.description || p.desc || '',
-    image: p.image || p.imageUrl || p.image_url || p.imageURL || '',
-    storeId: p.storeId || 'direct',
-    storeName: p.storeName || 'محل ZaLo شريك',
+    image: p.image || p.imageUrl || p.image_url || p.imageURL || 'assets/icon-192.svg',
+    storeId: p.store_id || p.storeId || 'direct',
+    storeName: p.store_name || p.storeName || 'متجر معتمد',
+    wilaya: p.wilaya || 'الجزائر',
+    phone: p.phone || '',
     status: p.status || 'active'
   }));
 
@@ -3940,18 +3954,26 @@ window.checkoutCart = async function() {
     const orderPayload = {
       id: orderId,
       customer_id: customerId,
-      customerName: name,
-      customerPhone: phone,
+      customer_name: name,
+      customer_phone: phone,
       address: addr,
       wilaya: wilaya,
       commune: 'غير محدد',
+      store_id: storeId,
+      store_name: storeName,
+      total_amount: subtotal,
+      payment_method: pay,
+      payment_status: 'pending',
+      status: 'pending',
+      items: JSON.stringify(groupItems),
+      created_at: new Date().toISOString(),
+      // Additional fallback keys
+      customerName: name,
+      customerPhone: phone,
       storeId: storeId,
       storeName: storeName,
       totalAmount: subtotal,
       paymentMethod: pay,
-      paymentStatus: 'pending',
-      status: 'pending',
-      items: JSON.stringify(groupItems),
       createdAt: new Date().toISOString()
     };
 
@@ -3984,19 +4006,19 @@ window.loadCustomerOrders = async function() {
   const tracker = document.getElementById('live-driver-tracker-container');
   if (!container || !tracker) return;
 
-  if (!window.currentUser) {
-    container.innerHTML = '<div style="text-align:center; padding:20px; color:var(--gray);">لم يتم تفعيل جلسة المستخدم.</div>';
-    
-  }
+  const user = window.currentUser || {};
+  const userId = user.id || localStorage.getItem('zalo_uid') || 'anonymous';
 
   try {
     let orders = [];
     try {
-      const { data, error } = await supabase
-        .from('orders')
-        .select('*')
-        .eq('customer_id', window.currentUser.id);
-      if (!error && data) orders = data;
+      if (typeof supabase !== 'undefined' && supabase.from && userId !== 'anonymous' && userId !== 'guest') {
+        const { data, error } = await supabase
+          .from('orders')
+          .select('*')
+          .or(`customer_id.eq.${userId},customerName.eq.${user.email || ''}`);
+        if (!error && data) orders = data;
+      }
     } catch(e) {}
 
     // Add offline orders

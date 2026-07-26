@@ -701,13 +701,20 @@
         // 4. Insert to the real merchant_requests table (PostgreSQL)
         try {
           const { error: reqError } = await supabase.from('merchant_requests').insert({
+            id: uid,
             user_id: uid,
+            email: email,
+            owner_name: fullName,
+            ownerName: fullName,
             store_name: storeName,
+            storeName: storeName,
             phone: phone,
+            wilaya: wilaya,
             commercial_register: rcFile || null,
             tax_number: rcnum || null,
             description: 'طلب ترقية متجر جديد للتاجر: ' + fullName,
-            status: 'pending'
+            status: 'pending',
+            created_at: new Date().toISOString()
           });
           if (reqError) console.warn("Postgres merchant_requests insert warning:", reqError.message);
         } catch (e) {

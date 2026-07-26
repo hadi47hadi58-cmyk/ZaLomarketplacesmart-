@@ -1379,9 +1379,17 @@
             e.preventDefault();
 
             let products = getDB("products", []);
-            let store = getDB("stores", []).find(s => s.storeId === "store_salam");
-            let storeId = store ? store.storeId : "store_salam";
-            let storeName = store ? store.storeName : "محل ZaLo شريك";
+            
+            // Get current active store details
+            let currentStoreSettings = {};
+            try {
+                currentStoreSettings = JSON.parse(localStorage.getItem('zalo_merchant_store_settings') || '{}');
+            } catch(e) {}
+
+            const realStoreName = currentStoreSettings.storeName || currentStoreSettings.name || localStorage.getItem('zalo_active_store') || sessionStorage.getItem('merchant_store_name') || 'متجر معتمد';
+            const realStoreId = currentStoreSettings.id || localStorage.getItem('zalo_uid') || localStorage.getItem('user_uid') || 'store_' + Date.now();
+            const realWilaya = currentStoreSettings.wilaya || currentStoreSettings.location || localStorage.getItem('zalo_selected_wilaya') || 'الجزائر';
+            const realPhone = currentStoreSettings.phone || currentStoreSettings.storePhone || '';
 
             const pId = "p_" + Date.now();
             
@@ -1404,7 +1412,10 @@
                 sku: document.getElementById('prod-sku').value.trim(),
                 weight: parseFloat(document.getElementById('prod-weight').value) || 0.1,
                 minOrder: parseInt(document.getElementById('prod-min-order').value) || 1,
-                storeId: storeId,
+                storeId: realStoreId,
+                storeName: realStoreName,
+                wilaya: realWilaya,
+                phone: realPhone,
                 variants: "",
                 image: pImg
             };
@@ -1417,7 +1428,9 @@
                 if (window.supabaseClient) {
                     const sbPayload = {
                         id: pId,
+                        productId: pId,
                         name: newProd.productName,
+                        productName: newProd.productName,
                         price: newProd.price,
                         stock: newProd.stock,
                         category: mainCatVal,
@@ -1426,9 +1439,14 @@
                         sku: newProd.sku,
                         weight: newProd.weight,
                         minOrder: newProd.minOrder,
-                        storeId: storeId,
-                        storeName: storeName,
+                        store_id: realStoreId,
+                        storeId: realStoreId,
+                        store_name: realStoreName,
+                        storeName: realStoreName,
+                        wilaya: realWilaya,
+                        phone: realPhone,
                         image: newProd.image,
+                        image_url: newProd.image,
                         status: 'active'
                     };
                     await window.supabaseClient.from('products').insert(sbPayload);
