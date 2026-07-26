@@ -1872,10 +1872,10 @@ body {
 
       <!-- Merchant Application / Partnership Section (MANDATORY) -->
       <div id="merchant-partner-card" style="background: rgba(212, 175, 55, 0.05); border: 1.5px dashed var(--metallic-gold); border-radius: 16px; padding: 18px; display: flex; flex-direction: column; gap: 12px;">
-        <h4 style="font-size: 14px; font-weight: 800; color: var(--navy); display: flex; align-items: center; gap: 8px;">
+        <h4 id="merchant-card-title" style="font-size: 14px; font-weight: 800; color: var(--navy); display: flex; align-items: center; gap: 8px;">
           💼 الشراكة والبيع على منصة ZaLo
         </h4>
-        <p style="font-size: 11.5px; color: var(--gray); line-height: 1.5; margin: 0;">
+        <p id="merchant-card-desc" style="font-size: 11.5px; color: var(--gray); line-height: 1.5; margin: 0;">
           هل تملك متجراً أو منتجات وتريد بيعها لآلاف الزبائن في 69 ولاية جزائرية؟ قدم طلب شريك تجاري الآن للانضمام لكوكبة التجار المعتمدين وتفعيل لوحة الإدارة الخاصة بك!
         </p>
         
@@ -3153,28 +3153,59 @@ async function syncMerchantRequestStatus(user) {
   const container = document.getElementById('application-status-container');
   if (!btn || !container) return;
 
+  user = user || window.currentUser || {};
+
   // Local fallback state check
   const localRole = (localStorage.getItem('zalo_user_role') || sessionStorage.getItem('zalo_user_role') || '').toLowerCase();
   const localStatus = (localStorage.getItem('zalo_merchant_status') || '').toLowerCase();
   const activeStore = localStorage.getItem('zalo_active_store') || sessionStorage.getItem('merchant_store_name');
 
-  let isApproved = (localStatus === 'approved' || localStatus === 'active' || localRole === 'merchant');
-  let isPending = (localStatus === 'pending') || (!isApproved && !!activeStore);
+  let isApproved = (localStatus === 'approved' || localStatus === 'active' || localRole === 'merchant' || localRole === 'admin');
+  let isPending = (!isApproved && localStatus === 'pending') || (!isApproved && !!activeStore);
+
+  // Check local stores list in localStorage
+  try {
+    const localStores = JSON.parse(localStorage.getItem('stores_list_old') || '[]');
+    if (Array.isArray(localStores)) {
+      const userStore = localStores.find(st => (user?.id && st.id === user.id) || (user?.email && st.email === user.email) || (activeStore && st.name === activeStore));
+      if (userStore && (userStore.status === 'APPROVED' || userStore.status === 'approved' || userStore.status === 'active')) {
+        isApproved = true;
+        isPending = false;
+        localStorage.setItem('zalo_merchant_status', 'approved');
+        localStorage.setItem('zalo_user_role', 'MERCHANT');
+      }
+    }
+  } catch(e) {}
 
   try {
     if (user && user.id && typeof supabase !== 'undefined' && supabase.from) {
+      // 1. Check merchant_requests
       const { data: requests } = await supabase
         .from('merchant_requests')
         .select('*')
-        .eq('id', user.id)
+        .or(`id.eq.${user.id},user_id.eq.${user.id}`)
         .maybeSingle();
 
       if (requests) {
-        if (requests.status === 'pending') {
-          isPending = true;
-          isApproved = false;
-          localStorage.setItem('zalo_merchant_status', 'pending');
-        } else if (requests.status === 'approved' || requests.status === 'active' || requests.status === 'APPROVED') {
+        if (requests.status === 'approved' || requests.status === 'active' || requests.status === 'APPROVED') {
+          isApproved = true;
+          isPending = false;
+          localStorage.setItem('zalo_user_role', 'MERCHANT');
+          localStorage.setItem('zalo_merchant_status', 'approved');
+        } else if (requests.status === 'pending' || requests.status === 'PENDING') {
+          if (!isApproved) isPending = true;
+        }
+      }
+
+      // 2. Check profiles
+      const { data: prof } = await supabase
+        .from('profiles')
+        .select('role, status')
+        .eq('id', user.id)
+        .maybeSingle();
+
+      if (prof) {
+        if (prof.role === 'merchant' || prof.role === 'MERCHANT' || prof.status === 'approved' || prof.status === 'APPROVED' || prof.status === 'active') {
           isApproved = true;
           isPending = false;
           localStorage.setItem('zalo_user_role', 'MERCHANT');
@@ -3186,31 +3217,58 @@ async function syncMerchantRequestStatus(user) {
     console.warn("Could not sync requests status from Supabase:", e);
   }
 
+  const titleEl = document.getElementById('merchant-card-title');
+  const descEl = document.getElementById('merchant-card-desc');
+  const drawerSn = document.getElementById('drawer-merchant-sn');
+  const drawerSd = document.getElementById('drawer-merchant-sd');
+
   if (isApproved) {
     btn.disabled = false;
-    btn.style.background = 'linear-gradient(135deg, #113f1c 0%, #1e5a2a 100%)';
+    btn.style.background = 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)';
     btn.style.color = '#ffffff';
-    btn.style.border = '1px solid #d4af37';
+    btn.style.border = 'none';
+    btn.style.boxShadow = '0 4px 14px rgba(2, 132, 199, 0.35)';
     btn.onclick = function() { window.location.href = 'dashboard-store.html'; };
-    btn.innerHTML = `<i class="fa-solid fa-store" style="color:#d4af37;"></i> الدخول إلى لوحة التحكم للتاجر 📦`;
+    btn.innerHTML = `<i class="fa-solid fa-store" style="color:#ffffff;"></i> دخول لوحة تحكم متجرك 📦`;
+
+    if (titleEl) titleEl.innerHTML = `🏪 لوحة تحكم متجرك المعتمد`;
+    if (descEl) descEl.innerHTML = `تهانينا! حساب متجرك معتمد ونشط رسمياً على منصة ZaLo. يمكنك الآن الانضمام المباشر لمدير المتجر لإضافة المنتجات، إدارة العروض والتواصل مع الزبائن.`;
+
+    if (drawerSn) drawerSn.innerText = `دخول لوحة المتجر 🏪`;
+    if (drawerSd) drawerSd.innerText = `الانتقال المباشر لمتجرك المعتمد`;
+
     container.style.display = 'block';
-    container.style.color = '#16a34a';
-    container.innerHTML = `✅ حسابك نشط ومعتمد كتاجر! اضغط على الزر أعلاه للانتقال المباشر إلى لوحة إدارة متجرك.`;
+    container.style.color = '#0369a1';
+    container.style.background = 'rgba(14, 165, 233, 0.1)';
+    container.style.border = '1px solid rgba(14, 165, 233, 0.25)';
+    container.innerHTML = `🎉 تم قبول طلبك وتفعيل متجرك بنجاح! اضغط على الزر أعلاه للانتقال المباشر إلى لوحة تحكم متجرك.`;
   } else if (isPending) {
     btn.disabled = false;
     btn.style.background = '#f59e0b';
     btn.style.color = '#ffffff';
+    btn.style.border = 'none';
     btn.onclick = function() { alert('⏳ تم إيداع طلب الشراكة بنجاح وهو قيد الدراسة والتدقيق من قبل الإدارة العليا لمنصة ZaLo.'); };
     btn.innerHTML = `<i class="fa-solid fa-clock"></i> طلبك قيد المراجعة والتدقيق ⏳`;
+
+    if (titleEl) titleEl.innerHTML = `💼 الشراكة والبيع على منصة ZaLo`;
+    if (descEl) descEl.innerHTML = `ملف انضمامك كتاجر قيد المراجعة والتدقيق من طرف الإدارة. يمكنك متابعة حالة الطلب هنا.`;
+
     container.style.display = 'block';
-    container.style.color = '#d4af37';
+    container.style.color = '#b45309';
+    container.style.background = 'rgba(245, 158, 11, 0.1)';
+    container.style.border = '1px solid rgba(245, 158, 11, 0.25)';
     container.innerHTML = `⏳ تم استلام ملف انضمامك بنجاح وهو الآن قيد الدراسة. سنقوم بإشعارك فور تفعيل المتجر.`;
   } else {
     btn.disabled = false;
     btn.style.background = 'var(--metallic-gold)';
     btn.style.color = '#070a08';
+    btn.style.border = 'none';
     btn.onclick = function() { window.location.href = 'register-step1.html'; };
     btn.innerHTML = `<i class="fa-solid fa-briefcase"></i> تقديم طلب انضمام كتاجر شريك`;
+
+    if (titleEl) titleEl.innerHTML = `💼 الشراكة والبيع على منصة ZaLo`;
+    if (descEl) descEl.innerHTML = `هل تملك متجراً أو منتجات وتريد بيعها لآلاف الزبائن في 69 ولاية جزائرية؟ قدم طلب شريك تجاري الآن للانضمام لكوكبة التجار المعتمدين وتفعيل لوحة الإدارة الخاصة بك!`;
+
     container.style.display = 'none';
   }
 }
@@ -3218,9 +3276,23 @@ async function syncMerchantRequestStatus(user) {
 // Global apply / enter merchant dashboard router
 window.applyForMerchant = function() {
   const role = (localStorage.getItem('zalo_user_role') || sessionStorage.getItem('zalo_user_role') || '').toLowerCase();
-  const status = (localStorage.getItem('zalo_merchant_status') || 'pending').toLowerCase();
+  const status = (localStorage.getItem('zalo_merchant_status') || '').toLowerCase();
+  const activeStore = localStorage.getItem('zalo_active_store') || sessionStorage.getItem('merchant_store_name');
 
-  if (status === 'approved' || status === 'active' || role === 'merchant' || role === 'admin' || role === 'super_admin') {
+  let isApproved = (status === 'approved' || status === 'active' || role === 'merchant' || role === 'admin' || role === 'super_admin');
+
+  try {
+    const localStores = JSON.parse(localStorage.getItem('stores_list_old') || '[]');
+    if (Array.isArray(localStores)) {
+      const u = window.currentUser || {};
+      const userStore = localStores.find(st => (u.id && st.id === u.id) || (u.email && st.email === u.email) || (activeStore && st.name === activeStore));
+      if (userStore && (userStore.status === 'APPROVED' || userStore.status === 'approved' || userStore.status === 'active')) {
+        isApproved = true;
+      }
+    }
+  } catch(e) {}
+
+  if (isApproved) {
     window.location.href = 'dashboard-store.html';
   } else if (status === 'pending') {
     alert('⏳ طلبك للانضمام كتاجر قيد الدراسة والتدقيق من طرف إدارة منصة ZaLo.');
@@ -3355,6 +3427,10 @@ window.switchTab = function(tabId) {
     loadFavorites();
   } else if (tabId === 'orders') {
     loadCustomerOrders();
+  } else if (tabId === 'profile') {
+    if (typeof syncMerchantRequestStatus === 'function') {
+      syncMerchantRequestStatus(window.currentUser);
+    }
   }
 };
 
