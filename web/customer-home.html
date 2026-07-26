@@ -2660,101 +2660,24 @@ window.selectSubCategoryNew = function(subCatName, mainCatName) {
   showScreen('screen-stores-list');
 };
 
-window.getApprovedStoresForCurrentLocation = function(subCatName, mainCatName) {
-  let stores = [];
-  try {
-    const rawOld = localStorage.getItem('stores_list_old') || localStorage.getItem('zalo_stores_list_old') || '[]';
-    const parsed = JSON.parse(rawOld);
-    if (Array.isArray(parsed)) stores = stores.concat(parsed);
-  } catch (e) {}
-
-  try {
-    const rawReq = localStorage.getItem('zalo_merchant_requests') || localStorage.getItem('zalo_local_merchant_requests') || '[]';
-    const parsedReq = JSON.parse(rawReq);
-    if (Array.isArray(parsedReq)) stores = stores.concat(parsedReq);
-  } catch (e) {}
-
-  try {
-    const ms = localStorage.getItem('zalo_merchant_store_settings');
-    if (ms) {
-      const parsedSettings = JSON.parse(ms);
-      if (parsedSettings && parsedSettings.storeName) {
-        stores.push({
-          id: 'active_setting_store',
-          name: parsedSettings.storeName,
-          store_name: parsedSettings.storeName,
-          owner: parsedSettings.ownerName || 'تاجر ZaLo معتمد',
-          phone: parsedSettings.phone || '',
-          category: parsedSettings.category || mainCatName || 'عام',
-          location: (state.selectedBaladiya || state.selectedWilaya || 'الجزائر'),
-          wilaya: state.selectedWilaya || 'الجزائر',
-          baladiya: state.selectedBaladiya || 'الجزائر',
-          status: 'APPROVED'
-        });
-      }
-    }
-  } catch(e) {}
-
-  const seen = new Set();
-  const uniqueStores = [];
-  stores.forEach(s => {
-    const sName = (s.name || s.store_name || '').trim();
-    const st = (s.status || '').toUpperCase();
-    if (sName && (st === 'APPROVED' || st === 'ACTIVE') && !seen.has(sName)) {
-      seen.add(sName);
-      uniqueStores.push(s);
-    }
-  });
-
-  return uniqueStores;
-};
-
 window.viewStoreProfile = function(name, cat) {
   document.getElementById('store-profile-name').innerText = name;
-  document.getElementById('store-profile-category').innerHTML = `<i class="fa-solid fa-tag"></i> ${cat || 'عام'}`;
-  document.getElementById('store-profile-location').innerHTML = `<i class="fa-solid fa-location-dot"></i> ${state.selectedBaladiya || state.selectedWilaya || 'الجزائر'}`;
+  document.getElementById('store-profile-category').innerHTML = `<i class="fa-solid fa-tag"></i> ${cat}`;
+  document.getElementById('store-profile-location').innerHTML = `<i class="fa-solid fa-location-dot"></i> ${state.selectedBaladiya || state.selectedWilaya || 'الجزائر'}, ${state.selectedWilaya || 'الجزائر'}`;
   
   const covers = [
     "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png"
   ];
-  const coverImg = document.getElementById('store-cover-img');
-  if (coverImg) coverImg.src = covers[0];
+  document.getElementById('store-cover-img').src = covers[0];
   
-  let storeDetail = null;
-  try {
-    const allStores = window.getApprovedStoresForCurrentLocation();
-    storeDetail = allStores.find(s => (s.name || s.store_name) === name);
-  } catch(e) {}
-
   // Filter products for this store
   const storeProds = (state.loadedProducts || []).filter(p => (p.storeName || p.store_name) === name);
   const container = document.getElementById('store-products-grid');
   
-  if (container) {
-    if (storeProds.length === 0) {
-      container.innerHTML = `
-        <div style="grid-column: span 2; text-align: center; padding: 25px 15px; background: white; border-radius: 16px; border: 1px solid #e2e8f0; color: #475569; margin: 10px 0;">
-          <div style="width: 50px; height: 50px; border-radius: 15px; background: #f0fdf4; border: 1px solid #bbf7d0; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; color: #16a34a; font-size: 22px;">
-            <i class="fa-solid fa-store"></i>
-          </div>
-          <h4 style="font-size: 14px; font-weight: 800; color: #0f172a; margin-bottom: 4px;">متجر معتمد ونشط رسمياً 🟢</h4>
-          <p style="font-size: 11.5px; color: #64748b; margin-bottom: 14px; line-height: 1.5;">
-            تم قبول اعتماد هذا المتجر من طرف الإدارة. التاجر في مرحلة إدخال وعرض منتجاته الجديدة.
-          </p>
-          ${storeDetail && storeDetail.phone ? `
-            <a href="tel:${storeDetail.phone}" style="display: inline-flex; align-items: center; gap: 8px; background: #16a34a; color: white; padding: 10px 18px; border-radius: 12px; font-weight: 700; font-size: 12px; text-decoration: none; box-shadow: 0 4px 12px rgba(22,163,74,0.25);">
-              <i class="fa-solid fa-phone"></i> الاتصال بالتاجر المباشر (${storeDetail.phone})
-            </a>
-          ` : `
-            <span style="font-size: 11px; color: #0284c7; font-weight: 700; background: #f0f9ff; padding: 6px 12px; border-radius: 20px; border: 1px solid #bae6fd;">
-              <i class="fa-solid fa-shield-halved ml-1"></i> تاجر موثق بـ ${state.selectedBaladiya || state.selectedWilaya || 'الجزائر'}
-            </span>
-          `}
-        </div>
-      `;
-    } else {
-      renderProductsInGrid(storeProds, 'store-products-grid');
-    }
+  if (storeProds.length === 0) {
+    container.innerHTML = `<div style="grid-column: span 2; text-align: center; padding: 40px 0; color: var(--gray);">لا يوجد منتجات معروضة حالياً لهذا المتجر.</div>`;
+  } else {
+    renderProductsInGrid(storeProds, 'store-products-grid');
   }
   
   showScreen('screen-store-profile');
@@ -2764,72 +2687,11 @@ function renderProductsInGrid(prods, containerId) {
   const container = document.getElementById(containerId);
   if (!container) return;
 
-  // Retrieve approved stores for this municipality/region
-  const approvedStores = (containerId === 'stores-list-container') ? window.getApprovedStoresForCurrentLocation() : [];
-
-  let html = '';
-
-  // 1. Render Approved Store Cards if any exist for this area
-  if (approvedStores.length > 0 && containerId === 'stores-list-container') {
-    html += approvedStores.map(st => `
-      <div style="grid-column: 1 / -1; width: 100%; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); border-radius: 20px; padding: 16px; color: white; margin-bottom: 14px; border: 1px solid rgba(212, 175, 55, 0.4); box-shadow: 0 8px 20px rgba(0,0,0,0.25);">
-        <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 12px; margin-bottom: 10px;">
-          <div style="display: flex; align-items: center; gap: 12px;">
-            <div style="width: 46px; height: 46px; border-radius: 14px; background: rgba(212, 175, 55, 0.15); border: 1.5px solid #d4af37; display: flex; align-items: center; justify-content: center; font-size: 20px; color: #f59e0b; shrink: 0;">
-              <i class="fa-solid fa-store"></i>
-            </div>
-            <div>
-              <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
-                <h3 style="font-size: 14.5px; font-weight: 800; color: #ffffff; margin: 0;">${st.name || st.store_name || 'متجر معتمد'}</h3>
-                <span style="background: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid rgba(74, 222, 128, 0.4); font-size: 10px; padding: 2px 8px; border-radius: 20px; font-weight: 800; display: inline-flex; align-items: center; gap: 4px;">
-                  <i class="fa-solid fa-circle-check"></i> معتمد ونشط 🟢
-                </span>
-              </div>
-              <p style="font-size: 11px; color: #94a3b8; margin: 3px 0 0 0; display: flex; align-items: center; gap: 8px;">
-                <span><i class="fa-solid fa-tag text-amber-400"></i> ${st.category || 'متجر معتمد'}</span>
-                <span>•</span>
-                <span><i class="fa-solid fa-location-dot text-sky-400"></i> ${st.location || (state.selectedBaladiya || state.selectedWilaya || 'المنطقة')}</span>
-              </p>
-            </div>
-          </div>
-          <button onclick="window.viewStoreProfile('${st.name || st.store_name}', '${st.category || 'عام'}')" style="background: linear-gradient(135deg, #d4af37 0%, #b8860b 100%); color: #0f172a; border: none; padding: 8px 14px; border-radius: 12px; font-weight: 800; font-size: 11px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; shrink: 0; box-shadow: 0 4px 10px rgba(212,175,55,0.3);">
-            <span>دخول المتجر</span>
-            <i class="fa-solid fa-arrow-left"></i>
-          </button>
-        </div>
-        ${(!prods || prods.length === 0) ? `
-          <div style="background: rgba(255,255,255,0.06); border-radius: 12px; padding: 10px 12px; font-size: 11px; color: #cbd5e1; display: flex; align-items: center; gap: 8px; border: 1px dashed rgba(255,255,255,0.15);">
-            <i class="fa-solid fa-circle-info text-amber-400" style="font-size: 14px;"></i>
-            <span>هذا المتجر معتمد بـ ${state.selectedBaladiya || state.selectedWilaya || 'المنطقة'}. اضغط على "دخول المتجر" للتواصل المباشر مع التاجر.</span>
-          </div>
-        ` : ''}
-      </div>
-    `;
-  }
-
-  // 2. Render Products Grid
-  if (prods && prods.length > 0) {
-    html += prods.map(p => `
-      <div class="product-card-mockup" onclick="window.openProductDetails('${p.id}')">
-        <div class="product-img-wrap-mockup">
-          <img src="${p.image || p.image_url || 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png'}" alt="${p.name}">
-        </div>
-        <div class="product-details-mockup">
-          <div class="product-name-mockup">${p.name}</div>
-          <div class="product-price-mockup">${p.price} دج</div>
-          <div style="font-size: 10px; color: var(--gray); margin-top: 4px; border-top: 1px solid #f1f5f9; padding-top: 4px;">
-            <div style="font-weight: 700; color: var(--navy);"><i class="fa-solid fa-store" style="font-size: 8px;"></i> ${p.store_name || p.storeName || 'متجر غير معروف'}</div>
-            <div><i class="fa-solid fa-location-dot" style="font-size: 8px;"></i> ${p.wilaya || state.selectedWilaya || 'الجزائر'}</div>
-          </div>
-        </div>
-      </div>
-    `).join('');
-  } else if (approvedStores.length === 0) {
-    // 3. Fallback only if NO products AND NO approved stores exist
-    html = `
+  if (!prods || prods.length === 0) {
+    container.innerHTML = `
       <div style="grid-column: 1 / -1; width: 100%; text-align: center; padding: 40px 20px; background: white; border-radius: 20px; border: 1px solid #e2e8f0; margin: 10px 0;">
         <i class="fa-solid fa-box-open" style="font-size: 38px; color: #cbd5e1; margin-bottom: 12px; display: block;"></i>
-        <h3 style="font-size: 14px; font-weight: 800; color: #1e293b; margin-bottom: 6px;">لا توجد معروضات أو متاجر مسجلة حالياً بـ ${state.selectedBaladiya || state.selectedWilaya || 'هذه المنطقة'}</h3>
+        <h3 style="font-size: 14px; font-weight: 800; color: #1e293b; margin-bottom: 6px;">لا توجد معروضات حالياً في هذا الفرع بـ ${state.selectedBaladiya || state.selectedWilaya || 'هذه المنطقة'}</h3>
         <p style="font-size: 12px; color: #64748b; line-height: 1.6; max-width: 320px; margin: 0 auto 16px;">
           إذا كنت تاجرًا أو مزود خدمات في هذه المنطقة، يمكنك تسجيل متجرك وإضافة معروضاتك بسهولة لتظهر للزبائن هنا.
         </p>
@@ -2838,9 +2700,24 @@ function renderProductsInGrid(prods, containerId) {
         </button>
       </div>
     `;
+    return;
   }
 
-  container.innerHTML = html;
+  container.innerHTML = prods.map(p => `
+    <div class="product-card-mockup" onclick="window.openProductDetails('${p.id}')">
+      <div class="product-img-wrap-mockup">
+        <img src="${p.image || p.image_url || 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png'}" alt="${p.name}">
+      </div>
+      <div class="product-details-mockup">
+        <div class="product-name-mockup">${p.name}</div>
+        <div class="product-price-mockup">${p.price} دج</div>
+        <div style="font-size: 10px; color: var(--gray); margin-top: 4px; border-top: 1px solid #f1f5f9; padding-top: 4px;">
+          <div style="font-weight: 700; color: var(--navy);"><i class="fa-solid fa-store" style="font-size: 8px;"></i> ${p.store_name || p.storeName || 'متجر غير معروف'}</div>
+          <div><i class="fa-solid fa-location-dot" style="font-size: 8px;"></i> ${p.wilaya || state.selectedWilaya || 'الجزائر'}</div>
+        </div>
+      </div>
+    </div>
+  `).join('');
 }
 
 // Update initialization to start with Wilaya flow
@@ -3594,12 +3471,14 @@ async function loadProducts() {
 
   let remoteProds = [];
   try {
-    const fetchPromise = supabase.from('products').select('*');
-    const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 5000));
-    const { data, error } = await Promise.race([fetchPromise, timeoutPromise]);
-    
-    if (!error && data) {
-      remoteProds = data;
+    const sb = (typeof supabase !== 'undefined') ? supabase : window.supabaseClient;
+    if (sb && sb.from) {
+      const fetchPromise = sb.from('products').select('*');
+      const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 5000));
+      const { data, error } = await Promise.race([fetchPromise, timeoutPromise]);
+      if (!error && data) {
+        remoteProds = data;
+      }
     }
   } catch (e) {
     console.warn("Failed to fetch remote products:", e);
@@ -3655,6 +3534,15 @@ async function loadProducts() {
       merged.push(lp);
     }
   });
+
+  if (merged.length === 0) {
+    merged = [
+      { id: 'p1', productId: 'p1', name: 'قفطان جزائري تقليدي فخم', price: 18500, category: 'ملابس نسائية', storeName: 'اللمسة الجزائرية', storeId: 'store1', status: 'active', image: 'https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=500' },
+      { id: 'p2', productId: 'p2', name: 'عطر الفخامة العربي المنيعة', price: 4500, category: 'عطور ومستحضرات', storeName: 'عطور الجنوب', storeId: 'store2', status: 'active', image: 'https://images.unsplash.com/photo-1594035910387-fea47794261f?w=500' },
+      { id: 'p3', productId: 'p3', name: 'حذاء جلدي صناعة محلية', price: 6200, category: 'أحذية ومستلزمات', storeName: 'أحذية الجودة', storeId: 'store3', status: 'active', image: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=500' },
+      { id: 'p4', productId: 'p4', name: 'ساعة يد أنيقة رجالية', price: 3800, category: 'إكسسوارات', storeName: 'متجر الأناقة', storeId: 'store4', status: 'active', image: 'https://images.unsplash.com/photo-1524805444758-089113d48a6d?w=500' }
+    ];
+  }
 
   state.loadedProducts = merged;
   applyActiveWilayaFilter();
