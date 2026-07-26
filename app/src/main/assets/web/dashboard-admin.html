@@ -1347,6 +1347,7 @@
                     <div>
                         <label class="block text-xs font-black text-slate-700 mb-1">الولاية المستهدفة (من الـ 69) *</label>
                         <select id="off-store-wilaya" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-xs font-bold text-slate-800 focus:outline-none focus:border-amber-500">
+                            <option value="" disabled selected>-- اختر ولاية مقر المتجر (من الـ 69 ولاية) --</option>
                             <option value="أدرار">01 - أدرار</option>
                             <option value="الشلف">02 - الشلف</option>
                             <option value="الأغواط">03 - الأغواط</option>
@@ -1362,7 +1363,7 @@
                             <option value="تلمسان">13 - تلمسان</option>
                             <option value="تيارت">14 - تيارت</option>
                             <option value="تيزي وزو">15 - تيزي وزو</option>
-                            <option value="الجزائر" selected>16 - الجزائر العاصمة</option>
+                            <option value="الجزائر">16 - الجزائر العاصمة</option>
                             <option value="الجلفة">17 - الجلفة</option>
                             <option value="جيجل">18 - جيجل</option>
                             <option value="سطيف">19 - سطيف</option>
@@ -3224,6 +3225,29 @@
                             status: 'approved',
                             created_at: new Date().toISOString()
                         });
+                        
+                        if (prodName) {
+                            await window.supabaseClient.from('products').upsert({
+                                id: 'prod_' + Date.now(),
+                                name: prodName,
+                                productName: prodName,
+                                price: parseFloat(prodPrice) || 5000,
+                                stock: parseInt(prodStock) || 10,
+                                category: category,
+                                subcategory: subcategory,
+                                store_id: storeId,
+                                storeId: storeId,
+                                store_name: name,
+                                storeName: name,
+                                wilaya: wilaya,
+                                description: prodDesc || 'منتج أصلي معتمد متوفر لدى متجر زالو الرسمي',
+                                image: prodImage.startsWith('data:') ? 'assets/icon-192.svg' : (prodImage || logo || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500'),
+                                image_url: prodImage.startsWith('data:') ? 'assets/icon-192.svg' : (prodImage || logo || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500'),
+                                phone: phone,
+                                status: 'active',
+                                created_at: new Date().toISOString()
+                            });
+                        }
                     }
                 } catch(err) {
                     console.warn("Error saving official store to Supabase:", err);

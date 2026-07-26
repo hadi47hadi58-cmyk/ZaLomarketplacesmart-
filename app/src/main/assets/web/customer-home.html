@@ -1991,36 +1991,58 @@ body {
 
   <!-- MODAL: PRODUCT DETAILS -->
   <div class="modal-overlay" id="productModal" onclick="if(event.target===this) this.style.display='none'">
-    <div class="modal-content" id="prod-detail-wrapper">
-      <div class="modal-header">
-        <span id="pd-modal-title">تفاصيل السلعة المعروضة</span>
-        <button class="modal-close" onclick="document.getElementById('productModal').style.display='none'">✕</button>
+    <div class="modal-content" id="prod-detail-wrapper" style="max-width:440px; padding:0; border-radius:20px; overflow:hidden;">
+      
+      <!-- Store Cover Banner (Facebook Page style) -->
+      <div id="pd-store-cover-wrap" style="position:relative; width:100%; height:110px; background:#0f172a; overflow:hidden;">
+        <img id="pd-store-cover-img" src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=500" style="width:100%; height:100%; object-fit:cover; opacity:0.85;" alt="غلاف المحل">
+        <button class="modal-close" onclick="document.getElementById('productModal').style.display='none'" style="position:absolute; top:10px; right:10px; background:rgba(0,0,0,0.6); color:white; border-radius:50%; width:30px; height:30px; display:flex; align-items:center; justify-content:center; border:none; cursor:pointer;">✕</button>
+        <span id="pd-modal-title" style="display:none;">تفاصيل السلعة المعروضة</span>
       </div>
-      <div class="modal-body" style="display:flex; flex-direction:column; gap:12px;">
+
+      <!-- Store Header Card (Facebook style avatar + Store Name + Verified badge) -->
+      <div style="position:relative; padding:0 16px 12px; margin-top:-32px; display:flex; align-items:flex-end; gap:12px; border-bottom:1px solid var(--bd); background:#fff;">
+        <div style="width:64px; height:64px; border-radius:50%; border:3px solid #fff; background:#f8fafc; overflow:hidden; box-shadow:0 3px 10px rgba(0,0,0,0.15); flex-shrink:0;">
+          <img id="pd-store-logo-img" src="assets/icon-192.svg" style="width:100%; height:100%; object-fit:cover;" alt="شعار المحل" onerror="this.src='assets/icon-192.svg'">
+        </div>
+        <div style="flex:1; padding-bottom:2px;">
+          <div style="display:flex; align-items:center; gap:6px;">
+            <h4 id="pd-store-name" style="font-size:14px; font-weight:800; color:var(--navy); margin:0;">اسم المتجر الرئيسي</h4>
+            <span style="color:#0284c7; font-size:12px;" title="متجر رسمي معتمد"><i class="fa-solid fa-circle-check"></i></span>
+          </div>
+          <div style="display:flex; flex-wrap:wrap; gap:6px; margin-top:3px; font-size:10px; color:var(--gray);">
+            <span id="pd-wilaya-tag" style="background:#f1f5f9; padding:2px 8px; border-radius:6px; font-weight:700; color:#0369a1;"><i class="fa-solid fa-location-dot"></i> ولاية: الجزائر</span>
+            <span id="pd-category-tag" style="background:#f1f5f9; padding:2px 8px; border-radius:6px; font-weight:700; color:#475569;"><i class="fa-solid fa-tags"></i> الصنف: عام</span>
+            <span id="pd-subcategory-tag" style="background:#fef3c7; padding:2px 8px; border-radius:6px; font-weight:700; color:#b45309;"><i class="fa-solid fa-code-branch"></i> الفرع: التخصص الفرعي</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-body" style="padding:16px; display:flex; flex-direction:column; gap:12px;">
         
-        <!-- Product Image -->
-        <div id="pd-img-wrap" style="width:100%; height:180px; background:#f8fafc; border-radius:12px; display:flex; align-items:center; justify-content:center; border:1px solid var(--bd); overflow:hidden;">
+        <!-- Product Image & Title -->
+        <div id="pd-img-wrap" style="width:100%; height:190px; background:#f8fafc; border-radius:14px; display:flex; align-items:center; justify-content:center; border:1px solid var(--bd); overflow:hidden;">
           <!-- Loaded dynamically -->
         </div>
 
-        <h3 id="pd-name" style="font-size:15px; font-weight:800; color:var(--navy);">اسم المنتج</h3>
-        
-        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--bd); padding-bottom:8px;">
-          <span style="font-size:14px; font-weight:900; color:var(--metallic-gold);" id="pd-price">0 دج</span>
-          <div style="text-align: left; display: flex; flex-direction: column; align-items: flex-start;">
-            <span style="font-size:11px; color:var(--gray); font-weight: 700;" id="pd-store">🏪 شريك معتمد</span>
-            <span style="font-size:10px; color:var(--gray);" id="pd-wilaya-tag"><i class="fa-solid fa-location-dot"></i> ولاية: الجزائر</span>
-            <span style="font-size:10px; color:var(--gray);" id="pd-category-tag"><i class="fa-solid fa-tags"></i> الصنف: عام</span>
-          </div>
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px;">
+          <h3 id="pd-name" style="font-size:15px; font-weight:800; color:var(--navy); margin:0; line-height:1.4;">اسم المنتج المعروض</h3>
+          <span style="font-size:16px; font-weight:900; color:var(--metallic-gold); white-space:nowrap;" id="pd-price">0 دج</span>
         </div>
 
+        <div id="pd-description" style="font-size:11.5px; color:var(--gray); line-height:1.6; background:#f8fafc; padding:10px 12px; border-radius:10px; border:1px solid #f1f5f9;">
+          منتج أصلي متوفر بالشحن الفوري السريع لجميع الولايات مع الضمان المعاينة قبل الدفع.
+        </div>
+        
+        <div id="pd-store" style="display:none;"></div>
+
         <!-- Quantity Selector -->
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-          <span style="font-weight:700; font-size:12px;">الكمية المطلوبة:</span>
+        <div style="display:flex; justify-content:space-between; align-items:center; background:#fff; border:1px solid var(--bd); padding:8px 12px; border-radius:12px;">
+          <span style="font-weight:700; font-size:12px; color:var(--navy);">الكمية المطلوبة:</span>
           <div style="display:flex; align-items:center; gap:12px;">
-            <button onclick="chQty(-1)" style="width:30px; height:30px; border-radius:50%; border:1px solid var(--bd); background:#f1f5f9; cursor:pointer; font-weight:bold;">-</button>
-            <span id="qty-v" style="font-weight:800; font-size:14px;">1</span>
-            <button onclick="chQty(1)" style="width:30px; height:30px; border-radius:50%; border:1px solid var(--bd); background:#f1f5f9; cursor:pointer; font-weight:bold;">+</button>
+            <button onclick="chQty(-1)" style="width:32px; height:32px; border-radius:8px; border:1px solid var(--bd); background:#f1f5f9; cursor:pointer; font-weight:bold; font-size:15px;">-</button>
+            <span id="qty-v" style="font-weight:900; font-size:15px; min-width:20px; text-align:center;">1</span>
+            <button onclick="chQty(1)" style="width:32px; height:32px; border-radius:8px; border:1px solid var(--bd); background:#f1f5f9; cursor:pointer; font-weight:bold; font-size:15px;">+</button>
           </div>
         </div>
 
@@ -2028,15 +2050,67 @@ body {
           ⚠️ عذراً، هذا المتجر مغلق مؤقتاً لتجهيز الطلبيات السابقة ولا يستقبل طلبات جديدة حالياً.
         </div>
 
-        <!-- Order actions -->
-        <div style="display:flex; gap:10px; margin-top:10px;" id="pd-order-actions-wrap">
-          <button onclick="addToCartFromModal()" class="btn-p" style="background:var(--brand-green); flex:1;">
-            <i class="fa-solid fa-cart-plus"></i> إضافة للسلة
+        <!-- Direct Action Buttons -->
+        <div style="display:flex; flex-direction:column; gap:8px; margin-top:4px;">
+          <!-- Direct WhatsApp Order Button -->
+          <button id="pd-direct-whatsapp-btn" onclick="directWhatsAppOrder()" style="width:100%; height:44px; background:linear-gradient(135deg, #25D366, #128C7E); color:white; border:none; border-radius:12px; font-weight:800; font-size:13px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 4px 12px rgba(37,211,102,0.3);">
+            <i class="fa-brands fa-whatsapp" style="font-size:18px;"></i> ⚡ طلب مباشر وسريع عبر الواتساب
           </button>
-          <button onclick="toggleFavFromModal()" class="btn-s" style="flex:0.4;">
-            <i class="fa-solid fa-heart" id="modal-fav-heart" style="color:var(--gray);"></i> حفظ
-          </button>
+
+          <div style="display:flex; gap:8px;" id="pd-order-actions-wrap">
+            <button onclick="addToCartFromModal()" class="btn-p" style="background:var(--navy); flex:1; height:42px; font-size:12.5px;">
+              <i class="fa-solid fa-cart-plus"></i> إضافة لسلة المشتريات
+            </button>
+            <button onclick="toggleFavFromModal()" class="btn-s" style="flex:0.35; height:42px; border-radius:12px;">
+              <i class="fa-solid fa-heart" id="modal-fav-heart" style="color:var(--gray);"></i>
+            </button>
+          </div>
         </div>
+
+        <!-- Store Contact & Social Media Links Bar -->
+        <div style="border-top:1px dashed var(--bd); padding-top:10px; margin-top:4px;">
+          <div style="font-size:11px; font-weight:800; color:var(--navy); margin-bottom:8px; display:flex; align-items:center; gap:5px;">
+            <i class="fa-solid fa-share-nodes" style="color:var(--brand-gold);"></i> روابط الاتصال ومواقع التواصل الخاصة بالمتجر:
+          </div>
+          <div style="display:flex; flex-wrap:wrap; gap:8px;" id="pd-social-links-bar">
+            <!-- Rendered dynamically -->
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: ORDER RECEIPT & WHATSAPP CONFIRMATION -->
+  <div class="modal-overlay" id="orderReceiptModal" onclick="if(event.target===this) this.style.display='none'">
+    <div class="modal-content" style="max-width:440px; border-radius:20px; overflow:hidden; background:#fff;">
+      <div class="modal-header" style="background:linear-gradient(135deg, #075e54, #128c7e); color:white; padding:16px 20px;">
+        <span style="font-size:15px; font-weight:800; display:flex; align-items:center; gap:8px;">
+          <i class="fa-solid fa-receipt" style="color:#25d366;"></i> وصل إثبات الطلب والإشعار الفوري
+        </span>
+        <button class="modal-close" style="color:white; opacity:0.8;" onclick="document.getElementById('orderReceiptModal').style.display='none'">✕</button>
+      </div>
+
+      <div class="modal-body" style="padding:20px; display:flex; flex-direction:column; gap:14px; text-align:right;">
+        
+        <div style="background:#f0fdf4; border:1.5px solid #86efac; border-radius:14px; padding:14px; text-align:center;">
+          <i class="fa-solid fa-circle-check" style="font-size:36px; color:#16a34a; margin-bottom:6px; display:block;"></i>
+          <h3 style="font-size:15px; font-weight:900; color:#14532d; margin:0 0 4px;">تم تسجيل الطلب بنجاح في المنصة!</h3>
+          <p style="font-size:11px; color:#15803d; margin:0;">وصلك هذا الإشعار لتأكيد الشراء الفوري وتوجيه الشحنة إلى ولايتك 🚚</p>
+        </div>
+
+        <div id="receipt-details-content" style="background:#f8fafc; border:1px solid var(--bd); border-radius:14px; padding:14px; font-size:12px; display:flex; flex-direction:column; gap:8px;">
+          <!-- Receipt info populated dynamically -->
+        </div>
+
+        <!-- WhatsApp Direct Sending Button -->
+        <a id="receipt-whatsapp-link" href="#" target="_blank" style="width:100%; height:48px; background:linear-gradient(135deg, #25D366, #128C7E); color:white; border-radius:12px; font-weight:900; font-size:13.5px; text-decoration:none; display:flex; align-items:center; justify-content:center; gap:10px; box-shadow:0 4px 14px rgba(37,211,102,0.35);">
+          <i class="fa-brands fa-whatsapp" style="font-size:20px;"></i> 📱 إرسال وصل الطلب لمسؤول المتجر عبر الواتساب
+        </a>
+
+        <button onclick="document.getElementById('orderReceiptModal').style.display='none'; switchTab('orders');" style="width:100%; height:40px; background:#f1f5f9; color:var(--navy); border:1px solid var(--bd); border-radius:12px; font-weight:700; font-size:12px; cursor:pointer;">
+          <i class="fa-solid fa-list-check"></i> الانتقال لقائمة طلبياتي والمتابعة
+        </button>
 
       </div>
     </div>
@@ -3912,33 +3986,141 @@ window.openProductDetails = function(prodId) {
   // Find product from either state.loadedProducts or a mock search
   const prod = state.loadedProducts.find(p => p.id === prodId);
   if (prod) {
-    window.openProd(prod.id, prod.name, prod.price, prod.image || prod.image_url, prod.emoji, prod.store_id || prod.storeId, prod.store_name || prod.storeName, prod.wilaya, prod.category);
+    window.openProd(prod.id, prod.name, prod.price, prod.image || prod.image_url, prod.emoji, prod.store_id || prod.storeId, prod.store_name || prod.storeName, prod.wilaya, prod.category, prod.subcategory);
   }
 };
 
-// Product detail modal
-window.openProd = function(id, name, price, img, emoji, storeId, storeName, wilaya, category) {
-  state.selectedProduct = { id, name, price, img, emoji, storeId, storeName, wilaya, category };
+window.getStoreDetails = function(storeId, storeName) {
+  let stores = [];
+  try {
+    const raw1 = localStorage.getItem('stores_list_old');
+    const raw2 = localStorage.getItem('zalo_official_stores');
+    stores = [...(raw1 ? JSON.parse(raw1) : []), ...(raw2 ? JSON.parse(raw2) : [])];
+  } catch(e) {}
+  
+  const sNameClean = (storeName || '').trim().toLowerCase();
+  const found = stores.find(s => 
+    (s.id && s.id === storeId) || 
+    (s.storeId && s.storeId === storeId) || 
+    (s.name && s.name.trim().toLowerCase() === sNameClean) ||
+    (s.storeName && s.storeName.trim().toLowerCase() === sNameClean)
+  );
+
+  return found || {
+    name: storeName || 'متجر زالو المعتمد',
+    logo: 'assets/icon-192.svg',
+    coverImage: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=500',
+    wilaya: state.selectedWilaya || 'الجزائر',
+    category: 'قسم عام',
+    subcategory: 'تخصص فرعي شمول',
+    phone: '0550000000',
+    website: '',
+    socialLinks: {}
+  };
+};
+
+// Product detail modal with Facebook Store style branding and social links
+window.openProd = function(id, name, price, img, emoji, storeId, storeName, wilaya, category, subcategory) {
+  const storeInfo = getStoreDetails(storeId, storeName);
+
+  state.selectedProduct = { 
+    id, name, price, img, emoji, storeId, storeName, 
+    wilaya: wilaya || storeInfo.wilaya || 'الجزائر', 
+    category: category || storeInfo.category || 'عام',
+    subcategory: subcategory || storeInfo.subcategory || 'فرع عام',
+    storeInfo
+  };
   state.qty = 1;
 
-  document.getElementById('pd-modal-title').textContent = "تفاصيل السلعة المعروضة";
+  // Set store cover & logo
+  const coverImg = document.getElementById('pd-store-cover-img');
+  if (coverImg) coverImg.src = storeInfo.coverImage || 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=500';
+
+  const logoImg = document.getElementById('pd-store-logo-img');
+  if (logoImg) logoImg.src = storeInfo.logo || storeInfo.image || 'assets/icon-192.svg';
+
+  const sNameEl = document.getElementById('pd-store-name');
+  if (sNameEl) sNameEl.textContent = storeInfo.name || storeName || 'متجر معتمد';
+
   document.getElementById('pd-name').textContent = name;
   document.getElementById('pd-price').textContent = (parseFloat(price) || 0).toLocaleString() + ' دج';
-  document.getElementById('pd-store').textContent = `🏪 توفير: ${storeName || 'محل شريك معتمد'}`;
-  document.getElementById('pd-wilaya-tag').innerHTML = `<i class="fa-solid fa-location-dot"></i> ولاية: ${wilaya || state.selectedWilaya || 'الجزائر'}`;
-  document.getElementById('pd-category-tag').innerHTML = `<i class="fa-solid fa-tags"></i> الصنف: ${category || 'عام'}`;
+  
+  const wilayaTag = document.getElementById('pd-wilaya-tag');
+  if (wilayaTag) wilayaTag.innerHTML = `<i class="fa-solid fa-location-dot"></i> ولاية: ${wilaya || storeInfo.wilaya || 'الجزائر'}`;
+
+  const catTag = document.getElementById('pd-category-tag');
+  if (catTag) catTag.innerHTML = `<i class="fa-solid fa-tags"></i> التخصص: ${category || storeInfo.category || 'عام'}`;
+
+  const subCatTag = document.getElementById('pd-subcategory-tag');
+  if (subCatTag) subCatTag.innerHTML = `<i class="fa-solid fa-code-branch"></i> الفرع: ${subcategory || storeInfo.subcategory || 'فرع عام'}`;
+
   document.getElementById('qty-v').textContent = '1';
   
   const imgWrap = document.getElementById('pd-img-wrap');
-  imgWrap.innerHTML = img ? `<img src="${img}" style="max-width:100%; max-height:100%; object-fit:contain;">` : `<span style="font-size:72px;">${emoji||'📦'}</span>`;
+  if (imgWrap) {
+    imgWrap.innerHTML = img ? `<img src="${img}" style="max-width:100%; max-height:100%; object-fit:contain;">` : `<span style="font-size:72px;">${emoji||'📦'}</span>`;
+  }
+
+  // Render Social and Contact Links
+  const socialBar = document.getElementById('pd-social-links-bar');
+  if (socialBar) {
+    const pPhone = storeInfo.phone || '0550000000';
+    const waPhone = pPhone.replace(/[^0-9]/g, '');
+    const cleanWaPhone = waPhone.startsWith('0') ? '213' + waPhone.substring(1) : (waPhone.startsWith('213') ? waPhone : '213' + waPhone);
+
+    let linksHtml = `
+      <a href="https://wa.me/${cleanWaPhone}?text=${encodeURIComponent('مرحباً متجر ' + (storeInfo.name||storeName) + '، أود الاستفسار عن المنتج: ' + name)}" target="_blank" style="background:#25D366; color:white; text-decoration:none; padding:6px 12px; border-radius:8px; font-size:11px; font-weight:800; display:inline-flex; align-items:center; gap:5px;">
+        <i class="fa-brands fa-whatsapp"></i> واتساب المحل
+      </a>
+      <a href="tel:${pPhone}" style="background:#0ea5e9; color:white; text-decoration:none; padding:6px 12px; border-radius:8px; font-size:11px; font-weight:800; display:inline-flex; align-items:center; gap:5px;">
+        <i class="fa-solid fa-phone"></i> اتصال مباشر
+      </a>
+    `;
+
+    if (storeInfo.website) {
+      linksHtml += `
+        <a href="${storeInfo.website.startsWith('http')?storeInfo.website:'https://'+storeInfo.website}" target="_blank" style="background:#6366f1; color:white; text-decoration:none; padding:6px 12px; border-radius:8px; font-size:11px; font-weight:800; display:inline-flex; align-items:center; gap:5px;">
+          <i class="fa-solid fa-globe"></i> الموقع الإلكتروني
+        </a>
+      `;
+    }
+
+    if (storeInfo.socialLinks) {
+      const s = storeInfo.socialLinks;
+      if (s.facebook) linksHtml += `<a href="${s.facebook}" target="_blank" style="background:#1877f2; color:white; padding:6px 10px; border-radius:8px; font-size:11px;"><i class="fa-brands fa-facebook-f"></i></a>`;
+      if (s.instagram) linksHtml += `<a href="${s.instagram}" target="_blank" style="background:#e4405f; color:white; padding:6px 10px; border-radius:8px; font-size:11px;"><i class="fa-brands fa-instagram"></i></a>`;
+      if (s.tiktok) linksHtml += `<a href="${s.tiktok}" target="_blank" style="background:#000000; color:white; padding:6px 10px; border-radius:8px; font-size:11px;"><i class="fa-brands fa-tiktok"></i></a>`;
+    }
+
+    socialBar.innerHTML = linksHtml;
+  }
 
   // Check if saved as favorite
   const favs = JSON.parse(localStorage.getItem('zalo_favorites') || '[]');
   const isFav = favs.some(f => f.id === id);
   const heart = document.getElementById('modal-fav-heart');
-  heart.style.color = isFav ? '#ef4444' : 'var(--gray)';
+  if (heart) heart.style.color = isFav ? '#ef4444' : 'var(--gray)';
 
   document.getElementById('productModal').style.display = 'flex';
+};
+
+window.directWhatsAppOrder = function() {
+  if (!state.selectedProduct) return;
+  const p = state.selectedProduct;
+  const storeInfo = p.storeInfo || getStoreDetails(p.storeId, p.storeName);
+  const pPhone = storeInfo.phone || '0550000000';
+  const waPhone = pPhone.replace(/[^0-9]/g, '');
+  const cleanWaPhone = waPhone.startsWith('0') ? '213' + waPhone.substring(1) : (waPhone.startsWith('213') ? waPhone : '213' + waPhone);
+
+  const message = `🛒 *طلب شراء مباشر - منصة ZaLo الموحدة*\n\n` +
+    `📦 *المنتج:* ${p.name}\n` +
+    `💰 *السعر:* ${(parseFloat(p.price)||0).toLocaleString()} دج\n` +
+    `🔢 *الكمية:* ${state.qty}\n` +
+    `🏪 *المتجر:* ${p.storeName}\n` +
+    `📍 *الولاية:* ${p.wilaya}\n\n` +
+    `أرجو تأكيد الطلب والتوصيل الفوري السريع وشكراً!`;
+
+  window.open(`https://wa.me/${cleanWaPhone}?text=${encodeURIComponent(message)}`, '_blank');
 };
 
 window.chQty = function(delta) {
@@ -4208,10 +4390,73 @@ window.checkoutCart = async function() {
   if (successfulOrders > 0) {
     localStorage.setItem('zalo_local_orders', JSON.stringify(localOrders));
     localStorage.removeItem('zalo_cart');
-    window.showToast(`✨ تم إرسال ${successfulOrders} طلبيات للمتاجر المعنية بنجاح!`);
+    updateCartBadge();
     
-    // Redirect to orders tab
-    switchTab('orders');
+    // Prepare Receipt Modal Details
+    const receiptContainer = document.getElementById('receipt-details-content');
+    let grandTotal = 0;
+    let itemsTextList = [];
+
+    let summaryHtml = `
+      <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--bd); padding-bottom:6px;">
+        <span style="color:var(--gray);">اسم المشتري:</span>
+        <span style="font-weight:bold; color:var(--navy);">${name} (${phone})</span>
+      </div>
+      <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--bd); padding-bottom:6px;">
+        <span style="color:var(--gray);">مكان التسليم:</span>
+        <span style="font-weight:bold; color:#0369a1;">ولاية ${wilaya} - ${addr}</span>
+      </div>
+      <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--bd); padding-bottom:6px;">
+        <span style="color:var(--gray);">طريقة الدفع:</span>
+        <span style="font-weight:bold; color:#15803d;">${pay === 'cod' ? 'الدفع عند الاستلام (COD)' : pay}</span>
+      </div>
+      <div style="margin-top:4px; font-weight:800; color:var(--navy);">تفاصيل المنتجات المشتراة:</div>
+    `;
+
+    cart.forEach(item => {
+      const itemSubtotal = item.price * item.qty;
+      grandTotal += itemSubtotal;
+      itemsTextList.push(`• ${item.name} (الكمية: ${item.qty}) = ${itemSubtotal.toLocaleString()} دج [${item.storeName}]`);
+      summaryHtml += `
+        <div style="display:flex; justify-content:space-between; font-size:11.5px; background:#fff; padding:6px 10px; border-radius:8px; border:1px solid var(--bd);">
+          <span>${item.emoji||'📦'} ${item.name} <strong style="color:var(--brand-gold);">x${item.qty}</strong></span>
+          <strong style="color:var(--metallic-gold);">${itemSubtotal.toLocaleString()} دج</strong>
+        </div>
+      `;
+    });
+
+    summaryHtml += `
+      <div style="display:flex; justify-content:space-between; font-size:13.5px; font-weight:900; color:var(--navy); background:#fef3c7; padding:8px 12px; border-radius:10px; border:1px solid #fde047; margin-top:4px;">
+        <span>الإجمالي النهائي:</span>
+        <span style="color:#b45309;">${grandTotal.toLocaleString()} دج</span>
+      </div>
+    `;
+
+    if (receiptContainer) receiptContainer.innerHTML = summaryHtml;
+
+    // Generate WhatsApp Message
+    const waText = `🛍️ *وصل إثبات الطلب - منصة ZaLo الموحدة*\n\n` +
+      `👤 *المشتري:* ${name}\n` +
+      `📞 *الهاتف:* ${phone}\n` +
+      `📍 *ولاية التسليم:* ${wilaya}\n` +
+      `🏠 *العنوان:* ${addr}\n` +
+      `💳 *طريقة الدفع:* الدفع يد بلمس عند الاستلام\n\n` +
+      `📦 *قائمة المنتجات:*\n` +
+      itemsTextList.join('\n') + `\n\n` +
+      `💰 *المجموع الإجمالي شامل التسليم:* ${grandTotal.toLocaleString()} دج\n\n` +
+      `أرجو تأكيد تجهيز الطلبية والشحن الفوري لولايتي وشكراً!`;
+
+    const storePhoneClean = '0550000000'; // Default admin hotline fallback
+    const waLink = document.getElementById('receipt-whatsapp-link');
+    if (waLink) {
+      waLink.href = `https://wa.me/213${storePhoneClean.substring(1)}?text=${encodeURIComponent(waText)}`;
+    }
+
+    // Display Receipt Modal
+    const rModal = document.getElementById('orderReceiptModal');
+    if (rModal) rModal.style.display = 'flex';
+
+    window.showToast(`✨ تم تسجيل وتأكيد ${successfulOrders} طلبيات بنجاح!`);
   } else {
     window.showToast("❌ فشل تأكيد الطلبات، يرجى تكرار المحاولة.");
   }
@@ -4488,7 +4733,7 @@ window.applyActiveWilayaFilter = function() {
   const selected = localStorage.getItem('zalo_selected_wilaya') || 'الكل';
   const bannerText = document.getElementById('active-wilaya-name');
   if (bannerText) {
-    bannerText.textContent = selected === 'الكل' ? 'الكل (توصيل لكافة الولايات)' : selected;
+    bannerText.textContent = selected === 'الكل' ? 'الكل (توصيل لكافة الـ 69 ولاية)' : selected;
   }
   
   if (!state.loadedProducts) return;
@@ -4496,11 +4741,14 @@ window.applyActiveWilayaFilter = function() {
   if (selected === 'الكل') {
     renderProductsList(state.loadedProducts);
   } else {
+    const cleanSelected = selected.replace(/^[0-9\s\-]+/, '').trim().toLowerCase();
     const filtered = state.loadedProducts.filter(p => {
+      const pWilaya = (p.wilaya || p.wilayaName || p.store_wilaya || '').replace(/^[0-9\s\-]+/, '').trim().toLowerCase();
       const storeName = (p.storeName || p.store_name || '').toLowerCase();
       const desc = (p.description || '').toLowerCase();
-      const val = selected.toLowerCase();
-      return storeName.includes(val) || desc.includes(val);
+      const cat = (p.category || '').toLowerCase();
+      
+      return pWilaya.includes(cleanSelected) || cleanSelected.includes(pWilaya) || storeName.includes(cleanSelected) || desc.includes(cleanSelected) || cat.includes(cleanSelected);
     });
     
     if (filtered.length === 0) {
@@ -4514,7 +4762,7 @@ window.applyActiveWilayaFilter = function() {
         const tip = document.createElement('div');
         tip.id = 'wilaya-empty-tip';
         tip.style.cssText = 'grid-column: span 2; background: rgba(212, 175, 55, 0.08); border: 1.5px solid var(--brand-gold); border-radius: 12px; padding: 12px; text-align: center; font-size: 11.5px; font-weight: bold; color: var(--navy); margin-bottom: 12px; width: 100%;';
-        tip.innerHTML = `💡 لا توجد متاجر محلية مسجلة بـ ${selected} حالياً. نعرض لك كافة المنتجات مع الشحن الفوري السريع لولايتك 🚚`;
+        tip.innerHTML = `💡 نتائج التصفح بولاية ${selected}: تم تخصيص قائمة المنتجات والشحن الفوري الفعال لولايتك 🚚`;
         grid.insertBefore(tip, grid.firstChild);
       }
     } else {
