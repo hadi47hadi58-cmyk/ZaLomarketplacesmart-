@@ -261,9 +261,31 @@ fun PureWebContainerScreen(
             factory = { context ->
                 WebView(context).apply {
                     webViewClient = object : WebViewClient() {
-                        override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
-                            // Keep navigation internal to the WebView
-                            return false
+                        override fun shouldOverrideUrlLoading(view: WebView?, request: android.webkit.WebResourceRequest?): Boolean {
+                            val url = request?.url?.toString() ?: return false
+                            
+                            // Check whitelist
+                            val isAllowed = url.startsWith("https://appassets.androidplatform.net") ||
+                                    url.startsWith("http://appassets.androidplatform.net") ||
+                                    url.contains("supabase.co") ||
+                                    url.contains("hadi47hadi58-cmyk.github.io") ||
+                                    url.startsWith("blob:") ||
+                                    url.startsWith("data:") ||
+                                    url.startsWith("about:blank") ||
+                                    url.contains("accounts.google.com")
+
+                            if (isAllowed) {
+                                return false // Let WebView load allowed URLs
+                            } else {
+                                try {
+                                    Toast.makeText(activity, "جاري فتح الرابط في المتصفح الخارجي للأمان...", Toast.LENGTH_SHORT).show()
+                                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                                    activity.startActivity(intent)
+                                } catch (e: Exception) {
+                                    e.printStackTrace()
+                                }
+                                return true // Intercept & open externally
+                            }
                         }
 
                         override fun shouldInterceptRequest(
@@ -387,8 +409,8 @@ fun PureWebContainerScreen(
                         domStorageEnabled = true
                         allowFileAccess = true
                         allowContentAccess = true
-                        allowFileAccessFromFileURLs = true
-                        allowUniversalAccessFromFileURLs = true
+                        allowFileAccessFromFileURLs = false
+                        allowUniversalAccessFromFileURLs = false
                         databaseEnabled = true
                         loadWithOverviewMode = true
                         useWideViewPort = true

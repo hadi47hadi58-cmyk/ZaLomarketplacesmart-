@@ -264,7 +264,7 @@
             reader.readAsDataURL(file);
         }
 
-        function submitJobApplication(event) {
+        async function submitJobApplication(event) {
             event.preventDefault();
 
             const firstname = document.getElementById("app-firstname").value.trim();
@@ -276,6 +276,8 @@
             const roleType = document.getElementById("app-role-type").value;
             const customTitle = document.getElementById("app-custom-role-title").value.trim();
             const notes = document.getElementById("app-notes").value.trim();
+            const fullName = `${firstname} ${lastname}`.trim();
+            const position = customTitle || roleType || 'مؤكد طلبيات';
 
             const application = {
                 id: "app_" + Date.now(),
@@ -286,14 +288,14 @@
                 wilaya,
                 commune,
                 roleType,
-                customTitle: customTitle || roleType,
+                customTitle: position,
                 notes,
                 files: {
-                    cv: fileData.cv || "data:text/plain;base64,TW9jayBDVg==", // fallbacks
+                    cv: fileData.cv || "data:text/plain;base64,TW9jayBDVg==",
                     id: fileData.id || "data:text/plain;base64,TW9jayBJRCA=",
                     photo: fileData.photo || "data:text/plain;base64,TW9jayBQaG90bw=="
                 },
-                status: "PENDING", // PENDING, APPROVED, REJECTED
+                status: "PENDING",
                 dateSubmitted: new Date().toISOString().split('T')[0]
             };
 
@@ -305,6 +307,25 @@
 
             applications.push(application);
             localStorage.setItem("zalo_careers_applications", JSON.stringify(applications));
+
+            // Sync with Supabase career_applications table if available
+            try {
+                const sb = window.supabaseClient || (typeof supabase !== 'undefined' ? supabase : null);
+                if (sb && sb.from) {
+                    await sb.from('career_applications').insert({
+                        full_name: fullName,
+                        email: email,
+                        phone: phone,
+                        position: `${position} (${wilaya} - ${commune})`,
+                        cv_url: fileData.cv || null,
+                        cover_letter: notes || null,
+                        status: 'pending'
+                    });
+                    console.log("Successfully synchronized career application to Supabase.");
+                }
+            } catch(err) {
+                console.warn("Failed to synchronize career application to Supabase:", err);
+            }
 
             alert(`✨ تم إرسال طلب توظيفك بنجاح للرقابة العليا!\nرقم الطلب الخاص بك: #${application.id.substring(4, 10).toUpperCase()}\nسيتواصل معك المنسق الإداري قريباً.`);
             

@@ -1,0 +1,33 @@
+name: Security Guard & Bypass Prevention
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  check-bypass-tokens:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Check for unauthorized auth bypass keywords
+        run: |
+          echo "Scanning web/ and app/src/main/assets/web/ for unauthorized bypass patterns..."
+          
+          # Keywords that should never appear in production frontend code
+          FORBIDDEN_PATTERNS="triggerEmergencyBypass|bypassAdminBtn|quickLogin|دخول سريع|ممر الدخول"
+          
+          FOUND_ERRORS=0
+          if grep -rE "$FORBIDDEN_PATTERNS" web/ app/src/main/assets/web/; then
+            echo "❌ SECURITY RISK DETECTED: Found forbidden bypass keyword in frontend files!"
+            FOUND_ERRORS=1
+          fi
+
+          if [ $FOUND_ERRORS -ne 0 ]; then
+            echo "Build failed due to security violation."
+            exit 1
+          else
+            echo "✅ All security checks passed! No auth bypass patterns found."
+          fi
