@@ -1729,66 +1729,53 @@ body {
   <!-- SCREEN 6: GENERAL PRODUCTS (المنتجات العامة) DELETED -->
 
 
-  <!-- SCREEN 2: CATEGORIES (الأقسام) -->
+  <!-- SCREEN 2: CATEGORIES (الأقسام والتخصصات) -->
   <div class="screen" id="screen-cats">
-    <div class="screen-title"><i class="fa-solid fa-folder-tree"></i> تصفح حسب الأقسام</div>
-    <div style="padding: 16px; display: flex; flex-direction: column; gap: 12px;">
-      
-      <div style="background: #ffffff; border-radius: 12px; border: 1.5px solid var(--bd); padding: 14px; display: flex; align-items: center; justify-content: space-between; cursor: pointer;" onclick="filterCatAndSwitch('هواتف وإلكترونيات')">
-        <div style="display: flex; align-items: center; gap: 12px;">
-          <span style="font-size: 26px;">📱</span>
-          <div>
-            <div style="font-weight: 800; font-size:14px; color: var(--navy);">هواتف وإلكترونيات</div>
-            <div style="font-size: 11px; color: var(--gray);">أجهزة لوحية، هواتف ذكية، وملحقاتها</div>
-          </div>
+    <!-- View 1: Main Categories List -->
+    <div id="cats-main-list-view">
+      <div class="screen-title" style="display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; border-bottom: 1px solid var(--bd);">
+        <span style="font-weight: 800; font-size: 15px; color: var(--navy); display: flex; align-items: center; gap: 8px;">
+          <i class="fa-solid fa-folder-tree" style="color: var(--metallic-gold);"></i> تصفح حسب التخصصات والأقسام
+        </span>
+        <span style="font-size: 11px; background: #e0f2fe; color: #0284c7; padding: 4px 10px; border-radius: 20px; font-weight: 700;">9 تخصصات رئيسية</span>
+      </div>
+      <div style="padding: 16px; display: flex; flex-direction: column; gap: 12px;" id="cats-main-cards-container">
+        <!-- Dynamic main categories from ZALO_CATEGORIES -->
+      </div>
+    </div>
+
+    <!-- View 2: Selected Category Subcategories & Products Detail View -->
+    <div id="cats-detail-view" style="display: none; padding: 16px;">
+      <!-- Header with back button -->
+      <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px; background: white; padding: 12px 14px; border-radius: 16px; border: 1.5px solid var(--bd); box-shadow: 0 2px 8px rgba(0,0,0,0.02);">
+        <button onclick="closeCategoryDetailView()" style="background: #f1f5f9; border: none; border-radius: 12px; width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--navy); font-size: 15px; transition: all 0.2s;">
+          <i class="fa-solid fa-arrow-right"></i>
+        </button>
+        <div style="flex: 1;">
+          <h2 id="cat-detail-title" style="font-size: 15px; font-weight: 800; color: var(--navy); margin: 0; display: flex; align-items: center; gap: 6px;">تخصص...</h2>
+          <span id="cat-detail-subtitle" style="font-size: 11px; color: var(--gray); font-weight: 600;">اختر الفرع للفلترة أو استعرض كافة المعروضات</span>
         </div>
-        <i class="fa-solid fa-angle-left" style="color: var(--gray);"></i>
       </div>
 
-      <div style="background: #ffffff; border-radius: 12px; border: 1.5px solid var(--bd); padding: 14px; display: flex; align-items: center; justify-content: space-between; cursor: pointer;" onclick="filterCatAndSwitch('ملابس وأزياء')">
-        <div style="display: flex; align-items: center; gap: 12px;">
-          <span style="font-size: 26px;">👗</span>
-          <div>
-            <div style="font-weight: 800; font-size:14px; color: var(--navy);">ملابس وأزياء</div>
-            <div style="font-size: 11px; color: var(--gray);">أحدث صيحات الملابس الرجالية والنسائية</div>
-          </div>
+      <!-- Subcategories Pills Horizontal Bar -->
+      <div style="margin-bottom: 16px;">
+        <div style="font-size: 11.5px; font-weight: 800; color: var(--navy); margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+          <i class="fa-solid fa-code-branch" style="color: #0ea5e9;"></i> الفروع والتخصصات الفرعية:
         </div>
-        <i class="fa-solid fa-angle-left" style="color: var(--gray);"></i>
+        <div id="cat-detail-subs-pills" style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; scrollbar-width: none;">
+          <!-- Dynamic subcategory pills -->
+        </div>
       </div>
 
-      <div style="background: #ffffff; border-radius: 12px; border: 1.5px solid var(--bd); padding: 14px; display: flex; align-items: center; justify-content: space-between; cursor: pointer;" onclick="filterCatAndSwitch('مواد غذائية')">
-        <div style="display: flex; align-items: center; gap: 12px;">
-          <span style="font-size: 26px;">🍎</span>
-          <div>
-            <div style="font-weight: 800; font-size:14px; color: var(--navy);">مواد غذائية وبقالة</div>
-            <div style="font-size: 11px; color: var(--gray);">أغذية طبيعية، تمور، وحاجيات المنزل</div>
-          </div>
-        </div>
-        <i class="fa-solid fa-angle-left" style="color: var(--gray);"></i>
+      <!-- Products Grid -->
+      <div style="font-weight: 800; font-size: 13.5px; color: var(--navy); margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between;">
+        <span><i class="fa-solid fa-boxes-stacked" style="color: var(--metallic-gold); margin-left: 6px;"></i> المعروضات المتاحة في هذا التخصص</span>
+        <span id="cat-detail-count" style="font-size: 11px; background: #f1f5f9; color: #475569; padding: 3px 8px; border-radius: 12px; font-weight: 700;">0 منتج</span>
       </div>
 
-      <div style="background: #ffffff; border-radius: 12px; border: 1.5px solid var(--bd); padding: 14px; display: flex; align-items: center; justify-content: space-between; cursor: pointer;" onclick="filterCatAndSwitch('أثاث ومنزل')">
-        <div style="display: flex; align-items: center; gap: 12px;">
-          <span style="font-size: 26px;">🏠</span>
-          <div>
-            <div style="font-weight: 800; font-size:14px; color: var(--navy);">أثاث ومستلزمات منزلية</div>
-            <div style="font-size: 11px; color: var(--gray);">ديكورات ومعدات وتجهيزات منزلية</div>
-          </div>
-        </div>
-        <i class="fa-solid fa-angle-left" style="color: var(--gray);"></i>
+      <div class="products-grid-mockup" id="cat-detail-products-grid">
+        <!-- Products cards -->
       </div>
-
-      <div style="background: #ffffff; border-radius: 12px; border: 1.5px solid var(--bd); padding: 14px; display: flex; align-items: center; justify-content: space-between; cursor: pointer;" onclick="filterCatAndSwitch('كتب ومستلزمات')">
-        <div style="display: flex; align-items: center; gap: 12px;">
-          <span style="font-size: 26px;">📚</span>
-          <div>
-            <div style="font-weight: 800; font-size:14px; color: var(--navy);">كتب ومستلزمات مكتبية</div>
-            <div style="font-size: 11px; color: var(--gray);">مجلات، روايات ومستلزمات مدرسية</div>
-          </div>
-        </div>
-        <i class="fa-solid fa-angle-left" style="color: var(--gray);"></i>
-      </div>
-
     </div>
   </div>
 
@@ -3436,6 +3423,9 @@ window.switchTab = function(tabId) {
     loadFavorites();
   } else if (tabId === 'orders') {
     loadCustomerOrders();
+  } else if (tabId === 'cats') {
+    if (typeof renderCategoriesTab === 'function') renderCategoriesTab();
+    if (typeof closeCategoryDetailView === 'function') closeCategoryDetailView();
   } else if (tabId === 'profile') {
     if (typeof syncMerchantRequestStatus === 'function') {
       syncMerchantRequestStatus(window.currentUser);
@@ -3551,15 +3541,24 @@ async function loadProducts() {
 
   if (merged.length === 0) {
     merged = [
-      { id: 'p1', productId: 'p1', name: 'قفطان جزائري تقليدي فخم', price: 18500, category: 'ملابس نسائية', storeName: 'اللمسة الجزائرية', storeId: 'store1', status: 'active', image: 'https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=500' },
-      { id: 'p2', productId: 'p2', name: 'عطر الفخامة العربي المنيعة', price: 4500, category: 'عطور ومستحضرات', storeName: 'عطور الجنوب', storeId: 'store2', status: 'active', image: 'https://images.unsplash.com/photo-1594035910387-fea47794261f?w=500' },
-      { id: 'p3', productId: 'p3', name: 'حذاء جلدي صناعة محلية', price: 6200, category: 'أحذية ومستلزمات', storeName: 'أحذية الجودة', storeId: 'store3', status: 'active', image: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=500' },
-      { id: 'p4', productId: 'p4', name: 'ساعة يد أنيقة رجالية', price: 3800, category: 'إكسسوارات', storeName: 'متجر الأناقة', storeId: 'store4', status: 'active', image: 'https://images.unsplash.com/photo-1524805444758-089113d48a6d?w=500' }
+      { id: 'p1', productId: 'p1', name: 'قفطان جزائري تقليدي فخم', price: 18500, category: 'ملابس، أزياء وموضة', subcategory: 'ملابس نسائية', storeName: 'اللمسة الجزائرية', storeId: 'store1', status: 'active', image: 'https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=500' },
+      { id: 'p2', productId: 'p2', name: 'عطر الفخامة العربي المنيعة', price: 4500, category: 'صحة، تجميل وعناية شخصية', subcategory: 'عطور وفواحات', storeName: 'عطور الجنوب', storeId: 'store2', status: 'active', image: 'https://images.unsplash.com/photo-1594035910387-fea47794261f?w=500' },
+      { id: 'p3', productId: 'p3', name: 'حذاء جلدي صناعة محلية', price: 6200, category: 'ملابس، أزياء وموضة', subcategory: 'أحذية نسائية ورجالية', storeName: 'أحذية الجودة', storeId: 'store3', status: 'active', image: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=500' },
+      { id: 'p4', productId: 'p4', name: 'ساعة يد أنيقة رجالية', price: 3800, category: 'ملابس، أزياء وموضة', subcategory: 'ساعات ونظارات', storeName: 'متجر الأناقة', storeId: 'store4', status: 'active', image: 'https://images.unsplash.com/photo-1524805444758-089113d48a6d?w=500' },
+      { id: 'p5', productId: 'p5', name: 'قطع غيار تويوتا هيلوكس الأصلي', price: 24000, category: 'قطع غيار وإكسسوارات المركبات', subcategory: 'قطع غيار تويوتا (Toyota)', storeName: 'القطع الذهبية للسيارات', storeId: 'store5', status: 'active', image: 'https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?w=500' },
+      { id: 'p6', productId: 'p6', name: 'هاتف سامسونج جالاكسي ذكي', price: 34500, category: 'هواتف وإلكترونيات', subcategory: 'هواتف ذكية واكسسواراتها', storeName: 'المركز الإلكتروني', storeId: 'store6', status: 'active', image: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=500' },
+      { id: 'p7', productId: 'p7', name: 'تمر دقلة نور بسكرة ممتاز 1 كغ', price: 1200, category: 'مواد غذائية وتموين', subcategory: 'حلويات، مكسرات ومشروبات', storeName: 'تمور الصحراء الممتازة', storeId: 'store7', status: 'active', image: 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=500' },
+      { id: 'p8', productId: 'p8', name: 'طقم أواني مطبخ سيراميك فاخر', price: 14200, category: 'مستلزمات المنزل والأثاث', subcategory: 'أواني وديكورات المطبخ', storeName: 'تجهيزات المنزل العصري', storeId: 'store8', status: 'active', image: 'https://images.unsplash.com/photo-1556911220-e15b29be8c8f?w=500' },
+      { id: 'p9', productId: 'p9', name: 'طقم أدوات يدوية ومعدات 108 قطعة', price: 8900, category: 'خردوات، بناء وتجهيزات', subcategory: 'أدوات ومعدات يدوية وكهربائية', storeName: 'معدات الجزائر للتجهيز', storeId: 'store9', status: 'active', image: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=500' },
+      { id: 'p10', productId: 'p10', name: 'مجموعة قصص وروايات عالمية', price: 2200, category: 'مكتبة، أدوات مدرسية وألعاب', subcategory: 'كتب، روايات ومصاحف', storeName: 'مكتبة المعرفة', storeId: 'store10', status: 'active', image: 'https://images.unsplash.com/photo-1512820790803-83ca734da794?w=500' },
+      { id: 'p11', productId: 'p11', name: 'زربية غرداية تقليدية صوف 100%', price: 32000, category: 'صناعة تقليدية وحرف يدوية', subcategory: 'زربيات ومنسوجات تقليدية', storeName: 'حرف وكنوز الجزائر', storeId: 'store11', status: 'active', image: 'https://images.unsplash.com/photo-1600121848594-d8644e57abab?w=500' }
     ];
   }
 
   state.loadedProducts = merged;
   applyActiveWilayaFilter();
+  if (typeof renderCategoriesSlider === 'function') renderCategoriesSlider();
+  if (typeof renderCategoriesTab === 'function') renderCategoriesTab();
 }
 
 function renderProductsList(list) {
@@ -3604,10 +3603,101 @@ function renderProductsList(list) {
   });
 }
 
-// Category and Search Filtering
-window.filterHomeProducts = function(category, element) {
+// Smart matching for categories & subcategories taxonomy
+window.matchesCategoryOrSubcategory = function(p, mainCatName, subCatName) {
+  if (!p) return false;
+  const pCat = (p.category || '').toLowerCase().trim();
+  const pSub = (p.subcategory || p.sub_category || '').toLowerCase().trim();
+  const pName = (p.name || p.productName || '').toLowerCase();
+  const pDesc = (p.description || p.desc || '').toLowerCase();
+
+  const targetMain = (mainCatName || '').toLowerCase().trim();
+  const targetSub = (subCatName || '').toLowerCase().trim();
+
+  const isAllSub = !targetSub || targetSub === 'الكل' || targetSub.includes('جميع');
+
+  if (!isAllSub) {
+    const cleanTargetSub = targetSub.replace(/\(.*\)/g, '').trim();
+    if (pSub === targetSub || pSub.includes(cleanTargetSub) || pCat.includes(cleanTargetSub)) {
+      return true;
+    }
+    if (cleanTargetSub.length >= 3 && (pName.includes(cleanTargetSub) || pDesc.includes(cleanTargetSub))) {
+      return true;
+    }
+  }
+
+  if (targetMain) {
+    if (pCat === targetMain || pCat.includes(targetMain) || targetMain.includes(pCat)) {
+      return true;
+    }
+
+    const catObj = (window.ZALO_CATEGORIES || []).find(c => 
+      c.name.toLowerCase() === targetMain || 
+      c.id.toLowerCase() === targetMain ||
+      targetMain.includes(c.name.toLowerCase()) ||
+      c.name.toLowerCase().includes(targetMain)
+    );
+
+    if (catObj && catObj.subcategories) {
+      for (const sub of catObj.subcategories) {
+        const cleanSub = sub.toLowerCase().replace(/\(.*\)/g, '').trim();
+        if (pCat.includes(cleanSub) || pSub.includes(cleanSub)) {
+          return true;
+        }
+      }
+    }
+
+    if (targetMain.includes('مركبات') || targetMain.includes('سيارات') || targetMain.includes('قطع غيار') || targetMain.includes('auto')) {
+      if (pCat.includes('سيار') || pCat.includes('قطع') || pCat.includes('مركب') || pCat.includes('تويوتا') || pName.includes('قطع') || pName.includes('سيار')) return true;
+    }
+    if (targetMain.includes('ملابس') || targetMain.includes('أزياء') || targetMain.includes('موضة') || targetMain.includes('fashion')) {
+      if (pCat.includes('ملابس') || pCat.includes('أزياء') || pCat.includes('موضة') || pCat.includes('أحذية') || pCat.includes('قفطان') || pCat.includes('ساعة') || pName.includes('قفطان') || pName.includes('حذاء') || pName.includes('ساعة')) return true;
+    }
+    if (targetMain.includes('هواتف') || targetMain.includes('إلكترون') || targetMain.includes('الكترون') || targetMain.includes('tech')) {
+      if (pCat.includes('هاتف') || pCat.includes('إلكترون') || pCat.includes('الكترون') || pCat.includes('سامسونج') || pName.includes('هاتف') || pName.includes('سامسونج')) return true;
+    }
+    if (targetMain.includes('غذائ') || targetMain.includes('تموين') || targetMain.includes('بقالة') || targetMain.includes('food')) {
+      if (pCat.includes('غذائ') || pCat.includes('طعام') || pCat.includes('بقالة') || pCat.includes('تمور') || pCat.includes('تمر') || pName.includes('تمر') || pName.includes('دقلة')) return true;
+    }
+    if (targetMain.includes('منزل') || targetMain.includes('أثاث') || targetMain.includes('home')) {
+      if (pCat.includes('منزل') || pCat.includes('أثاث') || pCat.includes('ديكور') || pCat.includes('أواني') || pName.includes('أواني') || pName.includes('مطبخ')) return true;
+    }
+    if (targetMain.includes('صحة') || targetMain.includes('تجميل') || targetMain.includes('عناية') || targetMain.includes('beauty')) {
+      if (pCat.includes('تجميل') || pCat.includes('صحة') || pCat.includes('عطور') || pCat.includes('عطر') || pName.includes('عطر') || pName.includes('تجميل')) return true;
+    }
+    if (targetMain.includes('خردوات') || targetMain.includes('بناء') || targetMain.includes('تجهيزات') || targetMain.includes('hardware')) {
+      if (pCat.includes('خردوات') || pCat.includes('بناء') || pCat.includes('أدوات') || pCat.includes('معدات') || pName.includes('أدوات') || pName.includes('معدات')) return true;
+    }
+    if (targetMain.includes('مكتب') || targetMain.includes('كتب') || targetMain.includes('ألعاب') || targetMain.includes('books')) {
+      if (pCat.includes('كتب') || pCat.includes('مكتب') || pCat.includes('ألعاب') || pName.includes('قصص') || pName.includes('روايات') || pName.includes('كتاب')) return true;
+    }
+    if (targetMain.includes('تقليد') || targetMain.includes('حرف') || targetMain.includes('يدوي') || targetMain.includes('handicraft')) {
+      if (pCat.includes('تقليد') || pCat.includes('حرف') || pCat.includes('زربية') || pName.includes('زربية') || pName.includes('تقليدي')) return true;
+    }
+  }
+
+  return false;
+};
+
+// Render home category slider dynamically
+window.renderCategoriesSlider = function() {
+  const slider = document.getElementById('categories-slider');
+  if (!slider) return;
+
+  const categories = window.ZALO_CATEGORIES || [];
+  slider.innerHTML = categories.map(c => `
+    <div class="category-item-mockup" onclick="filterHomeProductsByMainCategory('${c.name.replace(/'/g, "\\'")}', this)">
+      <div class="category-circle-mockup">
+        <span style="font-size: 22px;">${c.emoji || '📦'}</span>
+      </div>
+      <div class="category-label-mockup">${c.name}</div>
+    </div>
+  `).join('');
+};
+
+window.filterHomeProductsByMainCategory = function(category, element) {
   try {
-    const items = document.querySelectorAll('.category-item-mockup');
+    const items = document.querySelectorAll('#categories-slider .category-item-mockup');
     const isActive = element && element.classList && element.classList.contains('active');
     items.forEach(el => el.classList.remove('active'));
 
@@ -3615,60 +3705,186 @@ window.filterHomeProducts = function(category, element) {
       renderProductsList(state.loadedProducts || []);
     } else {
       if (element && element.classList) element.classList.add('active');
-      const filtered = (state.loadedProducts || []).filter(p => {
-        const cat = (p.category || '').toLowerCase();
-        if (category === 'هواتف وإلكترونيات') {
-          return cat.includes('الكترون') || cat.includes('هاتف');
-        }
-        if (category === 'ملابس وأزياء') {
-          return cat.includes('ملابس') || cat.includes('موضة') || cat.includes('أزياء');
-        }
-        if (category === 'مواد غذائية') {
-          return cat.includes('غذائي') || cat.includes('طعام');
-        }
-        if (category === 'أثاث ومنزل') {
-          return cat.includes('منزل') || cat.includes('أثاث');
-        }
-        if (category === 'كتب ومستلزمات') {
-          return cat.includes('كتب') || cat.includes('مكتب') || cat.includes('مستلزمات');
-        }
-        return cat.includes((category || '').toLowerCase());
-      });
+      const filtered = (state.loadedProducts || []).filter(p => matchesCategoryOrSubcategory(p, category, ''));
       renderProductsList(filtered);
     }
   } catch(e) {
-    console.error("filterHomeProducts error:", e);
+    console.error("filterHomeProductsByMainCategory error:", e);
   }
+};
+
+// Category Tab rendering functions
+window.renderCategoriesTab = function() {
+  const container = document.getElementById('cats-main-cards-container');
+  if (!container) return;
+
+  const categories = window.ZALO_CATEGORIES || [];
+  container.innerHTML = categories.map(c => {
+    const subsList = c.subcategories || [];
+    const subsPreview = subsList.slice(0, 3).join('، ') + (subsList.length > 3 ? '...' : '');
+    const escName = c.name.replace(/'/g, "\\'");
+    return `
+      <div style="background: #ffffff; border-radius: 16px; border: 1.5px solid var(--bd); padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.03);"
+           onclick="openCategoryDetailView('${escName}')">
+        <div style="display: flex; align-items: center; gap: 14px; flex: 1; overflow: hidden;">
+          <div style="font-size: 24px; background: #f0f9ff; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 14px; border: 1px solid #bae6fd; flex-shrink: 0;">
+            ${c.emoji || '📦'}
+          </div>
+          <div style="flex: 1; min-width: 0;">
+            <div style="font-weight: 800; font-size: 14.5px; color: var(--navy); margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${c.name}</div>
+            <div style="font-size: 11px; color: var(--gray); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.4;">${subsPreview}</div>
+            <div style="font-size: 10.5px; color: #0ea5e9; font-weight: 700; margin-top: 4px; display: flex; align-items: center; gap: 4px;">
+              <i class="fa-solid fa-code-branch" style="font-size: 10px;"></i> ${subsList.length} فرع وتخصص فرعي
+            </div>
+          </div>
+        </div>
+        <i class="fa-solid fa-chevron-left" style="color: var(--gray); font-size: 14px; margin-right: 8px;"></i>
+      </div>
+    `;
+  }).join('');
+};
+
+window.openCategoryDetailView = function(mainCatName, subCatName = '') {
+  window.currentSelectedCategory = { main: mainCatName, sub: subCatName };
+
+  const mainView = document.getElementById('cats-main-list-view');
+  const detailView = document.getElementById('cats-detail-view');
+  if (mainView) mainView.style.display = 'none';
+  if (detailView) detailView.style.display = 'block';
+
+  const catObj = (window.ZALO_CATEGORIES || []).find(c => c.name === mainCatName || c.id === mainCatName);
+  const titleEl = document.getElementById('cat-detail-title');
+  if (titleEl) {
+    titleEl.innerHTML = `${catObj ? catObj.emoji : '📦'} ${mainCatName}`;
+  }
+
+  const subsPillsContainer = document.getElementById('cat-detail-subs-pills');
+  if (subsPillsContainer) {
+    const subsList = catObj ? (catObj.subcategories || []) : [];
+    
+    let pillsHtml = `
+      <div onclick="filterCategoryDetailProducts('${mainCatName.replace(/'/g, "\\'")}', 'الكل', this)" 
+           class="cat-sub-pill ${!subCatName || subCatName === 'الكل' ? 'active' : ''}"
+           style="padding: 7px 14px; border-radius: 20px; font-size: 11.5px; font-weight: 700; white-space: nowrap; cursor: pointer; transition: all 0.2s; ${!subCatName || subCatName === 'الكل' ? 'background: linear-gradient(135deg, #0284c7, #0369a1); color: white; box-shadow: 0 2px 6px rgba(2,132,199,0.3);' : 'background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1;'}">
+        <i class="fa-solid fa-border-all" style="margin-left: 4px;"></i> جميع الفروع (${subsList.length})
+      </div>
+    `;
+
+    pillsHtml += subsList.map(sub => {
+      const isAct = subCatName === sub;
+      const escSub = sub.replace(/'/g, "\\'");
+      return `
+        <div onclick="filterCategoryDetailProducts('${mainCatName.replace(/'/g, "\\'")}', '${escSub}', this)"
+             class="cat-sub-pill ${isAct ? 'active' : ''}"
+             style="padding: 7px 14px; border-radius: 20px; font-size: 11.5px; font-weight: 700; white-space: nowrap; cursor: pointer; transition: all 0.2s; ${isAct ? 'background: linear-gradient(135deg, #0284c7, #0369a1); color: white; box-shadow: 0 2px 6px rgba(2,132,199,0.3);' : 'background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1;'}">
+          ${sub}
+        </div>
+      `;
+    }).join('');
+
+    subsPillsContainer.innerHTML = pillsHtml;
+  }
+
+  renderCategoryDetailProducts(mainCatName, subCatName);
+};
+
+window.filterCategoryDetailProducts = function(mainCatName, subCatName, element) {
+  window.currentSelectedCategory = { main: mainCatName, sub: subCatName };
+
+  if (element && element.parentElement) {
+    element.parentElement.querySelectorAll('.cat-sub-pill').forEach(pill => {
+      pill.style.background = '#f1f5f9';
+      pill.style.color = '#334155';
+      pill.style.border = '1px solid #cbd5e1';
+      pill.style.boxShadow = 'none';
+      pill.classList.remove('active');
+    });
+    element.style.background = 'linear-gradient(135deg, #0284c7, #0369a1)';
+    element.style.color = 'white';
+    element.style.border = 'none';
+    element.style.boxShadow = '0 2px 6px rgba(2,132,199,0.3)';
+    element.classList.add('active');
+  }
+
+  renderCategoryDetailProducts(mainCatName, subCatName);
+};
+
+window.renderCategoryDetailProducts = function(mainCatName, subCatName = '') {
+  const grid = document.getElementById('cat-detail-products-grid');
+  const countEl = document.getElementById('cat-detail-count');
+  if (!grid) return;
+
+  const allProds = state.loadedProducts || [];
+  const matched = allProds.filter(p => matchesCategoryOrSubcategory(p, mainCatName, subCatName));
+
+  if (countEl) countEl.textContent = `${matched.length} منتج`;
+
+  if (matched.length === 0) {
+    grid.innerHTML = `
+      <div style="grid-column: 1 / -1; width: 100%; text-align: center; padding: 40px 20px; background: white; border-radius: 20px; border: 1.5px solid var(--bd); margin: 10px 0;">
+        <i class="fa-solid fa-box-open" style="font-size: 42px; color: #cbd5e1; margin-bottom: 12px; display: block;"></i>
+        <h3 style="font-size: 14.5px; font-weight: 800; color: var(--navy); margin-bottom: 6px;">لا توجد معروضات حالياً بفرع (${subCatName === 'الكل' || !subCatName ? mainCatName : subCatName})</h3>
+        <p style="font-size: 12px; color: var(--gray); line-height: 1.6; max-width: 320px; margin: 0 auto 16px;">
+          يمكنك تصفح باقي الفروع أو التسجيل كتاجر معتمد لإضافة معروضاتك فوراً هنا ليصلك الطلبات المباشرة!
+        </p>
+        <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+          <button onclick="filterCategoryDetailProducts('${mainCatName.replace(/'/g, "\\'")}', 'الكل')" style="background: #f1f5f9; color: var(--navy); border: 1px solid var(--bd); padding: 10px 18px; border-radius: 12px; font-weight: 700; font-size: 12px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+            <i class="fa-solid fa-border-all"></i> عرض كل معروضات ${mainCatName}
+          </button>
+          <button onclick="applyForMerchant()" style="background: linear-gradient(135deg, #0284c7, #0369a1); color: white; border: none; padding: 10px 18px; border-radius: 12px; font-weight: 700; font-size: 12px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 12px rgba(2,132,199,0.25);">
+            <i class="fa-solid fa-shop"></i> انضم كتاجر الآن
+          </button>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  grid.innerHTML = matched.map(p => {
+    const pName = p.name || p.productName || 'منتج ZaLo';
+    const imgUrl = p.image || p.imageURL || p.imageUrl || p.image_url || 'assets/icon-192.svg';
+    const price = p.price || 0;
+    const storeId = p.storeId || 'direct';
+    const storeName = p.storeName || p.shopName || 'متجر معتمد';
+    const escName = pName.replace(/'/g, "\\'");
+    const escStore = storeName.replace(/'/g, "\\'");
+
+    return `
+      <div class="pcard">
+        <div class="pcard-img-container" onclick="openProd('${p.id}','${escName}',${price},'${imgUrl}','${p.emoji||'📦'}','${storeId}','${escStore}')">
+          <img src="${imgUrl}" class="pcard-img-tag" alt="${pName}" onerror="this.src='assets/icon-192.svg'">
+        </div>
+        <div class="pcard-info-box">
+          <div class="pcard-rating-row"><span class="pcard-rating-star">⭐</span> 4.8</div>
+          <div class="pcard-title-text" onclick="openProd('${p.id}','${escName}',${price},'${imgUrl}','${p.emoji||'📦'}','${storeId}','${escStore}')">${pName}</div>
+          <div style="font-size: 10px; color: #0ea5e9; font-weight: 700; margin: 2px 0;"><i class="fa-solid fa-shop"></i> ${storeName}</div>
+          <div class="pcard-price-row">
+            <span class="pcard-price-value">${price.toLocaleString()} دج</span> <span class="pcard-coin-emoji">💰</span>
+          </div>
+          <button class="pcard-add-btn" onclick="event.stopPropagation(); window.addToCartDirect('${p.id}','${escName}',${price},'${imgUrl}','${p.emoji||'📦'}','${storeId}','${escStore}')">
+            <i class="fa-solid fa-cart-shopping"></i> إضافة للسلة
+          </button>
+        </div>
+      </div>
+    `;
+  }).join('');
+};
+
+window.closeCategoryDetailView = function() {
+  const mainView = document.getElementById('cats-main-list-view');
+  const detailView = document.getElementById('cats-detail-view');
+  if (mainView) mainView.style.display = 'block';
+  if (detailView) detailView.style.display = 'none';
+};
+
+window.filterHomeProducts = function(category, element) {
+  filterHomeProductsByMainCategory(category, element);
 };
 
 window.filterCatAndSwitch = function(category) {
   try {
-    switchTab('home');
-    const items = document.querySelectorAll('.category-item-mockup');
-    let matched = false;
-    items.forEach(item => {
-      const lblEl = item.querySelector('.category-label-mockup');
-      if (!lblEl) return;
-      const label = lblEl.textContent || '';
-      let match = false;
-      if (category.includes('إلكترون') && label.includes('الكترون')) match = true;
-      else if (category.includes('ملابس') && label.includes('موضة')) match = true;
-      else if (category.includes('غذائي') && label.includes('غذا')) match = true;
-      else if (category.includes('منزل') && label.includes('منزل')) match = true;
-      else if (category.includes('كتب') && label.includes('كتب')) match = true;
-      
-      if (match || label.includes(category.substring(0, 3))) {
-        window.filterHomeProducts(category, item);
-        matched = true;
-      }
-    });
-    if (!matched) {
-      const filtered = (state.loadedProducts || []).filter(p => {
-        const cat = (p.category || '').toLowerCase();
-        return cat.includes((category || '').toLowerCase());
-      });
-      renderProductsList(filtered);
-    }
+    switchTab('cats');
+    openCategoryDetailView(category);
   } catch(e) {
     console.error("filterCatAndSwitch error:", e);
   }
