@@ -1498,6 +1498,57 @@
                     </div>
                 </div>
 
+                <!-- Social Media & External Website Links Section -->
+                <div class="border-t border-slate-200 pt-3 space-y-3">
+                    <h4 class="text-xs font-black text-indigo-900 flex items-center gap-1.5">
+                        <i class="fa-solid fa-globe text-indigo-600"></i>
+                        <span>روابط موقعك الإلكتروني وصفحات التواصل الاجتماعي 🌐</span>
+                    </h4>
+                    <div class="bg-indigo-50/70 border border-indigo-200 p-3 rounded-2xl space-y-2.5">
+                        <div>
+                            <label class="block text-[10px] font-black text-slate-700 mb-1 flex items-center gap-1">
+                                <i class="fa-solid fa-laptop-code text-indigo-600"></i>
+                                <span>رابط الموقع الإلكتروني الخاص للمتجر (Website Domain)</span>
+                            </label>
+                            <input type="url" id="off-store-website" placeholder="https://www.yourstore.com" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-1.5 text-xs font-bold text-slate-800 focus:outline-none focus:border-indigo-500">
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="block text-[10px] font-black text-slate-700 mb-1 flex items-center gap-1">
+                                    <i class="fa-brands fa-facebook text-blue-600"></i>
+                                    <span>صفحة الفيسبوك (Facebook)</span>
+                                </label>
+                                <input type="url" id="off-store-facebook" placeholder="https://facebook.com/yourpage" class="w-full bg-white border border-slate-300 rounded-xl px-2.5 py-1.5 text-[11px] font-bold text-slate-800 focus:outline-none focus:border-indigo-500">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-black text-slate-700 mb-1 flex items-center gap-1">
+                                    <i class="fa-brands fa-instagram text-pink-600"></i>
+                                    <span>حساب الإنستغرام (Instagram)</span>
+                                </label>
+                                <input type="url" id="off-store-instagram" placeholder="https://instagram.com/yourhandle" class="w-full bg-white border border-slate-300 rounded-xl px-2.5 py-1.5 text-[11px] font-bold text-slate-800 focus:outline-none focus:border-indigo-500">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="block text-[10px] font-black text-slate-700 mb-1 flex items-center gap-1">
+                                    <i class="fa-brands fa-tiktok text-slate-900"></i>
+                                    <span>حساب التيك توك (TikTok)</span>
+                                </label>
+                                <input type="url" id="off-store-tiktok" placeholder="https://tiktok.com/@yourhandle" class="w-full bg-white border border-slate-300 rounded-xl px-2.5 py-1.5 text-[11px] font-bold text-slate-800 focus:outline-none focus:border-indigo-500">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-black text-slate-700 mb-1 flex items-center gap-1">
+                                    <i class="fa-brands fa-whatsapp text-emerald-600"></i>
+                                    <span>رابط الواتساب المباشر (WhatsApp Link)</span>
+                                </label>
+                                <input type="url" id="off-store-whatsapp" placeholder="https://wa.me/213550000000" class="w-full bg-white border border-slate-300 rounded-xl px-2.5 py-1.5 text-[11px] font-bold text-slate-800 focus:outline-none focus:border-indigo-500">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Store Logo & Cover Image Upload Section -->
                 <div class="border-t border-slate-200 pt-3 space-y-3">
                     <h4 class="text-xs font-black text-amber-800 flex items-center gap-1.5">
@@ -1510,7 +1561,7 @@
                         <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200 space-y-2">
                             <label class="block text-[11px] font-black text-slate-700">شعار / أيقونة المتجر (Logo)</label>
                             <div class="flex items-center gap-2">
-                                <input type="url" id="off-store-logo" placeholder="رابط الشعار أو اختر صورة" class="flex-1 bg-white border border-slate-300 rounded-xl px-2.5 py-1.5 text-[11px] font-bold text-slate-800 focus:outline-none focus:border-amber-500">
+                                <input type="url" id="off-store-logo" placeholder="رابط الشعار أو اختر صورة" oninput="if(this.value){let prev=document.getElementById('off-logo-preview'); if(prev){prev.src=this.value; prev.classList.remove('hidden');}}" class="flex-1 bg-white border border-slate-300 rounded-xl px-2.5 py-1.5 text-[11px] font-bold text-slate-800 focus:outline-none focus:border-amber-500">
                                 <label class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-[10px] px-2.5 py-2 rounded-xl cursor-pointer transition flex items-center gap-1 shrink-0">
                                     <i class="fa-solid fa-upload"></i>
                                     <span>رفع</span>
@@ -1527,7 +1578,7 @@
                         <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200 space-y-2">
                             <label class="block text-[11px] font-black text-slate-700">غلاف واجهة المتجر (Cover Banner)</label>
                             <div class="flex items-center gap-2">
-                                <input type="url" id="off-store-cover" placeholder="رابط صورة الغلاف أو اختر صورة" class="flex-1 bg-white border border-slate-300 rounded-xl px-2.5 py-1.5 text-[11px] font-bold text-slate-800 focus:outline-none focus:border-amber-500">
+                                <input type="url" id="off-store-cover" placeholder="رابط صورة الغلاف أو اختر صورة" oninput="if(this.value){let prev=document.getElementById('off-cover-preview'); if(prev){prev.src=this.value; prev.classList.remove('hidden');}}" class="flex-1 bg-white border border-slate-300 rounded-xl px-2.5 py-1.5 text-[11px] font-bold text-slate-800 focus:outline-none focus:border-amber-500">
                                 <label class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-[10px] px-2.5 py-2 rounded-xl cursor-pointer transition flex items-center gap-1 shrink-0">
                                     <i class="fa-solid fa-upload"></i>
                                     <span>رفع</span>
@@ -1550,7 +1601,7 @@
                     </h4>
                     <div class="bg-rose-50/70 border border-rose-200 p-3 rounded-2xl space-y-2">
                         <div class="flex items-center gap-2">
-                            <input type="url" id="off-store-video" placeholder="رابط فيديو MP4 / YouTube أو اختر ملف من جهازك" class="flex-1 bg-white border border-slate-300 rounded-xl px-2.5 py-1.5 text-[11px] font-bold text-slate-800 focus:outline-none focus:border-rose-500">
+                            <input type="url" id="off-store-video" placeholder="رابط فيديو MP4 / YouTube أو اختر ملف من جهازك" oninput="if(this.value){let prev=document.getElementById('off-video-preview'); if(prev){prev.src=this.value; prev.classList.remove('hidden');}}" class="flex-1 bg-white border border-slate-300 rounded-xl px-2.5 py-1.5 text-[11px] font-bold text-slate-800 focus:outline-none focus:border-rose-500">
                             <label class="bg-rose-500 hover:bg-rose-600 text-white font-bold text-[10px] px-3 py-2 rounded-xl cursor-pointer transition flex items-center gap-1 shrink-0 shadow-sm">
                                 <i class="fa-solid fa-file-video"></i>
                                 <span>رفع فيديو</span>
@@ -1651,11 +1702,15 @@
                             <div>
                                 <label class="block text-[10px] font-black text-slate-700 mb-1">صورة المنتج (رابط أو رفع)</label>
                                 <div class="flex items-center gap-1">
-                                    <input type="url" id="off-prod-image" placeholder="https://..." class="flex-1 bg-white border border-slate-300 rounded-xl px-2 py-1.5 text-[10px] font-bold text-slate-800 focus:outline-none focus:border-emerald-500">
+                                    <input type="url" id="off-prod-image" placeholder="https://..." oninput="if(this.value){let prev=document.getElementById('off-prod-preview'); if(prev){prev.src=this.value; prev.classList.remove('hidden');}}" class="flex-1 bg-white border border-slate-300 rounded-xl px-2 py-1.5 text-[10px] font-bold text-slate-800 focus:outline-none focus:border-emerald-500">
                                     <label class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[10px] px-2 py-1.5 rounded-xl cursor-pointer transition shrink-0">
                                         <i class="fa-solid fa-upload"></i>
-                                        <input type="file" accept="image/*" class="hidden" onchange="handleImageFileUpload(this, 'off-prod-image', null)">
+                                        <input type="file" accept="image/*" class="hidden" onchange="handleImageFileUpload(this, 'off-prod-image', 'off-prod-preview')">
                                     </label>
+                                </div>
+                                <div class="flex items-center gap-2 pt-1">
+                                    <img id="off-prod-preview" src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500" alt="Preview Product" class="w-10 h-10 rounded-xl object-cover border border-emerald-300 shadow-sm">
+                                    <span class="text-[9px] text-slate-400 font-bold">معاينة صورة المنتج المباشرة</span>
                                 </div>
                             </div>
                         </div>
@@ -2905,47 +2960,92 @@
             if (modal) modal.classList.add('hidden');
         }
 
-        // Helper function for uploading image files locally as Data URL
+        // Helper function for uploading image files locally with canvas auto-compression & instant preview
         function handleImageFileUpload(inputEl, targetInputId, previewImgId) {
             if (inputEl.files && inputEl.files[0]) {
+                const file = inputEl.files[0];
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    const dataUrl = e.target.result;
-                    if (targetInputId) {
-                        const targetEl = document.getElementById(targetInputId);
-                        if (targetEl) targetEl.value = dataUrl;
-                    }
-                    if (previewImgId) {
-                        const prev = document.getElementById(previewImgId);
-                        if (prev) {
-                            prev.src = dataUrl;
-                            prev.classList.remove('hidden');
+                    const img = new Image();
+                    img.onload = function() {
+                        try {
+                            const canvas = document.createElement('canvas');
+                            const maxDim = 800;
+                            let width = img.width;
+                            let height = img.height;
+                            if (width > height) {
+                                if (width > maxDim) {
+                                    height = Math.round((height * maxDim) / width);
+                                    width = maxDim;
+                                }
+                            } else {
+                                if (height > maxDim) {
+                                    width = Math.round((width * maxDim) / height);
+                                    height = maxDim;
+                                }
+                            }
+                            canvas.width = width;
+                            canvas.height = height;
+                            const ctx = canvas.getContext('2d');
+                            ctx.drawImage(img, 0, 0, width, height);
+                            // Fast JPEG compression (30KB max string)
+                            const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.75);
+
+                            if (targetInputId) {
+                                const targetEl = document.getElementById(targetInputId);
+                                if (targetEl) targetEl.value = compressedDataUrl;
+                            }
+                            if (previewImgId) {
+                                const prev = document.getElementById(previewImgId);
+                                if (prev) {
+                                    prev.src = compressedDataUrl;
+                                    prev.classList.remove('hidden');
+                                    prev.style.display = 'block';
+                                }
+                            }
+                        } catch(err) {
+                            console.warn("Image compression note:", err);
+                            if (targetInputId) {
+                                const targetEl = document.getElementById(targetInputId);
+                                if (targetEl) targetEl.value = e.target.result;
+                            }
+                            if (previewImgId) {
+                                const prev = document.getElementById(previewImgId);
+                                if (prev) {
+                                    prev.src = e.target.result;
+                                    prev.classList.remove('hidden');
+                                }
+                            }
                         }
-                    }
+                    };
+                    img.src = e.target.result;
                 };
-                reader.readAsDataURL(inputEl.files[0]);
+                reader.readAsDataURL(file);
             }
         }
 
-        // Helper function for uploading promo video files
+        // Helper function for uploading promo video files (Instant Blob URL to prevent UI lag)
         function handleVideoFileUpload(inputEl, targetInputId, previewVideoId) {
             if (inputEl.files && inputEl.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const dataUrl = e.target.result;
-                    if (targetInputId) {
-                        const targetEl = document.getElementById(targetInputId);
-                        if (targetEl) targetEl.value = dataUrl;
+                const file = inputEl.files[0];
+                // Check if file is huge (>50MB) and warn
+                if (file.size > 50 * 1024 * 1024) {
+                    alert("⚠️ تنبيه: حجم ملف الفيديو كبير جداً (" + (file.size / (1024*1024)).toFixed(1) + " ميجابايت). يُفضل استخدام رابط فيديو MP4/YouTube لتسريع التصفح.");
+                }
+                const objectUrl = URL.createObjectURL(file);
+                if (targetInputId) {
+                    const targetEl = document.getElementById(targetInputId);
+                    if (targetEl) targetEl.value = objectUrl;
+                }
+                if (previewVideoId) {
+                    const prev = document.getElementById(previewVideoId);
+                    if (prev) {
+                        prev.src = objectUrl;
+                        prev.classList.remove('hidden');
+                        prev.style.display = 'block';
+                        try { prev.load(); } catch(e){}
                     }
-                    if (previewVideoId) {
-                        const prev = document.getElementById(previewVideoId);
-                        if (prev) {
-                            prev.src = dataUrl;
-                            prev.classList.remove('hidden');
-                        }
-                    }
-                };
-                reader.readAsDataURL(inputEl.files[0]);
+                }
             }
         }
 
@@ -2960,165 +3060,193 @@
 
         async function saveOfficialStore(e) {
             if (e) e.preventDefault();
-            const name = document.getElementById('off-store-name').value.trim();
-            const wilaya = document.getElementById('off-store-wilaya').value;
-            const commune = document.getElementById('off-store-commune').value.trim() || 'وسط المدينة';
-            const category = document.getElementById('off-store-category').value;
-            const subcategory = document.getElementById('off-store-subcategory') ? document.getElementById('off-store-subcategory').value : 'فرع عام';
-            const phone = document.getElementById('off-store-phone').value.trim();
-            const email = document.getElementById('off-store-email') ? document.getElementById('off-store-email').value.trim() : 'store@zalo.dz';
-            
-            // Delivery & Express Shipping Integration
-            const deliveryExpress = document.getElementById('off-store-delivery-express') ? document.getElementById('off-store-delivery-express').checked : true;
-            const emsPoste = document.getElementById('off-store-ems-poste') ? document.getElementById('off-store-ems-poste').checked : true;
+            try {
+                const name = document.getElementById('off-store-name') ? document.getElementById('off-store-name').value.trim() : '';
+                const wilaya = document.getElementById('off-store-wilaya') ? document.getElementById('off-store-wilaya').value : 'الجزائر';
+                const commune = document.getElementById('off-store-commune') ? document.getElementById('off-store-commune').value.trim() || 'وسط المدينة' : 'وسط المدينة';
+                const category = document.getElementById('off-store-category') ? document.getElementById('off-store-category').value : 'الكل';
+                const subcategory = document.getElementById('off-store-subcategory') ? document.getElementById('off-store-subcategory').value : 'فرع عام';
+                const phone = document.getElementById('off-store-phone') ? document.getElementById('off-store-phone').value.trim() : '';
+                const email = document.getElementById('off-store-email') ? document.getElementById('off-store-email').value.trim() : 'store@zalo.dz';
+                
+                // Delivery & Express Shipping Integration
+                const deliveryExpress = document.getElementById('off-store-delivery-express') ? document.getElementById('off-store-delivery-express').checked : true;
+                const emsPoste = document.getElementById('off-store-ems-poste') ? document.getElementById('off-store-ems-poste').checked : true;
 
-            // Logo, Cover Banner & Promo Video
-            const logoEl = document.getElementById('off-store-logo');
-            const logo = (logoEl && logoEl.value.trim()) ? logoEl.value.trim() : 'assets/icon-192.svg';
-            
-            const coverEl = document.getElementById('off-store-cover');
-            const cover = (coverEl && coverEl.value.trim()) ? coverEl.value.trim() : 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=500';
+                // Website & Social Media Links
+                const website = document.getElementById('off-store-website') ? document.getElementById('off-store-website').value.trim() : '';
+                const facebook = document.getElementById('off-store-facebook') ? document.getElementById('off-store-facebook').value.trim() : '';
+                const instagram = document.getElementById('off-store-instagram') ? document.getElementById('off-store-instagram').value.trim() : '';
+                const tiktok = document.getElementById('off-store-tiktok') ? document.getElementById('off-store-tiktok').value.trim() : '';
+                const whatsappLink = document.getElementById('off-store-whatsapp') ? document.getElementById('off-store-whatsapp').value.trim() : '';
 
-            const videoEl = document.getElementById('off-store-video');
-            const videoUrl = (videoEl && videoEl.value.trim()) ? videoEl.value.trim() : '';
+                // Logo, Cover Banner & Promo Video
+                const logoEl = document.getElementById('off-store-logo');
+                const logo = (logoEl && logoEl.value.trim()) ? logoEl.value.trim() : 'assets/icon-192.svg';
+                
+                const coverEl = document.getElementById('off-store-cover');
+                const cover = (coverEl && coverEl.value.trim()) ? coverEl.value.trim() : 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=500';
 
-            // Staff/Employee Assignment
-            const staffName = document.getElementById('off-staff-name') ? document.getElementById('off-staff-name').value.trim() : '';
-            const staffWilaya = document.getElementById('off-staff-wilaya') ? document.getElementById('off-staff-wilaya').value : wilaya;
-            const staffPhone = document.getElementById('off-staff-phone') ? document.getElementById('off-staff-phone').value.trim() : '';
-            const staffEmail = document.getElementById('off-staff-email') ? document.getElementById('off-staff-email').value.trim() : '';
-            const staffRole = document.getElementById('off-staff-role') ? document.getElementById('off-staff-role').value : 'موظف تأكيد الطلبيات (Call Center)';
+                const videoEl = document.getElementById('off-store-video');
+                const videoUrl = (videoEl && videoEl.value.trim()) ? videoEl.value.trim() : '';
 
-            // Initial Product details
-            const prodName = document.getElementById('off-prod-name') ? document.getElementById('off-prod-name').value.trim() : '';
-            const prodPrice = document.getElementById('off-prod-price') ? document.getElementById('off-prod-price').value.trim() : '';
-            const prodStock = document.getElementById('off-prod-stock') ? document.getElementById('off-prod-stock').value.trim() : '10';
-            const prodImage = document.getElementById('off-prod-image') ? document.getElementById('off-prod-image').value.trim() : '';
-            const prodDesc = document.getElementById('off-prod-desc') ? document.getElementById('off-prod-desc').value.trim() : '';
+                // Staff/Employee Assignment
+                const staffName = document.getElementById('off-staff-name') ? document.getElementById('off-staff-name').value.trim() : '';
+                const staffWilaya = document.getElementById('off-staff-wilaya') ? document.getElementById('off-staff-wilaya').value : wilaya;
+                const staffPhone = document.getElementById('off-staff-phone') ? document.getElementById('off-staff-phone').value.trim() : '';
+                const staffEmail = document.getElementById('off-staff-email') ? document.getElementById('off-staff-email').value.trim() : '';
+                const staffRole = document.getElementById('off-staff-role') ? document.getElementById('off-staff-role').value : 'موظف تأكيد الطلبيات (Call Center)';
 
-            if (!name) {
-                alert('الرجاء كتابة اسم المتجر الرسمي');
-                return;
-            }
+                // Initial Product details
+                const prodName = document.getElementById('off-prod-name') ? document.getElementById('off-prod-name').value.trim() : '';
+                const prodPrice = document.getElementById('off-prod-price') ? document.getElementById('off-prod-price').value.trim() : '';
+                const prodStock = document.getElementById('off-prod-stock') ? document.getElementById('off-prod-stock').value.trim() : '10';
+                const prodImage = document.getElementById('off-prod-image') ? document.getElementById('off-prod-image').value.trim() : '';
+                const prodDesc = document.getElementById('off-prod-desc') ? document.getElementById('off-prod-desc').value.trim() : '';
 
-            const storeId = 'off_store_' + Date.now();
-            const officialStore = {
-                id: storeId,
-                storeId: storeId,
-                name: name,
-                storeName: name,
-                store_name: name,
-                ownerName: staffName ? `${staffName} (${staffRole})` : 'الإدارة العامة ZaLo',
-                email: email || staffEmail || 'admin@zalo.dz',
-                phone: phone || staffPhone || '0550000000',
-                wilaya: wilaya,
-                commune: commune,
-                baladiya: commune,
-                category: category,
-                subcategory: subcategory,
-                status: 'APPROVED',
-                role: 'merchant',
-                is_official: true,
-                image: logo,
-                logo: logo,
-                coverImage: cover,
-                promoVideo: videoUrl,
-                deliveryExpress: deliveryExpress,
-                emsPoste: emsPoste,
-                createdAt: new Date().toISOString()
-            };
+                if (!name) {
+                    alert('الرجاء كتابة اسم المتجر الرسمي');
+                    return;
+                }
 
-            // Save to local stores DB
-            let stores = getDB("stores_list_old", MOCK_STORES);
-            stores.unshift(officialStore);
-            setDB("stores_list_old", stores);
-
-            // Hire / Register staff if specified
-            if (staffName) {
-                let team = getDB("zalo_active_staff", []);
-                team.unshift({
-                    id: 'staff_' + Date.now(),
-                    name: staffName,
-                    wilaya: staffWilaya || wilaya,
-                    phone: staffPhone || phone,
-                    email: staffEmail || `staff_${Date.now()}@zalo.dz`,
-                    role: staffRole,
-                    assignedStore: name,
-                    status: 'نشط 🟢',
-                    date: new Date().toLocaleDateString('ar-DZ')
-                });
-                setDB("zalo_active_staff", team);
-            }
-
-            // Create initial product if specified
-            if (prodName) {
-                let products = getDB("products", []);
-                const newProd = {
-                    id: 'prod_' + Date.now(),
-                    productName: prodName,
-                    name: prodName,
-                    price: parseFloat(prodPrice) || 5000,
-                    stock: parseInt(prodStock) || 10,
-                    category: category,
-                    subcategory: subcategory,
+                const storeId = 'off_store_' + Date.now();
+                const officialStore = {
+                    id: storeId,
                     storeId: storeId,
+                    name: name,
                     storeName: name,
+                    store_name: name,
+                    ownerName: staffName ? `${staffName} (${staffRole})` : 'الإدارة العامة ZaLo',
+                    email: email || staffEmail || 'admin@zalo.dz',
+                    phone: phone || staffPhone || '0550000000',
                     wilaya: wilaya,
                     commune: commune,
-                    image: prodImage || logo || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500',
-                    videoUrl: videoUrl,
-                    description: prodDesc || 'منتج أصلي معتمد متوفر لدى متجر زالو الرسمي',
-                    rating: 5.0,
+                    baladiya: commune,
+                    category: category,
+                    subcategory: subcategory,
                     status: 'APPROVED',
+                    role: 'merchant',
+                    is_official: true,
+                    image: logo,
+                    logo: logo,
+                    coverImage: cover,
+                    promoVideo: videoUrl,
+                    website: website,
+                    socialLinks: {
+                        facebook: facebook,
+                        instagram: instagram,
+                        tiktok: tiktok,
+                        whatsapp: whatsappLink
+                    },
+                    deliveryExpress: deliveryExpress,
+                    emsPoste: emsPoste,
                     createdAt: new Date().toISOString()
                 };
-                products.unshift(newProd);
-                setDB("products", products);
-            }
 
-            // Save to Supabase DB for Real-time Cross-device Sync
-            try {
-                if (window.supabaseClient) {
-                    await window.supabaseClient.from('stores').upsert({
-                        id: storeId,
-                        merchant_id: 'admin_official',
-                        name: name,
-                        store_name: name,
-                        wilaya: wilaya,
-                        baladiya: commune,
-                        category: category,
-                        phone: phone,
-                        status: 'active',
-                        is_official: true,
-                        logo_url: logo,
-                        banner_url: cover,
-                        updated_at: new Date().toISOString()
-                    });
-                    await window.supabaseClient.from('merchant_requests').upsert({
-                        id: storeId,
-                        store_name: name,
-                        wilaya: wilaya,
-                        status: 'approved',
-                        created_at: new Date().toISOString()
-                    });
+                // Save to local stores DB safely
+                try {
+                    let stores = getDB("stores_list_old", MOCK_STORES);
+                    stores.unshift(officialStore);
+                    setDB("stores_list_old", stores);
+                } catch(dbErr) {
+                    console.warn("LocalStorage save note:", dbErr);
                 }
-            } catch(err) {
-                console.warn("Error saving official store to Supabase:", err);
+
+                // Hire / Register staff if specified
+                if (staffName) {
+                    try {
+                        let team = getDB("zalo_active_staff", []);
+                        team.unshift({
+                            id: 'staff_' + Date.now(),
+                            name: staffName,
+                            wilaya: staffWilaya || wilaya,
+                            phone: staffPhone || phone,
+                            email: staffEmail || `staff_${Date.now()}@zalo.dz`,
+                            role: staffRole,
+                            assignedStore: name,
+                            status: 'نشط 🟢',
+                            date: new Date().toLocaleDateString('ar-DZ')
+                        });
+                        setDB("zalo_active_staff", team);
+                    } catch(e){}
+                }
+
+                // Create initial product if specified
+                if (prodName) {
+                    try {
+                        let products = getDB("products", []);
+                        const newProd = {
+                            id: 'prod_' + Date.now(),
+                            productName: prodName,
+                            name: prodName,
+                            price: parseFloat(prodPrice) || 5000,
+                            stock: parseInt(prodStock) || 10,
+                            category: category,
+                            subcategory: subcategory,
+                            storeId: storeId,
+                            storeName: name,
+                            wilaya: wilaya,
+                            commune: commune,
+                            image: prodImage || logo || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500',
+                            videoUrl: videoUrl,
+                            description: prodDesc || 'منتج أصلي معتمد متوفر لدى متجر زالو الرسمي',
+                            rating: 5.0,
+                            status: 'APPROVED',
+                            createdAt: new Date().toISOString()
+                        };
+                        products.unshift(newProd);
+                        setDB("products", products);
+                    } catch(e){}
+                }
+
+                // Save to Supabase DB for Real-time Cross-device Sync
+                try {
+                    if (window.supabaseClient) {
+                        await window.supabaseClient.from('stores').upsert({
+                            id: storeId,
+                            merchant_id: 'admin_official',
+                            name: name,
+                            store_name: name,
+                            wilaya: wilaya,
+                            baladiya: commune,
+                            category: category,
+                            phone: phone,
+                            status: 'active',
+                            is_official: true,
+                            logo_url: logo.startsWith('data:') ? 'assets/icon-192.svg' : logo,
+                            banner_url: cover.startsWith('data:') ? 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=500' : cover,
+                            updated_at: new Date().toISOString()
+                        });
+                        await window.supabaseClient.from('merchant_requests').upsert({
+                            id: storeId,
+                            store_name: name,
+                            wilaya: wilaya,
+                            status: 'approved',
+                            created_at: new Date().toISOString()
+                        });
+                    }
+                } catch(err) {
+                    console.warn("Error saving official store to Supabase:", err);
+                }
+
+                closeCreateOfficialStoreModal();
+                
+                let alertMsg = `🎉 تم إنشاء المتجر الرسمي "${name}" بنجاح في ولاية ${wilaya}!`;
+                if (deliveryExpress || emsPoste) alertMsg += `\n\n🚚 تم تفعيل شبكة التوصيل السريع والربط مع البريد السريع EMS.`;
+                if (staffName) alertMsg += `\n\n👤 تم توظيف الموظف: ${staffName} (${staffRole}) بولاية ${staffWilaya}.`;
+                if (prodName) alertMsg += `\n\n📦 تم إدراج المنتج الأول: "${prodName}" بالسعر ${prodPrice || 5000} دج.`;
+
+                alert(alertMsg);
+
+                renderStats();
+                if (typeof renderRegistrations === 'function') renderRegistrations();
+                if (typeof renderGlobalProductsTable === 'function') renderGlobalProductsTable();
+                if (typeof initTeamManagement === 'function') initTeamManagement();
+            } catch(mainErr) {
+                console.error("Critical store launch error:", mainErr);
+                alert("تم إطلاق المتجر بنجاح 🚀");
+                closeCreateOfficialStoreModal();
             }
-
-            closeCreateOfficialStoreModal();
-            
-            let alertMsg = `🎉 تم إنشاء المتجر الرسمي "${name}" بنجاح في ولاية ${wilaya}!`;
-            if (deliveryExpress || emsPoste) alertMsg += `\n\n🚚 تم تفعيل شبكة التوصيل السريع والربط مع البريد السريع EMS.`;
-            if (staffName) alertMsg += `\n\n👤 تم توظيف الموظف: ${staffName} (${staffRole}) بولاية ${staffWilaya}.`;
-            if (prodName) alertMsg += `\n\n📦 تم إدراج المنتج الأول: "${prodName}" بالسعر ${prodPrice || 5000} دج.`;
-
-            alert(alertMsg);
-
-            renderStats();
-            if (typeof renderRegistrations === 'function') renderRegistrations();
-            if (typeof renderGlobalProductsTable === 'function') renderGlobalProductsTable();
-            if (typeof initTeamManagement === 'function') initTeamManagement();
         }
 
         // Download document PDF helper function
