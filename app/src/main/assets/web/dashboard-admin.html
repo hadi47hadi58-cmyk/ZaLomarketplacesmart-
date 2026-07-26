@@ -1320,18 +1320,19 @@
     </div>
 
     <!-- MODAL: CREATE OFFICIAL ADMIN STORE -->
-    <div id="create-official-store-modal" class="fixed inset-0 bg-black/80 z-[90] flex items-center justify-center p-4 hidden backdrop-blur-md">
-        <div class="bg-white border-2 border-amber-400 rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl text-right">
-            <header class="bg-gradient-to-r from-slate-900 to-sky-950 text-white py-4 px-6 flex justify-between items-center border-b border-amber-400/40">
-                <button type="button" onclick="closeCreateOfficialStoreModal()" class="text-slate-400 hover:text-white text-lg">
-                    <i class="fa-solid fa-xmark"></i>
+    <div id="create-official-store-modal" class="fixed inset-0 bg-black/80 z-[90] flex items-center justify-center p-3 sm:p-4 hidden backdrop-blur-md overflow-y-auto">
+        <div class="bg-white border-2 border-amber-400 rounded-3xl w-full max-w-xl overflow-hidden shadow-2xl text-right my-8 max-h-[90vh] flex flex-col">
+            <header class="bg-gradient-to-r from-amber-500 via-amber-600 to-amber-700 p-3.5 px-5 flex justify-between items-center text-slate-950 font-black rounded-t-3xl shadow-md border-b-2 border-amber-300 shrink-0">
+                <button type="button" onclick="closeCreateOfficialStoreModal()" class="flex items-center gap-2 hover:bg-black/15 px-3 py-1.5 rounded-xl transition cursor-pointer text-slate-950 font-black border border-slate-950/20 bg-amber-400/30">
+                    <i class="fa-solid fa-arrow-right text-sm"></i>
+                    <span class="text-xs font-black">العودة للخلف (إغلاق)</span>
                 </button>
-                <h3 class="text-xs sm:text-sm font-black flex items-center gap-2 text-amber-300">
-                    <i class="fa-solid fa-store text-amber-400"></i>
-                    <span>إنشاء متجر زالو إداري رسمي في أي ولاية 🇩🇿</span>
+                <h3 class="text-xs sm:text-sm font-black flex items-center gap-2 text-slate-950">
+                    <i class="fa-solid fa-store text-amber-950"></i>
+                    <span>إنشاء متجر زالو إداري رسمي (69 ولاية) 🇩🇿</span>
                 </h3>
             </header>
-            <form onsubmit="saveOfficialStore(event)" class="p-6 space-y-4">
+            <form onsubmit="saveOfficialStore(event)" class="p-5 space-y-4 overflow-y-auto flex-1">
                 <div class="bg-amber-50 border border-amber-300 p-3 rounded-2xl text-[11px] font-bold text-amber-900 flex items-center gap-2.5">
                     <i class="fa-solid fa-crown text-amber-600 text-base flex-shrink-0"></i>
                     <span>يمكنك إنشاء وتخصيص متاجر رسمية في أية ولاية بأسماء تجارية ممتازة والبيع المباشر لحساب الإدارة مباشرة.</span>
@@ -1344,7 +1345,7 @@
 
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-black text-slate-700 mb-1">الولاية المستهدفة *</label>
+                        <label class="block text-xs font-black text-slate-700 mb-1">الولاية المستهدفة (من الـ 69) *</label>
                         <select id="off-store-wilaya" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-xs font-bold text-slate-800 focus:outline-none focus:border-amber-500">
                             <option value="أدرار">01 - أدرار</option>
                             <option value="الشلف">02 - الشلف</option>
@@ -1423,7 +1424,7 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-2 gap-3">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                         <label class="block text-xs font-black text-slate-700 mb-1">التخصص الرئيسي للمتجر</label>
                         <select id="off-store-category" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-xs font-bold text-slate-800 focus:outline-none focus:border-amber-500">
@@ -1437,8 +1438,63 @@
                         </select>
                     </div>
                     <div>
+                        <label class="block text-xs font-black text-slate-700 mb-1">فروع التخصصات (تخصص دقيق)</label>
+                        <select id="off-store-subcategory" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-xs font-bold text-slate-800 focus:outline-none focus:border-amber-500">
+                            <option value="ألبسة نسائية ورجالية فاخرة">ألبسة نسائية ورجالية فاخرة</option>
+                            <option value="هواتف ذكية وسماعات وإكسسوارات">هواتف ذكية وسماعات وإكسسوارات</option>
+                            <option value="قطع غيار ومحركات سيارات">قطع غيار ومحركات سيارات</option>
+                            <option value="مواد غذائية ومشروبات بالجملة">مواد غذائية ومشروبات بالجملة</option>
+                            <option value="عطور ومستحضرات تجميل أصلية">عطور ومستحضرات تجميل أصلية</option>
+                            <option value="أثاث وديكورات منزلية حديثة">أثاث وديكورات منزلية حديثة</option>
+                            <option value="مستلزمات أطفال وألعاب">مستلزمات أطفال وألعاب</option>
+                            <option value="فرع عام وشامل">فرع عام وشامل</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
                         <label class="block text-xs font-black text-slate-700 mb-1">رقم هاتف المتجر / الواتساب</label>
-                        <input type="tel" id="off-store-phone" value="0550000000" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-xs font-bold text-slate-800 focus:outline-none focus:border-amber-500">
+                        <input type="tel" id="off-store-phone" value="0550000000" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 focus:outline-none focus:border-amber-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-black text-slate-700 mb-1">البريد الإلكتروني للمتجر</label>
+                        <input type="email" id="off-store-email" value="store@zalo.dz" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 focus:outline-none focus:border-amber-500">
+                    </div>
+                </div>
+
+                <!-- Express Delivery & EMS Integration Section -->
+                <div class="border-t border-slate-200 pt-3 space-y-2">
+                    <h4 class="text-xs font-black text-purple-900 flex items-center gap-1.5">
+                        <i class="fa-solid fa-truck-fast text-purple-600"></i>
+                        <span>ربط وتفعيل خدمات التوصيل والبريد السريع (69 ولاية) 🚚</span>
+                    </h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <label class="bg-purple-50 hover:bg-purple-100/80 border border-purple-200 p-2.5 rounded-2xl flex items-center justify-between cursor-pointer transition">
+                            <div class="flex items-center gap-2">
+                                <div class="w-7 h-7 rounded-lg bg-purple-200 text-purple-800 flex items-center justify-center text-xs">
+                                    <i class="fa-solid fa-route"></i>
+                                </div>
+                                <div>
+                                    <span class="text-[11px] font-black text-slate-800 block">التوصيل الولائي السريع</span>
+                                    <span class="text-[9px] text-slate-500 font-bold">Yalidine / Zr Express / Kazi</span>
+                                </div>
+                            </div>
+                            <input type="checkbox" id="off-store-delivery-express" checked class="w-4 h-4 accent-purple-600 rounded cursor-pointer">
+                        </label>
+
+                        <label class="bg-emerald-50 hover:bg-emerald-100/80 border border-emerald-200 p-2.5 rounded-2xl flex items-center justify-between cursor-pointer transition">
+                            <div class="flex items-center gap-2">
+                                <div class="w-7 h-7 rounded-lg bg-emerald-200 text-emerald-800 flex items-center justify-center text-xs">
+                                    <i class="fa-solid fa-envelope-open-text"></i>
+                                </div>
+                                <div>
+                                    <span class="text-[11px] font-black text-slate-800 block">ربط البريد السريع EMS</span>
+                                    <span class="text-[9px] text-slate-500 font-bold">Algérie Poste EMS 🇩🇿</span>
+                                </div>
+                            </div>
+                            <input type="checkbox" id="off-store-ems-poste" checked class="w-4 h-4 accent-emerald-600 rounded cursor-pointer">
+                        </label>
                     </div>
                 </div>
 
@@ -1454,7 +1510,7 @@
                         <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200 space-y-2">
                             <label class="block text-[11px] font-black text-slate-700">شعار / أيقونة المتجر (Logo)</label>
                             <div class="flex items-center gap-2">
-                                <input type="url" id="off-store-logo" placeholder="رابط الشعار أو اختار صورة" class="flex-1 bg-white border border-slate-300 rounded-xl px-2.5 py-1.5 text-[11px] font-bold text-slate-800 focus:outline-none focus:border-amber-500">
+                                <input type="url" id="off-store-logo" placeholder="رابط الشعار أو اختر صورة" class="flex-1 bg-white border border-slate-300 rounded-xl px-2.5 py-1.5 text-[11px] font-bold text-slate-800 focus:outline-none focus:border-amber-500">
                                 <label class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-[10px] px-2.5 py-2 rounded-xl cursor-pointer transition flex items-center gap-1 shrink-0">
                                     <i class="fa-solid fa-upload"></i>
                                     <span>رفع</span>
@@ -1486,14 +1542,36 @@
                     </div>
                 </div>
 
+                <!-- Promo Video Upload Section -->
+                <div class="border-t border-slate-200 pt-3 space-y-2">
+                    <h4 class="text-xs font-black text-rose-800 flex items-center gap-1.5">
+                        <i class="fa-solid fa-video text-rose-500"></i>
+                        <span>رفع فيديو إعلاني أو عرض مرئي للمتجر/المنتج (Promo Video) 🎥</span>
+                    </h4>
+                    <div class="bg-rose-50/70 border border-rose-200 p-3 rounded-2xl space-y-2">
+                        <div class="flex items-center gap-2">
+                            <input type="url" id="off-store-video" placeholder="رابط فيديو MP4 / YouTube أو اختر ملف من جهازك" class="flex-1 bg-white border border-slate-300 rounded-xl px-2.5 py-1.5 text-[11px] font-bold text-slate-800 focus:outline-none focus:border-rose-500">
+                            <label class="bg-rose-500 hover:bg-rose-600 text-white font-bold text-[10px] px-3 py-2 rounded-xl cursor-pointer transition flex items-center gap-1 shrink-0 shadow-sm">
+                                <i class="fa-solid fa-file-video"></i>
+                                <span>رفع فيديو</span>
+                                <input type="file" accept="video/*" class="hidden" onchange="handleVideoFileUpload(this, 'off-store-video', 'off-video-preview')">
+                            </label>
+                        </div>
+                        <div class="pt-1">
+                            <video id="off-video-preview" controls class="w-full max-h-36 rounded-xl border border-rose-200 hidden bg-black"></video>
+                            <span class="text-[9px] text-slate-400 font-bold block pt-0.5">معاينة فيديو العرض الترويجي للمتجر</span>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Employee / Staff Hiring Section (69 Wilayas) -->
                 <div class="border-t border-slate-200 pt-3 space-y-3">
                     <div class="flex items-center justify-between">
                         <h4 class="text-xs font-black text-sky-800 flex items-center gap-1.5">
                             <i class="fa-solid fa-user-tie text-sky-500"></i>
-                            <span>توظيف وتعيين مسؤول / موظف في إحدى الولايات الـ 69 💼</span>
+                            <span>توظيف وتعيين موظفين (تأكيد طلبيات / مسؤول ولائي وبلدي) 💼</span>
                         </h4>
-                        <span class="text-[10px] bg-sky-100 text-sky-800 px-2 py-0.5 rounded-full font-bold">صلاحيات ولائية</span>
+                        <span class="text-[10px] bg-sky-100 text-sky-800 px-2 py-0.5 rounded-full font-bold">صلاحيات 69 ولاية</span>
                     </div>
 
                     <div class="bg-sky-50/70 border border-sky-200 p-3 rounded-2xl space-y-3">
@@ -1533,11 +1611,13 @@
                                 <input type="email" id="off-staff-email" placeholder="staff@zalo.dz" class="w-full bg-white border border-slate-300 rounded-xl px-2.5 py-1.5 text-[11px] font-bold text-slate-800 focus:outline-none focus:border-sky-500">
                             </div>
                             <div>
-                                <label class="block text-[10px] font-black text-slate-700 mb-1">المسمى الوظيفي</label>
+                                <label class="block text-[10px] font-black text-slate-700 mb-1">المسمى الوظيفي والوظيفة</label>
                                 <select id="off-staff-role" class="w-full bg-white border border-slate-300 rounded-xl px-2 py-1.5 text-[10px] font-bold text-slate-800 focus:outline-none focus:border-sky-500">
-                                    <option value="مدير فرع ولائي">مدير فرع ولائي</option>
-                                    <option value="مشرف مبيعات وتوصيل">مشرف مبيعات وتوصيل</option>
-                                    <option value="موظف خدمة عملاء">موظف خدمة عملاء</option>
+                                    <option value="موظف تأكيد الطلبيات (Call Center)">📞 موظف تأكيد الطلبيات (Call Center)</option>
+                                    <option value="مسؤول فرع ولائي (69 ولاية)">🏢 مسؤول فرع ولائي (69 ولاية)</option>
+                                    <option value="منسق بلدي مباشر">📍 منسق بلدي مباشر (Commune)</option>
+                                    <option value="مشرف توصيل ومعالجة لوجستية">🚚 مشرف توصيل ومعالجة لوجستية</option>
+                                    <option value="مدير خدمة عملاء ومبيعات">🎧 مدير خدمة عملاء ومبيعات</option>
                                 </select>
                             </div>
                         </div>
@@ -1587,13 +1667,14 @@
                     </div>
                 </div>
 
-                <div class="pt-2 flex gap-2">
-                    <button type="submit" class="flex-1 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-black py-3 rounded-xl transition text-xs shadow-lg shadow-amber-500/20 flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-check"></i>
-                        <span>تأكيد وإطلاق المتجر الرسمي فوراً</span>
+                <div class="pt-3 border-t border-slate-200 flex items-center justify-end gap-2.5 shrink-0">
+                    <button type="button" onclick="closeCreateOfficialStoreModal()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-4 py-2 rounded-xl transition text-xs border border-slate-300 flex items-center gap-1.5 cursor-pointer shadow-sm">
+                        <i class="fa-solid fa-xmark text-slate-500"></i>
+                        <span>إلغاء</span>
                     </button>
-                    <button type="button" onclick="closeCreateOfficialStoreModal()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-4 py-3 rounded-xl transition text-xs">
-                        إلغاء
+                    <button type="submit" class="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-black px-5 py-2 rounded-xl transition text-xs shadow-md shadow-amber-500/20 flex items-center gap-1.5 cursor-pointer hover:scale-[1.02]">
+                        <i class="fa-solid fa-rocket"></i>
+                        <span>تأكيد وإطلاق المتجر</span>
                     </button>
                 </div>
             </form>
@@ -2846,6 +2927,28 @@
             }
         }
 
+        // Helper function for uploading promo video files
+        function handleVideoFileUpload(inputEl, targetInputId, previewVideoId) {
+            if (inputEl.files && inputEl.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const dataUrl = e.target.result;
+                    if (targetInputId) {
+                        const targetEl = document.getElementById(targetInputId);
+                        if (targetEl) targetEl.value = dataUrl;
+                    }
+                    if (previewVideoId) {
+                        const prev = document.getElementById(previewVideoId);
+                        if (prev) {
+                            prev.src = dataUrl;
+                            prev.classList.remove('hidden');
+                        }
+                    }
+                };
+                reader.readAsDataURL(inputEl.files[0]);
+            }
+        }
+
         // Official Store Creation Functions (Admin)
         function openCreateOfficialStoreModal() {
             document.getElementById('create-official-store-modal').classList.remove('hidden');
@@ -2861,21 +2964,30 @@
             const wilaya = document.getElementById('off-store-wilaya').value;
             const commune = document.getElementById('off-store-commune').value.trim() || 'وسط المدينة';
             const category = document.getElementById('off-store-category').value;
+            const subcategory = document.getElementById('off-store-subcategory') ? document.getElementById('off-store-subcategory').value : 'فرع عام';
             const phone = document.getElementById('off-store-phone').value.trim();
+            const email = document.getElementById('off-store-email') ? document.getElementById('off-store-email').value.trim() : 'store@zalo.dz';
             
-            // Logo and Cover
+            // Delivery & Express Shipping Integration
+            const deliveryExpress = document.getElementById('off-store-delivery-express') ? document.getElementById('off-store-delivery-express').checked : true;
+            const emsPoste = document.getElementById('off-store-ems-poste') ? document.getElementById('off-store-ems-poste').checked : true;
+
+            // Logo, Cover Banner & Promo Video
             const logoEl = document.getElementById('off-store-logo');
             const logo = (logoEl && logoEl.value.trim()) ? logoEl.value.trim() : 'assets/icon-192.svg';
             
             const coverEl = document.getElementById('off-store-cover');
             const cover = (coverEl && coverEl.value.trim()) ? coverEl.value.trim() : 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=500';
 
+            const videoEl = document.getElementById('off-store-video');
+            const videoUrl = (videoEl && videoEl.value.trim()) ? videoEl.value.trim() : '';
+
             // Staff/Employee Assignment
             const staffName = document.getElementById('off-staff-name') ? document.getElementById('off-staff-name').value.trim() : '';
             const staffWilaya = document.getElementById('off-staff-wilaya') ? document.getElementById('off-staff-wilaya').value : wilaya;
             const staffPhone = document.getElementById('off-staff-phone') ? document.getElementById('off-staff-phone').value.trim() : '';
             const staffEmail = document.getElementById('off-staff-email') ? document.getElementById('off-staff-email').value.trim() : '';
-            const staffRole = document.getElementById('off-staff-role') ? document.getElementById('off-staff-role').value : 'مدير فرع ولائي';
+            const staffRole = document.getElementById('off-staff-role') ? document.getElementById('off-staff-role').value : 'موظف تأكيد الطلبيات (Call Center)';
 
             // Initial Product details
             const prodName = document.getElementById('off-prod-name') ? document.getElementById('off-prod-name').value.trim() : '';
@@ -2897,18 +3009,22 @@
                 storeName: name,
                 store_name: name,
                 ownerName: staffName ? `${staffName} (${staffRole})` : 'الإدارة العامة ZaLo',
-                email: staffEmail || 'admin@zalo.dz',
+                email: email || staffEmail || 'admin@zalo.dz',
                 phone: phone || staffPhone || '0550000000',
                 wilaya: wilaya,
                 commune: commune,
                 baladiya: commune,
                 category: category,
+                subcategory: subcategory,
                 status: 'APPROVED',
                 role: 'merchant',
                 is_official: true,
                 image: logo,
                 logo: logo,
                 coverImage: cover,
+                promoVideo: videoUrl,
+                deliveryExpress: deliveryExpress,
+                emsPoste: emsPoste,
                 createdAt: new Date().toISOString()
             };
 
@@ -2944,11 +3060,13 @@
                     price: parseFloat(prodPrice) || 5000,
                     stock: parseInt(prodStock) || 10,
                     category: category,
+                    subcategory: subcategory,
                     storeId: storeId,
                     storeName: name,
                     wilaya: wilaya,
                     commune: commune,
                     image: prodImage || logo || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500',
+                    videoUrl: videoUrl,
                     description: prodDesc || 'منتج أصلي معتمد متوفر لدى متجر زالو الرسمي',
                     rating: 5.0,
                     status: 'APPROVED',
@@ -2958,7 +3076,7 @@
                 setDB("products", products);
             }
 
-            // Save to Supabase
+            // Save to Supabase DB for Real-time Cross-device Sync
             try {
                 if (window.supabaseClient) {
                     await window.supabaseClient.from('stores').upsert({
@@ -2991,7 +3109,8 @@
             closeCreateOfficialStoreModal();
             
             let alertMsg = `🎉 تم إنشاء المتجر الرسمي "${name}" بنجاح في ولاية ${wilaya}!`;
-            if (staffName) alertMsg += `\n\n👤 تم توظيف الموظف/المسؤول: ${staffName} (${staffRole}) بولاية ${staffWilaya}.`;
+            if (deliveryExpress || emsPoste) alertMsg += `\n\n🚚 تم تفعيل شبكة التوصيل السريع والربط مع البريد السريع EMS.`;
+            if (staffName) alertMsg += `\n\n👤 تم توظيف الموظف: ${staffName} (${staffRole}) بولاية ${staffWilaya}.`;
             if (prodName) alertMsg += `\n\n📦 تم إدراج المنتج الأول: "${prodName}" بالسعر ${prodPrice || 5000} دج.`;
 
             alert(alertMsg);
