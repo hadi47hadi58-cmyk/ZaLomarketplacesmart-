@@ -465,7 +465,10 @@ body {
   align-items: center !important;
   gap: 6px !important;
   cursor: pointer !important;
-  min-width: 68px !important;
+  width: 82px !important;
+  min-width: 82px !important;
+  max-width: 85px !important;
+  flex-shrink: 0 !important;
   transition: all 0.2s !important;
 }
 
@@ -491,11 +494,20 @@ body {
 }
 
 .category-label-mockup {
-  font-size: 11px !important;
-  font-weight: 800 !important;
+  font-size: 10.5px !important;
+  font-weight: 700 !important;
   color: var(--navy) !important;
   text-align: center !important;
-  white-space: nowrap !important;
+  white-space: normal !important;
+  word-break: break-word !important;
+  line-height: 1.25 !important;
+  max-width: 100% !important;
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+  height: 28px !important;
+  text-overflow: ellipsis !important;
 }
 
 /* Promotional Banner */
@@ -3539,20 +3551,9 @@ async function loadProducts() {
     }
   });
 
+  // Rely purely on real products from Supabase cloud and local merchant storage
   if (merged.length === 0) {
-    merged = [
-      { id: 'p1', productId: 'p1', name: 'قفطان جزائري تقليدي فخم', price: 18500, category: 'ملابس، أزياء وموضة', subcategory: 'ملابس نسائية', storeName: 'اللمسة الجزائرية', storeId: 'store1', status: 'active', image: 'https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=500' },
-      { id: 'p2', productId: 'p2', name: 'عطر الفخامة العربي المنيعة', price: 4500, category: 'صحة، تجميل وعناية شخصية', subcategory: 'عطور وفواحات', storeName: 'عطور الجنوب', storeId: 'store2', status: 'active', image: 'https://images.unsplash.com/photo-1594035910387-fea47794261f?w=500' },
-      { id: 'p3', productId: 'p3', name: 'حذاء جلدي صناعة محلية', price: 6200, category: 'ملابس، أزياء وموضة', subcategory: 'أحذية نسائية ورجالية', storeName: 'أحذية الجودة', storeId: 'store3', status: 'active', image: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=500' },
-      { id: 'p4', productId: 'p4', name: 'ساعة يد أنيقة رجالية', price: 3800, category: 'ملابس، أزياء وموضة', subcategory: 'ساعات ونظارات', storeName: 'متجر الأناقة', storeId: 'store4', status: 'active', image: 'https://images.unsplash.com/photo-1524805444758-089113d48a6d?w=500' },
-      { id: 'p5', productId: 'p5', name: 'قطع غيار تويوتا هيلوكس الأصلي', price: 24000, category: 'قطع غيار وإكسسوارات المركبات', subcategory: 'قطع غيار تويوتا (Toyota)', storeName: 'القطع الذهبية للسيارات', storeId: 'store5', status: 'active', image: 'https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?w=500' },
-      { id: 'p6', productId: 'p6', name: 'هاتف سامسونج جالاكسي ذكي', price: 34500, category: 'هواتف وإلكترونيات', subcategory: 'هواتف ذكية واكسسواراتها', storeName: 'المركز الإلكتروني', storeId: 'store6', status: 'active', image: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=500' },
-      { id: 'p7', productId: 'p7', name: 'تمر دقلة نور بسكرة ممتاز 1 كغ', price: 1200, category: 'مواد غذائية وتموين', subcategory: 'حلويات، مكسرات ومشروبات', storeName: 'تمور الصحراء الممتازة', storeId: 'store7', status: 'active', image: 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=500' },
-      { id: 'p8', productId: 'p8', name: 'طقم أواني مطبخ سيراميك فاخر', price: 14200, category: 'مستلزمات المنزل والأثاث', subcategory: 'أواني وديكورات المطبخ', storeName: 'تجهيزات المنزل العصري', storeId: 'store8', status: 'active', image: 'https://images.unsplash.com/photo-1556911220-e15b29be8c8f?w=500' },
-      { id: 'p9', productId: 'p9', name: 'طقم أدوات يدوية ومعدات 108 قطعة', price: 8900, category: 'خردوات، بناء وتجهيزات', subcategory: 'أدوات ومعدات يدوية وكهربائية', storeName: 'معدات الجزائر للتجهيز', storeId: 'store9', status: 'active', image: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=500' },
-      { id: 'p10', productId: 'p10', name: 'مجموعة قصص وروايات عالمية', price: 2200, category: 'مكتبة، أدوات مدرسية وألعاب', subcategory: 'كتب، روايات ومصاحف', storeName: 'مكتبة المعرفة', storeId: 'store10', status: 'active', image: 'https://images.unsplash.com/photo-1512820790803-83ca734da794?w=500' },
-      { id: 'p11', productId: 'p11', name: 'زربية غرداية تقليدية صوف 100%', price: 32000, category: 'صناعة تقليدية وحرف يدوية', subcategory: 'زربيات ومنسوجات تقليدية', storeName: 'حرف وكنوز الجزائر', storeId: 'store11', status: 'active', image: 'https://images.unsplash.com/photo-1600121848594-d8644e57abab?w=500' }
-    ];
+    merged = [];
   }
 
   state.loadedProducts = merged;

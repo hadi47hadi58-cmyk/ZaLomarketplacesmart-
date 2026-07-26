@@ -316,6 +316,29 @@
                 </div>
             </div>
 
+            <!-- ADMIN OFFICIAL STORES CREATION ACTION BAR -->
+            <div class="bg-gradient-to-r from-slate-900 via-sky-950 to-slate-900 border-2 border-amber-400 rounded-3xl p-5 flex flex-wrap items-center justify-between gap-4 text-white shadow-lg relative overflow-hidden">
+                <div class="absolute -left-10 -bottom-10 w-40 h-40 bg-amber-400/10 rounded-full blur-2xl"></div>
+                <div class="flex items-center gap-3.5 relative z-10">
+                    <div class="w-12 h-12 rounded-2xl bg-amber-400/20 text-amber-300 border border-amber-400/60 flex items-center justify-center text-xl shadow-md flex-shrink-0">
+                        <i class="fa-solid fa-shop"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xs sm:text-sm font-black text-amber-300 flex items-center gap-2">
+                            <span>إدارة وإنشاء المتاجر الإدارية الرسمية للبيع المباشر</span>
+                            <span class="bg-amber-400/20 text-amber-200 text-[10px] px-2 py-0.5 rounded-full border border-amber-400/40">صلاحية المدير</span>
+                        </h3>
+                        <p class="text-[11px] text-slate-300 font-bold mt-1 max-w-2xl leading-relaxed">
+                            بصفتك مديراً للمنصة، يمكنك إنشاء متاجر إدارية رسمية خاصة بك في جميع الولايات (58 ولاية) لبيع منتجاتك والاستفادة المباشرة من أرباح المبيعات إلى جانب تجار المنصة.
+                        </p>
+                    </div>
+                </div>
+                <button onclick="openCreateOfficialStoreModal()" class="relative z-10 bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 hover:from-amber-500 hover:to-amber-700 text-slate-950 font-black px-5 py-3 rounded-2xl shadow-xl hover:shadow-amber-500/20 transition-all text-xs flex items-center gap-2 cursor-pointer border border-amber-200 active:scale-95">
+                    <i class="fa-solid fa-plus-circle text-sm"></i>
+                    <span>إنشاء متجر زالو رسمي جديد (في أي ولاية) 🇩🇿</span>
+                </button>
+            </div>
+
             <!-- 8 RICH PERFORMANCE STATS CARDS -->
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                 
@@ -1211,11 +1234,16 @@
                     <div class="border border-dashed border-slate-300 rounded-xl p-2.5 flex items-center justify-between bg-slate-50">
                         <span class="text-[11px] font-bold text-slate-700 flex items-center gap-1.5 overflow-hidden">
                             <i class="fa-solid fa-id-card text-sky-600"></i>
-                            <span id="doc-modal-id-filename" class="truncate max-w-[180px]">ID_CARD_ALGERIA_BIOMETRIC.pdf</span>
+                            <span id="doc-modal-id-filename" class="truncate max-w-[140px]">ID_CARD_ALGERIA_BIOMETRIC.pdf</span>
                         </span>
-                        <button onclick="downloadStoreDoc('id')" class="text-sky-600 hover:text-sky-800 font-extrabold bg-sky-50 border border-sky-200 px-3 py-1.5 rounded-xl transition text-xs flex items-center gap-1 shadow-sm">
-                            <i class="fa-solid fa-download"></i> تحميل
-                        </button>
+                        <div class="flex items-center gap-1.5">
+                            <button onclick="previewStoreDoc('id')" class="text-amber-700 hover:text-amber-900 font-extrabold bg-amber-50 border border-amber-200 px-2.5 py-1.5 rounded-xl transition text-xs flex items-center gap-1 shadow-sm">
+                                <i class="fa-solid fa-eye"></i> معاينة الصورة
+                            </button>
+                            <button onclick="downloadStoreDoc('id')" class="text-sky-600 hover:text-sky-800 font-extrabold bg-sky-50 border border-sky-200 px-2.5 py-1.5 rounded-xl transition text-xs flex items-center gap-1 shadow-sm">
+                                <i class="fa-solid fa-download"></i> تحميل
+                            </button>
+                        </div>
                     </div>
                 </div>
                 <div class="space-y-2">
@@ -1223,11 +1251,16 @@
                     <div class="border border-dashed border-slate-300 rounded-xl p-2.5 flex items-center justify-between bg-slate-50">
                         <span class="text-[11px] font-bold text-slate-700 flex items-center gap-1.5 overflow-hidden">
                             <i class="fa-solid fa-file-signature text-amber-600"></i>
-                            <span id="doc-modal-rc-filename" class="truncate max-w-[180px]">COMMERCIAL_REGISTER_RC.pdf</span>
+                            <span id="doc-modal-rc-filename" class="truncate max-w-[140px]">COMMERCIAL_REGISTER_RC.pdf</span>
                         </span>
-                        <button onclick="downloadStoreDoc('rc')" class="text-sky-600 hover:text-sky-800 font-extrabold bg-sky-50 border border-sky-200 px-3 py-1.5 rounded-xl transition text-xs flex items-center gap-1 shadow-sm">
-                            <i class="fa-solid fa-download"></i> تحميل
-                        </button>
+                        <div class="flex items-center gap-1.5">
+                            <button onclick="previewStoreDoc('rc')" class="text-amber-700 hover:text-amber-900 font-extrabold bg-amber-50 border border-amber-200 px-2.5 py-1.5 rounded-xl transition text-xs flex items-center gap-1 shadow-sm">
+                                <i class="fa-solid fa-eye"></i> معاينة الصورة
+                            </button>
+                            <button onclick="downloadStoreDoc('rc')" class="text-sky-600 hover:text-sky-800 font-extrabold bg-sky-50 border border-sky-200 px-2.5 py-1.5 rounded-xl transition text-xs flex items-center gap-1 shadow-sm">
+                                <i class="fa-solid fa-download"></i> تحميل
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -1241,6 +1274,122 @@
                     </button>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- MODAL: DOCUMENT IMAGE PREVIEW -->
+    <div id="image-preview-modal" class="fixed inset-0 bg-black/80 z-[80] flex items-center justify-center p-4 hidden backdrop-blur-md">
+        <div class="bg-white border-2 border-amber-400 rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl text-right">
+            <header class="bg-slate-900 text-white py-4 px-6 flex justify-between items-center border-b border-amber-400/30">
+                <button onclick="closeImagePreviewModal()" class="text-slate-400 hover:text-white text-lg">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+                <h3 class="text-xs font-black flex items-center gap-2 text-amber-300" id="preview-doc-title">
+                    <i class="fa-solid fa-image"></i>
+                    <span>معاينة المستند الرسمي</span>
+                </h3>
+            </header>
+            <div class="p-6 space-y-4 text-center">
+                <div class="bg-slate-100 rounded-2xl p-2 border border-slate-200 min-h-[220px] flex items-center justify-center overflow-hidden">
+                    <img id="preview-doc-img" src="" alt="معاينة الوثيقة" class="max-h-[340px] w-auto rounded-xl object-contain shadow-md">
+                </div>
+                <div class="text-xs font-bold text-slate-600 bg-amber-50 p-3 rounded-xl border border-amber-200" id="preview-doc-info">
+                    تدقيق الوثيقة الرسمية المسجلة
+                </div>
+                <button onclick="closeImagePreviewModal()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-black py-2.5 rounded-xl transition text-xs">
+                    إغلاق المعاينة
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: CREATE OFFICIAL ADMIN STORE -->
+    <div id="create-official-store-modal" class="fixed inset-0 bg-black/80 z-[90] flex items-center justify-center p-4 hidden backdrop-blur-md">
+        <div class="bg-white border-2 border-amber-400 rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl text-right">
+            <header class="bg-gradient-to-r from-slate-900 to-sky-950 text-white py-4 px-6 flex justify-between items-center border-b border-amber-400/40">
+                <button type="button" onclick="closeCreateOfficialStoreModal()" class="text-slate-400 hover:text-white text-lg">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+                <h3 class="text-xs sm:text-sm font-black flex items-center gap-2 text-amber-300">
+                    <i class="fa-solid fa-store text-amber-400"></i>
+                    <span>إنشاء متجر زالو إداري رسمي في أي ولاية 🇩🇿</span>
+                </h3>
+            </header>
+            <form onsubmit="saveOfficialStore(event)" class="p-6 space-y-4">
+                <div class="bg-amber-50 border border-amber-300 p-3 rounded-2xl text-[11px] font-bold text-amber-900 flex items-center gap-2.5">
+                    <i class="fa-solid fa-crown text-amber-600 text-base flex-shrink-0"></i>
+                    <span>يمكنك إنشاء وتخصيص متاجر رسمية في أية ولاية بأسماء تجارية ممتازة والبيع المباشر لحساب الإدارة مباشرة.</span>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-black text-slate-700 mb-1">اسم المتجر الرسمي *</label>
+                    <input type="text" id="off-store-name" required placeholder="مثال: متجر زالو الرسمي - الجزائر العاصمة" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs font-bold text-slate-800 focus:outline-none focus:border-amber-500">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-black text-slate-700 mb-1">الولاية المستهدفة *</label>
+                        <select id="off-store-wilaya" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-xs font-bold text-slate-800 focus:outline-none focus:border-amber-500">
+                            <option value="الجزائر">16 - الجزائر العاصمة</option>
+                            <option value="وهران">31 - وهران</option>
+                            <option value="قسنطينة">25 - قسنطينة</option>
+                            <option value="سطيف">19 - سطيف</option>
+                            <option value="عنابة">23 - عنابة</option>
+                            <option value="باتنة">05 - باتنة</option>
+                            <option value="ورقلة">30 - ورقلة</option>
+                            <option value="المنيعة">58 - المنيعة</option>
+                            <option value="تمنراست">11 - تمنراست</option>
+                            <option value="بشار">08 - بشار</option>
+                            <option value="تلمسان">13 - تلمسان</option>
+                            <option value="البليدة">09 - البليدة</option>
+                            <option value="بومرداس">35 - بومرداس</option>
+                            <option value="تيزي وزو">15 - تيزي وزو</option>
+                            <option value="بجاية">06 - بجاية</option>
+                            <option value="بسكرة">07 - بسكرة</option>
+                            <option value="الشلف">02 - الشلف</option>
+                            <option value="مستغانم">27 - مستغانم</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-black text-slate-700 mb-1">البلدية / الفرع</label>
+                        <input type="text" id="off-store-commune" placeholder="مثال: سيدي امحمد" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-xs font-bold text-slate-800 focus:outline-none focus:border-amber-500">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-black text-slate-700 mb-1">التخصص الرئيسي</label>
+                        <select id="off-store-category" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-xs font-bold text-slate-800 focus:outline-none focus:border-amber-500">
+                            <option value="ملابس، أزياء وموضة">👗 ملابس، أزياء وموضة</option>
+                            <option value="هواتف وإلكترونيات">📱 هواتف وإلكترونيات</option>
+                            <option value="مواد غذائية وتموين">🍎 مواد غذائية وتموين</option>
+                            <option value="مستلزمات المنزل والأثاث">🏠 مستلزمات المنزل والأثاث</option>
+                            <option value="صحة، تجميل وعناية شخصية">✨ صحة وتجميل</option>
+                            <option value="قطع غيار وإكسسوارات المركبات">🚗 قطع غيار ومركبات</option>
+                            <option value="عام">📦 قسم عام متكامل</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-black text-slate-700 mb-1">رقم الهاتف / الواتساب</label>
+                        <input type="tel" id="off-store-phone" value="0550000000" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-xs font-bold text-slate-800 focus:outline-none focus:border-amber-500">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-black text-slate-700 mb-1">رابط أيقونة / غلاف المتجر (اختياري)</label>
+                    <input type="url" id="off-store-image" placeholder="https://..." class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-xs font-bold text-slate-800 focus:outline-none focus:border-amber-500">
+                </div>
+
+                <div class="pt-2 flex gap-2">
+                    <button type="submit" class="flex-1 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-black py-3 rounded-xl transition text-xs shadow-lg shadow-amber-500/20 flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-check"></i>
+                        <span>تأكيد وإطلاق المتجر الرسمي فوراً</span>
+                    </button>
+                    <button type="button" onclick="closeCreateOfficialStoreModal()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-4 py-3 rounded-xl transition text-xs">
+                        إلغاء
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -2086,6 +2235,168 @@
             document.getElementById('active-stores-modal').classList.add('hidden');
         }
 
+        // Document Image Preview Functions
+        function previewStoreDoc(type) {
+            const s = window.currentReviewStore || {};
+            const storeName = s.name || s.store_name || "المتجر المعاود";
+            const modal = document.getElementById('image-preview-modal');
+            const titleEl = document.getElementById('preview-doc-title');
+            const imgEl = document.getElementById('preview-doc-img');
+            const infoEl = document.getElementById('preview-doc-info');
+
+            let imgUrl = '';
+            let docLabel = '';
+
+            if (type === 'id') {
+                docLabel = 'بطاقة التعريف الوطنية البيومترية';
+                imgUrl = s.idCardImg || s.identity_card_url || s.id_card_url || s.idCardUrl || '';
+            } else {
+                docLabel = 'السجل التجاري واعتماد الغرفة التجارية';
+                imgUrl = s.rcImg || s.commercial_register_url || s.rc_url || s.rcUrl || '';
+            }
+
+            if (!imgUrl) {
+                // Fallback clean biometric ID card canvas / preview template
+                const canvas = document.createElement('canvas');
+                canvas.width = 600;
+                canvas.height = 380;
+                const ctx = canvas.getContext('2d');
+                
+                // Background
+                ctx.fillStyle = '#f8fafc';
+                ctx.fillRect(0, 0, 600, 380);
+                ctx.strokeStyle = '#0284c7';
+                ctx.lineWidth = 4;
+                ctx.strokeRect(10, 10, 580, 360);
+
+                // Header
+                ctx.fillStyle = '#0284c7';
+                ctx.fillRect(10, 10, 580, 60);
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 20px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('الجمهورية الجزائرية الديمقراطية الشعبية - وثيقة هويّة معتمدة', 300, 48);
+
+                // Details
+                ctx.fillStyle = '#0f172a';
+                ctx.font = 'bold 16px sans-serif';
+                ctx.textAlign = 'right';
+                ctx.fillText(`نوع الوثيقة: ${docLabel}`, 560, 120);
+                ctx.fillText(`صاحب الحساب / المتجر: ${storeName}`, 560, 160);
+                ctx.fillText(`المالك المسؤول: ${s.ownerName || s.owner || s.email || 'تاجر معتمد'}`, 560, 200);
+                ctx.fillText(`الولاية والمنطقة: ${s.wilaya || 'الجزائر'}`, 560, 240);
+                ctx.fillText(`حالة الاعتماد: ${s.status === 'APPROVED' ? 'معتمد رسمياً ✅' : 'قيد التدقيق والتفعيل ⏳'}`, 560, 280);
+
+                // Stamp box
+                ctx.strokeStyle = '#d4af37';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(40, 100, 180, 220);
+                ctx.fillStyle = '#e0f2fe';
+                ctx.fillRect(40, 100, 180, 220);
+                ctx.fillStyle = '#0369a1';
+                ctx.font = 'bold 14px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('ختم التدقيق الأمني', 130, 200);
+                ctx.fillText('منصة ZaLo 🇩🇿', 130, 230);
+
+                imgUrl = canvas.toDataURL('image/png');
+            }
+
+            if (titleEl) titleEl.innerText = `معاينة: ${docLabel} - ${storeName}`;
+            if (imgEl) imgEl.src = imgUrl;
+            if (infoEl) infoEl.innerText = `مالك المتجر: ${s.ownerName || s.name || 'تاجر ZaLo'} | الولاية: ${s.wilaya || 'الجزائر'}`;
+
+            if (modal) modal.classList.remove('hidden');
+        }
+
+        function closeImagePreviewModal() {
+            const modal = document.getElementById('image-preview-modal');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        // Official Store Creation Functions (Admin)
+        function openCreateOfficialStoreModal() {
+            document.getElementById('create-official-store-modal').classList.remove('hidden');
+        }
+
+        function closeCreateOfficialStoreModal() {
+            document.getElementById('create-official-store-modal').classList.add('hidden');
+        }
+
+        async function saveOfficialStore(e) {
+            if (e) e.preventDefault();
+            const name = document.getElementById('off-store-name').value.trim();
+            const wilaya = document.getElementById('off-store-wilaya').value;
+            const commune = document.getElementById('off-store-commune').value.trim() || 'المركز';
+            const category = document.getElementById('off-store-category').value;
+            const phone = document.getElementById('off-store-phone').value.trim();
+            const image = document.getElementById('off-store-image').value.trim() || 'assets/icon-192.svg';
+
+            if (!name) {
+                alert('الرجاء كتابة اسم المتجر الرسمي');
+                return;
+            }
+
+            const storeId = 'off_store_' + Date.now();
+            const officialStore = {
+                id: storeId,
+                storeId: storeId,
+                name: name,
+                storeName: name,
+                store_name: name,
+                ownerName: 'الإدارة العامة ZaLo',
+                email: 'admin@zalo.dz',
+                phone: phone || '0550000000',
+                wilaya: wilaya,
+                commune: commune,
+                baladiya: commune,
+                category: category,
+                status: 'APPROVED',
+                role: 'merchant',
+                is_official: true,
+                image: image,
+                createdAt: new Date().toISOString()
+            };
+
+            // Save to local stores
+            let stores = getDB("stores_list_old", MOCK_STORES);
+            stores.unshift(officialStore);
+            setDB("stores_list_old", stores);
+
+            // Save to Supabase
+            try {
+                if (window.supabaseClient) {
+                    await window.supabaseClient.from('stores').upsert({
+                        id: storeId,
+                        merchant_id: 'admin_official',
+                        name: name,
+                        store_name: name,
+                        wilaya: wilaya,
+                        baladiya: commune,
+                        category: category,
+                        phone: phone,
+                        status: 'active',
+                        is_official: true,
+                        updated_at: new Date().toISOString()
+                    });
+                    await window.supabaseClient.from('merchant_requests').upsert({
+                        id: storeId,
+                        store_name: name,
+                        wilaya: wilaya,
+                        status: 'approved',
+                        created_at: new Date().toISOString()
+                    });
+                }
+            } catch(err) {
+                console.warn("Error saving official store to Supabase:", err);
+            }
+
+            closeCreateOfficialStoreModal();
+            alert(`🎉 تم إنشاء المتجر الرسمي "${name}" بنجاح في ولاية ${wilaya}!\n\nيمكنك الآن البيع المباشر من هذا المتجر للمستهلكين بجميع الولايات.`);
+            renderStats();
+            if (typeof renderRegistrations === 'function') renderRegistrations();
+        }
+
         // Download document PDF helper function
         function downloadStoreDoc(docType) {
             const store = window.currentReviewStore || { name: 'متجر الشريك', id: 'store-1' };
@@ -2202,7 +2513,18 @@ startxref
                         await window.supabaseClient.from('merchant_requests').update({ status: 'approved' }).or(`id.eq.${targetKey},user_id.eq.${targetKey},email.eq.${targetKey}`);
                         await window.supabaseClient.from('profiles').update({ status: 'approved', role: 'merchant' }).or(`id.eq.${targetKey},email.eq.${targetKey}`);
                         await window.supabaseClient.from('users').update({ role: 'MERCHANT' }).or(`id.eq.${targetKey},email.eq.${targetKey}`);
-                        console.log("Successfully synchronized approval to Supabase!");
+                        await window.supabaseClient.from('stores').upsert({
+                            id: targetKey,
+                            name: s ? (s.name || s.store_name || "متجر معتمد") : "متجر معتمد",
+                            store_name: s ? (s.name || s.store_name || "متجر معتمد") : "متجر معتمد",
+                            wilaya: s ? (s.wilaya || "الجزائر") : "الجزائر",
+                            baladiya: s ? (s.baladiya || s.commune || "الجزائر") : "الجزائر",
+                            category: s ? (s.category || "عام") : "عام",
+                            phone: s ? (s.phone || "") : "",
+                            status: "active",
+                            updated_at: new Date().toISOString()
+                        });
+                        console.log("Successfully synchronized approval and store creation to Supabase!");
                     }
                 }
             } catch(e) {
