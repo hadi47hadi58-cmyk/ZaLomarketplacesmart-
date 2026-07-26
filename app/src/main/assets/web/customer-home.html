@@ -2052,10 +2052,29 @@ body {
 
         <!-- Direct Action Buttons -->
         <div style="display:flex; flex-direction:column; gap:8px; margin-top:4px;">
-          <!-- Direct WhatsApp Order Button -->
-          <button id="pd-direct-whatsapp-btn" onclick="directWhatsAppOrder()" style="width:100%; height:44px; background:linear-gradient(135deg, #25D366, #128C7E); color:white; border:none; border-radius:12px; font-weight:800; font-size:13px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 4px 12px rgba(37,211,102,0.3);">
-            <i class="fa-brands fa-whatsapp" style="font-size:18px;"></i> ⚡ طلب مباشر وسريع عبر الواتساب
+          <!-- Quick Direct Order Form Toggle Button -->
+          <button id="pd-direct-whatsapp-btn" onclick="toggleQuickOrderForm()" style="width:100%; height:44px; background:linear-gradient(135deg, #16a34a, #15803d); color:white; border:none; border-radius:12px; font-weight:800; font-size:13px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 4px 12px rgba(22,163,74,0.3);">
+            <i class="fa-solid fa-bolt" style="font-size:16px;"></i> ⚡ طلب مباشر وسريع (إدخال بيانات الشراء الفوري)
           </button>
+
+          <!-- Quick Direct Order Inline Form Container -->
+          <div id="pd-quick-order-form" style="display:none; background:#f8fafc; border:1.5px solid #16a34a; border-radius:14px; padding:12px; flex-direction:column; gap:10px; box-shadow:0 4px 12px rgba(0,0,0,0.05);">
+            <div style="font-size:12px; font-weight:800; color:var(--navy); display:flex; justify-content:space-between; align-items:center;">
+              <span><i class="fa-solid fa-file-signature" style="color:#16a34a;"></i> إدخال معلومات الطلب السريع</span>
+              <button onclick="toggleQuickOrderForm(false)" style="background:none; border:none; color:var(--gray); cursor:pointer; font-weight:bold;">✕</button>
+            </div>
+            <input type="text" id="qo-fullname" placeholder="الاسم واللقب الكامل *" style="width:100%; height:38px; border:1px solid var(--bd); border-radius:8px; padding:0 10px; font-size:12px; font-weight:700;">
+            <input type="tel" id="qo-phone" placeholder="رقم الهاتف للتأكيد (مثال: 0658000000) *" style="width:100%; height:38px; border:1px solid var(--bd); border-radius:8px; padding:0 10px; font-size:12px; font-weight:700;">
+            <div style="display:flex; gap:8px;">
+              <select id="qo-wilaya" style="flex:1; height:38px; border:1px solid var(--bd); border-radius:8px; padding:0 8px; font-size:11.5px; font-weight:700; background:#fff;">
+                <!-- Populated dynamically with ALGERIAN_WILAYAS -->
+              </select>
+              <input type="text" id="qo-address" placeholder="البلدية / العنوان *" style="flex:1; height:38px; border:1px solid var(--bd); border-radius:8px; padding:0 10px; font-size:12px; font-weight:700;">
+            </div>
+            <button onclick="submitQuickDirectOrder()" style="width:100%; height:42px; background:linear-gradient(135deg, #16a34a, #15803d); color:white; border:none; border-radius:10px; font-weight:800; font-size:13px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 3px 10px rgba(22,163,74,0.3);">
+              <i class="fa-solid fa-check-circle"></i> تأكيد الطلب واستلام الوصل 📄
+            </button>
+          </div>
 
           <div style="display:flex; gap:8px;" id="pd-order-actions-wrap">
             <button onclick="addToCartFromModal()" class="btn-p" style="background:var(--navy); flex:1; height:42px; font-size:12.5px;">
@@ -3657,15 +3676,18 @@ function renderProductsList(list) {
     const price = p.price || 0;
     const storeId = p.storeId || 'direct';
     const storeName = p.storeName || p.shopName || 'محل ZaLo شريك';
+    const pWilaya = p.wilaya || '';
+    const pCat = p.category || '';
+    const pSubCat = p.subcategory || p.sub_category || '';
 
     grid.innerHTML += `
       <div class="pcard">
-        <div class="pcard-img-container" onclick="openProd('${p.id}','${pName.replace(/'/g,"\\'")}',${price},'${imgUrl}','${p.emoji||'📦'}','${storeId}','${storeName.replace(/'/g,"\\'")}')">
+        <div class="pcard-img-container" onclick="openProd('${p.id}','${pName.replace(/'/g,"\\'")}',${price},'${imgUrl}','${p.emoji||'📦'}','${storeId}','${storeName.replace(/'/g,"\\'")}', '${pWilaya.replace(/'/g,"\\'")}', '${pCat.replace(/'/g,"\\'")}', '${pSubCat.replace(/'/g,"\\')}')">
           ${imgUrl ? `<img src="${imgUrl}" class="pcard-img-tag" alt="${pName}">` : `<span class="pcard-emoji-span">${p.emoji||'📦'}</span>`}
         </div>
         <div class="pcard-info-box">
           <div class="pcard-rating-row"><span class="pcard-rating-star">⭐</span> 4.7</div>
-          <div class="pcard-title-text" onclick="openProd('${p.id}','${pName.replace(/'/g,"\\'")}',${price},'${imgUrl}','${p.emoji||'📦'}','${storeId}','${storeName.replace(/'/g,"\\'")}')">${pName}</div>
+          <div class="pcard-title-text" onclick="openProd('${p.id}','${pName.replace(/'/g,"\\'")}',${price},'${imgUrl}','${p.emoji||'📦'}','${storeId}','${storeName.replace(/'/g,"\\'")}', '${pWilaya.replace(/'/g,"\\'")}', '${pCat.replace(/'/g,"\\'")}', '${pSubCat.replace(/'/g,"\\')}')">${pName}</div>
           <div class="pcard-price-row">
             <span class="pcard-price-value">${price.toLocaleString()} دج</span> <span class="pcard-coin-emoji">💰</span>
           </div>
@@ -4032,6 +4054,10 @@ window.openProd = function(id, name, price, img, emoji, storeId, storeName, wila
   };
   state.qty = 1;
 
+  // Reset quick order form if visible
+  const qForm = document.getElementById('pd-quick-order-form');
+  if (qForm) qForm.style.display = 'none';
+
   // Set store cover & logo
   const coverImg = document.getElementById('pd-store-cover-img');
   if (coverImg) coverImg.src = storeInfo.coverImage || 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=500';
@@ -4065,21 +4091,23 @@ window.openProd = function(id, name, price, img, emoji, storeId, storeName, wila
   const socialBar = document.getElementById('pd-social-links-bar');
   if (socialBar) {
     const pPhone = storeInfo.phone || '0550000000';
-    const waPhone = pPhone.replace(/[^0-9]/g, '');
-    const cleanWaPhone = waPhone.startsWith('0') ? '213' + waPhone.substring(1) : (waPhone.startsWith('213') ? waPhone : '213' + waPhone);
+    const waPhone = (storeInfo.socialLinks && storeInfo.socialLinks.whatsapp) ? storeInfo.socialLinks.whatsapp : pPhone;
+    const cleanWaPhone = waPhone.replace(/[^0-9]/g, '');
+    const finalWa = cleanWaPhone.startsWith('0') ? '213' + cleanWaPhone.substring(1) : (cleanWaPhone.startsWith('213') ? cleanWaPhone : '213' + cleanWaPhone);
 
     let linksHtml = `
-      <a href="https://wa.me/${cleanWaPhone}?text=${encodeURIComponent('مرحباً متجر ' + (storeInfo.name||storeName) + '، أود الاستفسار عن المنتج: ' + name)}" target="_blank" style="background:#25D366; color:white; text-decoration:none; padding:6px 12px; border-radius:8px; font-size:11px; font-weight:800; display:inline-flex; align-items:center; gap:5px;">
+      <a href="https://wa.me/${finalWa}?text=${encodeURIComponent('مرحباً متجر ' + (storeInfo.name||storeName) + '، أود الاستفسار عن المنتج: ' + name)}" target="_blank" style="background:#25D366; color:white; text-decoration:none; padding:6px 12px; border-radius:8px; font-size:11px; font-weight:800; display:inline-flex; align-items:center; gap:5px; box-shadow:0 2px 5px rgba(37,211,102,0.2);">
         <i class="fa-brands fa-whatsapp"></i> واتساب المحل
       </a>
-      <a href="tel:${pPhone}" style="background:#0ea5e9; color:white; text-decoration:none; padding:6px 12px; border-radius:8px; font-size:11px; font-weight:800; display:inline-flex; align-items:center; gap:5px;">
-        <i class="fa-solid fa-phone"></i> اتصال مباشر
+      <a href="tel:${pPhone}" style="background:#0ea5e9; color:white; text-decoration:none; padding:6px 12px; border-radius:8px; font-size:11px; font-weight:800; display:inline-flex; align-items:center; gap:5px; box-shadow:0 2px 5px rgba(14,165,233,0.2);">
+        <i class="fa-solid fa-phone"></i> اتصال مباشر (${pPhone})
       </a>
     `;
 
     if (storeInfo.website) {
+      const siteUrl = storeInfo.website.startsWith('http') ? storeInfo.website : 'https://' + storeInfo.website;
       linksHtml += `
-        <a href="${storeInfo.website.startsWith('http')?storeInfo.website:'https://'+storeInfo.website}" target="_blank" style="background:#6366f1; color:white; text-decoration:none; padding:6px 12px; border-radius:8px; font-size:11px; font-weight:800; display:inline-flex; align-items:center; gap:5px;">
+        <a href="${siteUrl}" target="_blank" style="background:#6366f1; color:white; text-decoration:none; padding:6px 12px; border-radius:8px; font-size:11px; font-weight:800; display:inline-flex; align-items:center; gap:5px; box-shadow:0 2px 5px rgba(99,102,241,0.2);">
           <i class="fa-solid fa-globe"></i> الموقع الإلكتروني
         </a>
       `;
@@ -4087,9 +4115,18 @@ window.openProd = function(id, name, price, img, emoji, storeId, storeName, wila
 
     if (storeInfo.socialLinks) {
       const s = storeInfo.socialLinks;
-      if (s.facebook) linksHtml += `<a href="${s.facebook}" target="_blank" style="background:#1877f2; color:white; padding:6px 10px; border-radius:8px; font-size:11px;"><i class="fa-brands fa-facebook-f"></i></a>`;
-      if (s.instagram) linksHtml += `<a href="${s.instagram}" target="_blank" style="background:#e4405f; color:white; padding:6px 10px; border-radius:8px; font-size:11px;"><i class="fa-brands fa-instagram"></i></a>`;
-      if (s.tiktok) linksHtml += `<a href="${s.tiktok}" target="_blank" style="background:#000000; color:white; padding:6px 10px; border-radius:8px; font-size:11px;"><i class="fa-brands fa-tiktok"></i></a>`;
+      if (s.facebook) {
+        const fbUrl = s.facebook.startsWith('http') ? s.facebook : 'https://' + s.facebook;
+        linksHtml += `<a href="${fbUrl}" target="_blank" style="background:#1877f2; color:white; text-decoration:none; padding:6px 10px; border-radius:8px; font-size:11px; font-weight:800; display:inline-flex; align-items:center; gap:4px;"><i class="fa-brands fa-facebook-f"></i> فيسبوك</a>`;
+      }
+      if (s.instagram) {
+        const igUrl = s.instagram.startsWith('http') ? s.instagram : 'https://' + s.instagram;
+        linksHtml += `<a href="${igUrl}" target="_blank" style="background:#e4405f; color:white; text-decoration:none; padding:6px 10px; border-radius:8px; font-size:11px; font-weight:800; display:inline-flex; align-items:center; gap:4px;"><i class="fa-brands fa-instagram"></i> إنستغرام</a>`;
+      }
+      if (s.tiktok) {
+        const ttUrl = s.tiktok.startsWith('http') ? s.tiktok : 'https://' + s.tiktok;
+        linksHtml += `<a href="${ttUrl}" target="_blank" style="background:#000000; color:white; text-decoration:none; padding:6px 10px; border-radius:8px; font-size:11px; font-weight:800; display:inline-flex; align-items:center; gap:4px;"><i class="fa-brands fa-tiktok"></i> تيك توك</a>`;
+      }
     }
 
     socialBar.innerHTML = linksHtml;
@@ -4104,23 +4141,141 @@ window.openProd = function(id, name, price, img, emoji, storeId, storeName, wila
   document.getElementById('productModal').style.display = 'flex';
 };
 
-window.directWhatsAppOrder = function() {
+window.toggleQuickOrderForm = function(forceShow) {
+  const form = document.getElementById('pd-quick-order-form');
+  if (!form) return;
+  if (forceShow !== undefined) {
+    form.style.display = forceShow ? 'flex' : 'none';
+  } else {
+    form.style.display = (form.style.display === 'none' || !form.style.display) ? 'flex' : 'none';
+  }
+
+  if (form.style.display === 'flex') {
+    const wilSelect = document.getElementById('qo-wilaya');
+    if (wilSelect && (!wilSelect.options || wilSelect.options.length <= 1)) {
+      if (typeof ALGERIAN_WILAYAS !== 'undefined') {
+        wilSelect.innerHTML = ALGERIAN_WILAYAS.map(w => `<option value="${w.name}">${w.code} - ${w.name}</option>`).join('');
+      }
+    }
+    if (state.selectedProduct && state.selectedProduct.wilaya && wilSelect) {
+      const pWil = state.selectedProduct.wilaya.replace(/^[0-9\s\-]+/, '').trim();
+      for (let i = 0; i < wilSelect.options.length; i++) {
+        if (wilSelect.options[i].value.includes(pWil) || pWil.includes(wilSelect.options[i].value)) {
+          wilSelect.selectedIndex = i;
+          break;
+        }
+      }
+    }
+  }
+};
+
+window.submitQuickDirectOrder = async function() {
   if (!state.selectedProduct) return;
   const p = state.selectedProduct;
   const storeInfo = p.storeInfo || getStoreDetails(p.storeId, p.storeName);
+
+  const name = document.getElementById('qo-fullname') ? document.getElementById('qo-fullname').value.trim() : '';
+  const phone = document.getElementById('qo-phone') ? document.getElementById('qo-phone').value.trim() : '';
+  const wilaya = document.getElementById('qo-wilaya') ? document.getElementById('qo-wilaya').value : (p.wilaya || 'الجزائر');
+  const address = document.getElementById('qo-address') ? document.getElementById('qo-address').value.trim() : 'وسط المدينة';
+
+  if (!name || !phone) {
+    window.showToast("⚠️ يرجى إدخال الاسم الكامل ورقم الهاتف لتأكيد الطلب!");
+    return;
+  }
+
+  const qty = state.qty || 1;
+  const totalAmount = (parseFloat(p.price) || 0) * qty;
+  const orderId = 'ord_' + Date.now();
+
+  const newOrder = {
+    id: orderId,
+    customer_id: window.currentUser ? window.currentUser.id : 'guest_' + Date.now(),
+    customer_name: name,
+    customer_phone: phone,
+    customerName: name,
+    customerPhone: phone,
+    wilaya: wilaya,
+    address: address,
+    store_id: p.storeId || storeInfo.id || 'direct',
+    store_name: p.storeName || storeInfo.name || 'متجر معتمد',
+    storeId: p.storeId || storeInfo.id || 'direct',
+    storeName: p.storeName || storeInfo.name || 'متجر معتمد',
+    total_amount: totalAmount,
+    totalAmount: totalAmount,
+    total: totalAmount,
+    status: 'جديد 🆕',
+    created_at: new Date().toISOString(),
+    items: JSON.stringify([{ id: p.id, name: p.name, price: p.price, qty: qty, emoji: p.emoji, storeName: p.storeName }])
+  };
+
+  // Save locally
+  let localOrders = JSON.parse(localStorage.getItem('zalo_local_orders') || '[]');
+  localOrders.unshift(newOrder);
+  localStorage.setItem('zalo_local_orders', JSON.stringify(localOrders));
+
+  // Sync to Supabase
+  try {
+    if (typeof supabase !== 'undefined' && supabase.from) {
+      await supabase.from('orders').insert(newOrder);
+    }
+  } catch(e) {
+    console.warn("Supabase order sync note:", e);
+  }
+
+  // Populate receipt modal
+  const receiptContainer = document.getElementById('receipt-details-content');
+  if (receiptContainer) {
+    receiptContainer.innerHTML = `
+      <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--bd); padding-bottom:6px;">
+        <span style="color:var(--gray);">المشتري:</span>
+        <span style="font-weight:bold; color:var(--navy);">${name} (${phone})</span>
+      </div>
+      <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--bd); padding-bottom:6px;">
+        <span style="color:var(--gray);">مكان التسليم:</span>
+        <span style="font-weight:bold; color:#0369a1;">ولاية ${wilaya} - ${address}</span>
+      </div>
+      <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--bd); padding-bottom:6px;">
+        <span style="color:var(--gray);">المتجر:</span>
+        <span style="font-weight:bold; color:var(--navy);">${p.storeName}</span>
+      </div>
+      <div style="display:flex; justify-content:space-between; font-size:12px; background:#fff; padding:6px 10px; border-radius:8px; border:1px solid var(--bd); margin-top:4px;">
+        <span>${p.emoji||'📦'} ${p.name} <strong style="color:var(--brand-gold);">x${qty}</strong></span>
+        <strong style="color:var(--metallic-gold);">${totalAmount.toLocaleString()} دج</strong>
+      </div>
+      <div style="display:flex; justify-content:space-between; font-size:13.5px; font-weight:900; color:var(--navy); background:#fef3c7; padding:8px 12px; border-radius:10px; border:1px solid #fde047; margin-top:6px;">
+        <span>الإجمالي المستحق (الدفع عند الاستلام):</span>
+        <span style="color:#b45309;">${totalAmount.toLocaleString()} دج</span>
+      </div>
+    `;
+  }
+
+  // Generate WhatsApp Message for receipt button
   const pPhone = storeInfo.phone || '0550000000';
   const waPhone = pPhone.replace(/[^0-9]/g, '');
   const cleanWaPhone = waPhone.startsWith('0') ? '213' + waPhone.substring(1) : (waPhone.startsWith('213') ? waPhone : '213' + waPhone);
 
-  const message = `🛒 *طلب شراء مباشر - منصة ZaLo الموحدة*\n\n` +
-    `📦 *المنتج:* ${p.name}\n` +
-    `💰 *السعر:* ${(parseFloat(p.price)||0).toLocaleString()} دج\n` +
-    `🔢 *الكمية:* ${state.qty}\n` +
+  const waText = `🛍️ *إثبات طلب مباشر - منصة ZaLo*\n\n` +
+    `رقم الطلب: #${orderId.substring(0,8)}\n` +
+    `👤 *الزبون:* ${name}\n` +
+    `📞 *الهاتف:* ${phone}\n` +
+    `📍 *الولاية والبلدية:* ${wilaya} - ${address}\n` +
     `🏪 *المتجر:* ${p.storeName}\n` +
-    `📍 *الولاية:* ${p.wilaya}\n\n` +
-    `أرجو تأكيد الطلب والتوصيل الفوري السريع وشكراً!`;
+    `📦 *المنتج:* ${p.name} (الكمية: ${qty})\n` +
+    `💰 *المبلغ:* ${totalAmount.toLocaleString()} دج\n\n` +
+    `أرجو تأكيد تجهيز الشحن الفوري وشكراً!`;
 
-  window.open(`https://wa.me/${cleanWaPhone}?text=${encodeURIComponent(message)}`, '_blank');
+  const waLink = document.getElementById('receipt-whatsapp-link');
+  if (waLink) {
+    waLink.href = `https://wa.me/${cleanWaPhone}?text=${encodeURIComponent(waText)}`;
+  }
+
+  // Close product modal, show receipt modal
+  document.getElementById('productModal').style.display = 'none';
+  const rModal = document.getElementById('orderReceiptModal');
+  if (rModal) rModal.style.display = 'flex';
+
+  window.showToast("🎉 تم تسجيل طلبك المباشر بنجاح! جاري إصدار الوصل 📄");
 };
 
 window.chQty = function(delta) {

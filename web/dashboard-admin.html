@@ -3149,6 +3149,10 @@
                     let stores = getDB("stores_list_old", MOCK_STORES);
                     stores.unshift(officialStore);
                     setDB("stores_list_old", stores);
+
+                    let officialStores = getDB("zalo_official_stores", []);
+                    officialStores.unshift(officialStore);
+                    setDB("zalo_official_stores", officialStores);
                 } catch(dbErr) {
                     console.warn("LocalStorage save note:", dbErr);
                 }
@@ -3214,8 +3218,8 @@
                             phone: phone,
                             status: 'active',
                             is_official: true,
-                            logo_url: logo.startsWith('data:') ? 'assets/icon-192.svg' : logo,
-                            banner_url: cover.startsWith('data:') ? 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=500' : cover,
+                            logo_url: logo,
+                            banner_url: cover,
                             updated_at: new Date().toISOString()
                         });
                         await window.supabaseClient.from('merchant_requests').upsert({
@@ -3241,8 +3245,8 @@
                                 storeName: name,
                                 wilaya: wilaya,
                                 description: prodDesc || 'منتج أصلي معتمد متوفر لدى متجر زالو الرسمي',
-                                image: prodImage.startsWith('data:') ? 'assets/icon-192.svg' : (prodImage || logo || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500'),
-                                image_url: prodImage.startsWith('data:') ? 'assets/icon-192.svg' : (prodImage || logo || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500'),
+                                image: prodImage || logo || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500',
+                                image_url: prodImage || logo || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500',
                                 phone: phone,
                                 status: 'active',
                                 created_at: new Date().toISOString()
