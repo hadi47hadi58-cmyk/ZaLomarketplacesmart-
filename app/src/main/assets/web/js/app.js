@@ -874,29 +874,70 @@ function renderManagerUsers() {
     users.forEach(u => {
         let statusBadge = u.status === "ACTIVE" ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" : "bg-red-500/10 text-red-500 border-red-500/20";
         let row = document.createElement("tr");
-        row.className = "border-t border-slate-700/50 text-white font-semibold";
+        row.className = "border-t border-slate-700/50 text-slate-800 font-semibold";
+        const userId = u.id || u.uid || u.email;
         row.innerHTML = `
             <td class="p-3 text-right">
-                <p class="font-bold">${u.name}</p>
-                <p class="text-[10px] text-slate-400 font-normal">${u.email}</p>
+                <p class="font-bold text-slate-800">${u.name}</p>
+                <p class="text-[10px] text-slate-400 font-normal">${u.email || 'no-email'}</p>
             </td>
-            <td class="p-3 text-right">${u.phone}</td>
+            <td class="p-3 text-right text-slate-700">${u.phone || 'غير مدرج'}</td>
             <td class="p-3 text-right">
-                <span class="text-xs bg-slate-700 text-slate-300 px-3 py-1 rounded-full border border-slate-600 font-bold">${getRoleArabic(u.role)}</span>
+                <span class="text-xs bg-slate-100 text-slate-700 px-3 py-1 rounded-full border border-slate-200 font-bold">${getRoleArabic(u.role)}</span>
             </td>
             <td class="p-3 text-right">
                 <span class="text-xs px-2.5 py-1 rounded-full border ${statusBadge} font-bold">${u.status || 'ACTIVE'}</span>
             </td>
             <td class="p-3 text-center">
-                <div class="flex gap-2 justify-center">
-                    <button class="bg-amber-500 hover:bg-amber-600 text-slate-950 text-[10px] px-2.5 py-1 rounded-xl font-bold font-bold" onclick="changeUserRole('${u.uid}')">ترقية</button>
-                    <button class="bg-red-500 hover:bg-red-600 text-white text-[10px] px-2.5 py-1 rounded-xl font-bold font-bold" onclick="banUser('${u.uid}')">تعطيل</button>
+                <div class="flex gap-1.5 justify-center flex-wrap">
+                    <button class="bg-amber-500 hover:bg-amber-600 text-slate-950 text-[10px] px-2.5 py-1 rounded-xl font-bold transition" onclick="changeUserRole('${userId}')">ترقية</button>
+                    <button class="bg-amber-100 text-amber-800 hover:bg-amber-200 text-[10px] px-2.5 py-1 rounded-xl font-bold transition" onclick="banUser('${userId}')">تعطيل</button>
+                    <button class="bg-red-600 hover:bg-red-700 text-white text-[10px] px-2.5 py-1 rounded-xl font-bold transition shadow-sm" onclick="deleteUserPermanentGlobal('${userId}')" title="حذف الحساب نهائياً من كل التطبيق">
+                        <i class="fa-solid fa-trash-can"></i> حذف نهائي 🗑️
+                    </button>
                 </div>
             </td>
         `;
         tbody.appendChild(row);
     });
 }
+
+window.deleteUserPermanentGlobal = async function(uid) {
+    if (!confirm("🚨 هل أنت متأكد تماماً من حذف هذا الحساب نهائياً من قاعدة البيانات والتطبيق بالكامل؟\n\nسيتم حذف كافة سجلاته ووصوله نهائياً.")) {
+        return;
+    }
+    let users = DB.get("users", SEED_USERS);
+    let u = users.find(user => user.uid === uid || user.id === uid || user.email === uid);
+    let email = u ? u.email : (uid.includes('@') ? uid : null);
+    let userId = uid;
+
+    users = users.filter(user => user.uid !== uid && user.id !== uid && (!email || user.email !== email));
+    DB.set("users", users);
+
+    try {
+        if (window.supabaseClient) {
+            if (userId) {
+                await window.supabaseClient.from('profiles').delete().eq('id', userId);
+                await window.supabaseClient.from('users').delete().eq('id', userId);
+                await window.supabaseClient.from('merchant_requests').delete().eq('id', userId);
+                await window.supabaseClient.from('stores').delete().eq('id', userId);
+            }
+            if (email) {
+                await window.supabaseClient.from('profiles').delete().eq('email', email);
+                await window.supabaseClient.from('users').delete().eq('email', email);
+                await window.supabaseClient.from('merchant_requests').delete().eq('email', email);
+                await window.supabaseClient.from('stores').delete().eq('email', email);
+            }
+        }
+    } catch(e) {
+        console.warn("Supabase permanent deletion note:", e);
+    }
+
+    alert("✅ تم حذف الحساب نهائياً وكلياً من المنصة!");
+    if (typeof renderManagerUsers === 'function') renderManagerUsers();
+    if (typeof renderUsersTable === 'function') renderUsersTable();
+    if (typeof renderStats === 'function') renderStats();
+};
 
 window.changeUserRole = function(uid) {
     let users = DB.get("users", SEED_USERS);

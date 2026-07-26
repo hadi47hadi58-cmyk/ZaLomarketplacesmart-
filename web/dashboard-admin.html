@@ -359,13 +359,13 @@
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                 
                 <!-- Card 1: Pending Security Review -->
-                <div class="bg-white p-4 rounded-2xl border-2 border-amber-300 shadow-sm flex items-center justify-between hover:scale-[1.02] transition duration-200 relative">
+                <div onclick="openStatDetailModal('pending')" class="bg-white p-4 rounded-2xl border-2 border-amber-300 shadow-sm flex items-center justify-between hover:scale-[1.02] transition duration-200 cursor-pointer relative">
                     <div class="text-right space-y-1">
                         <span class="text-[10px] text-slate-400 font-bold block">طلبات قيد المعالجة الأمنية</span>
                         <h3 class="text-xl font-black text-amber-600" id="stat-pending-security">0</h3>
                     </div>
                     <div class="flex flex-col items-end justify-between h-full min-h-[40px]">
-                        <button onclick="refreshIndividualStat('pending-security', this)" class="text-slate-400 hover:text-sky-500 transition text-[11px]" title="تحديث">
+                        <button onclick="event.stopPropagation(); refreshIndividualStat('pending-security', this)" class="text-slate-400 hover:text-sky-500 transition text-[11px]" title="تحديث">
                             <i class="fa-solid fa-arrows-rotate"></i>
                         </button>
                         <div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-500 border border-amber-200 flex items-center justify-center text-xs shadow-sm mt-2">
@@ -375,7 +375,7 @@
                 </div>
 
                 <!-- Card 2: Active Stores -->
-                <div onclick="openActiveStoresModal()" class="bg-white p-4 rounded-2xl border-2 border-emerald-400 shadow-sm flex items-center justify-between hover:scale-[1.02] transition duration-200 cursor-pointer relative">
+                <div onclick="openStatDetailModal('active-stores')" class="bg-white p-4 rounded-2xl border-2 border-emerald-400 shadow-sm flex items-center justify-between hover:scale-[1.02] transition duration-200 cursor-pointer relative">
                     <div class="text-right space-y-1">
                         <span class="text-[10px] text-slate-400 font-bold block">المتاجر النشطة (معاينة)</span>
                         <h3 class="text-xl font-black text-emerald-600" id="stat-active-stores">0</h3>
@@ -391,13 +391,13 @@
                 </div>
 
                 <!-- Card 3: Phone Verified Users -->
-                <div class="bg-white p-4 rounded-2xl border-2 border-sky-400 shadow-sm flex items-center justify-between hover:scale-[1.02] transition duration-200 relative">
+                <div onclick="openStatDetailModal('verified-users')" class="bg-white p-4 rounded-2xl border-2 border-sky-400 shadow-sm flex items-center justify-between hover:scale-[1.02] transition duration-200 cursor-pointer relative">
                     <div class="text-right space-y-1">
                         <span class="text-[10px] text-slate-400 font-bold block">الزبائن الموثقين بالهواتف</span>
                         <h3 class="text-xl font-black text-sky-600" id="stat-verified-users">0</h3>
                     </div>
                     <div class="flex flex-col items-end justify-between h-full min-h-[40px]">
-                        <button onclick="refreshIndividualStat('verified-users', this)" class="text-slate-400 hover:text-sky-500 transition text-[11px]" title="تحديث">
+                        <button onclick="event.stopPropagation(); refreshIndividualStat('verified-users', this)" class="text-slate-400 hover:text-sky-500 transition text-[11px]" title="تحديث">
                             <i class="fa-solid fa-arrows-rotate"></i>
                         </button>
                         <div class="w-8 h-8 rounded-lg bg-sky-50 text-sky-500 border border-sky-200 flex items-center justify-center text-xs shadow-sm mt-2">
@@ -407,13 +407,13 @@
                 </div>
 
                 <!-- Card 4: Total Products -->
-                <div class="bg-white p-4 rounded-2xl border-2 border-blue-400 shadow-sm flex items-center justify-between hover:scale-[1.02] transition duration-200 relative">
+                <div onclick="openStatDetailModal('total-products')" class="bg-white p-4 rounded-2xl border-2 border-blue-400 shadow-sm flex items-center justify-between hover:scale-[1.02] transition duration-200 cursor-pointer relative">
                     <div class="text-right space-y-1">
                         <span class="text-[10px] text-slate-400 font-bold block">إجمالي السلع المعروضة</span>
                         <h3 class="text-xl font-black text-blue-600" id="stat-total-products">0</h3>
                     </div>
                     <div class="flex flex-col items-end justify-between h-full min-h-[40px]">
-                        <button onclick="refreshIndividualStat('total-products', this)" class="text-slate-400 hover:text-sky-500 transition text-[11px]" title="تحديث">
+                        <button onclick="event.stopPropagation(); refreshIndividualStat('total-products', this)" class="text-slate-400 hover:text-sky-500 transition text-[11px]" title="تحديث">
                             <i class="fa-solid fa-arrows-rotate"></i>
                         </button>
                         <div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-500 border border-blue-200 flex items-center justify-center text-xs shadow-sm mt-2">
@@ -423,13 +423,13 @@
                 </div>
 
                 <!-- Card 5: Net Profits -->
-                <div class="bg-white p-4 rounded-2xl border-2 border-emerald-500 shadow-sm flex items-center justify-between hover:scale-[1.02] transition duration-200 relative">
+                <div onclick="openStatDetailModal('net-profits')" class="bg-white p-4 rounded-2xl border-2 border-emerald-500 shadow-sm flex items-center justify-between hover:scale-[1.02] transition duration-200 cursor-pointer relative">
                     <div class="text-right space-y-1">
                         <span class="text-[10px] text-slate-400 font-bold block">صافي أرباح المنصة (دج)</span>
                         <h3 class="text-xl font-black text-emerald-700" id="stat-net-profits">0 دج</h3>
                     </div>
                     <div class="flex flex-col items-end justify-between h-full min-h-[40px]">
-                        <button onclick="refreshIndividualStat('net-profits', this)" class="text-slate-400 hover:text-sky-500 transition text-[11px]" title="تحديث">
+                        <button onclick="event.stopPropagation(); refreshIndividualStat('net-profits', this)" class="text-slate-400 hover:text-sky-500 transition text-[11px]" title="تحديث">
                             <i class="fa-solid fa-arrows-rotate"></i>
                         </button>
                         <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-600 border border-emerald-300 flex items-center justify-center text-xs shadow-sm mt-2">
@@ -439,13 +439,13 @@
                 </div>
 
                 <!-- Card 6: Active Orders Now -->
-                <div class="bg-white p-4 rounded-2xl border-2 border-red-400 shadow-sm flex items-center justify-between hover:scale-[1.02] transition duration-200 relative">
+                <div onclick="openStatDetailModal('active-orders')" class="bg-white p-4 rounded-2xl border-2 border-red-400 shadow-sm flex items-center justify-between hover:scale-[1.02] transition duration-200 cursor-pointer relative">
                     <div class="text-right space-y-1">
                         <span class="text-[10px] text-slate-400 font-bold block">الطلبات النشطة معالجة الآن</span>
                         <h3 class="text-xl font-black text-red-600" id="stat-active-orders">0</h3>
                     </div>
                     <div class="flex flex-col items-end justify-between h-full min-h-[40px]">
-                        <button onclick="refreshIndividualStat('active-orders', this)" class="text-slate-400 hover:text-sky-500 transition text-[11px]" title="تحديث">
+                        <button onclick="event.stopPropagation(); refreshIndividualStat('active-orders', this)" class="text-slate-400 hover:text-sky-500 transition text-[11px]" title="تحديث">
                             <i class="fa-solid fa-arrows-rotate"></i>
                         </button>
                         <div class="w-8 h-8 rounded-lg bg-red-50 text-red-500 border border-red-200 flex items-center justify-center text-xs shadow-sm mt-2">
@@ -455,13 +455,13 @@
                 </div>
 
                 <!-- Card 7: General Platform Rating -->
-                <div class="bg-white p-4 rounded-2xl border-2 border-yellow-400 shadow-sm flex items-center justify-between hover:scale-[1.02] transition duration-200 relative">
+                <div onclick="openStatDetailModal('rating')" class="bg-white p-4 rounded-2xl border-2 border-yellow-400 shadow-sm flex items-center justify-between hover:scale-[1.02] transition duration-200 cursor-pointer relative">
                     <div class="text-right space-y-1">
                         <span class="text-[10px] text-slate-400 font-bold block">تقييم المنصة العام للعملاء</span>
                         <h3 class="text-xl font-black text-yellow-600" id="stat-platform-rating">5.0 / 5.0 ★</h3>
                     </div>
                     <div class="flex flex-col items-end justify-between h-full min-h-[40px]">
-                        <button onclick="refreshIndividualStat('platform-rating', this)" class="text-slate-400 hover:text-sky-500 transition text-[11px]" title="تحديث">
+                        <button onclick="event.stopPropagation(); refreshIndividualStat('platform-rating', this)" class="text-slate-400 hover:text-sky-500 transition text-[11px]" title="تحديث">
                             <i class="fa-solid fa-arrows-rotate"></i>
                         </button>
                         <div class="w-8 h-8 rounded-lg bg-yellow-50 text-yellow-500 border border-yellow-200 flex items-center justify-center text-xs shadow-sm mt-2">
@@ -471,13 +471,13 @@
                 </div>
 
                 <!-- Card 8: Administrators & Personnel -->
-                <div class="bg-white p-4 rounded-2xl border-2 border-purple-400 shadow-sm flex items-center justify-between hover:scale-[1.02] transition duration-200 relative">
+                <div onclick="openStatDetailModal('admins')" class="bg-white p-4 rounded-2xl border-2 border-purple-400 shadow-sm flex items-center justify-between hover:scale-[1.02] transition duration-200 cursor-pointer relative">
                     <div class="text-right space-y-1">
                         <span class="text-[10px] text-slate-400 font-bold block">الموظفون والمشرفون الإداريون</span>
                         <h3 class="text-xl font-black text-purple-600" id="stat-admins-count">0</h3>
                     </div>
                     <div class="flex flex-col items-end justify-between h-full min-h-[40px]">
-                        <button onclick="refreshIndividualStat('admins-count', this)" class="text-slate-400 hover:text-sky-500 transition text-[11px]" title="تحديث">
+                        <button onclick="event.stopPropagation(); refreshIndividualStat('admins-count', this)" class="text-slate-400 hover:text-sky-500 transition text-[11px]" title="تحديث">
                             <i class="fa-solid fa-arrows-rotate"></i>
                         </button>
                         <div class="w-8 h-8 rounded-lg bg-purple-50 text-purple-500 border border-purple-200 flex items-center justify-center text-xs shadow-sm mt-2">
@@ -1346,24 +1346,64 @@
                     <div>
                         <label class="block text-xs font-black text-slate-700 mb-1">الولاية المستهدفة *</label>
                         <select id="off-store-wilaya" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-xs font-bold text-slate-800 focus:outline-none focus:border-amber-500">
-                            <option value="الجزائر">16 - الجزائر العاصمة</option>
-                            <option value="وهران">31 - وهران</option>
-                            <option value="قسنطينة">25 - قسنطينة</option>
-                            <option value="سطيف">19 - سطيف</option>
-                            <option value="عنابة">23 - عنابة</option>
+                            <option value="أدرار">01 - أدرار</option>
+                            <option value="الشلف">02 - الشلف</option>
+                            <option value="الأغواط">03 - الأغواط</option>
+                            <option value="أم البواقي">04 - أم البواقي</option>
                             <option value="باتنة">05 - باتنة</option>
-                            <option value="ورقلة">30 - ورقلة</option>
-                            <option value="المنيعة">58 - المنيعة</option>
-                            <option value="تمنراست">11 - تمنراست</option>
-                            <option value="بشار">08 - بشار</option>
-                            <option value="تلمسان">13 - تلمسان</option>
-                            <option value="البليدة">09 - البليدة</option>
-                            <option value="بومرداس">35 - بومرداس</option>
-                            <option value="تيزي وزو">15 - تيزي وزو</option>
                             <option value="بجاية">06 - بجاية</option>
                             <option value="بسكرة">07 - بسكرة</option>
-                            <option value="الشلف">02 - الشلف</option>
+                            <option value="بشار">08 - بشار</option>
+                            <option value="البليدة">09 - البليدة</option>
+                            <option value="البويرة">10 - البويرة</option>
+                            <option value="تمنراست">11 - تمنراست</option>
+                            <option value="تبسة">12 - تبسة</option>
+                            <option value="تلمسان">13 - تلمسان</option>
+                            <option value="تيارت">14 - تيارت</option>
+                            <option value="تيزي وزو">15 - تيزي وزو</option>
+                            <option value="الجزائر" selected>16 - الجزائر العاصمة</option>
+                            <option value="الجلفة">17 - الجلفة</option>
+                            <option value="جيجل">18 - جيجل</option>
+                            <option value="سطيف">19 - سطيف</option>
+                            <option value="سعيدة">20 - سعيدة</option>
+                            <option value="سكيكدة">21 - سكيكدة</option>
+                            <option value="سيدي بلعباس">22 - سيدي بلعباس</option>
+                            <option value="عنابة">23 - عنابة</option>
+                            <option value="قالمة">24 - قالمة</option>
+                            <option value="قسنطينة">25 - قسنطينة</option>
+                            <option value="المدية">26 - المدية</option>
                             <option value="مستغانم">27 - مستغانم</option>
+                            <option value="المسيلة">28 - المسيلة</option>
+                            <option value="معسكر">29 - معسكر</option>
+                            <option value="ورقلة">30 - ورقلة</option>
+                            <option value="وهران">31 - وهران</option>
+                            <option value="البيض">32 - البيض</option>
+                            <option value="إليزي">33 - إليزي</option>
+                            <option value="برج بوعريريج">34 - برج بوعريريج</option>
+                            <option value="بومرداس">35 - بومرداس</option>
+                            <option value="الطارف">36 - الطارف</option>
+                            <option value="تندوف">37 - تندوف</option>
+                            <option value="تيسمسيلت">38 - تيسمسيلت</option>
+                            <option value="الوادي">39 - الوادي</option>
+                            <option value="خنشلة">40 - خنشلة</option>
+                            <option value="سوق أهراس">41 - سوق أهراس</option>
+                            <option value="تيبازة">42 - تيبازة</option>
+                            <option value="ميلة">43 - ميلة</option>
+                            <option value="عين الدفلى">44 - عين الدفلى</option>
+                            <option value="النعامة">45 - النعامة</option>
+                            <option value="عين تموشنت">46 - عين تموشنت</option>
+                            <option value="غرداية">47 - غرداية</option>
+                            <option value="غليزان">48 - غليزان</option>
+                            <option value="تيميمون">49 - تيميمون</option>
+                            <option value="برج باجي مختار">50 - برج باجي مختار</option>
+                            <option value="أولاد جلال">51 - أولاد جلال</option>
+                            <option value="بني عباس">52 - بني عباس</option>
+                            <option value="عين صالح">53 - عين صالح</option>
+                            <option value="عين قزام">54 - عين قزام</option>
+                            <option value="تقرت">55 - تقرت</option>
+                            <option value="جانت">56 - جانت</option>
+                            <option value="المغير">57 - المغير</option>
+                            <option value="المنيعة">58 - المنيعة</option>
                         </select>
                     </div>
                     <div>
@@ -1619,17 +1659,17 @@
             { code: "56", name: "جانت", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
             { code: "57", name: "المغير", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
             { code: "58", name: "المنيعة", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
-            { code: "59", name: "البلدية الجديدة 59", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
-            { code: "60", name: "البلدية الجديدة 60", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
-            { code: "61", name: "البلدية الجديدة 61", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
-            { code: "62", name: "البلدية الجديدة 62", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
-            { code: "63", name: "البلدية الجديدة 63", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
-            { code: "64", name: "البلدية الجديدة 64", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
-            { code: "65", name: "البلدية الجديدة 65", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
-            { code: "66", name: "البلدية الجديدة 66", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
-            { code: "67", name: "البلدية الجديدة 67", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
-            { code: "68", name: "البلدية الجديدة 68", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
-            { code: "69", name: "البلدية الجديدة 69", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" }
+            { code: "59", name: "بريكة (ولاية منتدبة)", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
+            { code: "60", name: "بوسعادة (ولاية منتدبة)", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
+            { code: "61", name: "مسعد (ولاية منتدبة)", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
+            { code: "62", name: "قصر الشلالة (ولاية منتدبة)", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
+            { code: "63", name: "العلمة (ولاية منتدبة)", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
+            { code: "64", name: "فرجيوة (ولاية منتدبة)", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
+            { code: "65", name: "شلغوم العيد (ولاية منتدبة)", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
+            { code: "66", name: "عين البيضاء (ولاية منتدبة)", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
+            { code: "67", name: "عين وسارة (ولاية منتدبة)", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
+            { code: "68", name: "الأبيض سيدي الشيخ (ولاية منتدبة)", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" },
+            { code: "69", name: "أفلو (ولاية منتدبة)", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" }
         ];
 
         // Default mock active stores list (Cleared to prevent fake/mock stores)
@@ -1715,13 +1755,255 @@
         function refreshIndividualStat(statId, button) {
             // Add spin class to icon
             const icon = button.querySelector('i');
-            icon.classList.add('spin-anim');
+            if (icon) icon.classList.add('spin-anim');
             setTimeout(() => {
-                icon.classList.remove('spin-anim');
+                if (icon) icon.classList.remove('spin-anim');
             }, 600);
 
             // Re-render only actual calculations from real local database
             renderStats();
+        }
+
+        function openStatDetailModal(type) {
+            let modal = document.getElementById("stat-detail-modal");
+            if (!modal) {
+                modal = document.createElement("div");
+                modal.id = "stat-detail-modal";
+                modal.className = "fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-[9999] flex items-center justify-center p-4 font-sans";
+                modal.setAttribute("dir", "rtl");
+                document.body.appendChild(modal);
+            }
+
+            let title = "تفاصيل الإحصائيات";
+            let icon = "fa-chart-pie";
+            let contentHtml = "";
+
+            const users = getDB("users", []);
+            const stores = getDB("stores_list_old", []);
+            const products = getDB("products", []);
+            const orders = getDB("orders", []);
+
+            if (type === "users" || type === "verified-users") {
+                title = "بيانات وإحصائيات المستخدمين المسجلين";
+                icon = "fa-users";
+                contentHtml = `
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center bg-sky-50 p-3 rounded-xl border border-sky-200 text-xs">
+                            <span class="font-bold text-sky-800">إجمالي الحسابات المقيدة بالنظام: ${users.length}</span>
+                            <span class="text-[10px] bg-sky-200 text-sky-900 px-2 py-0.5 rounded-full font-black">محدث آلياً</span>
+                        </div>
+                        <div class="max-h-80 overflow-y-auto space-y-2">
+                            ${users.length === 0 ? '<p class="text-center text-xs text-slate-400 py-4">لا يوجد مستخدمون حالياً في النظام</p>' : 
+                                users.map(u => `
+                                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 flex justify-between items-center text-xs">
+                                        <div>
+                                            <p class="font-black text-slate-800">${u.name || 'مستخدم'}</p>
+                                            <p class="text-[10px] text-slate-400">${u.email || u.phone || 'بدون بريد'}</p>
+                                        </div>
+                                        <span class="bg-slate-200 text-slate-700 text-[10px] px-2 py-1 rounded-lg font-bold">${u.role || 'زبون'}</span>
+                                    </div>
+                                `).join('')
+                            }
+                        </div>
+                    </div>
+                `;
+            } else if (type === "sales" || type === "profits" || type === "net-profits") {
+                title = "تفاصيل المبيعات والأرباح المالية المحققة";
+                icon = "fa-sack-dollar";
+                let completed = orders.filter(o => o.status === "تم التسليم" || o.status === "DELIVERED");
+                let totalVal = completed.reduce((sum, o) => sum + (parseFloat(o.total) || 0), 0);
+                contentHtml = `
+                    <div class="space-y-4">
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="bg-emerald-50 p-3 rounded-xl border border-emerald-200 text-right">
+                                <span class="text-[10px] text-emerald-600 font-bold block">إجمالي القيمة المسلمة</span>
+                                <span class="text-sm font-black text-emerald-800">${totalVal.toLocaleString()} دج</span>
+                            </div>
+                            <div class="bg-amber-50 p-3 rounded-xl border border-amber-200 text-right">
+                                <span class="text-[10px] text-amber-600 font-bold block">عمولة المنصة الصافية (5%)</span>
+                                <span class="text-sm font-black text-amber-800">${(totalVal * 0.05).toLocaleString()} دج</span>
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-500 font-bold">الطلبات المكتملة حديثاً (${completed.length} طلبية):</p>
+                        <div class="max-h-60 overflow-y-auto space-y-2">
+                            ${completed.length === 0 ? '<p class="text-center text-xs text-slate-400 py-4">لا توجد مبيعات مكتملة مسجلة بعد</p>' :
+                                completed.map(o => `
+                                    <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200 flex justify-between items-center text-xs">
+                                        <div>
+                                            <p class="font-bold text-slate-800">طلب #${(o.id || '').substring(0,8)}</p>
+                                            <p class="text-[10px] text-slate-400">${o.customer || 'زبون'}</p>
+                                        </div>
+                                        <span class="font-black text-emerald-700">${o.total || 0} دج</span>
+                                    </div>
+                                `).join('')
+                            }
+                        </div>
+                    </div>
+                `;
+            } else if (type === "stores" || type === "active-stores") {
+                title = "سجل المتاجر والمحلات الرسمية المعتمدة";
+                icon = "fa-store";
+                let active = stores.filter(s => s.status === "APPROVED");
+                contentHtml = `
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center bg-amber-50 p-3 rounded-xl border border-amber-200 text-xs">
+                            <span class="font-bold text-amber-800">المتاجر المعتمدة المفتوحة: ${active.length}</span>
+                            <span class="text-[10px] bg-amber-200 text-amber-900 px-2 py-0.5 rounded-full font-black">69 ولاية</span>
+                        </div>
+                        <div class="max-h-80 overflow-y-auto space-y-2">
+                            ${active.length === 0 ? '<p class="text-center text-xs text-slate-400 py-4">لا توجد متاجر نشطة حالياً</p>' :
+                                active.map(s => `
+                                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 flex justify-between items-center text-xs">
+                                        <div>
+                                            <p class="font-black text-slate-800">${s.name || s.store_name || 'متجر'}</p>
+                                            <p class="text-[10px] text-slate-400">المالك: ${s.owner || s.owner_name || 'تاجر'} | الولاية: ${s.location || s.wilaya || 'الجزائر'}</p>
+                                        </div>
+                                        <span class="bg-emerald-100 text-emerald-800 text-[10px] px-2 py-1 rounded-lg font-bold">نشط 🟢</span>
+                                    </div>
+                                `).join('')
+                            }
+                        </div>
+                    </div>
+                `;
+            } else if (type === "orders" || type === "active-orders") {
+                title = "جدول وتفاصيل طلبات الشحن والتوصيل";
+                icon = "fa-box";
+                contentHtml = `
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center bg-purple-50 p-3 rounded-xl border border-purple-200 text-xs">
+                            <span class="font-bold text-purple-800">إجمالي الطلبات بالمنصة: ${orders.length}</span>
+                            <span class="text-[10px] bg-purple-200 text-purple-900 px-2 py-0.5 rounded-full font-black">تحديث مباشر</span>
+                        </div>
+                        <div class="max-h-80 overflow-y-auto space-y-2">
+                            ${orders.length === 0 ? '<p class="text-center text-xs text-slate-400 py-4">لا توجد طلبيات جارية حالياً</p>' :
+                                orders.map(o => `
+                                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 flex justify-between items-center text-xs">
+                                        <div>
+                                            <p class="font-black text-slate-800">طلب #${(o.id || o.orderId || '').substring(0,8)}</p>
+                                            <p class="text-[10px] text-slate-400">الزبون: ${o.customer || o.customerName || 'زبون'} | ${o.phone || ''}</p>
+                                        </div>
+                                        <span class="bg-sky-100 text-sky-800 text-[10px] px-2 py-1 rounded-lg font-bold">${o.status || 'قيد الشحن'}</span>
+                                    </div>
+                                `).join('')
+                            }
+                        </div>
+                    </div>
+                `;
+            } else if (type === "products" || type === "total-products") {
+                title = "قائمة البضائع والمنتجات العامة المعروضة";
+                icon = "fa-box-open";
+                contentHtml = `
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center bg-blue-50 p-3 rounded-xl border border-blue-200 text-xs">
+                            <span class="font-bold text-blue-800">عدد المنتجات المسجلة: ${products.length}</span>
+                            <span class="text-[10px] bg-blue-200 text-blue-900 px-2 py-0.5 rounded-full font-black">السوق المحلي</span>
+                        </div>
+                        <div class="max-h-80 overflow-y-auto space-y-2">
+                            ${products.length === 0 ? '<p class="text-center text-xs text-slate-400 py-4">لا توجد منتجات مسجلة في قاعدة البيانات</p>' :
+                                products.map(p => `
+                                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 flex justify-between items-center text-xs">
+                                        <div>
+                                            <p class="font-black text-slate-800">${p.productName || p.name || 'منتج'}</p>
+                                            <p class="text-[10px] text-slate-400">السعر: ${p.price || 0} دج | القسم: ${p.category || 'عام'}</p>
+                                        </div>
+                                        <span class="bg-blue-100 text-blue-800 text-[10px] px-2 py-1 rounded-lg font-bold">متوفر</span>
+                                    </div>
+                                `).join('')
+                            }
+                        </div>
+                    </div>
+                `;
+            } else if (type === "pending" || type === "pending-security") {
+                title = "طلبات التسجيل قيد المراجعة والمعالجة الأمنية";
+                icon = "fa-file-shield";
+                let pending = stores.filter(s => s.status !== "APPROVED");
+                contentHtml = `
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center bg-amber-50 p-3 rounded-xl border border-amber-200 text-xs">
+                            <span class="font-bold text-amber-800">الطلبات المعلقة: ${pending.length}</span>
+                            <span class="text-[10px] bg-amber-200 text-amber-900 px-2 py-0.5 rounded-full font-black">قيد التدقيق</span>
+                        </div>
+                        <div class="max-h-80 overflow-y-auto space-y-2">
+                            ${pending.length === 0 ? '<p class="text-center text-xs text-slate-400 py-4">لا توجد طلبات معلقة بانتظار التفعيل حالياً</p>' :
+                                pending.map(s => `
+                                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 flex justify-between items-center text-xs">
+                                        <div>
+                                            <p class="font-black text-slate-800">${s.name || s.store_name || 'طلب متجر'}</p>
+                                            <p class="text-[10px] text-slate-400">صاحب الطلب: ${s.owner || s.owner_name || 'متقدم'} | ${s.phone || ''}</p>
+                                        </div>
+                                        <span class="bg-amber-100 text-amber-800 text-[10px] px-2 py-1 rounded-lg font-bold">قيد الدراسة ⏳</span>
+                                    </div>
+                                `).join('')
+                            }
+                        </div>
+                    </div>
+                `;
+            } else if (type === "admins" || type === "admins-count") {
+                title = "سجل الموظفين والمشرفين الإداريين";
+                icon = "fa-crown";
+                let adminsList = users.filter(u => u.role === "admin" || u.role === "manager" || u.role === "super_admin");
+                contentHtml = `
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center bg-purple-50 p-3 rounded-xl border border-purple-200 text-xs">
+                            <span class="font-bold text-purple-800">المشرفون بالمنصة: ${adminsList.length || 1}</span>
+                            <span class="text-[10px] bg-purple-200 text-purple-900 px-2 py-0.5 rounded-full font-black">صلاحيات كاملة</span>
+                        </div>
+                        <div class="max-h-80 overflow-y-auto space-y-2">
+                            ${adminsList.length === 0 ? `
+                                <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 flex justify-between items-center text-xs">
+                                    <div>
+                                        <p class="font-black text-slate-800">المدير العام للمنصة</p>
+                                        <p class="text-[10px] text-slate-400">admin@zalo.dz</p>
+                                    </div>
+                                    <span class="bg-purple-100 text-purple-800 text-[10px] px-2 py-1 rounded-lg font-bold">مدير عام</span>
+                                </div>
+                            ` :
+                                adminsList.map(u => `
+                                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 flex justify-between items-center text-xs">
+                                        <div>
+                                            <p class="font-black text-slate-800">${u.name || 'مشرف إداري'}</p>
+                                            <p class="text-[10px] text-slate-400">${u.email || u.phone || 'إدارة'}</p>
+                                        </div>
+                                        <span class="bg-purple-100 text-purple-800 text-[10px] px-2 py-1 rounded-lg font-bold">${u.role || 'مشرف'}</span>
+                                    </div>
+                                `).join('')
+                            }
+                        </div>
+                    </div>
+                `;
+            } else {
+                title = "تفاصيل الإحصائيات الشاملة";
+                icon = "fa-chart-line";
+                contentHtml = `<p class="text-xs text-slate-600 font-bold leading-relaxed">توضح هذه الكارت الإحصائية المؤشرات الميدانية المحدثة آلياً بناءً على عمليات الشراء والتسجيلات الفعلية بجميع الولايات الـ 69.</p>`;
+            }
+
+            modal.innerHTML = `
+                <div class="bg-white rounded-3xl p-6 max-w-lg w-full shadow-2xl border-2 border-amber-400 space-y-5 animate-in fade-in zoom-in duration-200 text-right">
+                    <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                        <div class="flex items-center gap-2">
+                            <div class="w-9 h-9 rounded-xl bg-amber-50 border border-amber-200 text-amber-600 flex items-center justify-center text-base">
+                                <i class="fa-solid ${icon}"></i>
+                            </div>
+                            <h3 class="text-sm font-black text-slate-800">${title}</h3>
+                        </div>
+                        <button onclick="closeStatDetailModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center text-xs font-bold transition">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                    ${contentHtml}
+                    <div class="pt-2 text-left">
+                        <button onclick="closeStatDetailModal()" class="bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs px-5 py-2.5 rounded-xl transition">
+                            إغلاق النافذة
+                        </button>
+                    </div>
+                </div>
+            `;
+            modal.classList.remove("hidden");
+        }
+
+        function closeStatDetailModal() {
+            const modal = document.getElementById("stat-detail-modal");
+            if (modal) modal.classList.add("hidden");
         }
 
         // Toggle Advanced Filter Panel
@@ -2105,7 +2387,7 @@
                         </span>
                     </td>
                     <td class="p-3 text-center">
-                        <div class="flex gap-1.5 justify-center">
+                        <div class="flex gap-1.5 justify-center flex-wrap">
                             <!-- Direct Email Icon Button -->
                             <a href="mailto:${s.email || 'partner@zalo.dz'}?subject=مراجعة متجر زالو ديزاد&body=أهلاً بك شريكنا العزيز،" class="bg-indigo-50 text-indigo-600 border border-indigo-200 hover:bg-indigo-600 hover:text-white font-bold p-2 rounded-xl transition" title="إرسال بريد إلكتروني مباشر">
                                 <i class="fa-regular fa-envelope"></i>
@@ -2119,11 +2401,72 @@
                                 `<button onclick="openSuspendModal('${s.id}')" class="bg-red-50 text-red-600 border border-red-200 hover:bg-red-600 hover:text-white font-bold text-[10px] px-3 py-1.5 rounded-xl transition" title="تعليق طلب التسجيل ومطالبة ببيانات">تعليق</button>` : 
                                 `<button onclick="openActivationConfirmModal('${s.id}')" class="bg-emerald-50 text-emerald-600 border border-emerald-200 hover:bg-emerald-600 hover:text-white font-bold text-[10px] px-3 py-1.5 rounded-xl transition">إعادة تفعيل</button>`
                             }
+
+                            <!-- Permanent Delete Button -->
+                            <button onclick="deleteRegistrationRequest('${s.id}')" class="bg-red-600 hover:bg-red-700 text-white font-bold text-[10px] px-2.5 py-1.5 rounded-xl transition shadow-sm flex items-center gap-1" title="حذف الطلب نهائياً">
+                                <i class="fa-solid fa-trash-can"></i>
+                                <span>حذف</span>
+                            </button>
                         </div>
                     </td>
                 `;
                 tbody.appendChild(row);
             });
+        }
+
+        // Permanent Delete Registration Request Function
+        async function deleteRegistrationRequest(id) {
+            if (!confirm("🚨 هل أنت متأكد من رفض وحذف طلب التسجيل هذا نهائياً من قاعدة البيانات والتطبيق؟\n\nلن يستطيع المتقدم استرجاع الطلب أو الدخول بهذا الحساب.")) {
+                return;
+            }
+            
+            let stores = getDB("stores_list_old", []);
+            let target = stores.find(s => s.id === id);
+            const targetEmail = target ? target.email : null;
+
+            stores = stores.filter(s => s.id !== id && (!targetEmail || s.email !== targetEmail));
+            setDB("stores_list_old", stores);
+
+            let pending = getDB("pending_registrations", []);
+            pending = pending.filter(p => p.id !== id && (!targetEmail || p.email !== targetEmail));
+            setDB("pending_registrations", pending);
+
+            let users = getDB("users", []);
+            users = users.filter(u => u.id !== id && (!targetEmail || u.email !== targetEmail));
+            setDB("users", users);
+
+            try {
+                let zaloLocalReqs = JSON.parse(localStorage.getItem('zalo_local_merchant_requests') || '[]');
+                zaloLocalReqs = zaloLocalReqs.filter(r => r.id !== id && (!targetEmail || r.email !== targetEmail));
+                localStorage.setItem('zalo_local_merchant_requests', JSON.stringify(zaloLocalReqs));
+            } catch (e) {}
+
+            try {
+                let zaloMerchantReqs = JSON.parse(localStorage.getItem('zalo_merchant_requests') || '[]');
+                zaloMerchantReqs = zaloMerchantReqs.filter(r => r.id !== id && (!targetEmail || r.email !== targetEmail));
+                localStorage.setItem('zalo_merchant_requests', JSON.stringify(zaloMerchantReqs));
+            } catch (e) {}
+
+            if (window.supabaseClient) {
+                try {
+                    if (id) {
+                        await window.supabaseClient.from('merchant_requests').delete().eq('id', id);
+                        await window.supabaseClient.from('stores').delete().eq('id', id);
+                        await window.supabaseClient.from('profiles').delete().eq('id', id);
+                    }
+                    if (targetEmail) {
+                        await window.supabaseClient.from('merchant_requests').delete().eq('email', targetEmail);
+                        await window.supabaseClient.from('stores').delete().eq('email', targetEmail);
+                        await window.supabaseClient.from('profiles').delete().eq('email', targetEmail);
+                    }
+                } catch (err) {
+                    console.warn("Supabase request purge note:", err);
+                }
+            }
+
+            alert("✅ تم حذف طلب التسجيل وتطهير الحساب نهائياً بنجاح!");
+            renderRegistrations();
+            renderStats();
         }
 
         // Approve store
@@ -3031,14 +3374,48 @@ startxref
             alert(`تم تسجيل العميل "${name}" بنجاح ضمن قاعدة زوار وأعضاء المنصة! 📝`);
         }
 
-        function deleteUser(id) {
-            if (confirm("هل أنت متأكد من حذف هذا العميل نهائياً من قاعدة بيانات المنصة؟")) {
-                let users = getDB("users", []);
-                users = users.filter(u => u.id !== id);
-                setDB("users", users);
-                renderUsersTable();
-                renderStats();
+        async function deleteUser(id) {
+            if (!confirm("🚨 هل أنت متأكد تماماً من حذف هذا الحساب نهائياً من قاعدة البيانات والتطبيق بالكامل؟\n\nسيتم حذف كافة سجلاته ووصوله نهائياً.")) {
+                return;
             }
+
+            let users = getDB("users", []);
+            let u = users.find(user => user.id === id || user.uid === id);
+            const userEmail = u ? u.email : null;
+
+            users = users.filter(user => user.id !== id && user.uid !== id && (!userEmail || user.email !== userEmail));
+            setDB("users", users);
+
+            let stores = getDB("stores_list_old", []);
+            stores = stores.filter(s => s.id !== id && (!userEmail || s.email !== userEmail));
+            setDB("stores_list_old", stores);
+
+            let pending = getDB("pending_registrations", []);
+            pending = pending.filter(p => p.id !== id && (!userEmail || p.email !== userEmail));
+            setDB("pending_registrations", pending);
+
+            if (window.supabaseClient) {
+                try {
+                    if (id) {
+                        await window.supabaseClient.from('profiles').delete().eq('id', id);
+                        await window.supabaseClient.from('users').delete().eq('id', id);
+                        await window.supabaseClient.from('merchant_requests').delete().eq('id', id);
+                        await window.supabaseClient.from('stores').delete().eq('id', id);
+                    }
+                    if (userEmail) {
+                        await window.supabaseClient.from('profiles').delete().eq('email', userEmail);
+                        await window.supabaseClient.from('users').delete().eq('email', userEmail);
+                        await window.supabaseClient.from('merchant_requests').delete().eq('email', userEmail);
+                        await window.supabaseClient.from('stores').delete().eq('email', userEmail);
+                    }
+                } catch(err) {
+                    console.warn("Supabase user deletion note:", err);
+                }
+            }
+
+            alert("✅ تم حذف المستخدم والحساب نهائياً وكلياً من المنصة!");
+            renderUsersTable();
+            renderStats();
         }
 
         // 📦 General Products Database Functions
