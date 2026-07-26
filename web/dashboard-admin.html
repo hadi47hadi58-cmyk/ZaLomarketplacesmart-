@@ -1404,36 +1404,187 @@
                             <option value="جانت">56 - جانت</option>
                             <option value="المغير">57 - المغير</option>
                             <option value="المنيعة">58 - المنيعة</option>
+                            <option value="بريكة">59 - بريكة (ولاية منتدبة)</option>
+                            <option value="بوسعادة">60 - بوسعادة (ولاية منتدبة)</option>
+                            <option value="مسعد">61 - مسعد (ولاية منتدبة)</option>
+                            <option value="قصر الشلالة">62 - قصر الشلالة (ولاية منتدبة)</option>
+                            <option value="العلمة">63 - العلمة (ولاية منتدبة)</option>
+                            <option value="فرجيوة">64 - فرجيوة (ولاية منتدبة)</option>
+                            <option value="شلغوم العيد">65 - شلغوم العيد (ولاية منتدبة)</option>
+                            <option value="عين البيضاء">66 - عين البيضاء (ولاية منتدبة)</option>
+                            <option value="عين وسارة">67 - عين وسارة (ولاية منتدبة)</option>
+                            <option value="الأبيض سيدي الشيخ">68 - الأبيض سيدي الشيخ (ولاية منتدبة)</option>
+                            <option value="أفلو">69 - أفلو (ولاية منتدبة)</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-black text-slate-700 mb-1">البلدية / الفرع</label>
-                        <input type="text" id="off-store-commune" placeholder="مثال: سيدي امحمد" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-xs font-bold text-slate-800 focus:outline-none focus:border-amber-500">
+                        <label class="block text-xs font-black text-slate-700 mb-1">البلدية / الفرع المباشر</label>
+                        <input type="text" id="off-store-commune" placeholder="مثال: وسط المدينة / سيدي امحمد" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-xs font-bold text-slate-800 focus:outline-none focus:border-amber-500">
                     </div>
                 </div>
 
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-black text-slate-700 mb-1">التخصص الرئيسي</label>
+                        <label class="block text-xs font-black text-slate-700 mb-1">التخصص الرئيسي للمتجر</label>
                         <select id="off-store-category" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-xs font-bold text-slate-800 focus:outline-none focus:border-amber-500">
-                            <option value="ملابس، أزياء وموضة">👗 ملابس، أزياء وموضة</option>
+                            <option value="ملابس وأزياء وموضة">👗 ملابس وأزياء وموضة</option>
                             <option value="هواتف وإلكترونيات">📱 هواتف وإلكترونيات</option>
                             <option value="مواد غذائية وتموين">🍎 مواد غذائية وتموين</option>
                             <option value="مستلزمات المنزل والأثاث">🏠 مستلزمات المنزل والأثاث</option>
-                            <option value="صحة، تجميل وعناية شخصية">✨ صحة وتجميل</option>
-                            <option value="قطع غيار وإكسسوارات المركبات">🚗 قطع غيار ومركبات</option>
-                            <option value="عام">📦 قسم عام متكامل</option>
+                            <option value="صحة وتجميل">✨ صحة وتجميل وعناية</option>
+                            <option value="قطع غيار ومركبات">🚗 قطع غيار ومركبات</option>
+                            <option value="قسم عام متكامل">📦 قسم عام متكامل</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-black text-slate-700 mb-1">رقم الهاتف / الواتساب</label>
+                        <label class="block text-xs font-black text-slate-700 mb-1">رقم هاتف المتجر / الواتساب</label>
                         <input type="tel" id="off-store-phone" value="0550000000" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-xs font-bold text-slate-800 focus:outline-none focus:border-amber-500">
                     </div>
                 </div>
 
-                <div>
-                    <label class="block text-xs font-black text-slate-700 mb-1">رابط أيقونة / غلاف المتجر (اختياري)</label>
-                    <input type="url" id="off-store-image" placeholder="https://..." class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-xs font-bold text-slate-800 focus:outline-none focus:border-amber-500">
+                <!-- Store Logo & Cover Image Upload Section -->
+                <div class="border-t border-slate-200 pt-3 space-y-3">
+                    <h4 class="text-xs font-black text-amber-800 flex items-center gap-1.5">
+                        <i class="fa-solid fa-image text-amber-500"></i>
+                        <span>رفع شعار المتجر وغلاف الواجهة (الأسلوب البصري) 🖼️</span>
+                    </h4>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <!-- Logo Input -->
+                        <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200 space-y-2">
+                            <label class="block text-[11px] font-black text-slate-700">شعار / أيقونة المتجر (Logo)</label>
+                            <div class="flex items-center gap-2">
+                                <input type="url" id="off-store-logo" placeholder="رابط الشعار أو اختار صورة" class="flex-1 bg-white border border-slate-300 rounded-xl px-2.5 py-1.5 text-[11px] font-bold text-slate-800 focus:outline-none focus:border-amber-500">
+                                <label class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-[10px] px-2.5 py-2 rounded-xl cursor-pointer transition flex items-center gap-1 shrink-0">
+                                    <i class="fa-solid fa-upload"></i>
+                                    <span>رفع</span>
+                                    <input type="file" accept="image/*" class="hidden" onchange="handleImageFileUpload(this, 'off-store-logo', 'off-logo-preview')">
+                                </label>
+                            </div>
+                            <div class="flex items-center gap-2 pt-1">
+                                <img id="off-logo-preview" src="assets/icon-192.svg" alt="Preview Logo" class="w-10 h-10 rounded-xl object-cover border border-amber-300 shadow-sm">
+                                <span class="text-[9px] text-slate-400 font-bold">معاينة شعار المتجر المباشر</span>
+                            </div>
+                        </div>
+
+                        <!-- Cover Banner Input -->
+                        <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200 space-y-2">
+                            <label class="block text-[11px] font-black text-slate-700">غلاف واجهة المتجر (Cover Banner)</label>
+                            <div class="flex items-center gap-2">
+                                <input type="url" id="off-store-cover" placeholder="رابط صورة الغلاف أو اختر صورة" class="flex-1 bg-white border border-slate-300 rounded-xl px-2.5 py-1.5 text-[11px] font-bold text-slate-800 focus:outline-none focus:border-amber-500">
+                                <label class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-[10px] px-2.5 py-2 rounded-xl cursor-pointer transition flex items-center gap-1 shrink-0">
+                                    <i class="fa-solid fa-upload"></i>
+                                    <span>رفع</span>
+                                    <input type="file" accept="image/*" class="hidden" onchange="handleImageFileUpload(this, 'off-store-cover', 'off-cover-preview')">
+                                </label>
+                            </div>
+                            <div class="flex items-center gap-2 pt-1">
+                                <img id="off-cover-preview" src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=500" alt="Preview Cover" class="w-20 h-10 rounded-xl object-cover border border-amber-300 shadow-sm">
+                                <span class="text-[9px] text-slate-400 font-bold">معاينة واجهة المتجر</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Employee / Staff Hiring Section (69 Wilayas) -->
+                <div class="border-t border-slate-200 pt-3 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-xs font-black text-sky-800 flex items-center gap-1.5">
+                            <i class="fa-solid fa-user-tie text-sky-500"></i>
+                            <span>توظيف وتعيين مسؤول / موظف في إحدى الولايات الـ 69 💼</span>
+                        </h4>
+                        <span class="text-[10px] bg-sky-100 text-sky-800 px-2 py-0.5 rounded-full font-bold">صلاحيات ولائية</span>
+                    </div>
+
+                    <div class="bg-sky-50/70 border border-sky-200 p-3 rounded-2xl space-y-3">
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-[11px] font-black text-slate-700 mb-1">اسم الموظف / المسؤول</label>
+                                <input type="text" id="off-staff-name" placeholder="مثال: أحمد عبد الله" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 focus:outline-none focus:border-sky-500">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-black text-slate-700 mb-1">ولاية الموظف (من الـ 69)</label>
+                                <select id="off-staff-wilaya" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 focus:outline-none focus:border-sky-500">
+                                    <option value="الجزائر">16 - الجزائر العاصمة</option>
+                                    <option value="وهران">31 - وهران</option>
+                                    <option value="سطيف">19 - سطيف</option>
+                                    <option value="قسنطينة">25 - قسنطينة</option>
+                                    <option value="عنابة">23 - عنابة</option>
+                                    <option value="ورقلة">30 - ورقلة</option>
+                                    <option value="باتنة">05 - باتنة</option>
+                                    <option value="تلمسان">13 - تلمسان</option>
+                                    <option value="بسكرة">07 - بسكرة</option>
+                                    <option value="البليدة">09 - البليدة</option>
+                                    <option value="بريكة">59 - بريكة (ولاية منتدبة)</option>
+                                    <option value="بوسعادة">60 - بوسعادة (ولاية منتدبة)</option>
+                                    <option value="العلمة">63 - العلمة (ولاية منتدبة)</option>
+                                    <option value="عين وسارة">67 - عين وسارة (ولاية منتدبة)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-3 gap-2">
+                            <div>
+                                <label class="block text-[10px] font-black text-slate-700 mb-1">رقم هاتف الموظف</label>
+                                <input type="tel" id="off-staff-phone" placeholder="0661000000" class="w-full bg-white border border-slate-300 rounded-xl px-2.5 py-1.5 text-[11px] font-bold text-slate-800 focus:outline-none focus:border-sky-500">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-black text-slate-700 mb-1">البريد الإلكتروني</label>
+                                <input type="email" id="off-staff-email" placeholder="staff@zalo.dz" class="w-full bg-white border border-slate-300 rounded-xl px-2.5 py-1.5 text-[11px] font-bold text-slate-800 focus:outline-none focus:border-sky-500">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-black text-slate-700 mb-1">المسمى الوظيفي</label>
+                                <select id="off-staff-role" class="w-full bg-white border border-slate-300 rounded-xl px-2 py-1.5 text-[10px] font-bold text-slate-800 focus:outline-none focus:border-sky-500">
+                                    <option value="مدير فرع ولائي">مدير فرع ولائي</option>
+                                    <option value="مشرف مبيعات وتوصيل">مشرف مبيعات وتوصيل</option>
+                                    <option value="موظف خدمة عملاء">موظف خدمة عملاء</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Initial Product Addition Section -->
+                <div class="border-t border-slate-200 pt-3 space-y-3">
+                    <h4 class="text-xs font-black text-emerald-800 flex items-center gap-1.5">
+                        <i class="fa-solid fa-box-open text-emerald-500"></i>
+                        <span>إضافة أول منتج معتمد فورياً للمتجر (اختياري) 📦</span>
+                    </h4>
+
+                    <div class="bg-emerald-50/70 border border-emerald-200 p-3 rounded-2xl space-y-3">
+                        <div class="grid grid-cols-3 gap-2">
+                            <div class="col-span-2">
+                                <label class="block text-[10px] font-black text-slate-700 mb-1">اسم المنتج الأول</label>
+                                <input type="text" id="off-prod-name" placeholder="مثال: هاتف سامسونج جالاكسي S24 ألترا الأصلي" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 focus:outline-none focus:border-emerald-500">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-black text-slate-700 mb-1">سعر البيع (دج)</label>
+                                <input type="number" id="off-prod-price" placeholder="185000" class="w-full bg-white border border-slate-300 rounded-xl px-2.5 py-2 text-xs font-bold text-slate-800 focus:outline-none focus:border-emerald-500">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="block text-[10px] font-black text-slate-700 mb-1">الكمية بالمخزون</label>
+                                <input type="number" id="off-prod-stock" value="10" class="w-full bg-white border border-slate-300 rounded-xl px-2.5 py-1.5 text-[11px] font-bold text-slate-800 focus:outline-none focus:border-emerald-500">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-black text-slate-700 mb-1">صورة المنتج (رابط أو رفع)</label>
+                                <div class="flex items-center gap-1">
+                                    <input type="url" id="off-prod-image" placeholder="https://..." class="flex-1 bg-white border border-slate-300 rounded-xl px-2 py-1.5 text-[10px] font-bold text-slate-800 focus:outline-none focus:border-emerald-500">
+                                    <label class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[10px] px-2 py-1.5 rounded-xl cursor-pointer transition shrink-0">
+                                        <i class="fa-solid fa-upload"></i>
+                                        <input type="file" accept="image/*" class="hidden" onchange="handleImageFileUpload(this, 'off-prod-image', null)">
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-[10px] font-black text-slate-700 mb-1">وصف مقتضب للمنتج</label>
+                            <input type="text" id="off-prod-desc" placeholder="مثال: ضمان لمدة سنة كاملة مع توصيل سري للـ 69 ولاية" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-1.5 text-xs font-bold text-slate-800 focus:outline-none focus:border-emerald-500">
+                        </div>
+                    </div>
                 </div>
 
                 <div class="pt-2 flex gap-2">
@@ -2673,6 +2824,28 @@
             if (modal) modal.classList.add('hidden');
         }
 
+        // Helper function for uploading image files locally as Data URL
+        function handleImageFileUpload(inputEl, targetInputId, previewImgId) {
+            if (inputEl.files && inputEl.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const dataUrl = e.target.result;
+                    if (targetInputId) {
+                        const targetEl = document.getElementById(targetInputId);
+                        if (targetEl) targetEl.value = dataUrl;
+                    }
+                    if (previewImgId) {
+                        const prev = document.getElementById(previewImgId);
+                        if (prev) {
+                            prev.src = dataUrl;
+                            prev.classList.remove('hidden');
+                        }
+                    }
+                };
+                reader.readAsDataURL(inputEl.files[0]);
+            }
+        }
+
         // Official Store Creation Functions (Admin)
         function openCreateOfficialStoreModal() {
             document.getElementById('create-official-store-modal').classList.remove('hidden');
@@ -2686,10 +2859,30 @@
             if (e) e.preventDefault();
             const name = document.getElementById('off-store-name').value.trim();
             const wilaya = document.getElementById('off-store-wilaya').value;
-            const commune = document.getElementById('off-store-commune').value.trim() || 'المركز';
+            const commune = document.getElementById('off-store-commune').value.trim() || 'وسط المدينة';
             const category = document.getElementById('off-store-category').value;
             const phone = document.getElementById('off-store-phone').value.trim();
-            const image = document.getElementById('off-store-image').value.trim() || 'assets/icon-192.svg';
+            
+            // Logo and Cover
+            const logoEl = document.getElementById('off-store-logo');
+            const logo = (logoEl && logoEl.value.trim()) ? logoEl.value.trim() : 'assets/icon-192.svg';
+            
+            const coverEl = document.getElementById('off-store-cover');
+            const cover = (coverEl && coverEl.value.trim()) ? coverEl.value.trim() : 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=500';
+
+            // Staff/Employee Assignment
+            const staffName = document.getElementById('off-staff-name') ? document.getElementById('off-staff-name').value.trim() : '';
+            const staffWilaya = document.getElementById('off-staff-wilaya') ? document.getElementById('off-staff-wilaya').value : wilaya;
+            const staffPhone = document.getElementById('off-staff-phone') ? document.getElementById('off-staff-phone').value.trim() : '';
+            const staffEmail = document.getElementById('off-staff-email') ? document.getElementById('off-staff-email').value.trim() : '';
+            const staffRole = document.getElementById('off-staff-role') ? document.getElementById('off-staff-role').value : 'مدير فرع ولائي';
+
+            // Initial Product details
+            const prodName = document.getElementById('off-prod-name') ? document.getElementById('off-prod-name').value.trim() : '';
+            const prodPrice = document.getElementById('off-prod-price') ? document.getElementById('off-prod-price').value.trim() : '';
+            const prodStock = document.getElementById('off-prod-stock') ? document.getElementById('off-prod-stock').value.trim() : '10';
+            const prodImage = document.getElementById('off-prod-image') ? document.getElementById('off-prod-image').value.trim() : '';
+            const prodDesc = document.getElementById('off-prod-desc') ? document.getElementById('off-prod-desc').value.trim() : '';
 
             if (!name) {
                 alert('الرجاء كتابة اسم المتجر الرسمي');
@@ -2703,9 +2896,9 @@
                 name: name,
                 storeName: name,
                 store_name: name,
-                ownerName: 'الإدارة العامة ZaLo',
-                email: 'admin@zalo.dz',
-                phone: phone || '0550000000',
+                ownerName: staffName ? `${staffName} (${staffRole})` : 'الإدارة العامة ZaLo',
+                email: staffEmail || 'admin@zalo.dz',
+                phone: phone || staffPhone || '0550000000',
                 wilaya: wilaya,
                 commune: commune,
                 baladiya: commune,
@@ -2713,14 +2906,57 @@
                 status: 'APPROVED',
                 role: 'merchant',
                 is_official: true,
-                image: image,
+                image: logo,
+                logo: logo,
+                coverImage: cover,
                 createdAt: new Date().toISOString()
             };
 
-            // Save to local stores
+            // Save to local stores DB
             let stores = getDB("stores_list_old", MOCK_STORES);
             stores.unshift(officialStore);
             setDB("stores_list_old", stores);
+
+            // Hire / Register staff if specified
+            if (staffName) {
+                let team = getDB("zalo_active_staff", []);
+                team.unshift({
+                    id: 'staff_' + Date.now(),
+                    name: staffName,
+                    wilaya: staffWilaya || wilaya,
+                    phone: staffPhone || phone,
+                    email: staffEmail || `staff_${Date.now()}@zalo.dz`,
+                    role: staffRole,
+                    assignedStore: name,
+                    status: 'نشط 🟢',
+                    date: new Date().toLocaleDateString('ar-DZ')
+                });
+                setDB("zalo_active_staff", team);
+            }
+
+            // Create initial product if specified
+            if (prodName) {
+                let products = getDB("products", []);
+                const newProd = {
+                    id: 'prod_' + Date.now(),
+                    productName: prodName,
+                    name: prodName,
+                    price: parseFloat(prodPrice) || 5000,
+                    stock: parseInt(prodStock) || 10,
+                    category: category,
+                    storeId: storeId,
+                    storeName: name,
+                    wilaya: wilaya,
+                    commune: commune,
+                    image: prodImage || logo || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500',
+                    description: prodDesc || 'منتج أصلي معتمد متوفر لدى متجر زالو الرسمي',
+                    rating: 5.0,
+                    status: 'APPROVED',
+                    createdAt: new Date().toISOString()
+                };
+                products.unshift(newProd);
+                setDB("products", products);
+            }
 
             // Save to Supabase
             try {
@@ -2736,6 +2972,8 @@
                         phone: phone,
                         status: 'active',
                         is_official: true,
+                        logo_url: logo,
+                        banner_url: cover,
                         updated_at: new Date().toISOString()
                     });
                     await window.supabaseClient.from('merchant_requests').upsert({
@@ -2751,9 +2989,17 @@
             }
 
             closeCreateOfficialStoreModal();
-            alert(`🎉 تم إنشاء المتجر الرسمي "${name}" بنجاح في ولاية ${wilaya}!\n\nيمكنك الآن البيع المباشر من هذا المتجر للمستهلكين بجميع الولايات.`);
+            
+            let alertMsg = `🎉 تم إنشاء المتجر الرسمي "${name}" بنجاح في ولاية ${wilaya}!`;
+            if (staffName) alertMsg += `\n\n👤 تم توظيف الموظف/المسؤول: ${staffName} (${staffRole}) بولاية ${staffWilaya}.`;
+            if (prodName) alertMsg += `\n\n📦 تم إدراج المنتج الأول: "${prodName}" بالسعر ${prodPrice || 5000} دج.`;
+
+            alert(alertMsg);
+
             renderStats();
             if (typeof renderRegistrations === 'function') renderRegistrations();
+            if (typeof renderGlobalProductsTable === 'function') renderGlobalProductsTable();
+            if (typeof initTeamManagement === 'function') initTeamManagement();
         }
 
         // Download document PDF helper function
