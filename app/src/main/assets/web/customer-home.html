@@ -3674,24 +3674,19 @@ function renderProductsList(list) {
     const pName = p.name || p.productName || '';
     const imgUrl = p.image || p.imageURL || p.imageUrl || p.image_url || p.url || '';
     const price = p.price || 0;
-    const storeId = p.storeId || 'direct';
-    const storeName = p.storeName || p.shopName || 'محل ZaLo شريك';
-    const pWilaya = p.wilaya || '';
-    const pCat = p.category || '';
-    const pSubCat = p.subcategory || p.sub_category || '';
 
     grid.innerHTML += `
       <div class="pcard">
-        <div class="pcard-img-container" onclick="openProd('${p.id}','${pName.replace(/'/g,"\\'")}',${price},'${imgUrl}','${p.emoji||'📦'}','${storeId}','${storeName.replace(/'/g,"\\'")}', '${pWilaya.replace(/'/g,"\\'")}', '${pCat.replace(/'/g,"\\'")}', '${pSubCat.replace(/'/g,"\\')}')">
+        <div class="pcard-img-container" onclick="openProductDetails('${p.id}')">
           ${imgUrl ? `<img src="${imgUrl}" class="pcard-img-tag" alt="${pName}">` : `<span class="pcard-emoji-span">${p.emoji||'📦'}</span>`}
         </div>
         <div class="pcard-info-box">
           <div class="pcard-rating-row"><span class="pcard-rating-star">⭐</span> 4.7</div>
-          <div class="pcard-title-text" onclick="openProd('${p.id}','${pName.replace(/'/g,"\\'")}',${price},'${imgUrl}','${p.emoji||'📦'}','${storeId}','${storeName.replace(/'/g,"\\'")}', '${pWilaya.replace(/'/g,"\\'")}', '${pCat.replace(/'/g,"\\'")}', '${pSubCat.replace(/'/g,"\\')}')">${pName}</div>
+          <div class="pcard-title-text" onclick="openProductDetails('${p.id}')">${pName}</div>
           <div class="pcard-price-row">
             <span class="pcard-price-value">${price.toLocaleString()} دج</span> <span class="pcard-coin-emoji">💰</span>
           </div>
-          <button class="pcard-add-btn" onclick="event.stopPropagation(); window.addToCartDirect('${p.id}','${pName.replace(/'/g,"\\'")}',${price},'${imgUrl}','${p.emoji||'📦'}','${storeId}','${storeName.replace(/'/g,"\\'")}')">
+          <button class="pcard-add-btn" onclick="event.stopPropagation(); window.addToCartDirectById('${p.id}')">
             <i class="fa-solid fa-cart-shopping"></i> إضافة للسلة
           </button>
         </div>
@@ -4008,7 +4003,19 @@ window.openProductDetails = function(prodId) {
   // Find product from either state.loadedProducts or a mock search
   const prod = state.loadedProducts.find(p => p.id === prodId);
   if (prod) {
-    window.openProd(prod.id, prod.name, prod.price, prod.image || prod.image_url, prod.emoji, prod.store_id || prod.storeId, prod.store_name || prod.storeName, prod.wilaya, prod.category, prod.subcategory);
+    window.openProd(prod.id, prod.name || prod.productName, prod.price, prod.image || prod.image_url || prod.imageURL, prod.emoji, prod.store_id || prod.storeId, prod.store_name || prod.storeName || prod.shopName, prod.wilaya, prod.category, prod.subcategory || prod.sub_category);
+  }
+};
+
+window.addToCartDirectById = function(prodId) {
+  const prod = state.loadedProducts.find(p => p.id === prodId);
+  if (prod) {
+    const pName = prod.name || prod.productName || '';
+    const imgUrl = prod.image || prod.imageURL || prod.imageUrl || prod.image_url || prod.url || '';
+    const price = prod.price || 0;
+    const storeId = prod.storeId || prod.store_id || 'direct';
+    const storeName = prod.storeName || prod.store_name || prod.shopName || 'محل ZaLo شريك';
+    window.addToCartDirect(prod.id, pName, price, imgUrl, prod.emoji, storeId, storeName, 1);
   }
 };
 
