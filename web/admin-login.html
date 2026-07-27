@@ -479,8 +479,7 @@
               localStorage.setItem('zalo_session_jwt', res.token || ('mock-otp-token-' + Date.now()));
               localStorage.setItem('zalo_user_email', email);
               localStorage.setItem('zalo_uid', res.userId || ('ADMIN-' + Date.now()));
-              localStorage.setItem('zalo_role', 'ADMIN');
-            otpSent = true;
+              otpSent = true;
             showSuccess('📥 تم إرسال رمز التحقق إلى بريدك بنجاح!');
             document.getElementById('otpCode').focus();
             startCountdown();
@@ -535,7 +534,6 @@
               localStorage.setItem('zalo_session_jwt', res.token || ('mock-otp-token-' + Date.now()));
               localStorage.setItem('zalo_user_email', email);
               localStorage.setItem('zalo_uid', res.userId || ('ADMIN-' + Date.now()));
-              localStorage.setItem('zalo_role', 'ADMIN');
               showSuccess('✨ تم التحقق من الرمز بنجاح!');
               setTimeout(() => window.location.replace('dashboard-admin.html'), 800);
             } else {
@@ -557,7 +555,6 @@
             localStorage.setItem('zalo_session_jwt', (data && data.session) ? data.session.access_token : ('mock-pwd-token-' + Date.now()));
             localStorage.setItem('zalo_user_email', email);
             localStorage.setItem('zalo_uid', (data && data.user) ? data.user.id : ('ADMIN-' + Date.now()));
-            localStorage.setItem('zalo_role', 'ADMIN');
             showSuccess('✨ تم تسجيل الدخول بنجاح!');
             setTimeout(() => window.location.replace('dashboard-admin.html'), 800);
           } catch (err) {
@@ -570,7 +567,6 @@
 
       window.handleGoogleLogin = async function() {
         try {
-          localStorage.setItem('zalo_role', 'ADMIN');
           const client = window.supabaseClient || supabaseClient;
           showSuccess("جاري بدء تسجيل الدخول الآمن عبر Google...");
           if (window.AndroidInterface && typeof window.AndroidInterface.requestGoogleSignIn === 'function') {
@@ -578,7 +574,7 @@
           } else {
             const { error } = await client.auth.signInWithOAuth({
               provider: 'google',
-              options: { redirectTo: window.location.origin + window.location.pathname }
+              options: { redirectTo: window.location.origin + window.location.pathname, queryParams: { prompt: 'select_account' } }
             });
             if (error) throw error;
             // Redirection happens automatically.
