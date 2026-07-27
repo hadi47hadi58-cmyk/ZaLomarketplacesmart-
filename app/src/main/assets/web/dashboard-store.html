@@ -109,7 +109,7 @@
             if (role) role = role.toLowerCase();
 
             const activeStore = localStorage.getItem('zalo_active_store') || sessionStorage.getItem('merchant_store_name');
-            let merchantStatus = localStorage.getItem('zalo_merchant_status') || 'pending';
+            let merchantStatus = 'pending'; // Default to pending, don't trust localStorage by default for security
 
             // If admin or super_admin, allow immediately
             if (role === 'admin' || role === 'super_admin') {
@@ -117,32 +117,42 @@
                 return;
             }
 
-            // Verify with Supabase if possible
+            // Verify strictly with Supabase
             if (session && session.user && typeof supabase !== 'undefined' && supabase.from) {
                 try {
-                    const { data: req } = await supabase.from('merchant_requests').select('status').eq('user_id', session.user.id).maybeSingle();
-                    if (req && req.status) {
-                        merchantStatus = req.status;
-                        localStorage.setItem('zalo_merchant_status', req.status);
-                    } else if (session.user.email) {
-                        const { data: reqByEmail } = await supabase.from('merchant_requests').select('status').eq('email', session.user.email).maybeSingle();
-                        if (reqByEmail && reqByEmail.status) {
-                            merchantStatus = reqByEmail.status;
-                            localStorage.setItem('zalo_merchant_status', reqByEmail.status);
-                        }
-                    }
-                    // Also check profiles table for role/status
+                    // 1. Check Profiles table (Single Source of Truth)
                     const { data: profile } = await supabase.from('profiles').select('status, role').eq('id', session.user.id).maybeSingle();
                     if (profile) {
                         if (profile.status === 'approved' || profile.role === 'merchant' || profile.role === 'MERCHANT') {
                             merchantStatus = 'approved';
                             localStorage.setItem('zalo_merchant_status', 'approved');
                             localStorage.setItem('zalo_user_role', 'merchant');
+                        } else if (profile.status) {
+                            merchantStatus = profile.status;
                         }
                     }
+
+                    // 2. Check Merchant Requests table if profile didn't give 'approved'
+                    if (merchantStatus !== 'approved') {
+                        const { data: req } = await supabase.from('merchant_requests').select('status').eq('user_id', session.user.id).maybeSingle();
+                        if (req && req.status) {
+                            merchantStatus = req.status;
+                        } else if (session.user.email) {
+                            const { data: reqByEmail } = await supabase.from('merchant_requests').select('status').eq('email', session.user.email).maybeSingle();
+                            if (reqByEmail && reqByEmail.status) {
+                                merchantStatus = reqByEmail.status;
+                            }
+                        }
+                    }
+                    
+                    // Cache the final truth
+                    localStorage.setItem('zalo_merchant_status', merchantStatus);
                 } catch (e) {
-                    console.warn("Could not verify merchant status online:", e);
+                    console.warn("Could not verify merchant status online, falling back to local cache:", e);
+                    merchantStatus = localStorage.getItem('zalo_merchant_status') || 'pending';
                 }
+            } else {
+                merchantStatus = localStorage.getItem('zalo_merchant_status') || 'pending';
             }
 
             if (merchantStatus !== 'approved' && merchantStatus !== 'active' && merchantStatus !== 'APPROVED') {

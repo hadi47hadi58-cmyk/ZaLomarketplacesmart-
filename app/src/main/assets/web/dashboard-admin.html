@@ -2770,14 +2770,11 @@
             
             try {
                 if (window.supabaseClient) {
+                    // Update only merchant_requests. The database trigger (sync_merchant_approval) handles profiles, users, and stores automatically.
                     if (id.includes("@")) {
                         await window.supabaseClient.from('merchant_requests').update({ status: 'approved' }).eq('email', id);
-                        await window.supabaseClient.from('profiles').update({ status: 'approved', role: 'merchant' }).eq('email', id);
-                        await window.supabaseClient.from('users').update({ role: 'MERCHANT' }).eq('email', id);
                     } else {
                         await window.supabaseClient.from('merchant_requests').update({ status: 'approved' }).eq('user_id', id);
-                        await window.supabaseClient.from('profiles').update({ status: 'approved', role: 'merchant' }).eq('id', id);
-                        await window.supabaseClient.from('users').update({ role: 'MERCHANT' }).eq('supabase_uid', id);
                     }
                     console.log("Successfully synchronized approval to Supabase!");
                 }
@@ -2831,12 +2828,11 @@
 
                 try {
                     if (window.supabaseClient) {
+                        // Update only merchant_requests. The database trigger handles cascading rejections.
                         if (id.includes("@")) {
                             await window.supabaseClient.from('merchant_requests').update({ status: 'rejected' }).eq('email', id);
-                            await window.supabaseClient.from('profiles').update({ status: 'rejected' }).eq('email', id);
                         } else {
                             await window.supabaseClient.from('merchant_requests').update({ status: 'rejected' }).eq('user_id', id);
-                            await window.supabaseClient.from('profiles').update({ status: 'rejected' }).eq('id', id);
                         }
                         console.log("Successfully synchronized suspension to Supabase!");
                     }
@@ -3407,15 +3403,14 @@ startxref
                 if (window.supabaseClient) {
                     const targetKey = storeId || (s && (s.id || s.email));
                     if (targetKey) {
+                        // The database trigger handles profiles, users, and stores synchronization
                         if (targetKey.includes("@")) {
                             await window.supabaseClient.from('merchant_requests').update({ status: 'approved' }).eq('email', targetKey);
-                            await window.supabaseClient.from('profiles').update({ status: 'approved', role: 'merchant' }).eq('email', targetKey);
-                            await window.supabaseClient.from('users').update({ role: 'MERCHANT' }).eq('email', targetKey);
                         } else {
                             await window.supabaseClient.from('merchant_requests').update({ status: 'approved' }).eq('user_id', targetKey);
-                            await window.supabaseClient.from('profiles').update({ status: 'approved', role: 'merchant' }).eq('id', targetKey);
-                            await window.supabaseClient.from('users').update({ role: 'MERCHANT' }).eq('supabase_uid', targetKey);
                         }
+                        
+                        // We still upsert the store manually here to ensure custom store name properties from the admin panel are saved, but the DB trigger will also do a basic upsert.
                         await window.supabaseClient.from('stores').upsert({
                             id: targetKey,
                             name: s ? (s.name || s.store_name || "متجر معتمد") : "متجر معتمد",
