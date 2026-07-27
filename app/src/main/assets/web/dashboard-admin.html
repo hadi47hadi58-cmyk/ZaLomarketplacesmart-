@@ -88,6 +88,9 @@
     
     <!-- Strict Authorization & Session Checking -->
     <script type="module">
+        import { initRequestsRealtime } from "./js/modules/admin/admin-ui-requests.js";
+        import { initStatsRealtime } from "./js/modules/admin/admin-ui-stats.js";
+        document.addEventListener("DOMContentLoaded", () => { setTimeout(initRequestsRealtime, 2000); setTimeout(initStatsRealtime, 2000); });
         import { supabase } from './js/supabase-config.js';
         import sessionManager from './js/session-manager.js';
         
