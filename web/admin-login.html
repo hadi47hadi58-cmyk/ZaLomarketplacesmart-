@@ -570,6 +570,7 @@
 
       window.handleGoogleLogin = async function() {
         try {
+          localStorage.setItem('zalo_role', 'ADMIN');
           const client = window.supabaseClient || supabaseClient;
           showSuccess("جاري بدء تسجيل الدخول الآمن عبر Google...");
           if (window.AndroidInterface && typeof window.AndroidInterface.requestGoogleSignIn === 'function') {

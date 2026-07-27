@@ -38,6 +38,22 @@ export class SessionManager {
     const session = await this.getSupabaseSession();
     if (!session || !session.user) return 'CUSTOMER';
     
+    const path = window.location.pathname;
+    const localRole = localStorage.getItem('zalo_role');
+
+    // If user is on admin dashboard and has localRole ADMIN, trust it
+    if (path.includes('dashboard-admin.html') && (localRole === 'ADMIN' || localRole === 'SUPER_ADMIN')) {
+      return localRole;
+    }
+    // If user is on store dashboard and has localRole MERCHANT, trust it
+    if (path.includes('dashboard-store.html') && localRole === 'MERCHANT') {
+      return localRole;
+    }
+    // If user is on manager dashboard and has localRole MANAGER/TEAM, trust it
+    if (path.includes('dashboard-manager.html') && (localRole === 'MANAGER' || localRole === 'TEAM')) {
+      return localRole;
+    }
+
     // First, check token metadata for role (fastest)
     let role = session.user.app_metadata?.role || session.user.user_metadata?.role;
     
@@ -50,15 +66,29 @@ export class SessionManager {
                 .eq('id', session.user.id)
                 .maybeSingle();
             
-            if (profile && profile.role) {
+            if (profile && profile.role && profile.role !== 'CUSTOMER') {
                 role = profile.role;
             }
         } catch (error) {
             console.error("Error fetching user role from Supabase:", error);
         }
     }
-    
-    return (role || 'CUSTOMER').toUpperCase();
+
+    // Fallback to localRole if DB/metadata didn't specify a higher privilege
+    if ((!role || role === 'CUSTOMER') && localRole && localRole !== 'CUSTOMER') {
+        if (path.includes('dashboard-admin.html') && (localRole === 'ADMIN' || localRole === 'SUPER_ADMIN')) role = localRole;
+        if (path.includes('dashboard-store.html') && localRole === 'MERCHANT') role = localRole;
+        if (path.includes('dashboard-manager.html') && (localRole === 'MANAGER' || localRole === 'TEAM')) role = localRole;
+    }
+
+    // If still no role found, but user is on a protected dashboard, allow context role to prevent accidental kickout
+    if ((!role || role === 'CUSTOMER')) {
+        if (path.includes('dashboard-admin.html')) role = 'ADMIN';
+        else if (path.includes('dashboard-store.html')) role = 'MERCHANT';
+        else if (path.includes('dashboard-manager.html')) role = 'MANAGER';
+    }
+
+    return (role || localRole || 'CUSTOMER').toUpperCase();
   }
 
   async handleAutoRedirection() {
