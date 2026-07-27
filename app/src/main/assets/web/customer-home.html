@@ -1363,18 +1363,29 @@ body {
   transform: scale(0.95);
 }
 .wilaya-card-square.active-state {
-  border-color: #c59b27 !important;
-  background: rgba(197, 155, 39, 0.08) !important;
-  box-shadow: 0 0 0 2px rgba(197, 155, 39, 0.3) !important;
+  border-color: #0ea5e9 !important;
+  background: rgba(14, 165, 233, 0.08) !important;
+  box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.3) !important;
+}
+.wilaya-card-square.active-state .wilaya-thumb-square {
+  background: linear-gradient(135deg, var(--brand-gold), #eab308) !important;
+  border-color: var(--brand-gold) !important;
 }
 .wilaya-thumb-square {
   width: 58px !important;
   height: 58px !important;
   border-radius: 50% !important;
   overflow: hidden !important;
-  background: #f1f5f9 !important;
+  background: linear-gradient(135deg, #0ea5e9, #0284c7) !important;
   position: relative !important;
-  border: 2px solid rgba(197, 155, 39, 0.3) !important;
+  border: 2px solid rgba(14, 165, 233, 0.3) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: white !important;
+  font-weight: 900 !important;
+  font-size: 22px !important;
+  box-shadow: inset 0 2px 4px rgba(255,255,255,0.3) !important;
 }
 .wilaya-thumb-square img {
   width: 100% !important;
@@ -2525,7 +2536,7 @@ function renderStateSelectionUI() {
           </div>
         ` : ''}
         <div class="wilaya-thumb-square">
-          <img src="${optimizedImg}" alt="${w.name}" loading="lazy" onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png';">
+          ${w.id}
         </div>
         <div class="wilaya-name-square">${w.name} (${w.id})</div>
       </div>
@@ -2600,7 +2611,9 @@ window.selectWilaya = function(name) {
       banner.innerHTML = `
         <div class="wilaya-hero-card" style="margin: 16px; border-radius: 16px; overflow: hidden; background: white; box-shadow: 0 4px 15px rgba(0,0,0,0.06); border: 1px solid #eee; position: relative;">
           <div style="height: 180px; width: 100%; position: relative; overflow: hidden;">
-            <img src="${wilayaObj.img}?v=zalo-v12" alt="${name}" loading="lazy" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png'">
+            <div style="width: 100%; height: 100%; background: linear-gradient(135deg, #0f172a, #0c4a6e, #0369a1); display: flex; align-items: center; justify-content: center; opacity: 0.9;">
+              <i class="fa-solid fa-map-location-dot" style="font-size: 60px; color: rgba(255, 255, 255, 0.1);"></i>
+            </div>
             <div style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0)); padding: 15px; color: white;">
               <div style="font-size: 13px; opacity: 0.9; font-weight: bold; margin-bottom: 2px;">ولاية ${name} (${wilayaObj.id})</div>
               <div style="font-size: 16px; font-weight: 800; display: flex; align-items: center; gap: 6px;">
@@ -2634,7 +2647,9 @@ window.openPromptModal = function(id) {
   infoContainer.innerHTML = `
     <div style="display: flex; align-items: center; gap: 15px; text-align: right;">
       <div style="width: 70px; height: 70px; border-radius: 12px; overflow: hidden; border: 2px solid var(--brand-gold);">
-        <img src="${wilayaObj.img}" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Algeria_location_map.svg/400px-Algeria_location_map.svg.png'">
+        <div style="width: 100%; height: 100%; background: linear-gradient(135deg, var(--brand-gold), #eab308); display: flex; align-items: center; justify-content: center; color: white; font-weight: 900; font-size: 24px;">
+          ${wilayaObj.id}
+        </div>
       </div>
       <div>
         <div style="font-size: 15px; font-weight: 800; color: var(--navy); margin-bottom: 4px;">ولاية ${wilayaObj.name} (${wilayaObj.id})</div>
