@@ -2738,9 +2738,15 @@
             if (window.supabaseClient) {
                 try {
                     if (id) {
-                        await window.supabaseClient.from('merchant_requests').delete().eq('id', id);
-                        await window.supabaseClient.from('stores').delete().eq('id', id);
-                        await window.supabaseClient.from('profiles').delete().eq('id', id);
+                        if (id.includes("@")) {
+                            await window.supabaseClient.from('merchant_requests').delete().eq('email', id);
+                            await window.supabaseClient.from('stores').delete().eq('email', id);
+                            await window.supabaseClient.from('profiles').delete().eq('email', id);
+                        } else {
+                            await window.supabaseClient.from('merchant_requests').delete().eq('user_id', id);
+                            await window.supabaseClient.from('stores').delete().eq('id', id);
+                            await window.supabaseClient.from('profiles').delete().eq('id', id);
+                        }
                     }
                     if (targetEmail) {
                         await window.supabaseClient.from('merchant_requests').delete().eq('email', targetEmail);
@@ -2825,8 +2831,13 @@
 
                 try {
                     if (window.supabaseClient) {
-                        await window.supabaseClient.from('merchant_requests').update({ status: 'rejected' }).eq('id', id);
-                        await window.supabaseClient.from('profiles').update({ status: 'rejected' }).eq('id', id);
+                        if (id.includes("@")) {
+                            await window.supabaseClient.from('merchant_requests').update({ status: 'rejected' }).eq('email', id);
+                            await window.supabaseClient.from('profiles').update({ status: 'rejected' }).eq('email', id);
+                        } else {
+                            await window.supabaseClient.from('merchant_requests').update({ status: 'rejected' }).eq('user_id', id);
+                            await window.supabaseClient.from('profiles').update({ status: 'rejected' }).eq('id', id);
+                        }
                         console.log("Successfully synchronized suspension to Supabase!");
                     }
                 } catch(e) {
@@ -3930,10 +3941,17 @@ startxref
             if (window.supabaseClient) {
                 try {
                     if (id) {
-                        await window.supabaseClient.from('profiles').delete().eq('id', id);
-                        await window.supabaseClient.from('users').delete().eq('id', id);
-                        await window.supabaseClient.from('merchant_requests').delete().eq('id', id);
-                        await window.supabaseClient.from('stores').delete().eq('id', id);
+                        if (id.includes("@")) {
+                            await window.supabaseClient.from('profiles').delete().eq('email', id);
+                            await window.supabaseClient.from('users').delete().eq('email', id);
+                            await window.supabaseClient.from('merchant_requests').delete().eq('email', id);
+                            await window.supabaseClient.from('stores').delete().eq('email', id);
+                        } else {
+                            await window.supabaseClient.from('profiles').delete().eq('id', id);
+                            await window.supabaseClient.from('users').delete().eq('supabase_uid', id);
+                            await window.supabaseClient.from('merchant_requests').delete().eq('user_id', id);
+                            await window.supabaseClient.from('stores').delete().eq('id', id);
+                        }
                     }
                     if (userEmail) {
                         await window.supabaseClient.from('profiles').delete().eq('email', userEmail);
