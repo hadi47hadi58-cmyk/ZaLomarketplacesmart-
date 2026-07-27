@@ -90,7 +90,12 @@
     <script type="module">
         import { initRequestsRealtime } from "./js/modules/admin/admin-ui-requests.js";
         import { initStatsRealtime } from "./js/modules/admin/admin-ui-stats.js";
-        document.addEventListener("DOMContentLoaded", () => { setTimeout(initRequestsRealtime, 2000); setTimeout(initStatsRealtime, 2000); });
+        import { initUsersRealtime } from "./js/modules/admin/admin-ui-users.js";
+        import { initProductsRealtime } from "./js/modules/admin/admin-ui-products.js";
+        import { initStoresRealtime } from "./js/modules/admin/admin-ui-stores.js";
+        import { initReportsRealtime } from "./js/modules/admin/admin-ui-reports.js";
+        import "./js/modules/admin/admin-ui-announcements.js";
+        document.addEventListener("DOMContentLoaded", () => { setTimeout(initRequestsRealtime, 2000); setTimeout(initStatsRealtime, 2000); setTimeout(initUsersRealtime, 2000); setTimeout(initProductsRealtime, 2000); setTimeout(initStoresRealtime, 2000); setTimeout(initReportsRealtime, 2000); });
         import { supabase } from './js/supabase-config.js';
         import sessionManager from './js/session-manager.js';
         

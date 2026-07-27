@@ -94,6 +94,10 @@
     <script type="module">
         import { supabase } from './js/supabase-config.js';
         import sessionManager from './js/session-manager.js';
+        import { initStoreProductsRealtime } from './js/modules/store/store-ui-products.js';
+        import { initStoreOrdersRealtime } from './js/modules/store/store-ui-orders.js';
+        import { initStoreStatsRealtime } from './js/modules/store/store-ui-stats.js';
+        document.addEventListener('DOMContentLoaded', () => { setTimeout(initStoreProductsRealtime, 2000); setTimeout(initStoreOrdersRealtime, 2000); setTimeout(initStoreStatsRealtime, 2000); });
         
         window.supabaseClient = supabase;
         window.supabase = supabase;
