@@ -3580,15 +3580,41 @@ async function loadProducts() {
   try {
     const sb = (typeof supabase !== 'undefined') ? supabase : window.supabaseClient;
     if (sb && sb.from) {
+      // Fetch remote products
       const fetchPromise = sb.from('products').select('*');
       const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 5000));
       const { data, error } = await Promise.race([fetchPromise, timeoutPromise]);
       if (!error && data) {
         remoteProds = data;
       }
+
+      // Fetch remote stores and sync to localStorage for cross-device visibility
+      const { data: remoteStores, error: storeErr } = await sb.from('stores').select('*');
+      if (!storeErr && remoteStores && remoteStores.length > 0) {
+        let officialStores = JSON.parse(localStorage.getItem('zalo_official_stores') || '[]');
+        remoteStores.forEach(rs => {
+          const formattedStore = {
+            id: rs.id,
+            name: rs.name || rs.store_name,
+            wilaya: rs.wilaya,
+            commune: rs.baladiya || rs.commune,
+            category: rs.category || 'عام',
+            phone: rs.phone || '',
+            logo: rs.logo_url || 'assets/icon-192.svg',
+            coverImage: rs.banner_url || 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=500',
+            isOfficial: true,
+            status: rs.status || 'active'
+          };
+          const exists = officialStores.some(s => s.id === rs.id || s.name === formattedStore.name);
+          if (!exists) {
+            officialStores.unshift(formattedStore);
+          }
+        });
+        localStorage.setItem('zalo_official_stores', JSON.stringify(officialStores));
+      }
     }
   } catch (e) {
-    console.warn("Failed to fetch remote products:", e);
+    console.warn("Failed to fetch remote products or stores:", e);
   }
 
   const unifiedRemote = remoteProds.map(p => ({
