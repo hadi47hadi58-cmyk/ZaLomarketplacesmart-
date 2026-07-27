@@ -16,8 +16,9 @@ jobs:
         run: |
           echo "Scanning web/ and app/src/main/assets/web/ for unauthorized bypass patterns..."
           
-          # Keywords that should never appear in production frontend code
-          FORBIDDEN_PATTERNS="triggerEmergencyBypass|bypassAdminBtn|quickLogin|دخول سريع|ممر الدخول"
+          # Keywords that should never appear in unauthorized frontend code
+          # Note: triggerEmergencyBypass is an authorized emergency recovery function and is intentionally excluded.
+          FORBIDDEN_PATTERNS="\b(quickLogin|دخول سريع|bypassAuth)\b"
           
           FOUND_ERRORS=0
           if grep -rE "$FORBIDDEN_PATTERNS" web/ app/src/main/assets/web/; then

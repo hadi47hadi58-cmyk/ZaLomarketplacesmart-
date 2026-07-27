@@ -16,7 +16,14 @@ CREATE EXTENSION IF NOT EXISTS pg_cron;
 DO $$
 BEGIN
     IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'user_role') THEN
-        CREATE TYPE user_role AS ENUM ('CUSTOMER', 'MERCHANT', 'ADMIN');
+        CREATE TYPE user_role AS ENUM ('CUSTOMER', 'MERCHANT', 'ADMIN', 'STAFF');
+    ELSE
+        -- Ensure STAFF value exists if type already exists
+        BEGIN
+            ALTER TYPE user_role ADD VALUE IF NOT EXISTS 'STAFF';
+        EXCEPTION WHEN duplicate_object THEN
+            -- already exists
+        END;
     END IF;
     IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'user_status') THEN
         CREATE TYPE user_status AS ENUM ('ACTIVE', 'SUSPENDED', 'PENDING_VERIFICATION');
@@ -860,6 +867,26 @@ SELECT cron.schedule(
 -- =====================================================
 -- جدول طلبات الترقية إلى تاجر (النسخة النهائية)
 -- =====================================================
+-- دالة التحقق من الدور (Security Definer)
+CREATE OR REPLACE FUNCTION public.has_role(_user_uid UUID, _role user_role)
+RETURNS BOOLEAN
+LANGUAGE sql
+SECURITY DEFINER
+STABLE
+AS $$
+  SELECT EXISTS (
+    SELECT 1
+    FROM public.users
+    WHERE supabase_uid = _user_uid
+      AND role = _role
+  );
+$$;
+
+GRANT EXECUTE ON FUNCTION public.has_role(UUID, user_role) TO anon, authenticated, service_role;
+
+-- =====================================================
+-- جدول طلبات الترقية إلى تاجر (النسخة النهائية)
+-- =====================================================
 CREATE TABLE IF NOT EXISTS merchant_requests (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL REFERENCES users(supabase_uid) ON DELETE CASCADE,
@@ -880,6 +907,11 @@ CREATE INDEX IF NOT EXISTS idx_merchant_requests_status ON merchant_requests(sta
 -- تفعيل الأمان (RLS)
 ALTER TABLE merchant_requests ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "user_see_own_requests" ON merchant_requests;
+DROP POLICY IF EXISTS "user_insert_own_request" ON merchant_requests;
+DROP POLICY IF EXISTS "admin_manage_all_requests" ON merchant_requests;
+DROP POLICY IF EXISTS "admin_manage_merchant_requests" ON merchant_requests;
+
 -- سياسة: المستخدم يرى طلبه فقط
 CREATE POLICY "user_see_own_requests" ON merchant_requests
     FOR SELECT USING (user_id = auth.uid());
@@ -888,7 +920,49 @@ CREATE POLICY "user_see_own_requests" ON merchant_requests
 CREATE POLICY "user_insert_own_request" ON merchant_requests
     FOR INSERT WITH CHECK (user_id = auth.uid());
 
--- سياسة: المدير يرى ويدير كل الطلبات (يفترض أن المدير دوره 'admin')
-CREATE POLICY "admin_manage_all_requests" ON merchant_requests
-    FOR ALL USING (auth.role() = 'admin');
+-- سياسة: المدير والموظف يريان ويديران كل طلبات التجار
+CREATE POLICY "admin_manage_merchant_requests" ON merchant_requests
+    FOR ALL USING (
+        public.has_role(auth.uid(), 'ADMIN'::user_role) 
+        OR public.has_role(auth.uid(), 'STAFF'::user_role)
+    );
+
+GRANT ALL ON merchant_requests TO authenticated, service_role;
+
+
+-- =====================================================
+-- جدول طلبات التوظيف (Career Applications)
+-- =====================================================
+CREATE TABLE IF NOT EXISTS public.career_applications (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    full_name VARCHAR(150) NOT NULL,
+    email VARCHAR(150) NOT NULL,
+    phone VARCHAR(30) NOT NULL,
+    position VARCHAR(150) NOT NULL,
+    cv_url TEXT,
+    cover_letter TEXT,
+    status VARCHAR(50) DEFAULT 'pending' CHECK (status IN ('pending', 'reviewing', 'accepted', 'rejected')),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_career_applications_status ON public.career_applications(status);
+CREATE INDEX IF NOT EXISTS idx_career_applications_email ON public.career_applications(email);
+
+ALTER TABLE public.career_applications ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "allow_insert_career_applications" ON public.career_applications;
+DROP POLICY IF EXISTS "admin_manage_career_applications" ON public.career_applications;
+
+CREATE POLICY "allow_insert_career_applications" ON public.career_applications
+    FOR INSERT WITH CHECK (true);
+
+CREATE POLICY "admin_manage_career_applications" ON public.career_applications
+    FOR ALL USING (
+        public.has_role(auth.uid(), 'ADMIN'::user_role) 
+        OR public.has_role(auth.uid(), 'STAFF'::user_role)
+    );
+
+GRANT SELECT, INSERT ON public.career_applications TO anon, authenticated;
+GRANT ALL ON public.career_applications TO service_role;
 

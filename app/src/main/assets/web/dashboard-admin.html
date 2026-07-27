@@ -2764,9 +2764,15 @@
             
             try {
                 if (window.supabaseClient) {
-                    await window.supabaseClient.from('merchant_requests').update({ status: 'approved' }).or(`id.eq.${id},user_id.eq.${id},email.eq.${id}`);
-                    await window.supabaseClient.from('profiles').update({ status: 'approved', role: 'merchant' }).or(`id.eq.${id},email.eq.${id}`);
-                    await window.supabaseClient.from('users').update({ role: 'MERCHANT' }).or(`id.eq.${id},email.eq.${id}`);
+                    if (id.includes("@")) {
+                        await window.supabaseClient.from('merchant_requests').update({ status: 'approved' }).eq('email', id);
+                        await window.supabaseClient.from('profiles').update({ status: 'approved', role: 'merchant' }).eq('email', id);
+                        await window.supabaseClient.from('users').update({ role: 'MERCHANT' }).eq('email', id);
+                    } else {
+                        await window.supabaseClient.from('merchant_requests').update({ status: 'approved' }).eq('user_id', id);
+                        await window.supabaseClient.from('profiles').update({ status: 'approved', role: 'merchant' }).eq('id', id);
+                        await window.supabaseClient.from('users').update({ role: 'MERCHANT' }).eq('supabase_uid', id);
+                    }
                     console.log("Successfully synchronized approval to Supabase!");
                 }
             } catch(e) {
@@ -3390,9 +3396,15 @@ startxref
                 if (window.supabaseClient) {
                     const targetKey = storeId || (s && (s.id || s.email));
                     if (targetKey) {
-                        await window.supabaseClient.from('merchant_requests').update({ status: 'approved' }).or(`id.eq.${targetKey},user_id.eq.${targetKey},email.eq.${targetKey}`);
-                        await window.supabaseClient.from('profiles').update({ status: 'approved', role: 'merchant' }).or(`id.eq.${targetKey},email.eq.${targetKey}`);
-                        await window.supabaseClient.from('users').update({ role: 'MERCHANT' }).or(`id.eq.${targetKey},email.eq.${targetKey}`);
+                        if (targetKey.includes("@")) {
+                            await window.supabaseClient.from('merchant_requests').update({ status: 'approved' }).eq('email', targetKey);
+                            await window.supabaseClient.from('profiles').update({ status: 'approved', role: 'merchant' }).eq('email', targetKey);
+                            await window.supabaseClient.from('users').update({ role: 'MERCHANT' }).eq('email', targetKey);
+                        } else {
+                            await window.supabaseClient.from('merchant_requests').update({ status: 'approved' }).eq('user_id', targetKey);
+                            await window.supabaseClient.from('profiles').update({ status: 'approved', role: 'merchant' }).eq('id', targetKey);
+                            await window.supabaseClient.from('users').update({ role: 'MERCHANT' }).eq('supabase_uid', targetKey);
+                        }
                         await window.supabaseClient.from('stores').upsert({
                             id: targetKey,
                             name: s ? (s.name || s.store_name || "متجر معتمد") : "متجر معتمد",
