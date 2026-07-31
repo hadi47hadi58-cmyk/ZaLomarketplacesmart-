@@ -1454,16 +1454,16 @@ body {
 <div class="container-app">
   
   <!-- Top Header -->
-  <div class="topbar-mockup">
+  <div class="topbar-mockup" role="banner">
     <!-- Hamburger button -->
-    <div class="tb-menu" onclick="openSide()">
+    <div class="tb-menu" onclick="openSide()" role="button" tabindex="0" aria-label="فتح القائمة الجانبية للتطبيق والوصول للإعدادات" aria-expanded="false">
       <i class="fa-solid fa-bars"></i>
     </div>
     
     <!-- Logo -->
-    <a href="customer-home.html" class="logo-mockup" style="display: flex; align-items: center; justify-content: center; text-decoration: none;">
+    <a href="customer-home.html" class="logo-mockup" style="display: flex; align-items: center; justify-content: center; text-decoration: none;" aria-label="شعار منصة ZaLo الرئيسية">
       <!-- Circular Golden Palm Tree Mini Logo -->
-      <svg width="42" height="42" viewBox="0 0 100 100">
+      <svg width="42" height="42" viewBox="0 0 100 100" aria-hidden="true">
         <!-- Gold Outer Circle with elegant gap at the top -->
         <path d="M 29,13.6 A 42,42 0 1,0 71,13.6" fill="none" stroke="#d4af37" stroke-width="4.5" stroke-linecap="round" />
         
@@ -1497,9 +1497,9 @@ body {
     <!-- Right Actions -->
     <div class="header-icons-mockup">
       <!-- Notifications -->
-      <div class="header-icon-circle" onclick="openNotificationsModal()">
+      <div class="header-icon-circle" onclick="openNotificationsModal()" role="button" tabindex="0" aria-label="فتح التنبيهات والإشعارات الفورية">
         <i class="fa-solid fa-bell"></i>
-        <div class="header-icon-badge" id="notif-badge-count" style="display: none;">0</div>
+        <div class="header-icon-badge" id="notif-badge-count" style="display: none;" aria-live="polite">0</div>
       </div>
     </div>
   </div>
@@ -1510,9 +1510,9 @@ body {
   <div class="overlay" id="overlay" onclick="closeSide()"></div>
 
   <!-- Slide-out Sidebar Drawer Menu (☰) -->
-  <div class="sidemenu" id="sidemenu">
+  <div class="sidemenu" id="sidemenu" role="navigation" aria-label="القائمة الجانبية الرئيسية للتطبيق">
     <div class="sm-hd">
-      <div class="sm-close" onclick="closeSide()">✕</div>
+      <div class="sm-close" onclick="closeSide()" role="button" tabindex="0" aria-label="إغلاق القائمة الجانبية">✕</div>
       <div class="sm-user-avatar">
         <i class="fa-solid fa-circle-user"></i>
       </div>
@@ -1520,81 +1520,106 @@ body {
       <div style="font-size: 10px; color: rgba(255,255,255,0.7);">معرف الحساب: #<span id="drawer-user-id">...</span></div>
     </div>
 
-    <div class="sm-sec">العمليات والطلبات</div>
-    <div class="smi" onclick="closeSide(); switchTab('home')">
+    <div class="sm-sec" id="sm-sec-ops">العمليات والطلبات</div>
+    <div class="smi" onclick="closeSide(); switchTab('home')" role="button" tabindex="0" aria-label="التحويل للصفحة الرئيسية واستكشاف السوق">
       <span class="si" style="color:var(--brand-green)"><i class="fa-solid fa-house"></i></span>
       <div>
-        <div class="sn">الرئيسية وتصفح السوق</div>
-        <div class="sd">استكشاف المنتجات والعروض النشطة</div>
+        <div class="sn" id="sm-home-sn">الرئيسية وتصفح السوق</div>
+        <div class="sd" id="sm-home-sd">استكشاف المنتجات والعروض النشطة</div>
       </div>
     </div>
-    <div class="smi" onclick="closeSide(); switchTab('orders')">
+    <div class="smi" onclick="closeSide(); switchTab('orders')" role="button" tabindex="0" aria-label="عرض سجل المشتريات والطلبات">
       <span class="si" style="color:var(--brand-green)"><i class="fa-solid fa-receipt"></i></span>
       <div>
-        <div class="sn">طلباتي المشتراة</div>
-        <div class="sd">عرض سجل الطلبات وفواتيرك</div>
+        <div class="sn" id="sm-orders-sn">طلباتي المشتراة</div>
+        <div class="sd" id="sm-orders-sd">عرض سجل الطلبات وفواتيرك</div>
       </div>
     </div>
-    <div class="smi" onclick="closeSide(); switchTab('orders')">
+    <div class="smi" onclick="closeSide(); switchTab('orders')" role="button" tabindex="0" aria-label="تتبع الشحنات والمندوب المباشر">
       <span class="si" style="color:var(--brand-green)"><i class="fa-solid fa-truck-fast"></i></span>
       <div>
-        <div class="sn">تتبع الشحنات المباشر</div>
-        <div class="sd">متابعة المندوب وموقع التوصيل الفوري</div>
+        <div class="sn" id="sm-track-sn">تتبع الشحنات المباشر</div>
+        <div class="sd" id="sm-track-sd">متابعة المندوب وموقع التوصيل الفوري</div>
       </div>
     </div>
-    <div class="smi" onclick="closeSide(); openNotificationsModal()">
+    <div class="smi" onclick="closeSide(); openNotificationsModal()" role="button" tabindex="0" aria-label="فتح مركز التنبيهات والإشعارات الفورية">
       <span class="si" style="color:var(--brand-green)"><i class="fa-solid fa-bell"></i></span>
       <div>
-        <div class="sn">مركز التنبيهات الفورية</div>
-        <div class="sd">متابعة إشعارات فواتيرك وعملياتك</div>
+        <div class="sn" id="sm-notif-sn">مركز التنبيهات الفورية</div>
+        <div class="sd" id="sm-notif-sd">متابعة إشعارات فواتيرك وعملياتك</div>
       </div>
     </div>
 
-    <div class="sm-sec">شركاء ZaLo والبيع</div>
-    <div class="smi" onclick="closeSide(); scrollToMerchantSection()">
+    <div class="sm-sec" id="sm-sec-partners">شركاء ZaLo والبيع</div>
+    <div class="smi" onclick="closeSide(); scrollToMerchantSection()" role="button" tabindex="0" aria-label="الانتقال لتقديم طلب شراكة تجارية وفتح متجر">
       <span class="si" style="color:var(--brand-gold)"><i class="fa-solid fa-briefcase"></i></span>
       <div>
-        <div class="sn">طلب شراكة تجاري</div>
-        <div class="sd">انضم كتاجر لبيع سلعك لـ69 ولاية</div>
+        <div class="sn" id="sm-merchant-sn">طلب شراكة تجاري</div>
+        <div class="sd" id="sm-merchant-sd">انضم كتاجر لبيع سلعك لـ69 ولاية</div>
       </div>
     </div>
 
-    <div class="sm-sec">الدعم والمعلومات</div>
-    <div class="smi" onclick="closeSide(); alert('ZaLo Market هي منصة جزائرية تربط المتاجر المحلية بزبائنهم وتوفر خدمات التوصيل الفوري في 69 ولاية كاملة.')">
+    <div class="sm-sec" id="sm-sec-support">الدعم والمعلومات</div>
+    <div class="smi" onclick="closeSide(); alert('ZaLo Market هي منصة جزائرية تربط المتاجر المحلية بزبائنهم وتوفر خدمات التوصيل الفوري في 69 ولاية كاملة.')" role="button" tabindex="0" aria-label="معلومات عن منصة ZaLo">
       <span class="si" style="color:var(--sky-blue)"><i class="fa-solid fa-circle-info"></i></span>
       <div>
-        <div class="sn">من نحن</div>
-        <div class="sd">تعرف على قصة ورؤية منصة ZaLo</div>
+        <div class="sn" id="sm-about-sn">من نحن</div>
+        <div class="sd" id="sm-about-sd">تعرف على قصة ورؤية منصة ZaLo</div>
       </div>
     </div>
-    <div class="smi" onclick="closeSide(); openWA('0698694010', 'مرحباً إدارة ZaLo')">
+    <div class="smi" onclick="closeSide(); openWA('0698694010', 'مرحباً إدارة ZaLo')" role="button" tabindex="0" aria-label="التواصل الفوري عبر الواتساب">
       <span class="si" style="color:#25d366"><i class="fa-brands fa-whatsapp"></i></span>
-      <div><div class="sn">تواصل فوري واتساب</div><div class="sd">0698694010</div></div>
+      <div><div class="sn" id="sm-contact-sn">تواصل فوري واتساب</div><div class="sd">0698694010</div></div>
     </div>
 
-    <div class="sm-sec">الإعدادات والحساب</div>
-    <div class="smi" id="drawer-login-item" onclick="closeSide(); window.location.href='customer-login.html'">
+    <div class="sm-sec" id="sm-sec-account">الإعدادات والحساب</div>
+    <div class="smi" id="drawer-login-item" onclick="closeSide(); window.location.href='customer-login.html'" role="button" tabindex="0" aria-label="الانتقال لصفحة تسجيل الدخول">
       <span class="si" style="color:var(--brand-green)"><i class="fa-solid fa-right-to-bracket"></i></span>
       <div>
-        <div class="sn">تسجيل الدخول</div>
-        <div class="sd">إدارة حسابك ومتابعة طلباتك المحفوظة</div>
+        <div class="sn" id="sm-login-sn">تسجيل الدخول</div>
+        <div class="sd" id="sm-login-sd">إدارة حسابك ومتابعة طلباتك المحفوظة</div>
       </div>
     </div>
 
-    <div class="sm-sec">النظام والصيانة</div>
-    <div class="smi" onclick="closeSide(); forceUpdateApp()">
+    <!-- Language & Accessibility Section -->
+    <div class="sm-sec" id="sm-sec-lang-access">اللغة وإمكانية الوصول</div>
+    <div class="smi" style="background: rgba(2, 132, 199, 0.05); border-radius: 12px; margin: 4px 10px; padding: 10px 14px;" role="region" aria-label="إعدادات تغيير لغة التطبيق إلى الإنجليزية أو العربية">
+      <span class="si" style="color:var(--sky-blue)"><i class="fa-solid fa-language"></i></span>
+      <div style="flex:1;">
+        <div class="sn" id="lbl-lang-title">لغة التطبيق / Language</div>
+        <div class="sd" id="lbl-lang-desc">العربية (الأساسية) | English</div>
+      </div>
+      <div style="display: flex; gap: 4px;">
+        <button id="btn-lang-ar" onclick="setAppLanguage('ar')" aria-label="تفعيل اللغة العربية بالكامل" style="padding: 5px 9px; font-size: 11px; font-weight: 800; border-radius: 8px; border: 1.5px solid var(--brand-green); background: var(--brand-green); color: white; cursor: pointer;">عربي</button>
+        <button id="btn-lang-en" onclick="setAppLanguage('en')" aria-label="Switch interface language to English" style="padding: 5px 9px; font-size: 11px; font-weight: 800; border-radius: 8px; border: 1.5px solid #cbd5e1; background: #ffffff; color: var(--navy); cursor: pointer;">EN</button>
+      </div>
+    </div>
+
+    <div class="smi" style="background: rgba(16, 185, 129, 0.05); border-radius: 12px; margin: 4px 10px; padding: 10px 14px;" role="region" aria-label="مساعد القارئ الصوتي الناطق بذوي الهمم">
+      <span class="si" style="color:var(--brand-green)"><i class="fa-solid fa-universal-access"></i></span>
+      <div style="flex:1;">
+        <div class="sn" id="lbl-access-title">مساعد القارئ الصوتي</div>
+        <div class="sd" id="lbl-access-desc">نطق عناصر الواجهة لذوي الهمم</div>
+      </div>
+      <button id="btn-tts-toggle" onclick="toggleVoiceAccessibility()" aria-label="مفتاح تشغيل أو إيقاف القارئ الصوتي" style="padding: 5px 10px; font-size: 11px; font-weight: 800; border-radius: 20px; border: 1.5px solid var(--brand-green); background: #ecfdf5; color: var(--brand-green); cursor: pointer; display: flex; align-items: center; gap: 4px;">
+        <i class="fa-solid fa-volume-high"></i> <span id="tts-btn-text">معطل 🔇</span>
+      </button>
+    </div>
+
+    <div class="sm-sec" id="sm-sec-sys">النظام والصيانة</div>
+    <div class="smi" onclick="closeSide(); forceUpdateApp()" role="button" tabindex="0" aria-label="تنظيف ذاكرة التخزين وتحديث البيانات">
       <span class="si" style="color:var(--red)"><i class="fa-solid fa-arrows-rotate"></i></span>
       <div>
-        <div class="sn" style="color:var(--red); font-weight:800;">تنظيف الكاش وتحديث فوري</div>
-        <div class="sd">حل مشاكل المزامنة وتأخر البيانات</div>
+        <div class="sn" id="sm-refresh-sn" style="color:var(--red); font-weight:800;">تنظيف الكاش وتحديث فوري</div>
+        <div class="sd" id="sm-refresh-sd">حل مشاكل المزامنة وتأخر البيانات</div>
       </div>
     </div>
 
     <div class="sm-footer">
-      <button class="btn-s" id="drawer-logout-btn" style="color:var(--red); border-color: rgba(239, 68, 68, 0.2); font-weight: 800; background: rgba(239, 68, 68, 0.05); display:none;" onclick="handleLogout()">
+      <button class="btn-s" id="drawer-logout-btn" style="color:var(--red); border-color: rgba(239, 68, 68, 0.2); font-weight: 800; background: rgba(239, 68, 68, 0.05); display:none;" onclick="handleLogout()" aria-label="تسجيل الخروج الآمن من الحساب">
         <i class="fa-solid fa-right-from-bracket"></i> تسجيل الخروج الآمن 🚪
       </button>
-      <p style="margin-top:12px;">© 2026 ZaLo - بوابة الزبون الموحدة</p>
+      <p style="margin-top:12px;" id="drawer-copyright">© 2026 ZaLo - بوابة الزبون الموحدة</p>
     </div>
   </div>
 
@@ -3133,15 +3158,247 @@ window.showToast = function(msg) {
   }, 3200);
 };
 
-// Sidebar Handlers
+// Sidebar Handlers & Multi-language / Voice Accessibility Engine
+window.I18N_DICTIONARY = {
+  ar: {
+    sec_ops: "العمليات والطلبات",
+    menu_home: "الرئيسية وتصفح السوق",
+    menu_home_desc: "استكشاف المنتجات والعروض النشطة",
+    menu_orders: "طلباتي المشتراة",
+    menu_orders_desc: "عرض سجل الطلبات وفواتيرك",
+    menu_tracking: "تتبع الشحنات المباشر",
+    menu_tracking_desc: "متابعة المندوب وموقع التوصيل الفوري",
+    menu_notifs: "مركز التنبيهات الفورية",
+    menu_notifs_desc: "متابعة إشعارات فواتيرك وعملياتك",
+    sec_partners: "شركاء ZaLo والبيع",
+    menu_merchant: "طلب شراكة تجاري",
+    menu_merchant_desc: "انضم كتاجر لبيع سلعك لـ69 ولاية",
+    sec_support: "الدعم والمعلومات",
+    menu_about: "من نحن",
+    menu_about_desc: "تعرف على قصة ورؤية منصة ZaLo",
+    menu_contact: "تواصل فوري واتساب",
+    sec_account: "الإعدادات والحساب",
+    menu_login: "تسجيل الدخول",
+    menu_login_desc: "إدارة حسابك ومتابعة طلباتك المحفوظة",
+    sec_sys: "النظام والصيانة",
+    menu_refresh: "تنظيف الكاش وتحديث فوري",
+    menu_refresh_desc: "حل مشاكل المزامنة وتأخر البيانات",
+    btn_logout: "تسجيل الخروج الآمن 🚪",
+    sec_lang_access: "اللغة وإمكانية الوصول",
+    lbl_lang_title: "لغة التطبيق / Language",
+    lbl_lang_desc: "العربية (الأساسية) | English",
+    lbl_access_title: "مساعد القارئ الصوتي",
+    lbl_access_desc: "نطق عناصر الواجهة لذوي الهمم",
+    search_placeholder: "ابحث عن أي منتج، ماركة، أو هاتف...",
+    wilaya_fast_placeholder: "بحث سريع... (اسم أو رقم الولاية)",
+    footer_copyright: "© 2026 ZaLo - بوابة الزبون الموحدة",
+    toast_lang_ar: "تم تفعيل اللغة العربية بالكامل 🇩🇿",
+    toast_lang_en: "Language switched to English successfully 🇬🇧"
+  },
+  en: {
+    sec_ops: "Operations & Orders",
+    menu_home: "Home & Marketplace",
+    menu_home_desc: "Explore active products and deals",
+    menu_orders: "My Orders & History",
+    menu_orders_desc: "View purchase logs and invoices",
+    menu_tracking: "Live Shipment Tracking",
+    menu_tracking_desc: "Track courier & real-time delivery",
+    menu_notifs: "Instant Notification Center",
+    menu_notifs_desc: "Follow billing & order alerts",
+    sec_partners: "ZaLo Partners & Selling",
+    menu_merchant: "Merchant Partnership Request",
+    menu_merchant_desc: "Join as seller across all 69 Wilayas",
+    sec_support: "Support & Information",
+    menu_about: "About ZaLo",
+    menu_about_desc: "Discover ZaLo platform vision",
+    menu_contact: "Instant WhatsApp Support",
+    sec_account: "Account & Settings",
+    menu_login: "Sign In / Login",
+    menu_login_desc: "Manage account and saved orders",
+    sec_sys: "System & Maintenance",
+    menu_refresh: "Clear Cache & Force Update",
+    menu_refresh_desc: "Fix sync issues & data delays",
+    btn_logout: "Secure Sign Out 🚪",
+    sec_lang_access: "Language & Accessibility",
+    lbl_lang_title: "App Language / اللغة",
+    lbl_lang_desc: "Arabic (Primary) | English",
+    lbl_access_title: "Voice Screen Reader",
+    lbl_access_desc: "Audible element labels for accessibility",
+    search_placeholder: "Search products, brands, tech...",
+    wilaya_fast_placeholder: "Quick search... (Wilaya name or code)",
+    footer_copyright: "© 2026 ZaLo - Unified Customer Portal",
+    toast_lang_ar: "تم تفعيل اللغة العربية بالكامل 🇩🇿",
+    toast_lang_en: "Language switched to English successfully 🇬🇧"
+  }
+};
+
+window.currentAppLang = localStorage.getItem('zalo_app_lang') || 'ar';
+
+window.setAppLanguage = function(lang) {
+  if (!window.I18N_DICTIONARY[lang]) return;
+  window.currentAppLang = lang;
+  localStorage.setItem('zalo_app_lang', lang);
+
+  const btnAr = document.getElementById('btn-lang-ar');
+  const btnEn = document.getElementById('btn-lang-en');
+  if (btnAr && btnEn) {
+    if (lang === 'ar') {
+      btnAr.style.background = 'var(--brand-green)';
+      btnAr.style.color = '#ffffff';
+      btnAr.style.borderColor = 'var(--brand-green)';
+      btnEn.style.background = '#ffffff';
+      btnEn.style.color = 'var(--navy)';
+      btnEn.style.borderColor = '#cbd5e1';
+    } else {
+      btnEn.style.background = 'var(--brand-green)';
+      btnEn.style.color = '#ffffff';
+      btnEn.style.borderColor = 'var(--brand-green)';
+      btnAr.style.background = '#ffffff';
+      btnAr.style.color = 'var(--navy)';
+      btnAr.style.borderColor = '#cbd5e1';
+    }
+  }
+
+  const dict = window.I18N_DICTIONARY[lang];
+
+  const updateTxt = (id, text) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = text;
+  };
+
+  updateTxt('sm-sec-ops', dict.sec_ops);
+  updateTxt('sm-home-sn', dict.menu_home);
+  updateTxt('sm-home-sd', dict.menu_home_desc);
+  updateTxt('sm-orders-sn', dict.menu_orders);
+  updateTxt('sm-orders-sd', dict.menu_orders_desc);
+  updateTxt('sm-track-sn', dict.menu_tracking);
+  updateTxt('sm-track-sd', dict.menu_tracking_desc);
+  updateTxt('sm-notif-sn', dict.menu_notifs);
+  updateTxt('sm-notif-sd', dict.menu_notifs_desc);
+
+  updateTxt('sm-sec-partners', dict.sec_partners);
+  updateTxt('sm-merchant-sn', dict.menu_merchant);
+  updateTxt('sm-merchant-sd', dict.menu_merchant_desc);
+
+  updateTxt('sm-sec-support', dict.sec_support);
+  updateTxt('sm-about-sn', dict.menu_about);
+  updateTxt('sm-about-sd', dict.menu_about_desc);
+  updateTxt('sm-contact-sn', dict.menu_contact);
+
+  updateTxt('sm-sec-account', dict.sec_account);
+  updateTxt('sm-login-sn', dict.menu_login);
+  updateTxt('sm-login-sd', dict.menu_login_desc);
+
+  updateTxt('sm-sec-sys', dict.sec_sys);
+  updateTxt('sm-refresh-sn', dict.menu_refresh);
+  updateTxt('sm-refresh-sd', dict.menu_refresh_desc);
+
+  updateTxt('sm-sec-lang-access', dict.sec_lang_access);
+  updateTxt('lbl-lang-title', dict.lbl_lang_title);
+  updateTxt('lbl-lang-desc', dict.lbl_lang_desc);
+  updateTxt('lbl-access-title', dict.lbl_access_title);
+  updateTxt('lbl-access-desc', dict.lbl_access_desc);
+
+  updateTxt('drawer-copyright', dict.footer_copyright);
+
+  const logoutBtn = document.getElementById('drawer-logout-btn');
+  if (logoutBtn) logoutBtn.innerHTML = `<i class="fa-solid fa-right-from-bracket"></i> ${dict.btn_logout}`;
+
+  const mainSearch = document.getElementById('main-search-input');
+  if (mainSearch) mainSearch.placeholder = dict.search_placeholder;
+
+  const wilayaSearch = document.getElementById('wilaya-fast-search');
+  if (wilayaSearch) wilayaSearch.placeholder = dict.wilaya_fast_placeholder;
+
+  if (typeof showToast === 'function') {
+    showToast(lang === 'ar' ? dict.toast_lang_ar : dict.toast_lang_en);
+  }
+
+  if (window.voiceAccessibilityEnabled) {
+    speakText(lang === 'en' ? 'English language activated' : 'تم تفعيل اللغة العربية');
+  }
+};
+
+window.voiceAccessibilityEnabled = localStorage.getItem('zalo_tts_enabled') === '1';
+
+window.toggleVoiceAccessibility = function(enable) {
+  if (typeof enable === 'undefined') {
+    window.voiceAccessibilityEnabled = !window.voiceAccessibilityEnabled;
+  } else {
+    window.voiceAccessibilityEnabled = !!enable;
+  }
+  localStorage.setItem('zalo_tts_enabled', window.voiceAccessibilityEnabled ? '1' : '0');
+  
+  const btnText = document.getElementById('tts-btn-text');
+  const btn = document.getElementById('btn-tts-toggle');
+  
+  if (window.voiceAccessibilityEnabled) {
+    if (btnText) btnText.textContent = 'مفعل 🔊';
+    if (btn) {
+      btn.style.background = 'var(--brand-green)';
+      btn.style.color = '#ffffff';
+    }
+    speakText(window.currentAppLang === 'en' ? 'Voice screen reader enabled for accessibility' : 'تم تفعيل القارئ الصوتي لخدمة ذوي الهمم');
+    attachAccessibilitySpeechListeners();
+  } else {
+    if (btnText) btnText.textContent = 'معطل 🔇';
+    if (btn) {
+      btn.style.background = '#ecfdf5';
+      btn.style.color = 'var(--brand-green)';
+    }
+    speakText(window.currentAppLang === 'en' ? 'Voice screen reader disabled' : 'تم تعطيل القارئ الصوتي');
+  }
+};
+
+window.speakText = function(text) {
+  if (!('speechSynthesis' in window)) return;
+  window.speechSynthesis.cancel();
+  if (!text) return;
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = (window.currentAppLang === 'en') ? 'en-US' : 'ar-SA';
+  utterance.rate = 0.95;
+  window.speechSynthesis.speak(utterance);
+};
+
+function attachAccessibilitySpeechListeners() {
+  document.querySelectorAll('[aria-label]').forEach(el => {
+    if (el.dataset.hasTts) return;
+    el.dataset.hasTts = 'true';
+    const handler = () => {
+      if (window.voiceAccessibilityEnabled) {
+        speakText(el.getAttribute('aria-label'));
+      }
+    };
+    el.addEventListener('focus', handler);
+    el.addEventListener('mouseenter', handler);
+  });
+}
+
 window.openSide = function() {
   document.getElementById('sidemenu').classList.add('open');
   document.getElementById('overlay').classList.add('show');
+  const tbMenu = document.querySelector('.tb-menu');
+  if (tbMenu) tbMenu.setAttribute('aria-expanded', 'true');
+  if (window.voiceAccessibilityEnabled) {
+    speakText(window.currentAppLang === 'en' ? 'Side menu opened' : 'تم فتح القائمة الجانبية');
+  }
 };
 window.closeSide = function() {
   document.getElementById('sidemenu').classList.remove('open');
   document.getElementById('overlay').classList.remove('show');
+  const tbMenu = document.querySelector('.tb-menu');
+  if (tbMenu) tbMenu.setAttribute('aria-expanded', 'false');
 };
+
+document.addEventListener('DOMContentLoaded', () => {
+  if (window.currentAppLang !== 'ar') {
+    setAppLanguage(window.currentAppLang);
+  }
+  if (window.voiceAccessibilityEnabled) {
+    toggleVoiceAccessibility(true);
+  }
+  attachAccessibilitySpeechListeners();
+});
 
 // Routing contacts
 window.openLink = function(url) {
