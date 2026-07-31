@@ -1636,11 +1636,11 @@ body {
       </div>
     </div>
 
-    <!-- Hero Banner Section with dynamic backgrounds (Cinematic, Framed & Ultra-clear) -->
+    <!-- Hero Banner Section with dynamic backgrounds (Sky-Blue Vivid Theme & Local Banner Assets) -->
     <div style="padding: 16px 16px 0 16px;">
-      <div id="wilaya-hero-section" style="position: relative; height: 160px; width: 100%; overflow: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; border-radius: 20px; box-shadow: 0 8px 24px rgba(0,0,0,0.12); border: 1.5px solid rgba(255,255,255,0.8); background: #0c4a6e;">
-        <!-- Cinematic Vivid Background Image -->
-        <div id="wilaya-hero-bg" style="position: absolute; inset: 0; background-image: linear-gradient(135deg, rgba(14, 165, 233, 0.75), rgba(15, 23, 42, 0.75)), url('images/hero-south.jpg'); background-size: cover; background-position: center; filter: brightness(0.9) contrast(1.1); transition: all 0.5s ease-in-out; z-index: 1;"></div>
+      <div id="wilaya-hero-section" style="position: relative; height: 160px; width: 100%; overflow: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; border-radius: 20px; box-shadow: 0 8px 24px rgba(14, 165, 233, 0.25); border: 2px solid #38bdf8; background: #0284c7;">
+        <!-- Sky Blue Vivid Overlay & Background Image -->
+        <div id="wilaya-hero-bg" style="position: absolute; inset: 0; background-image: linear-gradient(135deg, rgba(14, 165, 233, 0.8), rgba(3, 105, 161, 0.8)), url('images/hero-south.jpg'); background-size: cover; background-position: center; filter: brightness(1.0) contrast(1.1); transition: all 0.5s ease-in-out; z-index: 1;"></div>
         
         <!-- Text & Content overlay on top of background -->
         <div style="position: relative; z-index: 2; color: #ffffff; text-align: center; width: 100%;">
@@ -1651,15 +1651,15 @@ body {
       </div>
     </div>
 
-    <!-- Regional Tabbed Control Bar with photo backgrounds instead of icons (Placed above the grid) -->
+    <!-- Regional Tabbed Control Bar with local sky-blue themed photo backgrounds -->
     <div class="regional-tabs-container" style="padding: 16px 16px 8px 16px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
-      <button class="regional-tab-btn" id="tab-north" onclick="switchRegion('north')" style="background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Algiers_and_its_bay.jpg/800px-Algiers_and_its_bay.jpg');">
+      <button class="regional-tab-btn" id="tab-north" onclick="switchRegion('north')" style="background-image: linear-gradient(135deg, rgba(14, 165, 233, 0.8), rgba(2, 132, 199, 0.8)), url('images/hero-north.jpg');">
         <span>شمال الجزائري</span>
       </button>
-      <button class="regional-tab-btn" id="tab-center" onclick="switchRegion('center')" style="background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/Gharda%C3%AFa_-_Vue_g%C3%A9n%C3%A9rale.jpg/800px-Gharda%C3%AFa_-_Vue_g%C3%A9n%C3%A9rale.jpg');">
+      <button class="regional-tab-btn" id="tab-center" onclick="switchRegion('center')" style="background-image: linear-gradient(135deg, rgba(14, 165, 233, 0.8), rgba(2, 132, 199, 0.8)), url('images/hero-center.jpg');">
         <span>وسط الجزائري</span>
       </button>
-      <button class="regional-tab-btn active" id="tab-south" onclick="switchRegion('south')" style="background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Tassili_n%27Ajjer_-_Algeria.jpg/800px-Tassili_n%27Ajjer_-_Algeria.jpg');">
+      <button class="regional-tab-btn active" id="tab-south" onclick="switchRegion('south')" style="background-image: linear-gradient(135deg, rgba(14, 165, 233, 0.8), rgba(2, 132, 199, 0.8)), url('images/hero-south.jpg');">
         <span>جنوب الجزائري</span>
       </button>
     </div>
