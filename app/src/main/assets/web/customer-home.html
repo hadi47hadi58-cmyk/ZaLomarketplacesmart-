@@ -8,6 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Great+Vibes&display=swap" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 <script src="js/categories.js"></script>
+<script src="js/indexed-db-cache.js"></script>
 <style>
 :root {
   --brand-green: #0ea5e9; /* Sky Blue replaces green */
@@ -3942,9 +3943,21 @@ async function loadProducts() {
     }
   });
 
-  // Rely purely on real products from Supabase cloud and local merchant storage
-  if (merged.length === 0) {
-    merged = [];
+  // Store or retrieve products via IndexedDB offline cache
+  if (merged.length > 0) {
+    if (window.ZaLoDB) {
+      window.ZaLoDB.saveProducts(merged);
+    }
+  } else if (window.ZaLoDB) {
+    try {
+      const cachedIDBProds = await window.ZaLoDB.getProducts();
+      if (Array.isArray(cachedIDBProds) && cachedIDBProds.length > 0) {
+        merged = cachedIDBProds;
+        console.log("📦 Products & attributes loaded from IndexedDB offline cache:", merged.length);
+      }
+    } catch (err) {
+      console.warn("Could not retrieve products from IndexedDB:", err);
+    }
   }
 
   state.loadedProducts = merged;
@@ -4617,6 +4630,9 @@ window.addToCartDirect = function(id, name, price, img, emoji, storeId, storeNam
   }
 
   localStorage.setItem('zalo_cart', JSON.stringify(cart));
+  if (window.ZaLoDB) {
+    window.ZaLoDB.saveCart(cart);
+  }
   window.showToast("✔️ تم إضافة المنتج بنجاح لسلة المشتريات! 🛒");
   updateCartBadge();
 };
@@ -4769,6 +4785,9 @@ window.removeFromCart = function(id) {
   let cart = JSON.parse(localStorage.getItem('zalo_cart') || '[]');
   cart = cart.filter(c => c.id !== id);
   localStorage.setItem('zalo_cart', JSON.stringify(cart));
+  if (window.ZaLoDB) {
+    window.ZaLoDB.saveCart(cart);
+  }
   loadCartItems();
   window.showToast("❌ تم إزالة المنتج من سلة المشتريات.");
 };
@@ -4850,6 +4869,9 @@ window.checkoutCart = async function() {
   if (successfulOrders > 0) {
     localStorage.setItem('zalo_local_orders', JSON.stringify(localOrders));
     localStorage.removeItem('zalo_cart');
+    if (window.ZaLoDB) {
+      window.ZaLoDB.saveCart([]);
+    }
     updateCartBadge();
     
     // Prepare Receipt Modal Details
