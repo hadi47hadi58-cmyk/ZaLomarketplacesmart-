@@ -5,7 +5,12 @@ import sessionManagerInstance from './session-manager.js';
 // routing all operations completely and cleanly through Supabase AND our NestJS + PostgreSQL Backend.
 
 import { supabase } from './supabase-config.js';
-import { telemetry } from './telemetry-logger.js';
+
+const telemetry = {
+    log: () => {},
+    error: () => {},
+    warn: () => {}
+};
 
 export { supabase, supabase as supabaseClient, telemetry };
 

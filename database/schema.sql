@@ -605,7 +605,6 @@ CREATE POLICY "Users can manage their own devices" ON public.user_devices FOR AL
     WITH CHECK (user_id = (SELECT id FROM public.users WHERE supabase_uid = auth.uid()));
 
 DROP POLICY IF EXISTS "allow_all_select" ON public.user_devices;
-CREATE POLICY "allow_all_select" ON public.user_devices FOR SELECT USING (true);
 
 
 -- 16) سياسات المصادقة الثنائية (Two Factor Secrets Policies)
@@ -615,7 +614,6 @@ CREATE POLICY "Users can manage their own 2fa secrets" ON public.two_factor_secr
     WITH CHECK (user_id = (SELECT id FROM public.users WHERE supabase_uid = auth.uid()));
 
 DROP POLICY IF EXISTS "allow_all_select" ON public.two_factor_secrets;
-CREATE POLICY "allow_all_select" ON public.two_factor_secrets FOR SELECT USING (true);
 
 
 -- 17) سياسات تتبع دورة حياة الطلبيات (Order Lifecycle Policies)
@@ -624,93 +622,56 @@ CREATE POLICY "Users and Merchants can view order lifecycles" ON public.order_li
     USING (order_id IN (SELECT id FROM public.orders));
 
 DROP POLICY IF EXISTS "allow_all_select" ON public.order_lifecycle;
-CREATE POLICY "allow_all_select" ON public.order_lifecycle FOR SELECT USING (true);
 
 
--- 18) سياسات الأمان المؤقتة لمنع الإغلاق الذاتي لقاعدة البيانات (Database Defensive Allow-All SELECT Testing Policies)
+-- 18) تنظيف وإسقاط سياسات الأمان المؤقتة (Secure RLS Production Rules Cleanup)
 DROP POLICY IF EXISTS "allow_all_select" ON public.orders;
-CREATE POLICY "allow_all_select" ON public.orders FOR SELECT USING (true);
 DROP POLICY IF EXISTS "temp_allow_select" ON public.orders;
-CREATE POLICY "temp_allow_select" ON public.orders FOR SELECT USING (true);
 DROP POLICY IF EXISTS "temp_allow_insert" ON public.orders;
-CREATE POLICY "temp_allow_insert" ON public.orders FOR INSERT WITH CHECK (true);
 
 DROP POLICY IF EXISTS "allow_all_select" ON public.order_items;
-CREATE POLICY "allow_all_select" ON public.order_items FOR SELECT USING (true);
 DROP POLICY IF EXISTS "temp_allow_select" ON public.order_items;
-CREATE POLICY "temp_allow_select" ON public.order_items FOR SELECT USING (true);
 DROP POLICY IF EXISTS "temp_allow_insert" ON public.order_items;
-CREATE POLICY "temp_allow_insert" ON public.order_items FOR INSERT WITH CHECK (true);
 
 DROP POLICY IF EXISTS "allow_all_select" ON public.payment_proofs;
-CREATE POLICY "allow_all_select" ON public.payment_proofs FOR SELECT USING (true);
 DROP POLICY IF EXISTS "temp_allow_select" ON public.payment_proofs;
-CREATE POLICY "temp_allow_select" ON public.payment_proofs FOR SELECT USING (true);
 DROP POLICY IF EXISTS "temp_allow_insert" ON public.payment_proofs;
-CREATE POLICY "temp_allow_insert" ON public.payment_proofs FOR INSERT WITH CHECK (true);
 
 DROP POLICY IF EXISTS "allow_all_select" ON public.reviews;
-CREATE POLICY "allow_all_select" ON public.reviews FOR SELECT USING (true);
 DROP POLICY IF EXISTS "temp_allow_select" ON public.reviews;
-CREATE POLICY "temp_allow_select" ON public.reviews FOR SELECT USING (true);
 DROP POLICY IF EXISTS "temp_allow_insert" ON public.reviews;
-CREATE POLICY "temp_allow_insert" ON public.reviews FOR INSERT WITH CHECK (true);
 
 DROP POLICY IF EXISTS "allow_all_select" ON public.complaints;
-CREATE POLICY "allow_all_select" ON public.complaints FOR SELECT USING (true);
 DROP POLICY IF EXISTS "temp_allow_select" ON public.complaints;
-CREATE POLICY "temp_allow_select" ON public.complaints FOR SELECT USING (true);
 DROP POLICY IF EXISTS "temp_allow_insert" ON public.complaints;
-CREATE POLICY "temp_allow_insert" ON public.complaints FOR INSERT WITH CHECK (true);
 
 DROP POLICY IF EXISTS "allow_all_select" ON public.subscriptions;
-CREATE POLICY "allow_all_select" ON public.subscriptions FOR SELECT USING (true);
 DROP POLICY IF EXISTS "temp_allow_select" ON public.subscriptions;
-CREATE POLICY "temp_allow_select" ON public.subscriptions FOR SELECT USING (true);
 DROP POLICY IF EXISTS "temp_allow_insert" ON public.subscriptions;
-CREATE POLICY "temp_allow_insert" ON public.subscriptions FOR INSERT WITH CHECK (true);
 
 DROP POLICY IF EXISTS "allow_all_select" ON public.notifications;
-CREATE POLICY "allow_all_select" ON public.notifications FOR SELECT USING (true);
 DROP POLICY IF EXISTS "temp_allow_select" ON public.notifications;
-CREATE POLICY "temp_allow_select" ON public.notifications FOR SELECT USING (true);
 DROP POLICY IF EXISTS "temp_allow_insert" ON public.notifications;
-CREATE POLICY "temp_allow_insert" ON public.notifications FOR INSERT WITH CHECK (true);
 
 DROP POLICY IF EXISTS "allow_all_select" ON public.audit_logs;
-CREATE POLICY "allow_all_select" ON public.audit_logs FOR SELECT USING (true);
 DROP POLICY IF EXISTS "temp_allow_select" ON public.audit_logs;
-CREATE POLICY "temp_allow_select" ON public.audit_logs FOR SELECT USING (true);
 DROP POLICY IF EXISTS "temp_allow_insert" ON public.audit_logs;
-CREATE POLICY "temp_allow_insert" ON public.audit_logs FOR INSERT WITH CHECK (true);
 
 DROP POLICY IF EXISTS "allow_all_select" ON public.login_attempts;
-CREATE POLICY "allow_all_select" ON public.login_attempts FOR SELECT USING (true);
 DROP POLICY IF EXISTS "temp_allow_select" ON public.login_attempts;
-CREATE POLICY "temp_allow_select" ON public.login_attempts FOR SELECT USING (true);
 DROP POLICY IF EXISTS "temp_allow_insert" ON public.login_attempts;
-CREATE POLICY "temp_allow_insert" ON public.login_attempts FOR INSERT WITH CHECK (true);
 
 DROP POLICY IF EXISTS "allow_all_select" ON public.failed_logins;
-CREATE POLICY "allow_all_select" ON public.failed_logins FOR SELECT USING (true);
 DROP POLICY IF EXISTS "temp_allow_select" ON public.failed_logins;
-CREATE POLICY "temp_allow_select" ON public.failed_logins FOR SELECT USING (true);
 DROP POLICY IF EXISTS "temp_allow_insert" ON public.failed_logins;
-CREATE POLICY "temp_allow_insert" ON public.failed_logins FOR INSERT WITH CHECK (true);
 
 DROP POLICY IF EXISTS "allow_all_select" ON public.password_reset_tokens;
-CREATE POLICY "allow_all_select" ON public.password_reset_tokens FOR SELECT USING (true);
 DROP POLICY IF EXISTS "temp_allow_select" ON public.password_reset_tokens;
-CREATE POLICY "temp_allow_select" ON public.password_reset_tokens FOR SELECT USING (true);
 DROP POLICY IF EXISTS "temp_allow_insert" ON public.password_reset_tokens;
-CREATE POLICY "temp_allow_insert" ON public.password_reset_tokens FOR INSERT WITH CHECK (true);
 
 DROP POLICY IF EXISTS "allow_all_select" ON public.email_verification_tokens;
-CREATE POLICY "allow_all_select" ON public.email_verification_tokens FOR SELECT USING (true);
 DROP POLICY IF EXISTS "temp_allow_select" ON public.email_verification_tokens;
-CREATE POLICY "temp_allow_select" ON public.email_verification_tokens FOR SELECT USING (true);
 DROP POLICY IF EXISTS "temp_allow_insert" ON public.email_verification_tokens;
-CREATE POLICY "temp_allow_insert" ON public.email_verification_tokens FOR INSERT WITH CHECK (true);
 
 
 -- ==========================================
