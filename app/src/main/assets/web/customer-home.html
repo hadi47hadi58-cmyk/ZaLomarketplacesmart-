@@ -1638,9 +1638,9 @@ body {
 
     <!-- Hero Banner Section with dynamic backgrounds (Cinematic, Framed & Ultra-clear) -->
     <div style="padding: 16px 16px 0 16px;">
-      <div id="wilaya-hero-section" style="position: relative; height: 160px; width: 100%; overflow: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; border-radius: 20px; box-shadow: 0 8px 24px rgba(0,0,0,0.12); border: 1.5px solid rgba(255,255,255,0.8);">
+      <div id="wilaya-hero-section" style="position: relative; height: 160px; width: 100%; overflow: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; border-radius: 20px; box-shadow: 0 8px 24px rgba(0,0,0,0.12); border: 1.5px solid rgba(255,255,255,0.8); background: #0c4a6e;">
         <!-- Cinematic Vivid Background Image -->
-        <div id="wilaya-hero-bg" style="position: absolute; inset: 0; background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Tassili_n%27Ajjer_-_Algeria.jpg/800px-Tassili_n%27Ajjer_-_Algeria.jpg'); background-size: cover; background-position: center; filter: brightness(0.65) contrast(1.15); transition: background-image 0.5s ease-in-out; z-index: 1;"></div>
+        <div id="wilaya-hero-bg" style="position: absolute; inset: 0; background-image: linear-gradient(135deg, rgba(14, 165, 233, 0.75), rgba(15, 23, 42, 0.75)), url('images/hero-south.jpg'); background-size: cover; background-position: center; filter: brightness(0.9) contrast(1.1); transition: all 0.5s ease-in-out; z-index: 1;"></div>
         
         <!-- Text & Content overlay on top of background -->
         <div style="position: relative; z-index: 2; color: #ffffff; text-align: center; width: 100%;">
@@ -2444,10 +2444,10 @@ const WILAYA_REGIONS = {
 let currentActiveView = 'south'; 
 
 const REGION_BANNERS = {
-  popular: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/Gharda%C3%AFa_-_Vue_g%C3%A9n%C3%A9rale.jpg/800px-Gharda%C3%AFa_-_Vue_g%C3%A9n%C3%A9rale.jpg",
-  north: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Algiers_and_its_bay.jpg/800px-Algiers_and_its_bay.jpg",
-  center: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/Gharda%C3%AFa_-_Vue_g%C3%A9n%C3%A9rale.jpg/800px-Gharda%C3%AFa_-_Vue_g%C3%A9n%C3%A9rale.jpg",
-  south: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Tassili_n%27Ajjer_-_Algeria.jpg/800px-Tassili_n%27Ajjer_-_Algeria.jpg"
+  popular: "images/hero-north.jpg",
+  north: "images/hero-north.jpg",
+  center: "images/hero-center.jpg",
+  south: "images/hero-south.jpg"
 };
 
 const REGION_LABELS = {
@@ -2492,7 +2492,8 @@ function renderStateSelectionUI() {
   const heroBg = document.getElementById('wilaya-hero-bg');
   const heroRegionLabel = document.getElementById('wilaya-hero-region-label');
   if (heroBg) {
-    heroBg.style.backgroundImage = `url('${REGION_BANNERS[currentActiveView]}')`;
+    const bgImg = REGION_BANNERS[currentActiveView] || 'images/hero-south.jpg';
+    heroBg.style.backgroundImage = `linear-gradient(135deg, rgba(14, 165, 233, 0.75), rgba(15, 23, 42, 0.75)), url('${bgImg}')`;
   }
   if (heroRegionLabel) {
     heroRegionLabel.textContent = REGION_LABELS[currentActiveView];
@@ -3966,6 +3967,48 @@ async function loadProducts() {
   if (typeof renderCategoriesTab === 'function') renderCategoriesTab();
 }
 
+window.getProductCardImageHTML = function(pName, imgUrl) {
+  const isDefaultLogo = !imgUrl || imgUrl === 'assets/icon-192.svg' || imgUrl.includes('icon-192.svg') || imgUrl.includes('location_map');
+  const escName = (pName || '').replace(/'/g, "\\'");
+  
+  if (!isDefaultLogo) {
+    return `<img src="${imgUrl}" class="pcard-img-tag" alt="${pName}" onerror="this.onerror=null; this.parentElement.innerHTML=window.getProductFallbackVisualHTML('${escName}');">`;
+  }
+  return window.getProductFallbackVisualHTML(pName);
+};
+
+window.getProductFallbackVisualHTML = function(pName) {
+  const nameLower = (pName || '').toLowerCase();
+  let icon = '🛍️';
+  let gradient = 'linear-gradient(135deg, #0ea5e9, #0284c7)';
+  let tagText = 'منتج مميز';
+
+  if (nameLower.includes('ساعة') || nameLower.includes('watch') || nameLower.includes('ذكية')) {
+    icon = '⌚';
+    gradient = 'linear-gradient(135deg, #0f172a, #334155)';
+    tagText = 'ساعات وإلكترونيات';
+  } else if (nameLower.includes('هاتف') || nameLower.includes('حامل') || nameLower.includes('phone') || nameLower.includes('شاحن')) {
+    icon = '📱';
+    gradient = 'linear-gradient(135deg, #0284c7, #0369a1)';
+    tagText = 'ملحقات الهواتف';
+  } else if (nameLower.includes('طفل') || nameLower.includes('اطفال') || nameLower.includes('بيبي') || nameLower.includes('دفتر') || nameLower.includes('فراش')) {
+    icon = '👶';
+    gradient = 'linear-gradient(135deg, #f43f5e, #be123c)';
+    tagText = 'مستلزمات أطفال';
+  } else if (nameLower.includes('حذاء') || nameLower.includes('ملابس') || nameLower.includes('قميص') || nameLower.includes('فستان')) {
+    icon = '👟';
+    gradient = 'linear-gradient(135deg, #8b5cf6, #6d28d9)';
+    tagText = 'أزياء وموضة';
+  }
+
+  return `
+    <div style="width:100%; height:100%; background: ${gradient}; display:flex; flex-direction:column; align-items:center; justify-content:center; position:relative; overflow:hidden; border-radius:12px;">
+      <span style="font-size: 42px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.35)); transition: transform 0.3s;">${icon}</span>
+      <span style="font-size: 9.5px; font-weight: 800; color: #ffffff; background: rgba(0,0,0,0.35); padding: 3px 10px; border-radius: 12px; margin-top: 6px; letter-spacing: 0.3px; backdrop-filter: blur(4px);">${tagText}</span>
+    </div>
+  `;
+};
+
 function renderProductsList(list) {
   const grid = document.getElementById('home-pgrid');
   if (!grid) return;
@@ -3989,7 +4032,7 @@ function renderProductsList(list) {
     grid.innerHTML += `
       <div class="pcard">
         <div class="pcard-img-container" onclick="openProductDetails('${p.id}')">
-          ${imgUrl ? `<img src="${imgUrl}" class="pcard-img-tag" alt="${pName}">` : `<span class="pcard-emoji-span">${p.emoji||'📦'}</span>`}
+          ${window.getProductCardImageHTML(pName, imgUrl)}
         </div>
         <div class="pcard-info-box">
           <div class="pcard-rating-row"><span class="pcard-rating-star">⭐</span> 4.7</div>
@@ -4255,7 +4298,7 @@ window.renderCategoryDetailProducts = function(mainCatName, subCatName = '') {
     return `
       <div class="pcard">
         <div class="pcard-img-container" onclick="openProd('${p.id}','${escName}',${price},'${imgUrl}','${p.emoji||'📦'}','${storeId}','${escStore}')">
-          <img src="${imgUrl}" class="pcard-img-tag" alt="${pName}" onerror="this.src='assets/icon-192.svg'">
+          ${window.getProductCardImageHTML(pName, imgUrl)}
         </div>
         <div class="pcard-info-box">
           <div class="pcard-rating-row"><span class="pcard-rating-star">⭐</span> 4.8</div>
