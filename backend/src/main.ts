@@ -10,13 +10,23 @@ async function bootstrap() {
   // Implement helmet for robust security headers
   app.use(helmet());
 
-  // Configure Cors to allow production and development environments dynamically
+  // Configure Cors to allow production and development origins strictly
   app.enableCors({
     origin: (origin, callback) => {
-      if (!origin || origin.startsWith('http://localhost') || origin.startsWith('http://127.0.0.1') || origin.includes('run.app') || origin.includes('google.com') || origin.includes('zalo.dz')) {
+      const allowedDomains = [
+        'localhost',
+        '127.0.0.1',
+        'run.app',
+        'google.com',
+        'zalo.dz',
+        process.env.ALLOWED_ORIGIN,
+        process.env.FRONTEND_URL
+      ].filter(Boolean);
+
+      if (!origin || allowedDomains.some(domain => origin.includes(domain!))) {
         callback(null, true);
       } else {
-        callback(null, true); // Safe fallback to ensure no breakage on any other client platform
+        callback(new Error('CORS Access Denied: Origin not allowed by ZaLo Security Policy'));
       }
     },
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',

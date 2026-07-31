@@ -18,6 +18,10 @@ local.properties
 .env*
 serviceAccountKey.json
 debug.keystore
+*.jks
+*.keystore
+release-upload-key.jks
+app/release-upload-key.jks
 
 # Node and build outputs
 node_modules/

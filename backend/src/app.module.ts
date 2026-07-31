@@ -27,7 +27,7 @@ import { APP_GUARD } from '@nestjs/core';
       password: process.env.DB_PASSWORD || 'zalo_secure_pass',
       database: process.env.DB_NAME || 'zalo_marketplace_smart',
       autoLoadEntities: true,
-      synchronize: true, // Auto aligns ORM entities with Postgres columns during runtime
+      synchronize: process.env.NODE_ENV !== 'production' && process.env.TYPEORM_SYNCHRONIZE === 'true', // Disabled by default in production to require explicit migrations
     }),
     ThrottlerModule.forRoot([{
       ttl: 60000, // 60 seconds

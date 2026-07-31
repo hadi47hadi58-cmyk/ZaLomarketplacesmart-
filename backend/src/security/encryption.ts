@@ -2,11 +2,21 @@ import * as crypto from 'crypto';
 
 export class EncryptionService {
   private static readonly ALGORITHM = 'aes-256-cbc';
-  private static readonly KEY = crypto.scryptSync(
-    process.env.ENCRYPTION_KEY || 'zalo-marketplace-ultra-secure-key-2026',
-    'salt-for-key-generation',
-    32
-  );
+  private static getKey(): Buffer {
+    const keyString = process.env.ENCRYPTION_KEY || process.env.SUPABASE_JWT_SECRET || process.env.JWT_SECRET;
+    if (!keyString && process.env.NODE_ENV === 'production') {
+      throw new Error('CRITICAL SECURITY ERROR: ENCRYPTION_KEY or SUPABASE_JWT_SECRET is required in production!');
+    }
+    return crypto.scryptSync(
+      keyString || 'dev-only-local-secret-do-not-use-in-prod',
+      'salt-for-key-generation',
+      32
+    );
+  }
+
+  private static get KEY(): Buffer {
+    return this.getKey();
+  }
 
   /**
    * Encrypts a plain-text string.
