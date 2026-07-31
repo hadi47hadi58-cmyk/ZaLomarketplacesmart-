@@ -414,7 +414,7 @@ fun PureWebContainerScreen(
                         databaseEnabled = true
                         loadWithOverviewMode = true
                         useWideViewPort = true
-                        mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
+                        mixedContentMode = WebSettings.MIXED_CONTENT_NEVER_ALLOW
                         cacheMode = WebSettings.LOAD_DEFAULT
                     }
                     addJavascriptInterface(WebAppInterface(activity, this), "AndroidInterface")

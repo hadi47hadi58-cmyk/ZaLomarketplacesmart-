@@ -660,18 +660,26 @@ DROP POLICY IF EXISTS "temp_allow_insert" ON public.audit_logs;
 DROP POLICY IF EXISTS "allow_all_select" ON public.login_attempts;
 DROP POLICY IF EXISTS "temp_allow_select" ON public.login_attempts;
 DROP POLICY IF EXISTS "temp_allow_insert" ON public.login_attempts;
+CREATE POLICY "user_own_login_attempts" ON public.login_attempts FOR SELECT
+    USING (user_id = (SELECT id FROM public.users WHERE supabase_uid = auth.uid()));
 
 DROP POLICY IF EXISTS "allow_all_select" ON public.failed_logins;
 DROP POLICY IF EXISTS "temp_allow_select" ON public.failed_logins;
 DROP POLICY IF EXISTS "temp_allow_insert" ON public.failed_logins;
+CREATE POLICY "admin_only_failed_logins" ON public.failed_logins FOR ALL
+    USING ((SELECT role FROM public.users WHERE supabase_uid = auth.uid()) = 'ADMIN');
 
 DROP POLICY IF EXISTS "allow_all_select" ON public.password_reset_tokens;
 DROP POLICY IF EXISTS "temp_allow_select" ON public.password_reset_tokens;
 DROP POLICY IF EXISTS "temp_allow_insert" ON public.password_reset_tokens;
+CREATE POLICY "user_own_password_resets" ON public.password_reset_tokens FOR SELECT
+    USING (user_id = (SELECT id FROM public.users WHERE supabase_uid = auth.uid()));
 
 DROP POLICY IF EXISTS "allow_all_select" ON public.email_verification_tokens;
 DROP POLICY IF EXISTS "temp_allow_select" ON public.email_verification_tokens;
 DROP POLICY IF EXISTS "temp_allow_insert" ON public.email_verification_tokens;
+CREATE POLICY "user_own_email_verifications" ON public.email_verification_tokens FOR SELECT
+    USING (user_id = (SELECT id FROM public.users WHERE supabase_uid = auth.uid()));
 
 
 -- ==========================================
