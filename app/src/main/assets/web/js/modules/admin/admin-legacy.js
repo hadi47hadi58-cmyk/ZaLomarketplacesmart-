@@ -1165,14 +1165,14 @@
             if (modal) modal.classList.add('hidden');
         }
 
-        // Helper function for uploading image files locally with canvas auto-compression & instant preview
+        // Helper function for uploading image files locally with canvas auto-compression & Cloud Storage CDN upload
         function handleImageFileUpload(inputEl, targetInputId, previewImgId) {
             if (inputEl.files && inputEl.files[0]) {
                 const file = inputEl.files[0];
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     const img = new Image();
-                    img.onload = function() {
+                    img.onload = async function() {
                         try {
                             const canvas = document.createElement('canvas');
                             const maxDim = 800;
@@ -1193,7 +1193,7 @@
                             canvas.height = height;
                             const ctx = canvas.getContext('2d');
                             ctx.drawImage(img, 0, 0, width, height);
-                            // Fast JPEG compression (30KB max string)
+                            // Fast client-side JPEG compression (~30KB max)
                             const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.75);
 
                             if (targetInputId) {
@@ -1206,6 +1206,32 @@
                                     prev.src = compressedDataUrl;
                                     prev.classList.remove('hidden');
                                     prev.style.display = 'block';
+                                }
+                            }
+
+                            // Async CDN Cloud Storage Upload
+                            if (window.supabaseClient && window.supabaseClient.storage) {
+                                try {
+                                    canvas.toBlob(async (blob) => {
+                                        if (!blob) return;
+                                        const fileExt = 'jpg';
+                                        const filePath = `products/${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
+                                        const { data, error } = await window.supabaseClient.storage
+                                            .from('products')
+                                            .upload(filePath, blob, { contentType: 'image/jpeg', upsert: true });
+                                        if (!error && data) {
+                                            const { data: pubData } = window.supabaseClient.storage.from('products').getPublicUrl(filePath);
+                                            if (pubData && pubData.publicUrl) {
+                                                if (targetInputId) {
+                                                    const targetEl = document.getElementById(targetInputId);
+                                                    if (targetEl) targetEl.value = pubData.publicUrl;
+                                                }
+                                                console.log("Uploaded image directly to Supabase Storage CDN:", pubData.publicUrl);
+                                            }
+                                        }
+                                    }, 'image/jpeg', 0.75);
+                                } catch (storageErr) {
+                                    console.warn("Cloud Storage CDN upload note:", storageErr);
                                 }
                             }
                         } catch(err) {

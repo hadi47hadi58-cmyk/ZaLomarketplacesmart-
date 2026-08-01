@@ -3938,14 +3938,24 @@ async function loadProducts() {
 
   let merged = [...unifiedRemote];
   unifiedLocal.forEach(lp => {
-    const exists = merged.some(rp => rp.id === lp.id || rp.name.trim() === lp.name.trim());
-    if (!exists) {
+    const idx = merged.findIndex(rp => rp.id === lp.id || (rp.name && lp.name && rp.name.trim() === lp.name.trim()));
+    if (idx < 0) {
       merged.push(lp);
+    } else {
+      const rp = merged[idx];
+      const lpHasRealImg = lp.image && lp.image !== 'assets/icon-192.svg' && !lp.image.includes('icon-192.svg') && !lp.image.includes('location_map');
+      const rpHasDefaultImg = !rp.image || rp.image === 'assets/icon-192.svg' || rp.image.includes('icon-192.svg') || rp.image.includes('location_map');
+      if (lpHasRealImg && rpHasDefaultImg) {
+        rp.image = lp.image;
+      }
     }
   });
 
-  // Store or retrieve products via IndexedDB offline cache
+  // Store or retrieve products via IndexedDB & localStorage offline cache
   if (merged.length > 0) {
+    try {
+      localStorage.setItem('zalo_products', JSON.stringify(merged));
+    } catch (e) {}
     if (window.ZaLoDB) {
       window.ZaLoDB.saveProducts(merged);
     }
