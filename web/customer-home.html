@@ -3587,6 +3587,27 @@ async function syncMerchantRequestStatus(user) {
           }
         }
       }
+
+      // 3. Check stores table
+      const storeMatchQuery = user.id ? `merchant_id.eq.${user.id},merchant_email.eq.${user.email}` : `merchant_email.eq.${user.email}`;
+      const { data: storeRow } = await supabase
+        .from('stores')
+        .select('*')
+        .or(`${storeMatchQuery}${emailQuery}`)
+        .maybeSingle();
+
+      if (storeRow) {
+        if (storeRow.status === 'approved' || storeRow.status === 'active' || storeRow.is_verified || storeRow.status !== 'rejected') {
+          isApproved = true;
+          isPending = false;
+          localStorage.setItem('zalo_user_role', 'MERCHANT');
+          localStorage.setItem('zalo_merchant_status', 'approved');
+          if (storeRow.name || storeRow.store_name) {
+            localStorage.setItem('zalo_active_store', storeRow.name || storeRow.store_name);
+            sessionStorage.setItem('merchant_store_name', storeRow.name || storeRow.store_name);
+          }
+        }
+      }
     }
   } catch(e) {
     console.warn("Could not sync requests status from Supabase:", e);

@@ -101,8 +101,15 @@
         
         window.supabaseClient = supabase;
         window.supabase = supabase;
-    </script>
-                console.log('✅ Store Session Verified.');
+
+        async function checkStoreSession() {
+            try {
+                const user = await sessionManager.getCurrentUser();
+                if (user) {
+                    console.log('✅ Store Session Verified for:', user.email);
+                }
+            } catch (e) {
+                console.warn('Store session check warning:', e);
             }
         }
         checkStoreSession();

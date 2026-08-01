@@ -81,13 +81,39 @@ window.merchantAddProductReal = async function(e) {
         const { data: { session } } = await window.supabase.auth.getSession();
         if (!session?.user) throw new Error("لا توجد جلسة صالحة");
         
-        const { data: store, error: storeErr } = await window.supabase
+        let { data: store } = await window.supabase
             .from('stores')
             .select('id, name')
             .eq('merchant_id', session.user.id)
             .maybeSingle();
             
-        if (storeErr || !store) throw new Error("لم يتم العثور على المتجر الخاص بك");
+        if (!store && session.user.email) {
+            const { data: storeByEmail } = await window.supabase
+                .from('stores')
+                .select('id, name')
+                .or(`merchant_email.eq.${session.user.email},email.eq.${session.user.email}`)
+                .maybeSingle();
+            if (storeByEmail) {
+                store = storeByEmail;
+                window.supabase.from('stores').update({ merchant_id: session.user.id }).eq('id', store.id).then();
+            }
+        }
+
+        if (!store) {
+            const storeName = session.user.user_metadata?.store_name || session.user.email?.split('@')[0] || 'متجر معتمد';
+            const { data: newStore } = await window.supabase
+                .from('stores')
+                .upsert({
+                    merchant_id: session.user.id,
+                    name: storeName,
+                    merchant_email: session.user.email,
+                    status: 'approved',
+                    is_verified: true
+                })
+                .select('id, name')
+                .maybeSingle();
+            store = newStore || { id: session.user.id, name: storeName };
+        }
         
         const name = document.getElementById('prod-name')?.value || 'منتج جديد';
         const price = document.getElementById('prod-price')?.value || 0;

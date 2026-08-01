@@ -6,7 +6,11 @@ export async function fetchStoreStats() {
         const { data: { session } } = await supabase.auth.getSession();
         if (!session?.user) return { totalSales: 0, pendingOrders: 0, productsCount: 0 };
         
-        const { data: store } = await supabase.from('stores').select('id').eq('merchant_id', session.user.id).maybeSingle();
+        let { data: store } = await supabase.from('stores').select('id').eq('merchant_id', session.user.id).maybeSingle();
+        if (!store && session.user.email) {
+            const { data: storeByEmail } = await supabase.from('stores').select('id').or(`merchant_email.eq.${session.user.email},email.eq.${session.user.email}`).maybeSingle();
+            if (storeByEmail) store = storeByEmail;
+        }
         if (!store) return { totalSales: 0, pendingOrders: 0, productsCount: 0 };
         
         const { count: pendingOrders } = await supabase.from('orders').select('*', { count: 'exact', head: true }).eq('store_id', store.id).eq('status', 'pending');

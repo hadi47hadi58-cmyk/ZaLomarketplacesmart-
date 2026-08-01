@@ -7,13 +7,22 @@ export async function fetchStoreProducts() {
         if (!session?.user) return [];
         
         // Find user's store
-        const { data: store, error: storeErr } = await supabase
+        let { data: store } = await supabase
             .from('stores')
             .select('id')
             .eq('merchant_id', session.user.id)
             .maybeSingle();
             
-        if (!store || storeErr) return [];
+        if (!store && session.user.email) {
+            const { data: storeByEmail } = await supabase
+                .from('stores')
+                .select('id')
+                .or(`merchant_email.eq.${session.user.email},email.eq.${session.user.email}`)
+                .maybeSingle();
+            if (storeByEmail) store = storeByEmail;
+        }
+            
+        if (!store) return [];
         
         const { data, error } = await supabase
             .from('products')
