@@ -185,26 +185,82 @@
             renderMerchantFinancialReports();
         };
 
-        // Live image previews
+        // Live image previews with canvas compression & Cloud Storage CDN upload
         function previewImage(input, previewId) {
             if (input.files && input.files[0]) {
+                const file = input.files[0];
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    document.getElementById(previewId).src = e.target.result;
-                    
-                    // Save in database immediately
-                    let settings = getDB("merchant_store_settings", DEFAULT_MERCHANT_SETTINGS);
-                    if (previewId === 'logo-preview') {
-                        settings.logoImg = e.target.result;
-                        document.getElementById('profile-store-image').src = e.target.result;
-                        const sidebarLogo = document.getElementById('sidebar-store-logo-preview');
-                        if (sidebarLogo) sidebarLogo.src = e.target.result;
-                    } else {
-                        settings.coverImg = e.target.result;
-                    }
-                    setDB("merchant_store_settings", settings);
+                    const img = new Image();
+                    img.onload = function() {
+                        try {
+                            const canvas = document.createElement('canvas');
+                            const maxDim = 800;
+                            let width = img.width;
+                            let height = img.height;
+                            if (width > height) {
+                                if (width > maxDim) {
+                                    height = Math.round((height * maxDim) / width);
+                                    width = maxDim;
+                                }
+                            } else {
+                                if (height > maxDim) {
+                                    width = Math.round((width * maxDim) / height);
+                                    height = maxDim;
+                                }
+                            }
+                            canvas.width = width;
+                            canvas.height = height;
+                            const ctx = canvas.getContext('2d');
+                            ctx.drawImage(img, 0, 0, width, height);
+                            const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.75);
+
+                            const prevEl = document.getElementById(previewId);
+                            if (prevEl) prevEl.src = compressedDataUrl;
+                            
+                            let settings = getDB("merchant_store_settings", DEFAULT_MERCHANT_SETTINGS);
+                            if (previewId === 'logo-preview') {
+                                settings.logoImg = compressedDataUrl;
+                                const pLogo = document.getElementById('profile-store-image');
+                                if (pLogo) pLogo.src = compressedDataUrl;
+                                const sidebarLogo = document.getElementById('sidebar-store-logo-preview');
+                                if (sidebarLogo) sidebarLogo.src = compressedDataUrl;
+                            } else {
+                                settings.coverImg = compressedDataUrl;
+                            }
+                            setDB("merchant_store_settings", settings);
+
+                            // Direct Cloud Storage CDN Upload
+                            if (window.supabaseClient && window.supabaseClient.storage) {
+                                canvas.toBlob(async (blob) => {
+                                    if (!blob) return;
+                                    const filePath = `stores/${Date.now()}_${Math.random().toString(36).substring(7)}.jpg`;
+                                    const { data, error } = await window.supabaseClient.storage
+                                        .from('stores')
+                                        .upload(filePath, blob, { contentType: 'image/jpeg', upsert: true });
+                                    if (!error && data) {
+                                        const { data: pubData } = window.supabaseClient.storage.from('stores').getPublicUrl(filePath);
+                                        if (pubData && pubData.publicUrl) {
+                                            const cdnUrl = pubData.publicUrl;
+                                            if (prevEl) prevEl.src = cdnUrl;
+                                            if (previewId === 'logo-preview') {
+                                                settings.logoImg = cdnUrl;
+                                            } else {
+                                                settings.coverImg = cdnUrl;
+                                            }
+                                            setDB("merchant_store_settings", settings);
+                                            console.log("Store image uploaded to Supabase Storage CDN:", cdnUrl);
+                                        }
+                                    }
+                                }, 'image/jpeg', 0.75);
+                            }
+                        } catch(err) {
+                            console.warn("Store image compression/upload note:", err);
+                        }
+                    };
+                    img.src = e.target.result;
                 };
-                reader.readAsDataURL(input.files[0]);
+                reader.readAsDataURL(file);
             }
         }
 

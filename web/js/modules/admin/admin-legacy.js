@@ -720,6 +720,26 @@
                         liveRequests = data;
                     }
 
+                    // Also check stores table for any merchant stores registered on other devices
+                    const { data: stData, error: stErr } = await window.supabaseClient.from('stores').select('*');
+                    if (!stErr && stData && Array.isArray(stData)) {
+                        stData.forEach(st => {
+                            const exists = liveRequests.some(r => (r.id && r.id === st.id) || (r.store_name && (r.store_name === st.name || r.store_name === st.store_name)));
+                            if (!exists) {
+                                liveRequests.push({
+                                    id: st.id,
+                                    store_name: st.name || st.store_name || 'متجر جديد',
+                                    owner_name: st.merchant_name || st.owner_name || st.merchant_email || 'تاجر جديد',
+                                    email: st.merchant_email || st.email || '',
+                                    phone: st.phone || '0658000000',
+                                    wilaya: st.wilaya || 'الجزائر',
+                                    status: st.status || (st.is_verified ? 'approved' : 'pending'),
+                                    merchant_type: st.merchant_type || 'registered'
+                                });
+                            }
+                        });
+                    }
+
                     // Also check profiles for merchants or pending accounts
                     const { data: profs, error: profErr } = await window.supabaseClient.from('profiles').select('*');
                     if (!profErr && profs && Array.isArray(profs)) {
