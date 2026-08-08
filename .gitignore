@@ -33,3 +33,4 @@ web/dist/
 .env.local
 .env.*.local
 
+.build-outputs/
