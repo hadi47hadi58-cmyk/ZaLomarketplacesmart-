@@ -293,7 +293,16 @@ fun PureWebContainerScreen(
                             request: android.webkit.WebResourceRequest?
                         ): android.webkit.WebResourceResponse? {
                             if (request != null) {
-                                return assetLoader.shouldInterceptRequest(request.url)
+                                val url = request.url
+                                if (url.path?.endsWith("favicon.ico") == true) {
+                                    return try {
+                                        val logoStream = activity.assets.open("web/assets/logo.svg")
+                                        android.webkit.WebResourceResponse("image/svg+xml", "UTF-8", logoStream)
+                                    } catch (e: Exception) {
+                                        android.webkit.WebResourceResponse("image/x-icon", "UTF-8", java.io.ByteArrayInputStream(ByteArray(0)))
+                                    }
+                                }
+                                return assetLoader.shouldInterceptRequest(url)
                             }
                             return null
                         }
@@ -358,10 +367,13 @@ fun PureWebContainerScreen(
                             request: android.webkit.WebResourceRequest?,
                             error: android.webkit.WebResourceError?
                         ) {
+                            val urlStr = request?.url?.toString() ?: ""
+                            if (urlStr.endsWith("favicon.ico")) {
+                                return
+                            }
                             super.onReceivedError(view, request, error)
                             val description = error?.description ?: "Unknown error"
                             val errorCode = error?.errorCode ?: 0
-                            val urlStr = request?.url?.toString() ?: ""
                             android.util.Log.e("WebViewError", "Error loading URL $urlStr: $description ($errorCode)")
                         }
                     }
