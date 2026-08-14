@@ -30,6 +30,17 @@
                 }
             });
 
+            if (tabId === 'products-global' && typeof window.renderGlobalProductsTable === 'function') {
+                window.renderGlobalProductsTable();
+            } else if (tabId === 'registrations' && typeof window.renderRegistrations === 'function') {
+                window.renderRegistrations();
+            } else if (tabId === 'wilayas' && typeof window.renderWilayaTable === 'function') {
+                window.renderWilayaTable();
+            } else if (tabId === 'home') {
+                if (typeof window.renderStats === 'function') window.renderStats();
+                if (typeof window.renderGlobalStoresTable === 'function') window.renderGlobalStoresTable();
+            }
+
             if (window.innerWidth < 1024) {
                 window.closeSidebar();
             }

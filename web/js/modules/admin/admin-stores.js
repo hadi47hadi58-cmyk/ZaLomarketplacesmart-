@@ -1,37 +1,26 @@
 import { supabase } from '../../supabase-config.js';
+import { fetchMerchantRequests, rejectMerchantRequest } from './admin-requests.js';
 
 export async function fetchActiveStores() {
-    if (!supabase) return [];
-    
     try {
-        const { data, error } = await supabase
-            .from('stores')
-            .select('*')
-            .in('status', ['active', 'APPROVED', 'approved', 'ACTIVE'])
-            .order('created_at', { ascending: false });
-
-        if (error) throw error;
-        return data || [];
+        const allStores = await fetchMerchantRequests();
+        return allStores.filter(s => {
+            const st = String(s.status || '').toUpperCase();
+            return st === 'APPROVED' || st === 'ACTIVE';
+        });
     } catch (e) {
         console.error("[admin-stores] fetch error:", e);
-        if (window.zaloErrorHandler) window.zaloErrorHandler.showError("فشل في جلب قائمة المتاجر النشطة");
         return [];
     }
 }
 
 export async function suspendStore(storeId) {
-    if (!supabase) return false;
     try {
-        const { error } = await supabase
-            .from('stores')
-            .update({ status: 'SUSPENDED' })
-            .eq('id', storeId);
-            
-        if (error) throw error;
-        return true;
+        return await rejectMerchantRequest(storeId);
     } catch (e) {
         console.error("[admin-stores] suspend error:", e);
         return false;
     }
 }
+
 

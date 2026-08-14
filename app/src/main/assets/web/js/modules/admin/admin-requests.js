@@ -1,6 +1,6 @@
 import { supabase } from '../../supabase-config.js';
 
-const MOCK_FALLBACK_STORES = [
+let MOCK_FALLBACK_STORES = [
     {
         id: 4,
         merchant_id: 13,
@@ -67,8 +67,26 @@ const MOCK_FALLBACK_STORES = [
     }
 ];
 
+function getStatusOverrides() {
+    try {
+        return JSON.parse(localStorage.getItem('zalo_store_status_overrides') || '{}');
+    } catch(e) {
+        return {};
+    }
+}
+
+function setStatusOverride(id, storeName, newStatus) {
+    try {
+        const overrides = getStatusOverrides();
+        if (id) overrides[String(id)] = newStatus;
+        if (storeName) overrides[String(storeName).trim()] = newStatus;
+        localStorage.setItem('zalo_store_status_overrides', JSON.stringify(overrides));
+    } catch(e) {}
+}
+
 export async function fetchMerchantRequests() {
     let allRequests = [];
+    const statusOverrides = getStatusOverrides();
     
     // 1. Fetch from Supabase `stores` table
     try {
@@ -82,11 +100,18 @@ export async function fetchMerchantRequests() {
                 stores.forEach(st => {
                     const phone = st.phone || st.whatsapp || '0658000000';
                     const whatsapp = st.whatsapp || st.phone || phone;
+                    const sName = st.name || st.store_name || 'متجر زالو';
+                    let stStatus = st.status || 'APPROVED';
+                    
+                    if (statusOverrides[String(st.id)] || statusOverrides[sName]) {
+                        stStatus = statusOverrides[String(st.id)] || statusOverrides[sName];
+                    }
+
                     allRequests.push({
                         id: st.id,
                         store_id: st.id,
                         user_id: st.merchant_id,
-                        store_name: st.name || st.store_name || 'متجر زالو',
+                        store_name: sName,
                         owner_name: st.merchant_name || st.owner_name || st.name || 'تاجر زالو',
                         email: st.email || st.merchant_email || (st.name ? `${st.name.replace(/[^a-zA-Z0-9]/g, '').toLowerCase() || 'merchant'}@zalo.dz` : ''),
                         phone: phone,
@@ -96,7 +121,7 @@ export async function fetchMerchantRequests() {
                         category: st.category || 'عام',
                         store_type: st.store_type || (st.rc_number ? 'سجل تجاري نظامي' : 'نشاط تجاري معتمد'),
                         rc_number: st.rc_number || `RC-5800${st.id}`,
-                        status: st.status || 'APPROVED',
+                        status: stStatus,
                         logo: st.logo || null,
                         created_at: st.created_at || new Date().toISOString()
                     });
@@ -117,11 +142,17 @@ export async function fetchMerchantRequests() {
 
             if (!reqErr && reqs && Array.isArray(reqs)) {
                 reqs.forEach(r => {
-                    const existsIdx = allRequests.findIndex(x => x.id === r.id || x.store_name === r.store_name);
+                    const existsIdx = allRequests.findIndex(x => x.id === r.id || x.store_name === (r.store_name || r.name));
+                    const sName = r.store_name || r.name || 'طلب متجر جديد';
+                    let reqStatus = r.status || 'PENDING';
+                    if (statusOverrides[String(r.id)] || statusOverrides[sName]) {
+                        reqStatus = statusOverrides[String(r.id)] || statusOverrides[sName];
+                    }
+
                     const formatted = {
                         id: r.id,
                         user_id: r.user_id,
-                        store_name: r.store_name || r.name || 'طلب متجر جديد',
+                        store_name: sName,
                         owner_name: r.owner_name || r.ownerName || r.name || 'تاجر جديد',
                         email: r.email || '',
                         phone: r.phone || '0658000000',
@@ -131,7 +162,7 @@ export async function fetchMerchantRequests() {
                         category: r.category || 'عام',
                         store_type: r.merchant_type || r.store_type || 'طلب تسجيل',
                         rc_number: r.rc_number || r.rcNumber || '',
-                        status: r.status || 'PENDING',
+                        status: reqStatus,
                         logo: r.logo || null,
                         id_front: r.id_front || null,
                         id_back: r.id_back || null,
@@ -157,28 +188,35 @@ export async function fetchMerchantRequests() {
         const localSources = [
             JSON.parse(localStorage.getItem('zalo_local_merchant_requests') || '[]'),
             JSON.parse(localStorage.getItem('zalo_merchant_requests') || '[]'),
-            JSON.parse(localStorage.getItem('zalo_fallback_shops') || '[]')
+            JSON.parse(localStorage.getItem('zalo_fallback_shops') || '[]'),
+            JSON.parse(localStorage.getItem('stores_list_old') || '[]')
         ];
 
         localSources.forEach(sourceList => {
             if (Array.isArray(sourceList)) {
                 sourceList.forEach(r => {
                     if (!r) return;
-                    const existsIdx = allRequests.findIndex(x => (x.id && x.id === r.id) || (x.store_name && (x.store_name === r.store_name || x.store_name === r.storeName || x.store_name === r.name)));
+                    const existsIdx = allRequests.findIndex(x => (x.id && (x.id === r.id || x.id == r.id)) || (x.store_name && (x.store_name === r.store_name || x.store_name === r.storeName || x.store_name === r.name)));
+                    const sName = r.store_name || r.storeName || r.name || 'متجر محلي';
+                    let localStatus = r.status || 'PENDING';
+                    if (statusOverrides[String(r.id)] || statusOverrides[sName]) {
+                        localStatus = statusOverrides[String(r.id)] || statusOverrides[sName];
+                    }
+
                     const formatted = {
                         id: r.id || `loc_${Date.now()}_${Math.random().toString(36).substr(2, 4)}`,
                         user_id: r.user_id || r.id,
-                        store_name: r.store_name || r.storeName || r.name || 'متجر محلي',
+                        store_name: sName,
                         owner_name: r.owner_name || r.ownerName || r.owner || r.name || 'تاجر مسجل',
                         email: r.email || '',
                         phone: r.phone || '0658000000',
                         whatsapp: r.whatsapp || r.phone || '0658000000',
-                        wilaya: r.wilaya || '58 المنيعة',
+                        wilaya: r.wilaya || r.location || '58 المنيعة',
                         commune: r.commune || 'المنيعة',
                         category: r.category || 'عام',
                         store_type: r.merchant_type || r.storeType || 'طلب تسجيل',
                         rc_number: r.rc_number || r.rcNumber || '',
-                        status: r.status || 'PENDING',
+                        status: localStatus,
                         logo: r.logo || r.logoURL || null,
                         id_front: r.id_front || r.idFront || null,
                         id_back: r.id_back || r.idBack || null,
@@ -199,44 +237,88 @@ export async function fetchMerchantRequests() {
         console.warn("[admin-requests] Local storage merge warning:", e);
     }
 
-    // 4. If empty, ensure default approved/registered stores are available
-    if (allRequests.length === 0) {
-        allRequests = [...MOCK_FALLBACK_STORES];
-    } else {
-        // Ensure the 4 foundational stores from Supabase are always present
-        MOCK_FALLBACK_STORES.forEach(mock => {
-            const exists = allRequests.some(r => r.id === mock.id || (r.store_name && r.store_name.trim() === mock.store_name.trim()));
-            if (!exists) {
-                allRequests.push(mock);
-            }
-        });
-    }
+    // 4. Ensure foundational stores exist and have overrides applied
+    MOCK_FALLBACK_STORES.forEach(mock => {
+        let mockStatus = mock.status;
+        if (statusOverrides[String(mock.id)] || statusOverrides[mock.store_name]) {
+            mockStatus = statusOverrides[String(mock.id)] || statusOverrides[mock.store_name];
+        }
+        mock.status = mockStatus;
+
+        const existsIdx = allRequests.findIndex(r => r.id == mock.id || (r.store_name && r.store_name.trim() === mock.store_name.trim()));
+        if (existsIdx === -1) {
+            allRequests.push({ ...mock });
+        } else {
+            allRequests[existsIdx].status = mockStatus;
+        }
+    });
+
+    // 5. Keep stores_list_old in sync so stats and wilayas update
+    try {
+        const storesSync = allRequests.map(r => ({
+            id: r.id,
+            name: r.store_name,
+            store_name: r.store_name,
+            owner: r.owner_name,
+            owner_name: r.owner_name,
+            phone: r.phone,
+            whatsapp: r.whatsapp,
+            location: r.wilaya,
+            wilaya: r.wilaya,
+            commune: r.commune,
+            category: r.category,
+            status: r.status,
+            rating: 5,
+            isLive: true
+        }));
+        localStorage.setItem('stores_list_old', JSON.stringify(storesSync));
+        localStorage.setItem('zalo_stores_list_old', JSON.stringify(storesSync));
+    } catch(e) {}
 
     return allRequests;
 }
 
 export async function approveMerchantRequest(requestId) {
     try {
-        if (supabase) {
-            // Update merchant_requests table
-            await supabase
-                .from('merchant_requests')
-                .update({ status: 'approved', updated_at: new Date().toISOString() })
-                .eq('id', requestId);
+        let targetStoreName = '';
+        const curReqs = await fetchMerchantRequests();
+        const found = curReqs.find(r => r.id == requestId || r.id === requestId);
+        if (found) targetStoreName = found.store_name;
 
-            // Update stores table
-            await supabase
-                .from('stores')
-                .update({ status: 'APPROVED', updated_at: new Date().toISOString() })
-                .eq('id', requestId);
+        // 1. Set persistent status override
+        setStatusOverride(requestId, targetStoreName, 'APPROVED');
+
+        // 2. Mutate in-memory fallback list
+        MOCK_FALLBACK_STORES = MOCK_FALLBACK_STORES.map(s => {
+            if (s.id == requestId || (targetStoreName && s.store_name === targetStoreName)) {
+                return { ...s, status: 'APPROVED' };
+            }
+            return s;
+        });
+
+        // 3. Update Supabase
+        if (supabase) {
+            try {
+                await supabase
+                    .from('merchant_requests')
+                    .update({ status: 'approved', updated_at: new Date().toISOString() })
+                    .eq('id', requestId);
+            } catch(e){}
+
+            try {
+                await supabase
+                    .from('stores')
+                    .update({ status: 'APPROVED', updated_at: new Date().toISOString() })
+                    .eq('id', requestId);
+            } catch(e){}
         }
 
-        // Update local storage
+        // 4. Update all local storage keys
         const updateStorageList = (key) => {
             try {
                 let list = JSON.parse(localStorage.getItem(key) || '[]');
                 list = list.map(item => {
-                    if (item.id === requestId || item.id == requestId) {
+                    if (item.id == requestId || item.id === requestId || (targetStoreName && (item.name === targetStoreName || item.store_name === targetStoreName || item.storeName === targetStoreName))) {
                         return { ...item, status: 'APPROVED' };
                     }
                     return item;
@@ -246,7 +328,14 @@ export async function approveMerchantRequest(requestId) {
         };
         updateStorageList('zalo_local_merchant_requests');
         updateStorageList('zalo_merchant_requests');
+        updateStorageList('zalo_fallback_shops');
+        updateStorageList('stores_list_old');
         updateStorageList('zalo_stores_list_old');
+
+        // 5. Trigger stats and tables updates if global functions exist
+        if (typeof window.renderStats === 'function') window.renderStats();
+        if (typeof window.renderWilayaTable === 'function') window.renderWilayaTable();
+        if (typeof window.renderGlobalStoresTable === 'function') window.renderGlobalStoresTable();
 
         return true;
     } catch (e) {
@@ -257,26 +346,45 @@ export async function approveMerchantRequest(requestId) {
 
 export async function rejectMerchantRequest(requestId) {
     try {
-        if (supabase) {
-            // Update merchant_requests table
-            await supabase
-                .from('merchant_requests')
-                .update({ status: 'rejected', updated_at: new Date().toISOString() })
-                .eq('id', requestId);
+        let targetStoreName = '';
+        const curReqs = await fetchMerchantRequests();
+        const found = curReqs.find(r => r.id == requestId || r.id === requestId);
+        if (found) targetStoreName = found.store_name;
 
-            // Update stores table
-            await supabase
-                .from('stores')
-                .update({ status: 'SUSPENDED', updated_at: new Date().toISOString() })
-                .eq('id', requestId);
+        // 1. Set persistent status override
+        setStatusOverride(requestId, targetStoreName, 'SUSPENDED');
+
+        // 2. Mutate in-memory fallback list
+        MOCK_FALLBACK_STORES = MOCK_FALLBACK_STORES.map(s => {
+            if (s.id == requestId || (targetStoreName && s.store_name === targetStoreName)) {
+                return { ...s, status: 'SUSPENDED' };
+            }
+            return s;
+        });
+
+        // 3. Update Supabase
+        if (supabase) {
+            try {
+                await supabase
+                    .from('merchant_requests')
+                    .update({ status: 'rejected', updated_at: new Date().toISOString() })
+                    .eq('id', requestId);
+            } catch(e){}
+
+            try {
+                await supabase
+                    .from('stores')
+                    .update({ status: 'SUSPENDED', updated_at: new Date().toISOString() })
+                    .eq('id', requestId);
+            } catch(e){}
         }
 
-        // Update local storage
+        // 4. Update all local storage keys
         const updateStorageList = (key) => {
             try {
                 let list = JSON.parse(localStorage.getItem(key) || '[]');
                 list = list.map(item => {
-                    if (item.id === requestId || item.id == requestId) {
+                    if (item.id == requestId || item.id === requestId || (targetStoreName && (item.name === targetStoreName || item.store_name === targetStoreName || item.storeName === targetStoreName))) {
                         return { ...item, status: 'SUSPENDED' };
                     }
                     return item;
@@ -286,7 +394,13 @@ export async function rejectMerchantRequest(requestId) {
         };
         updateStorageList('zalo_local_merchant_requests');
         updateStorageList('zalo_merchant_requests');
+        updateStorageList('zalo_fallback_shops');
+        updateStorageList('stores_list_old');
         updateStorageList('zalo_stores_list_old');
+
+        if (typeof window.renderStats === 'function') window.renderStats();
+        if (typeof window.renderWilayaTable === 'function') window.renderWilayaTable();
+        if (typeof window.renderGlobalStoresTable === 'function') window.renderGlobalStoresTable();
 
         return true;
     } catch (e) {
@@ -294,4 +408,5 @@ export async function rejectMerchantRequest(requestId) {
         return false;
     }
 }
+
 
