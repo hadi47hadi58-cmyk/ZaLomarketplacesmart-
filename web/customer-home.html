@@ -2864,17 +2864,25 @@ window.selectSubCategoryNew = function(subCatName, mainCatName) {
 };
 
 window.viewStoreProfile = function(name, cat) {
+  const storeInfo = (typeof window.getStoreDetails === 'function') ? window.getStoreDetails(null, name) : null;
   document.getElementById('store-profile-name').innerText = name;
-  document.getElementById('store-profile-category').innerHTML = `<i class="fa-solid fa-tag"></i> ${cat}`;
-  document.getElementById('store-profile-location').innerHTML = `<i class="fa-solid fa-location-dot"></i> ${state.selectedBaladiya || state.selectedWilaya || 'الجزائر'}, ${state.selectedWilaya || 'الجزائر'}`;
+  document.getElementById('store-profile-category').innerHTML = `<i class="fa-solid fa-tag"></i> ${cat || storeInfo?.category || 'متجر معتمد'}`;
+  document.getElementById('store-profile-location').innerHTML = `<i class="fa-solid fa-location-dot"></i> ${storeInfo?.wilaya || state.selectedBaladiya || state.selectedWilaya || 'الجزائر'}`;
   
-  const covers = [
-    "images/wilaya-thumb.jpg"
-  ];
-  document.getElementById('store-cover-img').src = covers[0];
+  const logoEl = document.getElementById('store-logo-img');
+  if (logoEl) {
+    logoEl.src = storeInfo?.logo || 'assets/icon-192.svg';
+  }
+  const coverEl = document.getElementById('store-cover-img');
+  if (coverEl) {
+    coverEl.src = storeInfo?.coverImage || 'images/wilaya-thumb.jpg';
+  }
   
   // Filter products for this store
-  const storeProds = (state.loadedProducts || []).filter(p => (p.storeName || p.store_name) === name);
+  const storeProds = (state.loadedProducts || []).filter(p => {
+    const pName = (p.storeName || p.store_name || '').trim().toLowerCase();
+    return pName === (name || '').trim().toLowerCase();
+  });
   const container = document.getElementById('store-products-grid');
   
   if (storeProds.length === 0) {
@@ -4478,27 +4486,43 @@ window.getStoreDetails = function(storeId, storeName) {
   try {
     const raw1 = localStorage.getItem('stores_list_old');
     const raw2 = localStorage.getItem('zalo_official_stores');
-    stores = [...(raw1 ? JSON.parse(raw1) : []), ...(raw2 ? JSON.parse(raw2) : [])];
+    const raw3 = localStorage.getItem('stores');
+    const raw4 = localStorage.getItem('merchant_store_settings');
+    const raw5 = localStorage.getItem('zalo_merchant_store_settings');
+    stores = [
+      ...(raw5 ? [JSON.parse(raw5)] : []),
+      ...(raw4 ? [JSON.parse(raw4)] : []),
+      ...(raw1 ? JSON.parse(raw1) : []), 
+      ...(raw2 ? JSON.parse(raw2) : []),
+      ...(raw3 ? JSON.parse(raw3) : [])
+    ];
   } catch(e) {}
   
   const sNameClean = (storeName || '').trim().toLowerCase();
+  const sIdClean = (storeId || '').toString().trim().toLowerCase();
+
   const found = stores.find(s => 
-    (s.id && s.id === storeId) || 
-    (s.storeId && s.storeId === storeId) || 
-    (s.name && s.name.trim().toLowerCase() === sNameClean) ||
-    (s.storeName && s.storeName.trim().toLowerCase() === sNameClean)
+    (sIdClean && s.id && s.id.toString().toLowerCase() === sIdClean) || 
+    (sIdClean && s.storeId && s.storeId.toString().toLowerCase() === sIdClean) || 
+    (sIdClean && s.store_id && s.store_id.toString().toLowerCase() === sIdClean) || 
+    (sNameClean && s.name && s.name.trim().toLowerCase() === sNameClean) ||
+    (sNameClean && s.storeName && s.storeName.trim().toLowerCase() === sNameClean) ||
+    (sNameClean && s.store_name && s.store_name.trim().toLowerCase() === sNameClean)
   );
 
-  return found || {
-    name: storeName || 'متجر زالو المعتمد',
-    logo: 'assets/icon-192.svg',
-    coverImage: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=500',
-    wilaya: state.selectedWilaya || 'الجزائر',
-    category: 'قسم عام',
-    subcategory: 'تخصص فرعي شمول',
-    phone: '0550000000',
-    website: '',
-    socialLinks: {}
+  const logoFound = found ? (found.logoImg || found.logo || found.logo_url || found.image || found.cover_url || found.avatar) : null;
+  const coverFound = found ? (found.coverImg || found.coverImage || found.cover_url || found.banner_url) : null;
+
+  return {
+    name: found?.name || found?.storeName || found?.store_name || storeName || 'متجر زالو المعتمد',
+    logo: logoFound || 'assets/icon-192.svg',
+    coverImage: coverFound || 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=500',
+    wilaya: found?.wilaya || state.selectedWilaya || 'الجزائر',
+    category: found?.category || 'قسم عام',
+    subcategory: found?.subcategory || found?.sub_category || 'تخصص فرعي شمول',
+    phone: found?.phone || '0550000000',
+    website: found?.website || '',
+    socialLinks: found?.socialLinks || {}
   };
 };
 

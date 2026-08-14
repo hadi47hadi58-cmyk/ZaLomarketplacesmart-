@@ -438,21 +438,59 @@
         }
 
         // Preview multi angle product images
+        window.uploadedAnglesPreview = [];
+        window.uploadedProductImage = null;
         let uploadedAnglesPreview = [];
         function previewProductAngles(input) {
             if (input.files && input.files[0]) {
+                window.uploadedAnglesPreview = [];
                 uploadedAnglesPreview = [];
-                for (let i = 0; i < input.files.length; i++) {
+                const files = Array.from(input.files);
+                let loadedCount = 0;
+                
+                files.forEach((file) => {
                     const reader = new FileReader();
                     reader.onload = function(e) {
-                        uploadedAnglesPreview.push(e.target.result);
+                        const raw = e.target.result;
+                        const img = new Image();
+                        img.onload = function() {
+                            const canvas = document.createElement('canvas');
+                            const maxDim = 800;
+                            let w = img.width, h = img.height;
+                            if (w > maxDim || h > maxDim) {
+                                if (w > h) { h = Math.round((h * maxDim) / w); w = maxDim; }
+                                else { w = Math.round((w * maxDim) / h); h = maxDim; }
+                            }
+                            canvas.width = w;
+                            canvas.height = h;
+                            const ctx = canvas.getContext('2d');
+                            ctx.drawImage(img, 0, 0, w, h);
+                            const compressed = canvas.toDataURL('image/jpeg', 0.85);
+                            
+                            window.uploadedAnglesPreview.push(compressed);
+                            uploadedAnglesPreview.push(compressed);
+                            window.uploadedProductImage = compressed;
+                            
+                            loadedCount++;
+                            if (loadedCount === files.length) {
+                                const lbl = document.getElementById('angles-upload-lbl');
+                                if (lbl) {
+                                    lbl.innerText = `تم رفع وتجهيز (${files.length}) صور بنجاح ✓`;
+                                    lbl.className = "text-emerald-500 font-bold";
+                                }
+                                const prevBox = document.getElementById('angles-preview');
+                                if (prevBox) {
+                                    prevBox.innerHTML = window.uploadedAnglesPreview.map(src => `<img src="${src}" class="w-12 h-12 rounded-lg object-cover border-2 border-emerald-400 shadow-sm inline-block mr-1">`).join('');
+                                }
+                            }
+                        };
+                        img.src = raw;
                     };
-                    reader.readAsDataURL(input.files[i]);
-                }
-                document.getElementById('angles-upload-lbl').innerText = `تم رفع (${input.files.length}) صور زاوية`;
-                document.getElementById('angles-upload-lbl').className = "text-emerald-500 font-bold";
+                    reader.readAsDataURL(file);
+                });
             }
         }
+        window.previewProductAngles = previewProductAngles;
 
         // Preview product video upload
         let uploadedVideoFile = null;
@@ -730,8 +768,12 @@
             const pId = "p_" + Date.now();
             
             let pImg = "assets/icon-192.svg"; // fallback default
-            if (uploadedAnglesPreview && uploadedAnglesPreview.length > 0) {
+            if (window.uploadedAnglesPreview && window.uploadedAnglesPreview.length > 0) {
+                pImg = window.uploadedAnglesPreview[0];
+            } else if (uploadedAnglesPreview && uploadedAnglesPreview.length > 0) {
                 pImg = uploadedAnglesPreview[0];
+            } else if (window.uploadedProductImage) {
+                pImg = window.uploadedProductImage;
             }
 
             const mainCatVal = document.getElementById('prod-main-category')?.value || document.getElementById('prod-category')?.value || 'عام';
@@ -739,7 +781,9 @@
 
             const newProd = {
                 productId: pId,
+                id: pId,
                 productName: document.getElementById('prod-name').value.trim(),
+                name: document.getElementById('prod-name').value.trim(),
                 price: parseFloat(document.getElementById('prod-price').value),
                 stock: parseInt(document.getElementById('prod-stock').value),
                 category: mainCatVal,
@@ -749,15 +793,26 @@
                 weight: parseFloat(document.getElementById('prod-weight').value) || 0.1,
                 minOrder: parseInt(document.getElementById('prod-min-order').value) || 1,
                 storeId: realStoreId,
+                store_id: realStoreId,
                 storeName: realStoreName,
+                store_name: realStoreName,
                 wilaya: realWilaya,
                 phone: realPhone,
                 variants: "",
-                image: pImg
+                image: pImg,
+                image_url: pImg,
+                imageUrl: pImg
             };
 
-            products.push(newProd);
+            products.unshift(newProd);
             setDB("products", products);
+
+            // Also keep zalo_products synced
+            try {
+                let zp = getDB("zalo_products", []);
+                zp.unshift(newProd);
+                setDB("zalo_products", zp);
+            } catch(e) {}
 
             // Write to Supabase table products if active
             try {
@@ -857,97 +912,177 @@
         }
 
         // Custom render merchant orders list
-        function renderMerchantOrders() {
+        async function renderMerchantOrders() {
             let container = document.getElementById("merchant-orders-list");
             if (!container) return;
 
             container.innerHTML = "";
             let orders = getDB("orders", []);
-            
-            // Seed mock order if empty (Cleared to prevent mock orders)
-            if (orders.length === 0) {
-                orders = [];
-                setDB("orders", orders);
+            let zaloOrders = getDB("zalo_orders", []);
+            let allOrders = [...orders, ...zaloOrders];
+
+            let currentStoreSettings = {};
+            try {
+                currentStoreSettings = JSON.parse(localStorage.getItem('zalo_merchant_store_settings') || localStorage.getItem('merchant_store_settings') || '{}');
+            } catch(e) {}
+
+            const realStoreName = (currentStoreSettings.storeName || currentStoreSettings.name || localStorage.getItem('zalo_active_store') || sessionStorage.getItem('merchant_store_name') || '').trim().toLowerCase();
+            const realStoreId = (currentStoreSettings.id || localStorage.getItem('zalo_uid') || localStorage.getItem('user_uid') || '').toString().toLowerCase();
+
+            // Try fetching live orders from Supabase if connected
+            if (window.supabaseClient) {
+                try {
+                    const { data: sbOrders, error: sbErr } = await window.supabaseClient.from('orders').select('*').order('created_at', { ascending: false });
+                    if (!sbErr && sbOrders && Array.isArray(sbOrders)) {
+                        sbOrders.forEach(sbo => {
+                            const oId = sbo.id || sbo.order_id || sbo.orderId;
+                            const exists = allOrders.some(lo => (lo.id && lo.id === oId) || (lo.orderId && lo.orderId === oId));
+                            if (!exists) {
+                                allOrders.unshift({
+                                    id: oId,
+                                    orderId: oId,
+                                    productName: sbo.product_name || sbo.productName || (sbo.items && sbo.items[0]?.name) || 'طلب متجر',
+                                    total: parseFloat(sbo.total_amount || sbo.total || 0),
+                                    address: sbo.shipping_address || sbo.address || (sbo.wilaya ? sbo.wilaya + (sbo.commune ? ' - ' + sbo.commune : '') : 'الجزائر'),
+                                    customerName: sbo.customer_name || sbo.customerName || 'زبون زالو',
+                                    customerPhone: sbo.customer_phone || sbo.customerPhone || sbo.phone || '',
+                                    status: sbo.status || 'قيد المراجعة',
+                                    paymentMethod: sbo.payment_method || 'الدفع عند الاستلام (COD)',
+                                    storeId: sbo.store_id || sbo.storeId || '',
+                                    storeName: sbo.store_name || sbo.storeName || ''
+                                });
+                            }
+                        });
+                    }
+                } catch(e) {
+                    console.warn("Orders live sync:", e);
+                }
             }
 
-            let store = getDB("stores", []).find(s => s.storeId === "store_salam");
-            let storeId = store ? store.storeId : "store_salam";
-            let merchantOrders = orders.filter(o => o.storeId === storeId);
+            let merchantOrders = allOrders.filter(o => {
+                const oStoreId = (o.storeId || o.store_id || "").toString().toLowerCase();
+                const oStoreName = (o.storeName || o.store_name || "").trim().toLowerCase();
+                if (!realStoreName && !realStoreId) return true;
+                return (realStoreId && oStoreId === realStoreId) || 
+                       (realStoreName && oStoreName === realStoreName) ||
+                       (!o.storeId && !o.store_id);
+            });
 
-            if (merchantOrders.length === 0) {
+            // Unique orders by ID
+            const uniqueOrders = [];
+            const seenIds = new Set();
+            merchantOrders.forEach(o => {
+                const id = o.orderId || o.id;
+                if (!seenIds.has(id)) {
+                    seenIds.add(id);
+                    uniqueOrders.push(o);
+                }
+            });
+
+            if (uniqueOrders.length === 0) {
                 container.innerHTML = `<p class="text-center text-slate-400 font-bold py-6">لا توجد طلبات جارية للمراجعة.</p>`;
                 return;
             }
 
-            merchantOrders.forEach(o => {
+            uniqueOrders.forEach(o => {
                 let badgeColor = "bg-amber-50 text-amber-600 border border-amber-200";
-                if (o.status === "جاري الشحن") badgeColor = "bg-sky-50 text-sky-600 border border-sky-200";
-                if (o.status === "تم التسليم") badgeColor = "bg-emerald-50 text-emerald-600 border border-emerald-200";
+                if (o.status === "جاري الشحن" || o.status === "shipping") badgeColor = "bg-sky-50 text-sky-600 border border-sky-200";
+                if (o.status === "تم التسليم" || o.status === "delivered") badgeColor = "bg-emerald-50 text-emerald-600 border border-emerald-200";
 
                 let card = document.createElement("div");
                 card.className = "bg-white border border-slate-200 rounded-3xl p-5 shadow-sm text-right space-y-3";
                 card.innerHTML = `
                     <div class="flex justify-between items-center pb-2 border-b border-slate-100 flex-wrap gap-2">
-                        <span class="text-[10px] bg-slate-100 text-slate-600 px-2.5 py-1 rounded-full font-bold">معاملة: ${o.orderId}</span>
-                        <span class="text-[10px] px-2.5 py-1 rounded-full font-black ${badgeColor}">${o.status}</span>
+                        <span class="text-[10px] bg-slate-100 text-slate-600 px-2.5 py-1 rounded-full font-bold">معاملة: ${o.orderId || o.id}</span>
+                        <span class="text-[10px] px-2.5 py-1 rounded-full font-black ${badgeColor}">${o.status || 'قيد المراجعة'}</span>
                     </div>
-                    <p class="text-xs font-black text-slate-800"><i class="fa-solid fa-cart-arrow-down text-sky-500 ml-1"></i> السلعة المطلوبة: ${o.productName}</p>
-                    <p class="text-xs font-bold text-slate-600"><i class="fa-solid fa-sack-dollar text-[#d4af37] ml-1"></i> القيمة المستحقة: ${o.total.toLocaleString()} دج</p>
+                    <p class="text-xs font-black text-slate-800"><i class="fa-solid fa-cart-arrow-down text-sky-500 ml-1"></i> السلعة المطلوبة: ${o.productName || 'منتج'}</p>
+                    <p class="text-xs font-bold text-slate-600"><i class="fa-solid fa-sack-dollar text-[#d4af37] ml-1"></i> القيمة المستحقة: ${parseFloat(o.total || 0).toLocaleString()} دج</p>
+                    <p class="text-xs font-bold text-slate-600"><i class="fa-solid fa-user text-slate-500 ml-1"></i> العميل: ${o.customerName || 'زبون'} ${o.customerPhone ? `(${o.customerPhone})` : ''}</p>
                     <p class="text-xs font-bold text-slate-600"><i class="fa-solid fa-map-location-dot text-red-500 ml-1"></i> عنوان التوصيل: ${o.address || 'العنوان غير محدد'}</p>
                     <p class="text-xs font-bold text-slate-600"><i class="fa-solid fa-credit-card text-emerald-500 ml-1"></i> طريقة الدفع: <span class="text-emerald-700">${o.paymentMethod || 'الدفع عند الاستلام (COD)'}</span></p>
 
                     <div class="flex gap-2 justify-end pt-3 border-t border-slate-100 flex-wrap">
-                        <!-- Print Invoice Button -->
-                        <button onclick="printOrderInvoice('${o.orderId}')" class="bg-indigo-50 hover:bg-indigo-600 text-indigo-600 hover:text-white border border-indigo-200 text-[10px] px-3 py-1.5 rounded-xl font-black transition flex items-center gap-1">
+                        <button onclick="printOrderInvoice('${o.orderId || o.id}')" class="bg-indigo-50 hover:bg-indigo-600 text-indigo-600 hover:text-white border border-indigo-200 text-[10px] px-3 py-1.5 rounded-xl font-black transition flex items-center gap-1">
                             <i class="fa-solid fa-print"></i>
                             <span>طباعة الفاتورة</span>
                         </button>
-
-                        <select onchange="updateMerchantOrderStatus('${o.orderId}', this.value)" class="bg-slate-50 border border-slate-200 text-[10px] text-slate-800 rounded-xl px-2.5 py-1.5 focus:outline-none focus:border-sky-400 font-bold">
-                            <option value="">تحديث حالة الشحن...</option>
-                            <option value="قيد المراجعة">جاري المعالجة والمطابقة</option>
-                            <option value="جاري الشحن">جاري الشحن والمناولة</option>
-                            <option value="تم التسليم">تم التسليم النهائي للمنزل</option>
-                            <option value="إلغاء المعاملة">إلغاء وتجميد الطلب</option>
-                        </select>
-                        <button class="bg-sky-50 hover:bg-sky-500 hover:text-white text-sky-600 text-[10px] px-3 py-1.5 rounded-xl font-bold transition" onclick="simulateMerchantChat('user_customer')">سؤال الزبون <i class="fa-regular fa-message"></i></button>
+                        <button onclick="updateMerchantOrderStatus('${o.orderId || o.id}', 'جاري الشحن')" class="bg-sky-50 hover:bg-sky-600 text-sky-600 hover:text-white border border-sky-200 text-[10px] px-3 py-1.5 rounded-xl font-black transition">
+                            شحن الطلب 🚚
+                        </button>
+                        <button onclick="updateMerchantOrderStatus('${o.orderId || o.id}', 'تم التسليم')" class="bg-emerald-50 hover:bg-emerald-600 text-emerald-600 hover:text-white border border-emerald-200 text-[10px] px-3 py-1.5 rounded-xl font-black transition">
+                            تأكيد التسليم ✓
+                        </button>
                     </div>
                 `;
                 container.appendChild(card);
             });
         }
 
-        // Update Order Status locally
-        function updateMerchantOrderStatus(orderId, val) {
+                        <select onchange="updateMerchantOrderStatus('${o.orderId || o.id}', this.value)" class="bg-slate-50 border border-slate-200 text-[10px] text-slate-800 rounded-xl px-2.5 py-1.5 focus:outline-none focus:border-sky-400 font-bold">
+                            <option value="">تحديث حالة الشحن...</option>
+                            <option value="قيد المراجعة">جاري المعالجة والمطابقة</option>
+                            <option value="جاري الشحن">جاري الشحن والمناولة</option>
+                            <option value="تم التسليم">تم التسليم النهائي للمنزل</option>
+                            <option value="إلغاء المعاملة">إلغاء وتجميد الطلب</option>
+                        </select>
+                        <button class="bg-sky-50 hover:bg-sky-500 hover:text-white text-sky-600 text-[10px] px-3 py-1.5 rounded-xl font-bold transition" onclick="simulateMerchantChat('${o.customerName || 'user_customer'}')">سؤال الزبون <i class="fa-regular fa-message"></i></button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Update Order Status locally and remotely
+        async function updateMerchantOrderStatus(orderId, val) {
             if (!val) return;
             let orders = getDB("orders", []);
-            let ord = orders.find(o => o.orderId === orderId);
+            let ord = orders.find(o => (o.orderId && o.orderId === orderId) || (o.id && o.id === orderId));
             if (ord) {
                 ord.status = val;
                 setDB("orders", orders);
-                alert(`تم تحديث حالة طلب الزبون بنجاح إلى "${val}"! ✅`);
-                renderMerchantOrders();
-                updateCounters();
             }
+            try {
+                let zo = getDB("zalo_orders", []);
+                let zOrd = zo.find(o => (o.orderId && o.orderId === orderId) || (o.id && o.id === orderId));
+                if (zOrd) {
+                    zOrd.status = val;
+                    setDB("zalo_orders", zo);
+                }
+            } catch(e) {}
+
+            if (window.supabaseClient) {
+                try {
+                    await window.supabaseClient.from('orders').update({ status: val }).eq('id', orderId);
+                } catch(e) {
+                    console.warn("Supabase order status update:", e);
+                }
+            }
+
+            alert(`تم تحديث حالة طلب الزبون بنجاح إلى "${val}"! ✅`);
+            renderMerchantOrders();
+            updateCounters();
         }
 
         // Print order invoice modal launcher
         function printOrderInvoice(orderId) {
             let orders = getDB("orders", []);
-            let ord = orders.find(o => o.orderId === orderId);
+            let zaloOrders = getDB("zalo_orders", []);
+            let all = [...orders, ...zaloOrders];
+            let ord = all.find(o => (o.orderId && o.orderId === orderId) || (o.id && o.id === orderId));
             let settings = getDB("merchant_store_settings", DEFAULT_MERCHANT_SETTINGS);
 
             if (ord) {
                 document.getElementById('inv-store-name').innerText = settings.storeName;
                 document.getElementById('inv-store-info').innerText = `المقر: ${settings.commune}، ${settings.wilaya} | هاتف الدعم: ${settings.phone}`;
                 
-                document.getElementById('inv-order-id').innerText = ord.orderId;
+                document.getElementById('inv-order-id').innerText = ord.orderId || ord.id;
                 document.getElementById('inv-customer-address').innerText = ord.address || 'العنوان غير متوفر';
                 document.getElementById('inv-payment-method').innerText = ord.paymentMethod || 'الدفع عند الاستلام (COD)';
                 
-                document.getElementById('inv-item-name').innerText = ord.productName;
-                document.getElementById('inv-item-price').innerText = ord.total.toLocaleString() + " دج";
-                document.getElementById('inv-total-price').innerText = ord.total.toLocaleString() + " دج";
+                document.getElementById('inv-item-name').innerText = ord.productName || 'طلب منتج';
+                document.getElementById('inv-item-price').innerText = parseFloat(ord.total || 0).toLocaleString() + " دج";
+                document.getElementById('inv-total-price').innerText = parseFloat(ord.total || 0).toLocaleString() + " دج";
 
                 document.getElementById('invoice-modal').classList.remove('hidden');
             }
@@ -975,8 +1110,19 @@
             prodList.innerHTML = '';
             
             let products = getDB("products", []);
-            let storeId = "store_salam";
-            let merchantProds = products.filter(p => p.storeId === storeId);
+            let currentStoreSettings = {};
+            try {
+                currentStoreSettings = JSON.parse(localStorage.getItem('zalo_merchant_store_settings') || '{}');
+            } catch(e) {}
+            const realStoreName = (currentStoreSettings.storeName || currentStoreSettings.name || '').trim().toLowerCase();
+            const realStoreId = (currentStoreSettings.id || '').toString().toLowerCase();
+
+            let merchantProds = products.filter(p => {
+                const pStoreId = (p.storeId || p.store_id || "").toString().toLowerCase();
+                const pStoreName = (p.storeName || p.store_name || "").trim().toLowerCase();
+                if (!realStoreName && !realStoreId) return true;
+                return (realStoreId && pStoreId === realStoreId) || (realStoreName && pStoreName === realStoreName) || (!p.storeId && !p.store_id);
+            });
 
             if (merchantProds.length === 0) {
                 prodList.innerHTML = `<p class="col-span-2 text-center text-slate-400 py-3">لا توجد منتجات منشورة حالياً بالمتجر.</p>`;
@@ -985,11 +1131,11 @@
                     let div = document.createElement('div');
                     div.className = "bg-white border border-slate-100 rounded-xl p-3 flex flex-col justify-between shadow-sm text-right";
                     div.innerHTML = `
-                        <h6 class="font-black text-slate-800 text-[11px]">${p.productName}</h6>
+                        <h6 class="font-black text-slate-800 text-[11px]">${p.productName || p.name}</h6>
                         <p class="text-[10px] text-slate-400 mt-1 line-clamp-1">${p.description || ''}</p>
                         <div class="flex justify-between items-center mt-3 border-t border-slate-50 pt-2 flex-wrap">
-                            <span class="text-[10px] font-black text-[#d4af37]">${p.price.toLocaleString()} دج</span>
-                            <span class="text-[9px] bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded font-bold">متاح: ${p.stock}</span>
+                            <span class="text-[10px] font-black text-[#d4af37]">${parseFloat(p.price || 0).toLocaleString()} دج</span>
+                            <span class="text-[9px] bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded font-bold">متاح: ${p.stock || 0}</span>
                         </div>
                     `;
                     prodList.appendChild(div);
@@ -1011,17 +1157,73 @@
         }
 
         // Dynamic Counters update helper
-        function updateCounters() {
-            let products = getDB("products", []);
-            let storeId = "store_salam";
-            
-            let merchantProds = products.filter(p => p.storeId === storeId);
-            document.getElementById('stat-merchant-products').innerText = merchantProds.length;
+        async function updateCounters() {
+            let currentStoreSettings = {};
+            try {
+                currentStoreSettings = JSON.parse(localStorage.getItem('zalo_merchant_store_settings') || localStorage.getItem('merchant_store_settings') || '{}');
+            } catch(e) {}
 
+            const realStoreName = (currentStoreSettings.storeName || currentStoreSettings.name || localStorage.getItem('zalo_active_store') || sessionStorage.getItem('merchant_store_name') || '').trim().toLowerCase();
+            const realStoreId = (currentStoreSettings.id || localStorage.getItem('zalo_uid') || localStorage.getItem('user_uid') || '').toString().toLowerCase();
+
+            // 1. Get products count
+            let products = getDB("products", []);
+            let zaloProducts = getDB("zalo_products", []);
+            let allProds = [...products, ...zaloProducts];
+
+            let merchantProds = allProds.filter(p => {
+                const pStoreId = (p.storeId || p.store_id || "").toString().toLowerCase();
+                const pStoreName = (p.storeName || p.store_name || "").trim().toLowerCase();
+                if (!realStoreName && !realStoreId) return true;
+                return (realStoreId && pStoreId === realStoreId) || (realStoreName && pStoreName === realStoreName) || (!p.storeId && !p.store_id);
+            });
+
+            const uniqueProds = [];
+            const seenPIds = new Set();
+            merchantProds.forEach(p => {
+                const id = p.productId || p.id || p.productName || p.name;
+                if (!seenPIds.has(id)) {
+                    seenPIds.add(id);
+                    uniqueProds.push(p);
+                }
+            });
+
+            const prodCountEl = document.getElementById('stat-merchant-products');
+            if (prodCountEl) {
+                prodCountEl.innerText = uniqueProds.length;
+            }
+
+            // 2. Get orders count
             let orders = getDB("orders", []);
-            let merchantOrders = orders.filter(o => o.storeId === storeId);
-            let pendingCount = merchantOrders.filter(o => o.status === "قيد المراجعة").length;
-            document.getElementById('stat-pending-orders').innerText = pendingCount;
+            let zaloOrders = getDB("zalo_orders", []);
+            let allOrders = [...orders, ...zaloOrders];
+
+            let merchantOrders = allOrders.filter(o => {
+                const oStoreId = (o.storeId || o.store_id || "").toString().toLowerCase();
+                const oStoreName = (o.storeName || o.store_name || "").trim().toLowerCase();
+                if (!realStoreName && !realStoreId) return true;
+                return (realStoreId && oStoreId === realStoreId) || (realStoreName && oStoreName === realStoreName) || (!o.storeId && !o.store_id);
+            });
+
+            const uniqueOrders = [];
+            const seenOIds = new Set();
+            merchantOrders.forEach(o => {
+                const id = o.orderId || o.id;
+                if (!seenOIds.has(id)) {
+                    seenOIds.add(id);
+                    uniqueOrders.push(o);
+                }
+            });
+
+            let pendingCount = uniqueOrders.filter(o => {
+                const st = (o.status || '').toLowerCase();
+                return st === 'قيد المراجعة' || st === 'pending' || st === 'new';
+            }).length;
+
+            const pendingEl = document.getElementById('stat-pending-orders');
+            if (pendingEl) {
+                pendingEl.innerText = pendingCount;
+            }
 
             // Sync pendingCount with sidebar tab badge
             const sidebarBadge = document.getElementById('badge-store-orders-count');
@@ -1030,12 +1232,19 @@
             }
 
             // Compute total revenue
-            let revenue = merchantOrders
-                .filter(o => o.status === "تم التسليم")
-                .reduce((acc, o) => acc + (o.total || 0), 0);
+            let revenue = uniqueOrders
+                .filter(o => {
+                    const st = (o.status || '').toLowerCase();
+                    return st === 'تم التسليم' || st === 'delivered' || st === 'completed';
+                })
+                .reduce((acc, o) => acc + parseFloat(o.total || o.total_amount || 0), 0);
             
-            document.getElementById('stat-revenue').innerText = (revenue || 22000).toLocaleString();
+            const revenueEl = document.getElementById('stat-revenue');
+            if (revenueEl) {
+                revenueEl.innerText = revenue > 0 ? revenue.toLocaleString() : "0";
+            }
         }
+        window.updateCounters = updateCounters;
 
         // 📲 Merchant Custom QR Code Logic
         function initMerchantQR() {
