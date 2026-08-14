@@ -281,51 +281,35 @@ export async function fetchMerchantRequests() {
 export async function approveMerchantRequest(requestId) {
     try {
         let targetStoreName = '';
-        let targetEmail = '';
-        let targetUserId = '';
         const curReqs = await fetchMerchantRequests();
-        const found = curReqs.find(r => r.id == requestId || r.id === requestId || r.store_name === requestId);
-        if (found) {
-            targetStoreName = found.store_name;
-            targetEmail = found.email;
-            targetUserId = found.user_id;
-        }
+        const found = curReqs.find(r => r.id == requestId || r.id === requestId);
+        if (found) targetStoreName = found.store_name;
 
         // 1. Set persistent status override
         setStatusOverride(requestId, targetStoreName, 'APPROVED');
-        if (targetEmail) setStatusOverride(targetEmail, targetStoreName, 'APPROVED');
 
         // 2. Mutate in-memory fallback list
         MOCK_FALLBACK_STORES = MOCK_FALLBACK_STORES.map(s => {
-            if (s.id == requestId || (targetStoreName && s.store_name === targetStoreName) || (targetEmail && s.email === targetEmail)) {
+            if (s.id == requestId || (targetStoreName && s.store_name === targetStoreName)) {
                 return { ...s, status: 'APPROVED' };
             }
             return s;
         });
 
-        // 3. Update Supabase across all related tables
+        // 3. Update Supabase
         if (supabase) {
             try {
                 await supabase
                     .from('merchant_requests')
                     .update({ status: 'approved', updated_at: new Date().toISOString() })
-                    .or(`id.eq.${requestId},email.eq.${targetEmail || 'null'},store_name.eq.${targetStoreName || 'null'}`);
+                    .eq('id', requestId);
             } catch(e){}
 
             try {
                 await supabase
                     .from('stores')
-                    .update({ status: 'APPROVED', is_verified: true, updated_at: new Date().toISOString() })
-                    .or(`id.eq.${requestId},name.eq.${targetStoreName || 'null'},merchant_email.eq.${targetEmail || 'null'},email.eq.${targetEmail || 'null'}`);
-            } catch(e){}
-
-            try {
-                if (targetUserId || targetEmail) {
-                    await supabase
-                        .from('profiles')
-                        .update({ role: 'merchant', status: 'approved', updated_at: new Date().toISOString() })
-                        .or(`id.eq.${targetUserId || 'null'},email.eq.${targetEmail || 'null'}`);
-                }
+                    .update({ status: 'APPROVED', updated_at: new Date().toISOString() })
+                    .eq('id', requestId);
             } catch(e){}
         }
 
@@ -334,9 +318,7 @@ export async function approveMerchantRequest(requestId) {
             try {
                 let list = JSON.parse(localStorage.getItem(key) || '[]');
                 list = list.map(item => {
-                    if (item.id == requestId || item.id === requestId || 
-                        (targetStoreName && (item.name === targetStoreName || item.store_name === targetStoreName || item.storeName === targetStoreName)) ||
-                        (targetEmail && item.email === targetEmail)) {
+                    if (item.id == requestId || item.id === requestId || (targetStoreName && (item.name === targetStoreName || item.store_name === targetStoreName || item.storeName === targetStoreName))) {
                         return { ...item, status: 'APPROVED' };
                     }
                     return item;
@@ -354,7 +336,6 @@ export async function approveMerchantRequest(requestId) {
         if (typeof window.renderStats === 'function') window.renderStats();
         if (typeof window.renderWilayaTable === 'function') window.renderWilayaTable();
         if (typeof window.renderGlobalStoresTable === 'function') window.renderGlobalStoresTable();
-        if (typeof window.renderRegistrationsReal === 'function') window.renderRegistrationsReal();
 
         return true;
     } catch (e) {
@@ -366,23 +347,16 @@ export async function approveMerchantRequest(requestId) {
 export async function rejectMerchantRequest(requestId) {
     try {
         let targetStoreName = '';
-        let targetEmail = '';
-        let targetUserId = '';
         const curReqs = await fetchMerchantRequests();
-        const found = curReqs.find(r => r.id == requestId || r.id === requestId || r.store_name === requestId);
-        if (found) {
-            targetStoreName = found.store_name;
-            targetEmail = found.email;
-            targetUserId = found.user_id;
-        }
+        const found = curReqs.find(r => r.id == requestId || r.id === requestId);
+        if (found) targetStoreName = found.store_name;
 
         // 1. Set persistent status override
         setStatusOverride(requestId, targetStoreName, 'SUSPENDED');
-        if (targetEmail) setStatusOverride(targetEmail, targetStoreName, 'SUSPENDED');
 
         // 2. Mutate in-memory fallback list
         MOCK_FALLBACK_STORES = MOCK_FALLBACK_STORES.map(s => {
-            if (s.id == requestId || (targetStoreName && s.store_name === targetStoreName) || (targetEmail && s.email === targetEmail)) {
+            if (s.id == requestId || (targetStoreName && s.store_name === targetStoreName)) {
                 return { ...s, status: 'SUSPENDED' };
             }
             return s;
@@ -394,14 +368,14 @@ export async function rejectMerchantRequest(requestId) {
                 await supabase
                     .from('merchant_requests')
                     .update({ status: 'rejected', updated_at: new Date().toISOString() })
-                    .or(`id.eq.${requestId},email.eq.${targetEmail || 'null'},store_name.eq.${targetStoreName || 'null'}`);
+                    .eq('id', requestId);
             } catch(e){}
 
             try {
                 await supabase
                     .from('stores')
-                    .update({ status: 'SUSPENDED', is_verified: false, updated_at: new Date().toISOString() })
-                    .or(`id.eq.${requestId},name.eq.${targetStoreName || 'null'},merchant_email.eq.${targetEmail || 'null'},email.eq.${targetEmail || 'null'}`);
+                    .update({ status: 'SUSPENDED', updated_at: new Date().toISOString() })
+                    .eq('id', requestId);
             } catch(e){}
         }
 

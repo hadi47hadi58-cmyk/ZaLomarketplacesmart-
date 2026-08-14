@@ -93,6 +93,139 @@
             vatNumber: "198273615243000"
         };
 
+        // Complete 69 Algerian Wilayas list for Merchant Settings
+        const STORE_WILAYAS_69 = [
+            "01 - أدرار", "02 - الشلف", "03 - الأغواط", "04 - أم البواقي", "05 - باتنة",
+            "06 - بجاية", "07 - بسكرة", "08 - بشار", "09 - البليدة", "10 - البويرة",
+            "11 - تمنراست", "12 - تبسة", "13 - تلمسان", "14 - تيارت", "15 - تيزي وزو",
+            "16 - الجزائر", "17 - الجلفة", "18 - جيجل", "19 - سطيف", "20 - سعيدة",
+            "21 - سكيكدة", "22 - سيدي بلعباس", "23 - عنابة", "24 - قالمة", "25 - قسنطينة",
+            "26 - المدية", "27 - مستغانم", "28 - المسيلة", "29 - معسكر", "30 - ورقلة",
+            "31 - وهران", "32 - البيض", "33 - إليزي", "34 - برج بوعريريج", "35 - بومرداس",
+            "36 - الطارف", "37 - تندوف", "38 - تيسمسيلت", "39 - الوادي", "40 - خنشلة",
+            "41 - سوق أهراس", "42 - تيبازة", "43 - ميلة", "44 - عين الدفلى", "45 - النعامة",
+            "46 - عين تموشنت", "47 - غرداية", "48 - غليزان", "49 - تيميمون", "50 - برج باجي مختار",
+            "51 - أولاد جلال", "52 - بني عباس", "53 - عين صالح", "54 - عين قزام", "55 - تقرت",
+            "56 - جانت", "57 - المغير", "58 - المنيعة", "59 - بريكة", "60 - بوسعادة",
+            "61 - مسعد", "62 - قصر الشلالة", "63 - العلمة", "64 - فرجيوة", "65 - شلغوم العيد",
+            "66 - عين البيضاء", "67 - عين وسارة", "68 - الأبيض سيدي الشيخ", "69 - أفلو"
+        ];
+
+        const STORE_BALADIYAS = {
+            "أدرار": ["أدرار", "تيميمون", "رقان", "تسابيت", "أولف", "زاوية كنتة"],
+            "الشلف": ["الشلف", "تنس", "بوقادير", "المرسى", "عين مران"],
+            "الأغواط": ["الأغواط", "أفلو", "حاسي الرمل", "قصر الحيران"],
+            "أم البواقي": ["أم البواقي", "عين البيضاء", "عين مليلة", "مسكيانة"],
+            "باتنة": ["باتنة", "أريس", "بريكة", "عين التوتة", "مروانة", "تيمقاد"],
+            "بجاية": ["بجاية", "أقبو", "القصر", "تيشي", "سيدي عيش", "خراطة"],
+            "بسكرة": ["بسكرة", "طولقة", "سيدي عقبة", "أولاد جلال", "زريبة الوادي"],
+            "بشار": ["بشار", "تاغيت", "بني عباس", "القنادسة", "العبادلة"],
+            "البليدة": ["البليدة", "بوفاريك", "العفرون", "موزاية", "الشبلي", "الشريعة"],
+            "البويرة": ["البويرة", "سور الغزلان", "الأخضرية", "تيكجدة", "عين بسام"],
+            "تمنراست": ["تمنراست", "عين صالح", "عين قزام", "أبالسا"],
+            "تبسة": ["تبسة", "بئر العاتر", "الشريعة", "الوانزة"],
+            "تلمسان": ["تلمسان", "مغنية", "الغزوات", "سبدو", "منصورة", "الرمشي"],
+            "تيارت": ["تيارت", "السوقر", "فرندة", "قصر الشلالة"],
+            "تيزي وزو": ["تيزي وزو", "عزازقة", "ذراع بن خدة", "عين الحمام", "أزفون", "تيقزيرت"],
+            "الجزائر": ["الجزائر الوسطى", "باب الواد", "الحراش", "بئر مراد رايس", "سيدي امحمد", "القبة", "درارية", "الشراقة", "الرويبة", "زرالدة"],
+            "الجلفة": ["الجلفة", "عين وسارة", "مسعد", "حاسي بحبح", "الشارف"],
+            "جيجل": ["جيجل", "الطاهير", "الميلية", "العوانة", "زيامة منصورية"],
+            "سطيف": ["سطيف", "العلمة", "عين أرنات", "بوقاعة", "عين ولمان", "جميلة"],
+            "سعيدة": ["سعيدة", "عين الحجر", "يوب", "الحساسنة"],
+            "سكيكدة": ["سكيكدة", "عزابة", "الحروش", "القُل", "تمالوس"],
+            "سيدي بلعباس": ["سيدي بلعباس", "تلاغ", "سفيزف", "عين البرد", "ابن باديس"],
+            "عنابة": ["عنابة", "البوني", "الحجار", "برحال", "سرايدي"],
+            "قالمة": ["قالمة", "وادي الزناتي", "بوشقوف", "هليوبوليس"],
+            "قسنطينة": ["قسنطينة", "الخروب", "حامة بوزيان", "زيغود يوسف", "عين سمارة", "علي منجلي"],
+            "المدية": ["المدية", "البرواقية", "قصر البخاري", "تابلاط", "عزيز"],
+            "مستغانم": ["مستغانم", "عين تدلس", "حاسي ماماش", "سيدي علي", "مقطع دوز"],
+            "المسيلة": ["المسيلة", "بوسعادة", "مقرة", "سيدي عيسى", "حمام ضلع"],
+            "معسكر": ["معسكر", "سيق", "محمدية", "تيغنيف", "غريس"],
+            "ورقلة": ["ورقلة", "حاسي مسعود", "تقرت", "الرويسات", "الأنقوسة"],
+            "وهران": ["وهران", "بئر الجير", "السانية", "أرزيو", "قديل", "عين الترك", "بطيوة"],
+            "البيض": ["البيض", "بوقطب", "بريزينة", "الأبيض سيدي الشيخ"],
+            "إليزي": ["إليزي", "جانت", "إن أمناس", "برج الحواس"],
+            "برج بوعريريج": ["برج بوعريريج", "رأس الوادي", "مجانة", "برج زمورة"],
+            "بومرداس": ["بومرداس", "دلس", "برج منايل", "خميس الخشنة", "يسر", "الثنية"],
+            "الطارف": ["الطارف", "القالة", "بوثلجة", "الذرعان", "بن مهيدي"],
+            "تندوف": ["تندوف", "أم العسل"],
+            "تيسمسيلت": ["تيسمسيلت", "ثنية الحد", "برج بونعامة", "خميستي"],
+            "الوادي": ["الوادي", "قمار", "الدبيلة", "جامعة", "المغير", "الرقيبة"],
+            "خنشلة": ["خنشلة", "ششار", "قايس", "بوحمامة", "أولاد رشاش"],
+            "سوق أهراس": ["سوق أهراس", "سدراتة", "مداوروش", "تاورة", "المشروحة"],
+            "تيبازة": ["تيبازة", "شرشال", "القليعة", "حجوط", "بوسماعيل", "فوكة"],
+            "ميلة": ["ميلة", "شلغوم العيد", "تاجنانت", "فرجيوة", "قرارم قوقة"],
+            "عين الدفلى": ["عين الدفلى", "خميس مليانة", "العطاف", "مليانة", "جليدة"],
+            "النعامة": ["النعامة", "مشرية", "عين الصفراء", "مكمن بن عمار"],
+            "عين تموشنت": ["عين تموشنت", "بني صاف", "حمام بوحجر", "العامرية"],
+            "غرداية": ["غرداية", "بني يزقن", "بونورة", "القرارة", "متليلي", "العطف"],
+            "غليزان": ["غليزان", "وادي ارهيو", "مازونة", "زمورة", "المطمر"],
+            "تيميمون": ["تيميمون", "أوقروت", "شروين"],
+            "برج باجي مختار": ["برج باجي مختار", "تيمياوين"],
+            "أولاد جلال": ["أولاد جلال", "سيدي خالد", "رأس الميعاد"],
+            "بني عباس": ["بني عباس", "كرزاز", "الواتة", "طبلبالة"],
+            "عين صالح": ["عين صالح", "إينغر", "فقارة الزاوية"],
+            "عين قزام": ["عين قزام", "تين زواتين"],
+            "تقرت": ["تقرت", "النزلة", "تبسبست", "المقارين"],
+            "جانت": ["جانت", "برج الحواس"],
+            "المغير": ["المغير", "جامعة", "أم الطيور"],
+            "المنيعة": ["المنيعة", "حاسي القارة", "حاسي الفحل"],
+            "بريكة": ["بريكة", "أولاد دراج", "الجزار"],
+            "بوسعادة": ["بوسعادة", "سيدي عيسى", "الهامل"],
+            "مسعد": ["مسعد", "فيض البطمة", "دلدول"],
+            "قصر الشلالة": ["قصر الشلالة", "زمالة الأمير عبد القادر"],
+            "العلمة": ["العلمة", "بئر العرش", "بازر سكرة"],
+            "فرجيوة": ["فرجيوة", "بوحاتم", "عين البيضاء أحريش"],
+            "شلغوم العيد": ["شلغوم العيد", "تاجنانت", "وادي العثمانية"],
+            "عين البيضاء": ["عين البيضاء", "بريش", "فكرينة"],
+            "عين وسارة": ["عين وسارة", "بيرين", "القرنيني"],
+            "الأبيض سيدي الشيخ": ["الأبيض سيدي الشيخ", "بريزينة", "البنود"],
+            "أفلو": ["أفلو", "سبقاق", "سيدي بوزيد"],
+            "default": ["مركز البلدية الرئيسي", "حي السوق المركزي", "المنطقة التجارية"]
+        };
+
+        window.handleStoreWilayaChange = function(wilayaVal) {
+            const communeSelect = document.getElementById('settings-commune');
+            const customInput = document.getElementById('settings-custom-commune');
+            if (!communeSelect) return;
+
+            let cleanName = wilayaVal.replace(/^[0-9]+\s*-\s*/, '').trim();
+            cleanName = cleanName.replace(/\s*\(.*\)/, '').trim();
+
+            const baladiyas = STORE_BALADIYAS[cleanName] || STORE_BALADIYAS[wilayaVal] || STORE_BALADIYAS["default"];
+            
+            communeSelect.innerHTML = '';
+            baladiyas.forEach(b => {
+                const opt = document.createElement('option');
+                opt.value = b;
+                opt.textContent = b;
+                communeSelect.appendChild(opt);
+            });
+
+            // Add other option
+            const otherOpt = document.createElement('option');
+            otherOpt.value = "بلدية أخرى (اكتبها في العنوان)";
+            otherOpt.textContent = "✍️ بلدية أخرى (كتابة يدوية)";
+            communeSelect.appendChild(otherOpt);
+
+            if (customInput) {
+                customInput.classList.add('hidden');
+                customInput.value = '';
+            }
+        };
+
+        window.handleStoreCommuneChange = function(communeVal) {
+            const customInput = document.getElementById('settings-custom-commune');
+            if (!customInput) return;
+
+            if (communeVal && (communeVal.includes('أخرى') || communeVal.includes('اكتبها') || communeVal.includes('يدوية'))) {
+                customInput.classList.remove('hidden');
+                customInput.focus();
+            } else {
+                customInput.classList.add('hidden');
+            }
+        };
+
         window.initOldMerchantDashboard = function() {
             // Read active store details from registration session or local storage
             const activeStoreName = sessionStorage.getItem('reg_storeName') || localStorage.getItem('zalo_active_store') || sessionStorage.getItem('merchant_store_name') || "";
@@ -109,9 +242,47 @@
             if (activeCommune) settings.commune = activeCommune;
 
             if (!settings.storeName) settings.storeName = "متجر ZaLo";
-            if (!settings.wilaya) settings.wilaya = "الجزائر";
+            if (!settings.wilaya) settings.wilaya = "16 - الجزائر";
 
             setDB("merchant_store_settings", settings);
+
+            // Populate settings-wilaya with all 69 Algerian Wilayas
+            const inputWilaya = document.getElementById('settings-wilaya');
+            if (inputWilaya) {
+                inputWilaya.innerHTML = '';
+                STORE_WILAYAS_69.forEach(w => {
+                    const opt = document.createElement('option');
+                    opt.value = w;
+                    opt.textContent = w;
+                    if (settings.wilaya && (settings.wilaya === w || w.includes(settings.wilaya) || settings.wilaya.includes(w))) {
+                        opt.selected = true;
+                    }
+                    inputWilaya.appendChild(opt);
+                });
+            }
+
+            // Populate Baladiyas for active wilaya
+            window.handleStoreWilayaChange(inputWilaya ? inputWilaya.value : (settings.wilaya || '16 - الجزائر'));
+
+            const inputCommune = document.getElementById('settings-commune');
+            const customCommuneInput = document.getElementById('settings-custom-commune');
+            if (inputCommune && settings.commune) {
+                let matched = false;
+                for (let i = 0; i < inputCommune.options.length; i++) {
+                    if (inputCommune.options[i].value === settings.commune) {
+                        inputCommune.selectedIndex = i;
+                        matched = true;
+                        break;
+                    }
+                }
+                if (!matched) {
+                    inputCommune.value = "بلدية أخرى (اكتبها في العنوان)";
+                    if (customCommuneInput) {
+                        customCommuneInput.classList.remove('hidden');
+                        customCommuneInput.value = settings.commune;
+                    }
+                }
+            }
 
             // Set input values
             const inputName = document.getElementById('settings-store-name');
@@ -119,11 +290,7 @@
             const inputPhone = document.getElementById('settings-phone');
             if (inputPhone) inputPhone.value = settings.phone;
             const inputCat = document.getElementById('settings-category');
-            if (inputCat) inputCat.value = settings.category || "cat_phones";
-            const inputWilaya = document.getElementById('settings-wilaya');
-            if (inputWilaya) inputWilaya.value = settings.wilaya;
-            const inputCommune = document.getElementById('settings-commune');
-            if (inputCommune) inputCommune.value = settings.commune;
+            if (inputCat) inputCat.value = settings.category || "";
 
             const inputFb = document.getElementById('settings-fb');
             if (inputFb) inputFb.value = settings.fb || '';
@@ -177,6 +344,12 @@
 
             const sidebarEmail = document.getElementById('sidebar-user-email');
             if (sidebarEmail && activeOwner) sidebarEmail.innerText = activeOwner;
+
+            // Initialize dynamic categories and subcategories
+            if (typeof setupDynamicCategorySelects === 'function') {
+                setupDynamicCategorySelects('settings-category', 'settings-subcategory', settings.category, settings.subcategory);
+                setupDynamicCategorySelects('prod-main-category', 'prod-sub-category');
+            }
 
             updateCounters();
             renderMerchantProducts();
@@ -307,18 +480,29 @@
         }
 
         // Save settings handler
-        function saveStoreSettings(e) {
+        async function saveStoreSettings(e) {
             e.preventDefault();
 
             let logoImg = document.getElementById('logo-preview').src;
             let coverImg = document.getElementById('cover-preview').src;
 
+            let selectedCommune = document.getElementById('settings-commune').value;
+            const customCommuneVal = document.getElementById('settings-custom-commune') ? document.getElementById('settings-custom-commune').value.trim() : '';
+            if ((selectedCommune.includes('أخرى') || selectedCommune.includes('اكتبها') || selectedCommune.includes('يدوية')) && customCommuneVal) {
+                selectedCommune = customCommuneVal;
+            }
+
+            const selectedWilaya = document.getElementById('settings-wilaya').value;
+            const selectedCat = document.getElementById('settings-category').value;
+            const selectedSubCat = document.getElementById('settings-subcategory') ? document.getElementById('settings-subcategory').value : '';
+
             let settings = {
                 storeName: document.getElementById('settings-store-name').value.trim(),
                 phone: document.getElementById('settings-phone').value.trim(),
-                category: document.getElementById('settings-category').value,
-                wilaya: document.getElementById('settings-wilaya').value,
-                commune: document.getElementById('settings-commune').value,
+                category: selectedCat,
+                subcategory: selectedSubCat,
+                wilaya: selectedWilaya,
+                commune: selectedCommune,
                 fb: document.getElementById('settings-fb').value.trim(),
                 ig: document.getElementById('settings-ig').value.trim(),
                 tiktok: document.getElementById('settings-tiktok').value.trim(),
@@ -333,7 +517,7 @@
 
             // Update profile card details live
             document.getElementById('profile-store-name').innerText = settings.storeName;
-            document.getElementById('profile-store-wilaya').innerText = "المركز الاقتصادي: " + settings.wilaya;
+            document.getElementById('profile-store-wilaya').innerText = "المركز الاقتصادي: " + settings.wilaya + (settings.commune ? (" - " + settings.commune) : "");
             document.getElementById('profile-store-image').src = settings.logoImg;
 
             // Sync with sidebar
@@ -342,68 +526,163 @@
             const sidebarName = document.getElementById('sidebar-user-name');
             if (sidebarName) sidebarName.innerText = settings.storeName;
 
-            // Update seed store array so customer can see renamed store!
+            // Update local stores array
             let stores = getDB("stores", []);
-            let store = stores.find(s => s.storeId === "store_salam");
+            let store = stores.find(s => s.storeId === "store_salam" || s.storeName === settings.storeName);
             if (store) {
                 store.storeName = settings.storeName;
                 store.phone = settings.phone;
                 store.address = settings.commune + "، " + settings.wilaya;
                 store.image = settings.logoImg;
+                store.coverImage = settings.coverImg;
                 setDB("stores", stores);
+            }
+
+            // Sync to Supabase stores table if available
+            try {
+                if (window.supabaseClient) {
+                    const userUid = localStorage.getItem('zalo_uid') || localStorage.getItem('user_uid');
+                    if (userUid) {
+                        await window.supabaseClient.from('stores').upsert({
+                            owner_id: userUid,
+                            name: settings.storeName,
+                            phone: settings.phone,
+                            wilaya: settings.wilaya,
+                            commune: settings.commune,
+                            category: settings.category,
+                            logo_url: settings.logoImg,
+                            cover_url: settings.coverImg,
+                            status: 'approved',
+                            updated_at: new Date().toISOString()
+                        }, { onConflict: 'owner_id' });
+                    }
+                }
+            } catch(err) {
+                console.warn('Supabase store update:', err);
             }
 
             // Show success banner
             const banner = document.getElementById('settings-success-banner');
-            banner.classList.remove('hidden');
-            banner.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            if (banner) {
+                banner.classList.remove('hidden');
+                banner.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
-            setTimeout(() => {
-                banner.classList.add('hidden');
-            }, 5000);
+                setTimeout(() => {
+                    banner.classList.add('hidden');
+                }, 5000);
+            }
         }
 
         // Overrides and custom renders for local dashboard with custom fields
-        function renderMerchantProducts() {
+        async function renderMerchantProducts() {
             let list = document.getElementById("merchant-product-list");
             if (!list) return;
 
-            list.innerHTML = "";
+            let currentStoreSettings = {};
+            try {
+                currentStoreSettings = JSON.parse(localStorage.getItem('zalo_merchant_store_settings') || '{}');
+            } catch(e) {}
+
+            const realStoreName = currentStoreSettings.storeName || currentStoreSettings.name || localStorage.getItem('zalo_active_store') || sessionStorage.getItem('merchant_store_name') || '';
+            const realStoreId = currentStoreSettings.id || localStorage.getItem('zalo_uid') || localStorage.getItem('user_uid') || '';
+
             let products = getDB("products", []);
             
-            // Seed defaults if empty (Cleared to prevent mock products)
-            if (products.length === 0) {
-                products = [];
-                setDB("products", products);
+            // Sync with Supabase products
+            try {
+                if (window.supabaseClient) {
+                    const { data: sbProds } = await window.supabaseClient.from('products').select('*');
+                    if (sbProds && Array.isArray(sbProds)) {
+                        sbProds.forEach(sp => {
+                            const pId = sp.id || sp.productId;
+                            const pName = sp.name || sp.productName || 'منتج';
+                            const exists = products.some(lp => (lp.productId && lp.productId === pId) || (lp.id && lp.id === pId) || (lp.productName === pName));
+                            if (!exists) {
+                                products.push({
+                                    productId: pId,
+                                    id: pId,
+                                    productName: pName,
+                                    price: sp.price || 0,
+                                    stock: sp.stock || sp.stock_quantity || 0,
+                                    category: sp.category || 'عام',
+                                    subcategory: sp.subcategory || '',
+                                    description: sp.description || '',
+                                    sku: sp.sku || `ZL-${pId}`,
+                                    weight: sp.weight || 0.1,
+                                    minOrder: sp.minOrder || 1,
+                                    image: sp.image_url || sp.image || 'assets/icon-192.svg',
+                                    storeName: sp.store_name || sp.storeName || realStoreName,
+                                    storeId: sp.store_id || sp.storeId || realStoreId
+                                });
+                            }
+                        });
+                        setDB("products", products);
+                    }
+                }
+            } catch (err) {
+                console.warn("Could not sync products from Supabase:", err);
             }
 
-            let store = getDB("stores", []).find(s => s.storeId === "store_salam");
-            let storeId = store ? store.storeId : "store_salam";
-            let merchantProds = products.filter(p => p.storeId === storeId);
+            list.innerHTML = "";
+
+            // Filter for current merchant
+            let merchantProds = products.filter(p => {
+                if (!realStoreName && !realStoreId) return true;
+                const matchId = realStoreId && (p.storeId === realStoreId || p.store_id === realStoreId);
+                const matchName = realStoreName && (p.storeName === realStoreName || p.store_name === realStoreName);
+                return matchId || matchName;
+            });
+
+            if (merchantProds.length === 0 && products.length > 0 && !realStoreName) {
+                merchantProds = products;
+            }
+
+            if (merchantProds.length === 0) {
+                list.innerHTML = `
+                    <tr>
+                        <td colspan="4" class="p-8 text-center text-slate-500">
+                            <div class="flex flex-col items-center justify-center gap-2">
+                                <i class="fa-solid fa-box-open text-3xl text-slate-300"></i>
+                                <p class="font-bold text-slate-600 text-sm">لا توجد منتجات مسجلة في متجرك حالياً</p>
+                                <p class="text-xs text-slate-400">أضف منتجك الأول من النموذج الجانبي لتظهر سلعك للزبائن</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
             
             merchantProds.forEach(p => {
-                let skuLabel = p.sku ? `<p class="text-[9px] text-slate-400 font-mono">الباركود: ${p.sku}</p>` : '';
-                let weightLabel = p.weight ? `<p class="text-[9px] text-slate-400">الوزن: ${p.weight} كغ</p>` : '';
-                let minOrderLabel = p.minOrder ? `<p class="text-[9px] text-amber-600 font-bold">أقل كمية: ${p.minOrder}</p>` : '';
+                let skuLabel = p.sku ? `<span class="text-[9px] text-slate-400 font-mono">الباركود: ${p.sku}</span>` : '';
+                let weightLabel = p.weight ? `<span class="text-[9px] text-slate-400">الوزن: ${p.weight} كغ</span>` : '';
+                let minOrderLabel = p.minOrder ? `<span class="text-[9px] text-amber-600 font-bold">أقل كمية: ${p.minOrder}</span>` : '';
+                let catLabel = p.category ? `<span class="text-[9px] bg-sky-50 text-sky-600 border border-sky-100 px-2 py-0.5 rounded font-bold">${p.category}${p.subcategory ? ' - ' + p.subcategory : ''}</span>` : '';
+                let pImg = p.image || p.image_url || p.img || 'assets/icon-192.svg';
 
                 let item = document.createElement("tr");
                 item.className = "border-t border-slate-100 hover:bg-slate-50 transition";
                 item.innerHTML = `
                     <td class="p-3 text-right">
-                        <p class="font-bold text-slate-800">${p.productName}</p>
-                        <div class="flex flex-wrap gap-2 mt-0.5">
-                            ${skuLabel}
-                            ${weightLabel}
-                            ${minOrderLabel}
+                        <div class="flex items-center gap-3">
+                            <img src="${pImg}" class="w-10 h-10 rounded-xl object-cover border border-slate-200 shadow-sm" onerror="this.src='assets/icon-192.svg'">
+                            <div>
+                                <p class="font-bold text-slate-800 text-xs">${p.productName || p.name}</p>
+                                <div class="flex flex-wrap gap-1.5 mt-1 items-center">
+                                    ${catLabel}
+                                    ${skuLabel}
+                                    ${weightLabel}
+                                    ${minOrderLabel}
+                                </div>
+                            </div>
                         </div>
                     </td>
-                    <td class="p-3 text-right font-black text-slate-800">${p.price.toLocaleString()} دج</td>
-                    <td class="p-3 text-right text-slate-600 font-bold">${p.stock} قطعة</td>
+                    <td class="p-3 text-right font-black text-slate-800 text-xs">${parseFloat(p.price || 0).toLocaleString()} دج</td>
+                    <td class="p-3 text-right text-slate-600 font-bold text-xs">${p.stock || 0} قطعة</td>
                     <td class="p-3 text-center">
                         <div class="flex gap-1 justify-center">
-                            <button class="bg-[#113f1c] hover:bg-[#1a4f26] text-white text-[10px] px-2.5 py-1 rounded-lg font-bold" onclick="duplicateProduct('${p.productId}')" title="نسخ وتكرار المنتج لتسريع العمل">تكرار</button>
-                            <button class="bg-amber-500 hover:bg-amber-600 text-slate-900 text-[10px] px-2.5 py-1 rounded-lg font-bold" onclick="openVariantsModal('${p.productId}')">خيارات</button>
-                            <button class="bg-red-500 hover:bg-red-600 text-white text-[10px] px-2.5 py-1 rounded-lg font-bold" onclick="deleteMerchantProduct('${p.productId}')">حذف</button>
+                            <button class="bg-[#113f1c] hover:bg-[#1a4f26] text-white text-[10px] px-2.5 py-1 rounded-lg font-bold transition" onclick="duplicateProduct('${p.productId || p.id}')" title="نسخ وتكرار المنتج لتسريع العمل">تكرار</button>
+                            <button class="bg-amber-500 hover:bg-amber-600 text-slate-900 text-[10px] px-2.5 py-1 rounded-lg font-bold transition" onclick="openVariantsModal('${p.productId || p.id}')">خيارات</button>
+                            <button class="bg-red-500 hover:bg-red-600 text-white text-[10px] px-2.5 py-1 rounded-lg font-bold transition" onclick="deleteMerchantProduct('${p.productId || p.id}')">حذف</button>
                         </div>
                     </td>
                 `;
@@ -1077,3 +1356,18 @@
             alert("✅ تم إضافة الفرع / السلسلة (" + branchName + ") بنجاح للتاجر الرئيسي!");
             closeAddBranchModal();
         };
+
+        // Safety fallback initialization on DOM ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                if (typeof window.initOldMerchantDashboard === 'function') {
+                    window.initOldMerchantDashboard();
+                }
+            });
+        } else {
+            setTimeout(() => {
+                if (typeof window.initOldMerchantDashboard === 'function') {
+                    window.initOldMerchantDashboard();
+                }
+            }, 100);
+        }

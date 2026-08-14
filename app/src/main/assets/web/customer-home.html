@@ -3666,8 +3666,7 @@ async function syncMerchantRequestStatus(user) {
         .maybeSingle();
 
       if (storeRow) {
-        const sStatus = String(storeRow.status || '').toUpperCase();
-        if (sStatus === 'APPROVED' || sStatus === 'ACTIVE' || storeRow.is_verified === true) {
+        if (storeRow.status === 'approved' || storeRow.status === 'active' || storeRow.is_verified || storeRow.status !== 'rejected') {
           isApproved = true;
           isPending = false;
           localStorage.setItem('zalo_user_role', 'MERCHANT');
@@ -3676,8 +3675,6 @@ async function syncMerchantRequestStatus(user) {
             localStorage.setItem('zalo_active_store', storeRow.name || storeRow.store_name);
             sessionStorage.setItem('merchant_store_name', storeRow.name || storeRow.store_name);
           }
-        } else if (sStatus === 'PENDING') {
-          if (!isApproved) isPending = true;
         }
       }
     }
@@ -4975,13 +4972,22 @@ window.checkoutCart = async function() {
     const subtotal = groupItems.reduce((sum, i) => sum + (i.price * i.qty), 0);
     const orderId = 'ord_' + Math.random().toString(36).substring(2, 11);
 
+    const firstItem = groupItems[0] || {};
+    const pName = groupItems.map(i => `${i.name || i.productName} (×${i.qty})`).join(' + ');
+    const totalQty = groupItems.reduce((sum, i) => sum + (parseInt(i.qty) || 1), 0);
+    const wilayaNum = parseInt(wilaya.toString().replace(/[^0-9]/g, ''), 10) || 16;
+
     const orderPayload = {
       id: orderId,
+      product_name: pName,
+      quantity: totalQty,
+      shipping_wilaya: wilayaNum,
       customer_id: customerId,
       customer_name: name,
       customer_phone: phone,
       address: addr,
-      wilaya: wilaya,
+      delivery_address: addr,
+      wilaya: wilayaNum.toString(),
       commune: 'غير محدد',
       store_id: storeId,
       store_name: storeName,

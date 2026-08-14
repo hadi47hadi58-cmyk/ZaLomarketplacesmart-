@@ -434,7 +434,7 @@
                     </div>
 
                     <!-- Dropdowns from old dashboard -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                         <div>
                             <label class="block text-[11px] text-slate-600 font-black mb-1">قسم وصنف النشاط الرئيسي *</label>
                             <select id="settings-category" class="w-full bg-slate-50 border border-slate-200 text-[11px] rounded-xl py-2.5 px-3 focus:outline-none focus:border-sky-400 font-black text-slate-800">
@@ -448,17 +448,22 @@
                             </select>
                         </div>
                         <div>
-                            <label class="block text-[11px] text-slate-600 font-black mb-1">ولاية النشاط والفرز الجغرافي (69 ولاية) *</label>
-                            <select id="settings-wilaya" class="w-full bg-slate-50 border border-slate-200 text-[11px] rounded-xl py-2.5 px-3 focus:outline-none focus:border-sky-400 font-black text-slate-800" onchange="handleStoreWilayaChange(this.value)">
-                                <!-- Populated dynamically with all 69 Wilayas -->
+                            <label class="block text-[11px] text-slate-600 font-black mb-1">ولاية النشاط والفرز الجغرافي *</label>
+                            <select id="settings-wilaya" class="w-full bg-slate-50 border border-slate-200 text-[11px] rounded-xl py-2.5 px-3 focus:outline-none focus:border-sky-400 font-black text-slate-800">
+                                <option value="58 المنيعة">58 المنيعة</option>
+                                <option value="16 الجزائر العاصمة">16 الجزائر العاصمة</option>
+                                <option value="31 وهران">31 وهران</option>
+                                <option value="25 قسنطينة">25 قسنطينة</option>
                             </select>
                         </div>
                         <div>
                             <label class="block text-[11px] text-slate-600 font-black mb-1">البلدية والمنطقة *</label>
-                            <select id="settings-commune" class="w-full bg-slate-50 border border-slate-200 text-[11px] rounded-xl py-2.5 px-3 focus:outline-none focus:border-sky-400 font-black text-slate-800" onchange="handleStoreCommuneChange(this.value)">
-                                <!-- Populated dynamically based on selected wilaya -->
+                            <select id="settings-commune" class="w-full bg-slate-50 border border-slate-200 text-[11px] rounded-xl py-2.5 px-3 focus:outline-none focus:border-sky-400 font-black text-slate-800">
+                                <option value="بلدية المنيعة">بلدية المنيعة</option>
+                                <option value="بلدية حاسي الفحل">بلدية حاسي الفحل</option>
+                                <option value="بلدية حاسي القارة">بلدية حاسي القارة</option>
+                                <option value="بلدية أخرى (اكتبها في العنوان)">بلدية أخرى (اكتبها في العنوان)</option>
                             </select>
-                            <input type="text" id="settings-custom-commune" placeholder="✍️ اكتب اسم بلديتك هنا..." class="w-full mt-2 bg-amber-50 border border-amber-300 text-[11px] rounded-xl py-2 px-3 focus:outline-none focus:border-amber-500 font-black text-slate-800 hidden">
                         </div>
                     </div>
 

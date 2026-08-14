@@ -1356,3 +1356,18 @@
             alert("✅ تم إضافة الفرع / السلسلة (" + branchName + ") بنجاح للتاجر الرئيسي!");
             closeAddBranchModal();
         };
+
+        // Safety fallback initialization on DOM ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                if (typeof window.initOldMerchantDashboard === 'function') {
+                    window.initOldMerchantDashboard();
+                }
+            });
+        } else {
+            setTimeout(() => {
+                if (typeof window.initOldMerchantDashboard === 'function') {
+                    window.initOldMerchantDashboard();
+                }
+            }, 100);
+        }

@@ -5,35 +5,45 @@ import { SupabaseService } from '../supabase/supabase.service';
 import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 export class CreateOrderDto {
-  @ApiProperty()
+  @ApiProperty({ description: 'معرف المتجر' })
+  storeId?: any;
+
+  @ApiProperty({ description: 'اسم المنتج' })
+  @IsNotEmpty()
+  @IsString()
+  productName: string;
+
+  @ApiProperty({ description: 'الكمية المطلوبة' })
   @IsNotEmpty()
   @IsNumber()
-  storeId: number;
+  quantity: number;
 
-  @ApiProperty()
+  @ApiProperty({ description: 'رقم ولاية الشحن (1-69)' })
+  @IsNotEmpty()
+  shippingWilaya: number | string;
+
+  @ApiProperty({ description: 'إجمالي المبلغ' })
   @IsNotEmpty()
   @IsNumber()
   totalAmount: number;
 
-  @ApiProperty()
+  @ApiProperty({ description: 'اسم الزبون' })
   @IsNotEmpty()
   @IsString()
   customerName: string;
 
-  @ApiProperty()
+  @ApiProperty({ description: 'رقم هاتف الزبون' })
   @IsNotEmpty()
   @IsString()
   customerPhone: string;
 
-  @ApiProperty()
-  @IsNotEmpty()
-  @IsString()
-  deliveryWilaya: string;
-
-  @ApiProperty()
+  @ApiProperty({ description: 'عنوان التوصيل' })
   @IsNotEmpty()
   @IsString()
   deliveryAddress: string;
+
+  @ApiProperty({ description: 'طريقة الدفع', required: false })
+  paymentMethod?: string;
 }
 
 export class UpdateOrderStatusDto {
@@ -68,19 +78,42 @@ export class OrdersController {
   @ApiBearerAuth()
   @ApiOperation({ summary: 'إنشاء طلبية جديدة' })
   async createOrder(@Request() req, @Body() dto: CreateOrderDto) {
+    const wilayaNumber = parseInt(dto.shippingWilaya.toString(), 10) || 16;
     const payload = {
-      customer_id: req.user.userId,
-      store_id: dto.storeId,
+      customer_id: req.user?.userId || 'anonymous',
+      store_id: dto.storeId || 'direct',
+      product_name: dto.productName,
+      quantity: dto.quantity || 1,
+      shipping_wilaya: wilayaNumber,
       total_amount: dto.totalAmount,
       customer_name: dto.customerName,
       customer_phone: dto.customerPhone,
-      delivery_wilaya: dto.deliveryWilaya,
       delivery_address: dto.deliveryAddress,
-      status: 'PENDING'
+      address: dto.deliveryAddress,
+      wilaya: wilayaNumber.toString(),
+      payment_method: dto.paymentMethod || 'cod',
+      status: 'pending',
+      created_at: new Date().toISOString()
     };
+
+    // Actual DB insertion via Supabase Service Client first
     const { data, error } = await this.supabaseService.getClient().from('orders').insert([payload]).select().single();
-    if (error) return { status: HttpStatus.INTERNAL_SERVER_ERROR, message: error.message };
-    return { status: HttpStatus.CREATED, data };
+    
+    // Strict error check - no fake response allowed
+    if (error) {
+      return {
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        success: false,
+        message: 'فشل حفظ الطلبية في قاعدة البيانات: ' + error.message
+      };
+    }
+
+    return {
+      status: HttpStatus.CREATED,
+      success: true,
+      message: 'تم تسجيل الطلبية بنجاح في قاعدة البيانات',
+      data
+    };
   }
 
   @Patch(':id/status')

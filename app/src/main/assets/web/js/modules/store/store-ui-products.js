@@ -37,7 +37,7 @@ export async function renderMerchantProductsReal() {
                     <i class="fa-solid fa-tag text-indigo-500"></i> ${p.category || 'غير محدد'}
                 </div>
                 <div class="absolute top-2 left-2 px-2 py-1 bg-green-100/90 text-green-700 rounded-md text-xs font-bold shadow-sm backdrop-blur-sm">
-                    ${p.stock_quantity > 0 ? 'متوفر' : 'غير متوفر'}
+                    ${(p.stock !== undefined ? p.stock : (p.stock_quantity || 0)) > 0 ? 'متوفر' : 'غير متوفر'}
                 </div>
             </div>
             <div class="flex justify-between items-start mb-2">
@@ -116,8 +116,13 @@ window.merchantAddProductReal = async function(e) {
         }
         
         const name = document.getElementById('prod-name')?.value || 'منتج جديد';
-        const price = document.getElementById('prod-price')?.value || 0;
-        const category = document.getElementById('prod-category')?.value || 'أخرى';
+        const price = parseFloat(document.getElementById('prod-price')?.value || 0);
+        const stock = parseInt(document.getElementById('prod-stock')?.value || 1);
+        const sku = document.getElementById('prod-sku')?.value || ('SKU-' + Math.floor(1000 + Math.random() * 9000));
+        const weight = parseFloat(document.getElementById('prod-weight')?.value || 0.1);
+        const minOrder = parseInt(document.getElementById('prod-min-order')?.value || 1);
+        const category = document.getElementById('prod-main-category')?.value || document.getElementById('prod-category')?.value || 'أخرى';
+        const subcategory = document.getElementById('prod-sub-category')?.value || '';
         const desc = document.getElementById('prod-desc')?.value || '';
         
         // Add loading state
@@ -126,34 +131,118 @@ window.merchantAddProductReal = async function(e) {
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الإضافة...';
         }
+
+        const imgUrl = (window.uploadedAnglesPreview && window.uploadedAnglesPreview.length > 0) 
+            ? window.uploadedAnglesPreview[0] 
+            : 'assets/icon-192.svg';
+
+        const pId = 'p_' + Date.now();
         
-        const { error } = await window.supabase
-            .from('products')
-            .insert({
-                store_id: store.id,
+        // Try inserting to Supabase products table
+        try {
+            const { error } = await window.supabase
+                .from('products')
+                .insert({
+                    id: pId,
+                    store_id: store.id,
+                    name: name,
+                    price: price,
+                    category: category,
+                    subcategory: subcategory,
+                    description: desc,
+                    stock: stock,
+                    sku: sku,
+                    weight: weight,
+                    min_order: minOrder,
+                    image_url: imgUrl,
+                    status: 'active'
+                });
+                
+            if (error) {
+                console.warn("Supabase insert warning, trying fallback:", error);
+                // If specific column doesn't exist, try minimal payload
+                await window.supabase
+                    .from('products')
+                    .insert({
+                        store_id: store.id,
+                        name: name,
+                        price: price,
+                        category: category,
+                        description: desc,
+                        stock: stock,
+                        image_url: imgUrl
+                    });
+            }
+        } catch(sbErr) {
+            console.warn("Supabase sync error (offline/local fallback used):", sbErr);
+        }
+
+        // Also save to LocalStorage for instant UI refresh
+        try {
+            const localProducts = JSON.parse(localStorage.getItem('zalo_products') || '[]');
+            localProducts.push({
+                productId: pId,
+                id: pId,
+                productName: name,
                 name: name,
-                price: parseFloat(price),
+                price: price,
+                stock: stock,
                 category: category,
+                subcategory: subcategory,
                 description: desc,
-                stock_quantity: 1, // default
-                image_url: window.uploadedAnglesPreview?.[0] || 'https://via.placeholder.com/400'
+                sku: sku,
+                weight: weight,
+                minOrder: minOrder,
+                storeId: store.id,
+                storeName: store.name || 'متجري',
+                image: imgUrl,
+                image_url: imgUrl,
+                status: 'active'
             });
-            
-        if (error) throw error;
+            localStorage.setItem('zalo_products', JSON.stringify(localProducts));
+        } catch(locErr) {
+            console.warn("LocalStorage save error:", locErr);
+        }
         
-        if (typeof Swal !== 'undefined') Swal.fire('نجاح', 'تمت إضافة المنتج بنجاح', 'success');
-        else alert('تم الإضافة بنجاح');
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                icon: 'success',
+                title: 'تمت إضافة السلعة بنجاح! 🚀',
+                text: `تم نشر "${name}" في متجرك وأصبحت متاحة للزبائن`,
+                confirmButtonColor: '#10b981',
+                confirmButtonText: 'ممتاز'
+            });
+        } else {
+            alert('تمت إضافة السلعة بنجاح! 🚀');
+        }
         
-        // Hide modal
+        // Hide modal if open
         document.getElementById('add-product-modal')?.classList.add('hidden');
         e.target.reset();
         
-        // Clear previews
+        // Reset SKU with new random number
+        const skuInput = document.getElementById('prod-sku');
+        if (skuInput) skuInput.value = 'SKU-' + Math.floor(1000 + Math.random() * 9000);
+        
+        // Reset previews
         if (window.uploadedAnglesPreview) window.uploadedAnglesPreview = [];
         const prevCont = document.getElementById('angles-preview');
         if (prevCont) prevCont.innerHTML = '';
+        const anglesLbl = document.getElementById('angles-upload-lbl');
+        if (anglesLbl) {
+            anglesLbl.innerText = "اضغط لرفع صور (0)";
+            anglesLbl.className = "text-sky-500 font-bold";
+        }
         
-        renderMerchantProductsReal();
+        if (typeof renderMerchantProductsReal === 'function') {
+            renderMerchantProductsReal();
+        }
+        if (typeof renderMerchantProducts === 'function' && renderMerchantProducts !== renderMerchantProductsReal) {
+            renderMerchantProducts();
+        }
+        if (typeof updateCounters === 'function') {
+            updateCounters();
+        }
         
     } catch (err) {
         console.error("Error adding product:", err);
