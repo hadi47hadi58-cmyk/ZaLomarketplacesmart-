@@ -7,7 +7,7 @@ export async function fetchActiveStores() {
         const { data, error } = await supabase
             .from('stores')
             .select('*')
-            .eq('status', 'active')
+            .in('status', ['active', 'APPROVED', 'approved', 'ACTIVE'])
             .order('created_at', { ascending: false });
 
         if (error) throw error;
@@ -24,7 +24,7 @@ export async function suspendStore(storeId) {
     try {
         const { error } = await supabase
             .from('stores')
-            .update({ status: 'suspended' })
+            .update({ status: 'SUSPENDED' })
             .eq('id', storeId);
             
         if (error) throw error;
@@ -34,3 +34,4 @@ export async function suspendStore(storeId) {
         return false;
     }
 }
+

@@ -560,28 +560,38 @@
       
       const uid = session.user.id;
       const email = session.user.email;
-      const fullName = sessionStorage.getItem('reg_fullName') || session.user.user_metadata?.full_name || '';
-      
-      // Update profile
-      const { error: profileError } = await supabase.from('profiles').upsert({
-        id: uid,
-        name: fullName,
-        email: email,
-        phone: phone,
-        wilaya: wilaya,
-        commune: commune,
-        role: 'merchant',
-        status: 'active',
-        updated_at: new Date().toISOString()
-      });
-
-      if (profileError) console.warn("Profiles upsert warning:", profileError.message);
-
+      const fullName = sessionStorage.getItem('reg_fullName') || session.user.user_metadata?.full_name || 'تاجر جديد';
+      const phone = sessionStorage.getItem('reg_phone') || '';
+      const wilaya = sessionStorage.getItem('reg_wilaya') || 'الجزائر';
+      const commune = sessionStorage.getItem('reg_commune') || '';
+      const userType = sessionStorage.getItem('reg_userType') || 'merchant';
       const rnum = 'REG-' + Date.now().toString().slice(-6);
-      
-      // Save to merchant_requests
+
+      // 1. Update user profile in Supabase
+      try {
+        const { error: profileError } = await supabase.from('profiles').upsert({
+          id: uid,
+          name: fullName,
+          full_name: fullName,
+          email: email,
+          phone: phone,
+          wilaya: wilaya,
+          commune: commune,
+          role: 'merchant',
+          status: 'pending',
+          store_name: storeName,
+          updated_at: new Date().toISOString()
+        });
+        if (profileError) console.warn("Profiles upsert warning:", profileError.message);
+      } catch (e) {
+        console.warn("Profiles upsert exception:", e);
+      }
+
+      // 2. Insert into merchant_requests table
       const reqPayload = {
         user_id: uid,
+        email: email,
+        owner_name: fullName,
         store_name: storeName,
         category: category,
         subcategory: subcategory,
@@ -594,156 +604,70 @@
         id_back: idBack,
         rc_doc: rcFile,
         front_image: frontFile,
-        merchant_type: storeType
+        merchant_type: storeType,
+        phone: phone,
+        created_at: new Date().toISOString()
       };
-      
-      const { error: reqError } = await supabase.from('merchant_requests').insert(reqPayload);
-      if (reqError) {
-        console.warn("Requests insert warning:", reqError.message);
+
+      try {
+        const { error: reqError } = await supabase.from('merchant_requests').insert(reqPayload);
+        if (reqError) console.warn("Requests insert warning:", reqError.message);
+      } catch (e) {
+        console.warn("merchant_requests insert exception:", e);
       }
-      
-      window.showToast?.("تم رفع ملفك وطلبك للتاجر بنجاح!") || alert("تم بنجاح!");
-      
-      setTimeout(() => {
-        window.location.href = 'customer-home.html';
-      }, 1500);
 
-    } catch (error) {
-      console.error(error);
-      errorMsg.textContent = error.message || 'حدث خطأ، الرجاء المحاولة مرة أخرى';
-      errorMsg.classList.add('show');
-      submitBtn.disabled = false;
-    } finally {
-      loading.classList.remove('show');
-    }
-  };
-
-        try {
-          const fallbackShops = JSON.parse(localStorage.getItem('zalo_fallback_shops') || '[]');
-          const idx = fallbackShops.findIndex(s => s.id === uid);
-          if (idx === -1) {
-            fallbackShops.push(shopPayload);
-          } else {
-            fallbackShops[idx] = shopPayload;
-          }
-          localStorage.setItem('zalo_fallback_shops', JSON.stringify(fallbackShops));
-        } catch (e) {
-          console.warn("Failed to write to local storage for shops:", e);
-        }
-
-        // 2. Map and upsert to the real stores table (PostgreSQL)
-        try {
-          // Wait a tiny moment for trigger to complete replicating auth.users -> public.users
-          let dbUser = null;
-          for (let i = 0; i < 5; i++) {
-            const { data: u } = await supabase.from('users').select('id').eq('supabase_uid', uid).maybeSingle();
-            if (u) {
-              dbUser = u;
-              break;
-            }
-            await new Promise(r => setTimeout(r, 200));
-          }
-          
-          if (dbUser) {
-            const { error: storeError } = await supabase.from('stores').upsert({
-              merchant_id: dbUser.id,
-              name: storeName,
-              description: 'شريك شبكة ZaLo المعتمد والموثق جغرافياً لخدمة زبائن ولاية ' + wilaya,
-              phone: phone,
-              whatsapp: phone,
-              wilaya: wilaya,
-              commune: commune,
-              category: category,
-              status: 'PENDING_APPROVAL'
-            });
-            if (storeError) console.warn("Postgres stores insert warning:", storeError.message);
-          }
-        } catch (e) {
-          console.warn("Failed to synchronize Postgres stores table:", e);
-        }
-
-        // 3. Save request logs to local storage fallback for legacy frontend compatibility (merchant_requests)
-        const reqPayload = {
-          id: uid,
-          regNumber: rnum,
-          storeName: storeName,
-          ownerName: fullName,
-          email: email,
-          phone: phone,
-          whatsapp: phone,
-          wilaya: wilaya,
-          commune: commune,
-          category: category,
-          storeType: storeType,
-          rcNumber: rcnum,
-          logoURL: logoB64,
-          frontFile: frontFile,
-          rcFile: rcFile,
-          idFront: idFront,
-          idBack: idBack,
-          status: 'pending', // Set status to pending for admin review
-          createdAt: new Date().toISOString()
-        };
-
-        try {
-          const localReqs = JSON.parse(localStorage.getItem('zalo_local_merchant_requests') || '[]');
-          const idx = localReqs.findIndex(r => r.id === uid);
-          if (idx === -1) {
-            localReqs.push(reqPayload);
-          } else {
-            localReqs[idx] = reqPayload;
-          }
-          localStorage.setItem('zalo_local_merchant_requests', JSON.stringify(localReqs));
-        } catch (e) {
-          console.warn("Failed to write to local storage for merchant_requests:", e);
-        }
-
-        // 4. Insert to the real merchant_requests table (PostgreSQL)
-        try {
-          const { error: reqError } = await supabase.from('merchant_requests').insert({
-            id: uid,
-            user_id: uid,
-            email: email,
-            owner_name: fullName,
-            ownerName: fullName,
-            store_name: storeName,
-            storeName: storeName,
+      // 3. Upsert into stores table if user exists
+      try {
+        const { data: dbUser } = await supabase.from('users').select('id').eq('supabase_uid', uid).maybeSingle();
+        const merchantId = dbUser ? dbUser.id : null;
+        if (merchantId) {
+          const { error: storeError } = await supabase.from('stores').upsert({
+            merchant_id: merchantId,
+            name: storeName,
+            description: 'شريك شبكة ZaLo المعتمد لولاية ' + wilaya,
             phone: phone,
+            whatsapp: phone,
             wilaya: wilaya,
-            commercial_register: rcFile || null,
-            tax_number: rcnum || null,
-            description: 'طلب ترقية متجر جديد للتاجر: ' + fullName,
-            status: 'pending',
-            created_at: new Date().toISOString()
+            commune: commune,
+            category: category,
+            status: 'PENDING_APPROVAL'
           });
-          if (reqError) console.warn("Postgres merchant_requests insert warning:", reqError.message);
-        } catch (e) {
-          console.warn("Failed to synchronize Postgres merchant_requests table:", e);
+          if (storeError) console.warn("Stores upsert warning:", storeError.message);
         }
+      } catch (e) {
+        console.warn("Stores sync exception:", e);
       }
 
-      // Save session and store settings
+      // 4. Update localStorage for instant local reactivity
+      try {
+        const localReqs = JSON.parse(localStorage.getItem('zalo_local_merchant_requests') || '[]');
+        const idx = localReqs.findIndex(r => r.id === uid || r.store_name === storeName);
+        if (idx === -1) {
+          localReqs.unshift({ id: uid, ...reqPayload });
+        } else {
+          localReqs[idx] = { id: uid, ...reqPayload };
+        }
+        localStorage.setItem('zalo_local_merchant_requests', JSON.stringify(localReqs));
+      } catch (e) {}
+
       localStorage.setItem('user_uid', uid);
       localStorage.setItem('user_email', email);
-      
-      if (userType === 'merchant') {
-        localStorage.setItem('zalo_merchant_status', 'pending');
-        localStorage.setItem('user_role', 'customer');
-        localStorage.setItem('zalo_user_role', 'customer');
-      } else {
-        localStorage.setItem('user_role', userType);
-        localStorage.setItem('zalo_user_role', userType);
-      }
+      localStorage.setItem('zalo_merchant_status', 'pending');
+      localStorage.setItem('user_role', 'customer');
+      localStorage.setItem('zalo_user_role', 'customer');
 
       if (storeName) {
         localStorage.setItem('zalo_active_store', storeName);
         sessionStorage.setItem('merchant_store_name', storeName);
         
         const newStoreSettings = {
+          id: uid,
           storeName: storeName,
+          ownerName: fullName,
           phone: phone,
           wilaya: wilaya,
           commune: commune,
+          category: category,
           logoImg: logoB64 || "assets/icon-192.svg",
           coverImg: frontFile || "assets/icon-192.svg",
           workingHours: "08:00 - 22:00",
@@ -753,23 +677,25 @@
       }
       sessionStorage.setItem('user_logged_in', 'true');
 
-      // Clear registration data
+      // Clear temporary registration data
       sessionStorage.removeItem('reg_userType');
       sessionStorage.removeItem('reg_fullName');
       sessionStorage.removeItem('reg_phone');
       sessionStorage.removeItem('reg_wilaya');
       sessionStorage.removeItem('reg_commune');
 
-      // Redirect - merchants go to customer-home to wait for admin approval
-      const redirectUrl = userType === 'merchant' ? 'customer-home.html?merchant_pending=true' : 'customer-home.html';
-      window.location.href = redirectUrl;
+      window.showToast?.("تم إرسال طلب تسجيل متجرك بنجاح!") || alert("تم إرسال طلب تسجيل متجرك بنجاح!");
+
+      setTimeout(() => {
+        window.location.href = 'customer-home.html?merchant_pending=true';
+      }, 1000);
 
     } catch (err) {
       console.error(err);
-      errorMsg.textContent = 'حدث خطأ أثناء إنشاء الحساب: ' + (err.message || err);
+      errorMsg.textContent = 'حدث خطأ أثناء إتمام الطلب: ' + (err.message || err);
       errorMsg.classList.add('show');
-    } finally {
       submitBtn.disabled = false;
+    } finally {
       loading.classList.remove('show');
     }
   };
