@@ -97,7 +97,7 @@
   border-color: var(--g1);
 }
 
-/* Store Profile Styles */
+/* Store Profile Styles - Facebook Page Style */
 .store-profile-header {
   position: relative;
   width: 100%;
@@ -105,28 +105,149 @@
 }
 .store-cover {
   width: 100%;
-  height: 160px;
-  background: linear-gradient(135deg, var(--g1), var(--g3));
+  height: 220px;
+  background: linear-gradient(135deg, #0f172a, #1e293b);
   position: relative;
+  overflow: hidden;
 }
-.store-cover img { width: 100%; height: 100%; object-fit: cover; }
+.store-cover img { width: 100%; height: 100%; object-fit: cover; opacity: 0.9; }
 .store-avatar-container {
   position: absolute;
-  bottom: -40px;
+  bottom: -45px;
   right: 20px;
-  width: 100px;
-  height: 100px;
+  width: 110px;
+  height: 110px;
   border-radius: 50%;
   background: var(--white);
   padding: 4px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+  border: 3px solid #ffffff;
+  z-index: 10;
 }
 .store-avatar-container img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
 .store-info-section {
-  padding: 50px 20px 20px 20px;
+  padding: 55px 20px 20px 20px;
+  background: #ffffff;
+  border-bottom: 1px solid var(--bd);
 }
-.store-title-new { font-size: 20px; font-weight: 800; color: var(--navy); margin-bottom: 4px; }
-.store-meta-new { font-size: 13px; color: var(--gray); display: flex; align-items: center; gap: 8px; }
+.store-title-new { font-size: 22px; font-weight: 900; color: var(--navy); margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+.store-meta-new { font-size: 13px; color: var(--gray); display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+
+/* Interactive Star Rating / Facebook Like Button */
+.pd-star-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: #fbbf24;
+  border: 1.5px solid rgba(251, 191, 36, 0.4);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.25);
+  transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  z-index: 5;
+}
+.pd-star-badge:hover {
+  transform: scale(1.05);
+  background: rgba(15, 23, 42, 0.9);
+}
+.pd-star-badge:active {
+  transform: scale(0.92);
+}
+.pd-star-badge.rated {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: #ffffff;
+  border-color: #fef3c7;
+  box-shadow: 0 4px 18px rgba(245, 158, 11, 0.45);
+}
+.star-burst-anim {
+  animation: starPulse 0.4s ease-out;
+}
+@keyframes starPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.35) rotate(15deg); }
+  100% { transform: scale(1); }
+}
+
+/* Facebook Stories & Live Posts Carousel */
+.stories-section-wrap {
+  padding: 12px 16px 8px;
+  background: #ffffff;
+  border-bottom: 1px solid #f1f5f9;
+}
+.stories-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.stories-scroll {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.stories-scroll::-webkit-scrollbar { display: none; }
+.story-card-item {
+  flex: 0 0 84px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  text-align: center;
+}
+.story-avatar-wrap {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  padding: 2.5px;
+  background: linear-gradient(135deg, #0284c7, #38bdf8, #d4af37);
+  box-shadow: 0 3px 10px rgba(2, 132, 199, 0.25);
+  position: relative;
+  transition: transform 0.2s;
+}
+.story-card-item:hover .story-avatar-wrap {
+  transform: scale(1.06);
+}
+.story-avatar-wrap img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #ffffff;
+}
+.story-avatar-wrap .live-badge-dot {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background: #ef4444;
+  color: white;
+  font-size: 8px;
+  font-weight: 900;
+  padding: 1px 5px;
+  border-radius: 8px;
+  border: 1.5px solid white;
+}
+.story-label {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--navy);
+  margin-top: 5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 80px;
+}
 
 .section-header-new {
   padding: 16px 20px;
@@ -1637,6 +1758,24 @@ body {
       </div>
     </div>
 
+    <!-- Facebook Stories & Live Marketplace Feed (قصص ومنشورات السوق اللحظية لكافة الولايات) -->
+    <div class="stories-section-wrap" style="background:#ffffff; padding:12px 16px 10px; border-bottom:1px solid #e2e8f0; box-shadow:0 2px 6px rgba(0,0,0,0.02);">
+      <div class="stories-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <div style="font-size:12px; font-weight:900; color:var(--navy); display:flex; align-items:center; gap:6px;">
+          <i class="fa-solid fa-bolt" style="color:#eab308; font-size:14px;"></i>
+          <span>عروض وقصص السوق اللحظية</span>
+          <span style="font-size:9.5px; background:#fee2e2; color:#ef4444; padding:1px 6px; border-radius:10px; font-weight:800; animation:pulse 2s infinite;">مباشر 🔴</span>
+        </div>
+        <button onclick="openCreateStoryModal()" style="background:#f0f9ff; color:#0284c7; border:1px solid #bae6fd; padding:3px 10px; border-radius:14px; font-size:10.5px; font-weight:800; cursor:pointer; display:flex; align-items:center; gap:4px;">
+          <i class="fa-solid fa-plus-circle"></i> أنشر صورة لحظية
+        </button>
+      </div>
+      
+      <div class="stories-scroll" id="home-stories-container">
+        <!-- Rendered dynamically with add button + merchant live stories -->
+      </div>
+    </div>
+
     <!-- Hero Banner Section with dynamic backgrounds (Sky-Blue Vivid Theme & Local Banner Assets) -->
     <div style="padding: 16px 16px 0 16px;">
       <div id="wilaya-hero-section" style="position: relative; height: 160px; width: 100%; overflow: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; border-radius: 20px; box-shadow: 0 8px 24px rgba(14, 165, 233, 0.25); border: 2px solid #38bdf8; background: #0284c7;">
@@ -1744,34 +1883,77 @@ body {
     </div>
   </div>
 
-  <!-- SCREEN: STORE PROFILE (واجهة المتجر - فيسبوك ستايل) -->
-  <div class="screen" id="screen-store-profile">
-    <div class="store-profile-header">
-      <div class="back-btn-new" style="position: absolute; top: 15px; left: 15px; z-index: 10; background: rgba(0,0,0,0.3); border-radius: 50%; color: white;" onclick="showScreen('screen-stores-list')">
-        <i class="fa-solid fa-arrow-left"></i>
+  <!-- SCREEN: STORE PROFILE (واجهة المتجر - فيسبوك بيج ستايل ممتدة) -->
+  <div class="screen" id="screen-store-profile" style="background:#f8fafc;">
+    <div class="store-profile-header" style="position:relative; width:100%; background:#ffffff; box-shadow:0 4px 15px rgba(0,0,0,0.04);">
+      
+      <!-- Back button & Share -->
+      <div style="position:absolute; top:15px; left:15px; right:15px; z-index:20; display:flex; justify-content:space-between; align-items:center;">
+        <div class="back-btn-new" style="background:rgba(0,0,0,0.5); border-radius:50%; color:white; width:36px; height:36px; display:flex; align-items:center; justify-content:center; cursor:pointer;" onclick="showScreen('screen-stores-list')">
+          <i class="fa-solid fa-arrow-right"></i>
+        </div>
+        <div style="background:rgba(0,0,0,0.5); border-radius:50%; color:white; width:36px; height:36px; display:flex; align-items:center; justify-content:center; cursor:pointer;" onclick="window.shareStoreLink()">
+          <i class="fa-solid fa-share-nodes"></i>
+        </div>
       </div>
-      <div class="store-cover">
-        <img id="store-cover-img" src="images/wilaya-thumb.jpg" alt="Cover">
+
+      <!-- Large Facebook Cover Photo -->
+      <div class="store-cover" style="height:220px; width:100%; position:relative; overflow:hidden; background:linear-gradient(135deg, #0f172a, #334155);">
+        <img id="store-cover-img" src="images/wilaya-thumb.jpg" alt="Cover" style="width:100%; height:100%; object-fit:cover; opacity:0.9;">
+        <div style="position:absolute; inset:0; background:linear-gradient(to bottom, transparent 40%, rgba(0,0,0,0.7) 100%);"></div>
       </div>
-      <div class="store-avatar-container">
-        <img id="store-logo-img" src="images/wilaya-thumb.jpg" alt="Logo">
+
+      <!-- Store Avatar (Facebook Page Style) -->
+      <div class="store-avatar-container" style="position:absolute; bottom:-45px; right:20px; width:105px; height:105px; border-radius:50%; background:#fff; padding:4px; box-shadow:0 6px 20px rgba(0,0,0,0.18); border:3px solid #fff; z-index:10;">
+        <img id="store-logo-img" src="images/wilaya-thumb.jpg" alt="Logo" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">
       </div>
     </div>
-    <div class="store-info-section">
-      <h1 class="store-title-new" id="store-profile-name">اسم المتجر</h1>
-      <div class="store-meta-new">
-        <span id="store-profile-category"><i class="fa-solid fa-tag"></i> تخصص</span>
-        <span id="store-profile-location"><i class="fa-solid fa-location-dot"></i> الموقع</span>
+
+    <!-- Store Info & Facebook-Style Action Buttons -->
+    <div class="store-info-section" style="padding:55px 20px 16px; background:#ffffff; border-bottom:1px solid #e2e8f0;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+        <div>
+          <h1 class="store-title-new" id="store-profile-name" style="font-size:22px; font-weight:900; color:var(--navy); margin-bottom:4px; display:flex; align-items:center; gap:8px;">
+            اسم المتجر <span style="color:#0284c7; font-size:16px;" title="متجر رسمي موثق"><i class="fa-solid fa-circle-check"></i></span>
+          </h1>
+          <div class="store-meta-new" style="font-size:12.5px; color:#64748b; display:flex; flex-wrap:wrap; align-items:center; gap:12px; margin-top:6px;">
+            <span id="store-profile-category" style="background:#e0f2fe; color:#0369a1; padding:2px 10px; border-radius:12px; font-weight:800;"><i class="fa-solid fa-tag"></i> تخصص</span>
+            <span id="store-profile-location" style="background:#f1f5f9; color:#334155; padding:2px 10px; border-radius:12px; font-weight:700;"><i class="fa-solid fa-location-dot"></i> الجزائر</span>
+            <span style="color:#f59e0b; font-weight:800;"><i class="fa-solid fa-star"></i> 4.9 (تقييمات ممتازة)</span>
+          </div>
+        </div>
       </div>
-      <div style="margin-top: 15px; display: flex; gap: 10px;">
-        <button class="btn-p" style="flex: 1; font-size: 12px; height: 38px;"><i class="fa-solid fa-message"></i> مراسلة</button>
-        <button class="btn-s" style="flex: 1; font-size: 12px; height: 38px;"><i class="fa-solid fa-phone"></i> اتصال</button>
+
+      <!-- Facebook Page Style Primary Action Row -->
+      <div style="margin-top:16px; display:grid; grid-template-columns: 1.2fr 1fr 1fr; gap:8px;">
+        <button id="store-follow-btn" onclick="toggleStoreFollow()" class="btn-p" style="background:linear-gradient(135deg, #0284c7, #0369a1); font-size:12px; font-weight:800; height:40px; border-radius:12px; display:flex; align-items:center; justify-content:center; gap:6px;">
+          <i class="fa-solid fa-thumbs-up"></i> <span id="store-follow-txt">متابعة المتجر</span>
+        </button>
+        <button id="store-whatsapp-btn" onclick="window.contactStoreWhatsApp()" class="btn-p" style="background:linear-gradient(135deg, #16a34a, #15803d); font-size:12px; font-weight:800; height:40px; border-radius:12px; display:flex; align-items:center; justify-content:center; gap:6px;">
+          <i class="fa-brands fa-whatsapp"></i> واتساب
+        </button>
+        <button id="store-call-btn" onclick="window.contactStoreCall()" class="btn-s" style="font-size:12px; font-weight:800; height:40px; border-radius:12px; display:flex; align-items:center; justify-content:center; gap:6px;">
+          <i class="fa-solid fa-phone"></i> اتصال
+        </button>
+      </div>
+
+      <!-- Store Badges & Fast Delivery Note -->
+      <div style="margin-top:14px; padding:10px 12px; background:#f8fafc; border:1px solid #f1f5f9; border-radius:12px; display:flex; justify-content:space-around; text-align:center; font-size:11px;">
+        <div><strong style="color:#0284c7; display:block; font-size:13px;">🚚 توصيل</strong> 69 ولاية</div>
+        <div style="border-right:1px solid #e2e8f0; padding-right:12px;"><strong style="color:#16a34a; display:block; font-size:13px;">⚡ الرد</strong> فوري</div>
+        <div style="border-right:1px solid #e2e8f0; padding-right:12px;"><strong style="color:#d97706; display:block; font-size:13px;">🛡️ ضمان</strong> المعاينة قبل الدفع</div>
       </div>
     </div>
-    <div class="screen-title" style="margin-top: 0; background: #fff;">
-      <i class="fa-solid fa-box-open"></i> منتجات المتجر
+
+    <!-- Products Showcase Header -->
+    <div class="screen-title" style="margin-top:0; background:#fff; padding:14px 18px; border-bottom:1px solid #e2e8f0; display:flex; justify-content:space-between; align-items:center;">
+      <span style="font-size:14px; font-weight:900; color:var(--navy); display:flex; align-items:center; gap:8px;">
+        <i class="fa-solid fa-box-open" style="color:var(--metallic-gold);"></i> معروضات وسلع المتجر
+      </span>
+      <span id="store-products-count" style="font-size:11px; background:#f1f5f9; color:var(--navy); padding:2px 8px; border-radius:10px; font-weight:700;"></span>
     </div>
-    <div class="products-grid-mockup" id="store-products-grid" style="padding: 16px;">
+
+    <div class="products-grid-mockup" id="store-products-grid" style="padding:16px;">
       <!-- Products will be filtered here -->
     </div>
   </div>
@@ -2027,114 +2209,255 @@ body {
   </div>
 
 
-  <!-- MODAL: PRODUCT DETAILS -->
+  <!-- MODAL: PRODUCT DETAILS (Facebook Style Showcase) -->
   <div class="modal-overlay" id="productModal" onclick="if(event.target===this) this.style.display='none'">
-    <div class="modal-content" id="prod-detail-wrapper" style="max-width:440px; padding:0; border-radius:20px; overflow:hidden;">
+    <div class="modal-content" id="prod-detail-wrapper" style="max-width:480px; width:95%; padding:0; border-radius:24px; overflow:hidden; box-shadow:0 20px 50px rgba(0,0,0,0.3); background:#ffffff;">
       
       <!-- Store Cover Banner (Facebook Page style) -->
-      <div id="pd-store-cover-wrap" style="position:relative; width:100%; height:110px; background:#0f172a; overflow:hidden;">
-        <img id="pd-store-cover-img" src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=500" style="width:100%; height:100%; object-fit:cover; opacity:0.85;" alt="غلاف المحل">
-        <button class="modal-close" onclick="document.getElementById('productModal').style.display='none'" style="position:absolute; top:10px; right:10px; background:rgba(0,0,0,0.6); color:white; border-radius:50%; width:30px; height:30px; display:flex; align-items:center; justify-content:center; border:none; cursor:pointer;">✕</button>
+      <div id="pd-store-cover-wrap" style="position:relative; width:100%; height:170px; background:linear-gradient(135deg, #0f172a, #1e293b); overflow:hidden;">
+        <img id="pd-store-cover-img" src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=800" style="width:100%; height:100%; object-fit:cover; opacity:0.9;" alt="غلاف المحل">
+        <div style="position:absolute; inset:0; background:linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.65) 100%);"></div>
+        
+        <!-- Top Controls on Banner -->
+        <div style="position:absolute; top:12px; left:12px; right:12px; display:flex; justify-content:space-between; align-items:center; z-index:5;">
+          <button onclick="visitStoreProfileFromModal()" style="background:rgba(255,255,255,0.9); color:var(--navy); border:none; padding:6px 14px; border-radius:20px; font-size:11px; font-weight:800; display:flex; align-items:center; gap:6px; cursor:pointer; box-shadow:0 3px 10px rgba(0,0,0,0.2);">
+            <i class="fa-solid fa-store" style="color:#0284c7;"></i> زيارة صفحة المتجر
+          </button>
+          <button class="modal-close" onclick="document.getElementById('productModal').style.display='none'" style="background:rgba(0,0,0,0.6); color:white; border-radius:50%; width:32px; height:32px; display:flex; align-items:center; justify-content:center; border:none; cursor:pointer; font-size:14px;">✕</button>
+        </div>
         <span id="pd-modal-title" style="display:none;">تفاصيل السلعة المعروضة</span>
       </div>
 
       <!-- Store Header Card (Facebook style avatar + Store Name + Verified badge) -->
-      <div style="position:relative; padding:0 16px 12px; margin-top:-32px; display:flex; align-items:flex-end; gap:12px; border-bottom:1px solid var(--bd); background:#fff;">
-        <div style="width:64px; height:64px; border-radius:50%; border:3px solid #fff; background:#f8fafc; overflow:hidden; box-shadow:0 3px 10px rgba(0,0,0,0.15); flex-shrink:0;">
+      <div style="position:relative; padding:0 18px 14px; margin-top:-40px; display:flex; align-items:flex-end; gap:14px; border-bottom:1px solid #f1f5f9; background:#fff; z-index:3;">
+        <div style="width:78px; height:78px; border-radius:50%; border:3.5px solid #ffffff; background:#f8fafc; overflow:hidden; box-shadow:0 6px 18px rgba(0,0,0,0.18); flex-shrink:0;">
           <img id="pd-store-logo-img" src="assets/icon-192.svg" style="width:100%; height:100%; object-fit:cover;" alt="شعار المحل" onerror="this.src='assets/icon-192.svg'">
         </div>
         <div style="flex:1; padding-bottom:2px;">
           <div style="display:flex; align-items:center; gap:6px;">
-            <h4 id="pd-store-name" style="font-size:14px; font-weight:800; color:var(--navy); margin:0;">اسم المتجر الرئيسي</h4>
-            <span style="color:#0284c7; font-size:12px;" title="متجر رسمي معتمد"><i class="fa-solid fa-circle-check"></i></span>
+            <h4 id="pd-store-name" style="font-size:16px; font-weight:900; color:var(--navy); margin:0;">اسم المتجر الرئيسي</h4>
+            <span style="color:#0284c7; font-size:14px;" title="متجر رسمي معتمد"><i class="fa-solid fa-circle-check"></i></span>
           </div>
-          <div style="display:flex; flex-wrap:wrap; gap:6px; margin-top:3px; font-size:10px; color:var(--gray);">
-            <span id="pd-wilaya-tag" style="background:#f1f5f9; padding:2px 8px; border-radius:6px; font-weight:700; color:#0369a1;"><i class="fa-solid fa-location-dot"></i> ولاية: الجزائر</span>
+          <div style="display:flex; flex-wrap:wrap; gap:6px; margin-top:5px; font-size:10.5px;">
+            <span id="pd-wilaya-tag" style="background:#e0f2fe; padding:2px 8px; border-radius:6px; font-weight:800; color:#0369a1;"><i class="fa-solid fa-location-dot"></i> ولاية: الجزائر</span>
             <span id="pd-category-tag" style="background:#f1f5f9; padding:2px 8px; border-radius:6px; font-weight:700; color:#475569;"><i class="fa-solid fa-tags"></i> الصنف: عام</span>
             <span id="pd-subcategory-tag" style="background:#fef3c7; padding:2px 8px; border-radius:6px; font-weight:700; color:#b45309;"><i class="fa-solid fa-code-branch"></i> الفرع: التخصص الفرعي</span>
           </div>
         </div>
       </div>
 
-      <div class="modal-body" style="padding:16px; display:flex; flex-direction:column; gap:12px;">
+      <div class="modal-body" style="padding:18px; display:flex; flex-direction:column; gap:14px; max-height:75vh; overflow-y:auto;">
         
-        <!-- Product Image & Title -->
-        <div id="pd-img-wrap" style="width:100%; height:190px; background:#f8fafc; border-radius:14px; display:flex; align-items:center; justify-content:center; border:1px solid var(--bd); overflow:hidden;">
-          <!-- Loaded dynamically -->
+        <!-- Large Product Image Showcase with Star Rating Badge Overlay (Facebook style like/star) -->
+        <div style="position:relative; width:100%; height:260px; background:#f8fafc; border-radius:18px; display:flex; align-items:center; justify-content:center; border:1px solid #e2e8f0; overflow:hidden; box-shadow:inset 0 2px 6px rgba(0,0,0,0.02);">
+          
+          <div id="pd-img-wrap" style="width:100%; height:100%; display:flex; align-items:center; justify-content:center;">
+            <!-- Loaded dynamically -->
+          </div>
+
+          <!-- Interactive Star Rating / Facebook Like Button -->
+          <button id="pd-star-like-btn" onclick="toggleProductRatingStar()" class="pd-star-badge" role="button" aria-label="تقييم وإعجاب بالمنتج">
+            <i class="fa-solid fa-star" id="pd-star-icon"></i>
+            <span id="pd-star-count">⭐ 4.9 (18)</span>
+          </button>
         </div>
 
-        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px;">
-          <h3 id="pd-name" style="font-size:15px; font-weight:800; color:var(--navy); margin:0; line-height:1.4;">اسم المنتج المعروض</h3>
-          <span style="font-size:16px; font-weight:900; color:var(--metallic-gold); white-space:nowrap;" id="pd-price">0 دج</span>
+        <!-- Product Name, Price & Rating Summary -->
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px;">
+          <div>
+            <h3 id="pd-name" style="font-size:17px; font-weight:900; color:var(--navy); margin:0; line-height:1.4;">اسم المنتج المعروض</h3>
+            <div style="display:flex; align-items:center; gap:6px; margin-top:4px; font-size:11px; color:#f59e0b; font-weight:800;">
+              <span>★★★★★</span>
+              <span id="pd-rating-text" style="color:var(--gray); font-size:10.5px;">(تقييمات ممتازة من الزبائن)</span>
+            </div>
+          </div>
+          <span style="font-size:18px; font-weight:900; color:var(--metallic-gold); white-space:nowrap; background:#fffbeb; padding:4px 12px; border-radius:10px; border:1px solid #fef3c7;" id="pd-price">0 دج</span>
         </div>
 
-        <div id="pd-description" style="font-size:11.5px; color:var(--gray); line-height:1.6; background:#f8fafc; padding:10px 12px; border-radius:10px; border:1px solid #f1f5f9;">
-          منتج أصلي متوفر بالشحن الفوري السريع لجميع الولايات مع الضمان المعاينة قبل الدفع.
+        <!-- Description Box -->
+        <div id="pd-description" style="font-size:12px; color:#475569; line-height:1.65; background:#f8fafc; padding:12px 14px; border-radius:12px; border:1px solid #f1f5f9;">
+          منتج أصلي متوفر بالشحن الفوري السريع لجميع الولايات مع الضمان والمعاينة قبل الدفع.
         </div>
         
         <div id="pd-store" style="display:none;"></div>
 
-        <!-- Quantity Selector -->
-        <div style="display:flex; justify-content:space-between; align-items:center; background:#fff; border:1px solid var(--bd); padding:8px 12px; border-radius:12px;">
-          <span style="font-weight:700; font-size:12px; color:var(--navy);">الكمية المطلوبة:</span>
+        <!-- Quantity Selector with Clean Controls -->
+        <div style="display:flex; justify-content:space-between; align-items:center; background:#ffffff; border:1.5px solid #e2e8f0; padding:10px 14px; border-radius:14px; box-shadow:0 2px 6px rgba(0,0,0,0.02);">
+          <span style="font-weight:800; font-size:13px; color:var(--navy); display:flex; align-items:center; gap:6px;">
+            <i class="fa-solid fa-calculator" style="color:#0284c7;"></i> الكمية المطلوبة:
+          </span>
           <div style="display:flex; align-items:center; gap:12px;">
-            <button onclick="chQty(-1)" style="width:32px; height:32px; border-radius:8px; border:1px solid var(--bd); background:#f1f5f9; cursor:pointer; font-weight:bold; font-size:15px;">-</button>
-            <span id="qty-v" style="font-weight:900; font-size:15px; min-width:20px; text-align:center;">1</span>
-            <button onclick="chQty(1)" style="width:32px; height:32px; border-radius:8px; border:1px solid var(--bd); background:#f1f5f9; cursor:pointer; font-weight:bold; font-size:15px;">+</button>
+            <button onclick="chQty(-1)" style="width:36px; height:36px; border-radius:10px; border:1.5px solid #cbd5e1; background:#f8fafc; cursor:pointer; font-weight:bold; font-size:16px; display:flex; align-items:center; justify-content:center; color:var(--navy); transition:all 0.15s;">-</button>
+            <span id="qty-v" style="font-weight:900; font-size:16px; min-width:24px; text-align:center; color:var(--navy);">1</span>
+            <button onclick="chQty(1)" style="width:36px; height:36px; border-radius:10px; border:1.5px solid #cbd5e1; background:#f8fafc; cursor:pointer; font-weight:bold; font-size:16px; display:flex; align-items:center; justify-content:center; color:var(--navy); transition:all 0.15s;">+</button>
           </div>
         </div>
 
-        <div style="display:none; padding:10px; border-radius:8px; background:rgba(239, 68, 68, 0.08); border:1px solid rgba(239, 68, 68, 0.2); font-size:11px; text-align:center; color:var(--red);" id="pd-store-closed-banner">
+        <div style="display:none; padding:12px; border-radius:10px; background:rgba(239, 68, 68, 0.08); border:1px solid rgba(239, 68, 68, 0.2); font-size:11.5px; text-align:center; color:var(--red);" id="pd-store-closed-banner">
           ⚠️ عذراً، هذا المتجر مغلق مؤقتاً لتجهيز الطلبيات السابقة ولا يستقبل طلبات جديدة حالياً.
         </div>
 
-        <!-- Direct Action Buttons -->
-        <div style="display:flex; flex-direction:column; gap:8px; margin-top:4px;">
-          <!-- Quick Direct Order Form Toggle Button -->
-          <button id="pd-direct-whatsapp-btn" onclick="toggleQuickOrderForm()" style="width:100%; height:44px; background:linear-gradient(135deg, #16a34a, #15803d); color:white; border:none; border-radius:12px; font-weight:800; font-size:13px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 4px 12px rgba(22,163,74,0.3);">
-            <i class="fa-solid fa-bolt" style="font-size:16px;"></i> ⚡ طلب مباشر وسريع (إدخال بيانات الشراء الفوري)
+        <!-- Harmonized Action Buttons Section -->
+        <div style="display:flex; flex-direction:column; gap:10px; margin-top:2px;">
+          <!-- Primary Direct Order Button (Full Width, Glowing Emerald) -->
+          <button id="pd-direct-whatsapp-btn" onclick="toggleQuickOrderForm()" style="width:100%; height:48px; background:linear-gradient(135deg, #16a34a, #15803d); color:white; border:none; border-radius:14px; font-weight:900; font-size:13.5px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 4px 16px rgba(22,163,74,0.35); transition:all 0.2s;">
+            <i class="fa-solid fa-bolt" style="font-size:17px; color:#fef08a;"></i> ⚡ طلب مباشر وسريع (إدخال بيانات الشراء الفوري)
           </button>
 
           <!-- Quick Direct Order Inline Form Container -->
-          <div id="pd-quick-order-form" style="display:none; background:#f8fafc; border:1.5px solid #16a34a; border-radius:14px; padding:12px; flex-direction:column; gap:10px; box-shadow:0 4px 12px rgba(0,0,0,0.05);">
-            <div style="font-size:12px; font-weight:800; color:var(--navy); display:flex; justify-content:space-between; align-items:center;">
-              <span><i class="fa-solid fa-file-signature" style="color:#16a34a;"></i> إدخال معلومات الطلب السريع</span>
-              <button onclick="toggleQuickOrderForm(false)" style="background:none; border:none; color:var(--gray); cursor:pointer; font-weight:bold;">✕</button>
+          <div id="pd-quick-order-form" style="display:none; background:#f8fafc; border:2px solid #16a34a; border-radius:16px; padding:14px; flex-direction:column; gap:10px; box-shadow:0 6px 18px rgba(0,0,0,0.06);">
+            <div style="font-size:13px; font-weight:900; color:var(--navy); display:flex; justify-content:space-between; align-items:center;">
+              <span style="display:flex; align-items:center; gap:6px;"><i class="fa-solid fa-file-signature" style="color:#16a34a;"></i> إدخال معلومات الطلب السريع</span>
+              <button onclick="toggleQuickOrderForm(false)" style="background:none; border:none; color:var(--gray); cursor:pointer; font-weight:bold; font-size:16px;">✕</button>
             </div>
-            <input type="text" id="qo-fullname" placeholder="الاسم واللقب الكامل *" style="width:100%; height:38px; border:1px solid var(--bd); border-radius:8px; padding:0 10px; font-size:12px; font-weight:700;">
-            <input type="tel" id="qo-phone" placeholder="رقم الهاتف للتأكيد (مثال: 0658000000) *" style="width:100%; height:38px; border:1px solid var(--bd); border-radius:8px; padding:0 10px; font-size:12px; font-weight:700;">
+            <input type="text" id="qo-fullname" placeholder="الاسم واللقب الكامل *" style="width:100%; height:40px; border:1.5px solid #cbd5e1; border-radius:10px; padding:0 12px; font-size:12px; font-weight:700; outline:none; background:#fff;">
+            <input type="tel" id="qo-phone" placeholder="رقم الهاتف للتأكيد (مثال: 0658000000) *" style="width:100%; height:40px; border:1.5px solid #cbd5e1; border-radius:10px; padding:0 12px; font-size:12px; font-weight:700; outline:none; background:#fff;">
             <div style="display:flex; gap:8px;">
-              <select id="qo-wilaya" style="flex:1; height:38px; border:1px solid var(--bd); border-radius:8px; padding:0 8px; font-size:11.5px; font-weight:700; background:#fff;">
+              <select id="qo-wilaya" style="flex:1; height:40px; border:1.5px solid #cbd5e1; border-radius:10px; padding:0 10px; font-size:11.5px; font-weight:700; background:#fff; outline:none;">
                 <!-- Populated dynamically with ALGERIAN_WILAYAS -->
               </select>
-              <input type="text" id="qo-address" placeholder="البلدية / العنوان *" style="flex:1; height:38px; border:1px solid var(--bd); border-radius:8px; padding:0 10px; font-size:12px; font-weight:700;">
+              <input type="text" id="qo-address" placeholder="البلدية / العنوان *" style="flex:1; height:40px; border:1.5px solid #cbd5e1; border-radius:10px; padding:0 12px; font-size:12px; font-weight:700; outline:none; background:#fff;">
             </div>
-            <button onclick="submitQuickDirectOrder()" style="width:100%; height:42px; background:linear-gradient(135deg, #16a34a, #15803d); color:white; border:none; border-radius:10px; font-weight:800; font-size:13px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 3px 10px rgba(22,163,74,0.3);">
+            <button onclick="submitQuickDirectOrder()" style="width:100%; height:44px; background:linear-gradient(135deg, #16a34a, #15803d); color:white; border:none; border-radius:12px; font-weight:900; font-size:13.5px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 4px 12px rgba(22,163,74,0.3);">
               <i class="fa-solid fa-check-circle"></i> تأكيد الطلب واستلام الوصل 📄
             </button>
           </div>
 
-          <div style="display:flex; gap:8px;" id="pd-order-actions-wrap">
-            <button onclick="addToCartFromModal()" class="btn-p" style="background:var(--navy); flex:1; height:42px; font-size:12.5px;">
+          <!-- Secondary Row: Add to Cart + Favorite + Star Rating Button (Harmonized Trio) -->
+          <div style="display:flex; gap:8px; width:100%;" id="pd-order-actions-wrap">
+            <button onclick="addToCartFromModal()" class="btn-p" style="background:var(--navy); flex:1.4; height:44px; font-size:12.5px; font-weight:800; border-radius:12px; display:flex; align-items:center; justify-content:center; gap:6px; box-shadow:0 3px 10px rgba(16,42,67,0.2);">
               <i class="fa-solid fa-cart-plus"></i> إضافة لسلة المشتريات
             </button>
-            <button onclick="toggleFavFromModal()" class="btn-s" style="flex:0.35; height:42px; border-radius:12px;">
-              <i class="fa-solid fa-heart" id="modal-fav-heart" style="color:var(--gray);"></i>
+            <button onclick="toggleFavFromModal()" class="btn-s" style="flex:0.8; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center; gap:6px; font-size:12px; font-weight:800;" title="حفظ في المفضلة">
+              <i class="fa-solid fa-heart" id="modal-fav-heart" style="color:var(--gray); font-size:14px;"></i> المفضلة
+            </button>
+            <button onclick="toggleProductRatingStar()" class="btn-s" style="flex:0.8; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center; gap:6px; font-size:12px; font-weight:800; color:#b45309;" title="تقييم وإعجاب بالمنتج">
+              <i class="fa-solid fa-star" style="color:#f59e0b; font-size:14px;"></i> تقييم
             </button>
           </div>
         </div>
 
-        <!-- Store Contact & Social Media Links Bar -->
-        <div style="border-top:1px dashed var(--bd); padding-top:10px; margin-top:4px;">
-          <div style="font-size:11px; font-weight:800; color:var(--navy); margin-bottom:8px; display:flex; align-items:center; gap:5px;">
+        <!-- Store Contact & Social Media Links Bar (Facebook Style Pill Buttons) -->
+        <div style="border-top:1px dashed #e2e8f0; padding-top:12px; margin-top:2px;">
+          <div style="font-size:11.5px; font-weight:800; color:var(--navy); margin-bottom:10px; display:flex; align-items:center; gap:6px;">
             <i class="fa-solid fa-share-nodes" style="color:var(--brand-gold);"></i> روابط الاتصال ومواقع التواصل الخاصة بالمتجر:
           </div>
           <div style="display:flex; flex-wrap:wrap; gap:8px;" id="pd-social-links-bar">
-            <!-- Rendered dynamically -->
+            <!-- Rendered dynamically with equal flex -->
           </div>
         </div>
 
       </div>
+    </div>
+  </div>
+
+  <!-- MODAL: CREATE INSTANT STORY / LIVE POST (Facebook Stories Style) -->
+  <div class="modal-overlay" id="createStoryModal" onclick="if(event.target===this) this.style.display='none'">
+    <div class="modal-content" style="max-width:440px; width:95%; border-radius:22px; overflow:hidden; background:#ffffff; box-shadow:0 20px 40px rgba(0,0,0,0.25);">
+      <div class="modal-header" style="background:linear-gradient(135deg, #0284c7, #0369a1); color:white; padding:16px 18px; display:flex; justify-content:space-between; align-items:center;">
+        <span style="font-size:14px; font-weight:900; display:flex; align-items:center; gap:8px;">
+          <i class="fa-solid fa-camera" style="color:#fef08a;"></i> نشر صورة أو عرض لحظي في المنصة
+        </span>
+        <button class="modal-close" style="color:white; opacity:0.85;" onclick="document.getElementById('createStoryModal').style.display='none'">✕</button>
+      </div>
+
+      <div class="modal-body" style="padding:18px; display:flex; flex-direction:column; gap:12px; text-align:right;">
+        <div style="background:#f0f9ff; border:1px solid #bae6fd; border-radius:12px; padding:10px 12px; font-size:11px; color:#0369a1; line-height:1.5; font-weight:700;">
+          💡 يظهر هذا المنشور/العرض اللحظي فوراً لجميع الزبائن في الـ 69 ولاية وفي لوحة إدارة المنصة مباشرة!
+        </div>
+
+        <div class="form-group">
+          <label style="font-size:11.5px; font-weight:800; color:var(--navy); margin-bottom:4px; display:block;">صورة العرض أو السلعة *</label>
+          <div onclick="document.getElementById('storyImageFileInput').click()" style="width:100%; height:140px; border:2px dashed #38bdf8; border-radius:14px; background:#f8fafc; display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer; overflow:hidden; position:relative;" id="story-image-preview-box">
+            <i class="fa-solid fa-cloud-arrow-up" style="font-size:28px; color:#0284c7; margin-bottom:6px;"></i>
+            <span style="font-size:11.5px; font-weight:800; color:#0369a1;">اضغط لاختيار أو التقاط صورة</span>
+            <span style="font-size:9.5px; color:var(--gray); margin-top:2px;">(JPEG, PNG, WebP)</span>
+          </div>
+          <input type="file" id="storyImageFileInput" accept="image/*" style="display:none;" onchange="handleStoryImageUpload(this)">
+        </div>
+
+        <div class="form-group">
+          <label style="font-size:11.5px; font-weight:800; color:var(--navy); margin-bottom:4px; display:block;">اسم المتجر أو العارض *</label>
+          <input type="text" id="story-author-input" class="form-control" placeholder="مثال: متجر السلام للأواني" style="width:100%; height:38px; border:1.5px solid #cbd5e1; border-radius:10px; padding:0 10px; font-size:12px; font-weight:700;">
+        </div>
+
+        <div style="display:flex; gap:8px;">
+          <div class="form-group" style="flex:1;">
+            <label style="font-size:11.5px; font-weight:800; color:var(--navy); margin-bottom:4px; display:block;">الولاية *</label>
+            <select id="story-wilaya-select" style="width:100%; height:38px; border:1.5px solid #cbd5e1; border-radius:10px; padding:0 8px; font-size:11.5px; font-weight:700; background:#fff;">
+              <!-- Populated with wilayas -->
+            </select>
+          </div>
+          <div class="form-group" style="flex:1;">
+            <label style="font-size:11.5px; font-weight:800; color:var(--navy); margin-bottom:4px; display:block;">السعر التقديري (دج)</label>
+            <input type="number" id="story-price-input" placeholder="مثال: 2500" style="width:100%; height:38px; border:1.5px solid #cbd5e1; border-radius:10px; padding:0 10px; font-size:12px; font-weight:700;">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label style="font-size:11.5px; font-weight:800; color:var(--navy); margin-bottom:4px; display:block;">عنوان أو تفاصيل العرض *</label>
+          <textarea id="story-caption-input" rows="2" placeholder="اكتب وصفاً مختصراً للسلعة أو العرض..." style="width:100%; border:1.5px solid #cbd5e1; border-radius:10px; padding:8px 10px; font-size:11.5px; font-weight:700; resize:none; font-family:'Cairo';"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label style="font-size:11.5px; font-weight:800; color:var(--navy); margin-bottom:4px; display:block;">رقم هاتف / واتساب للطلب</label>
+          <input type="tel" id="story-phone-input" placeholder="مثال: 0658000000" style="width:100%; height:38px; border:1.5px solid #cbd5e1; border-radius:10px; padding:0 10px; font-size:12px; font-weight:700;">
+        </div>
+
+        <button onclick="publishLiveStoryPost()" style="width:100%; height:44px; background:linear-gradient(135deg, #0284c7, #0369a1); color:white; border:none; border-radius:12px; font-weight:900; font-size:13px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 4px 14px rgba(2,132,199,0.35);">
+          <i class="fa-solid fa-paper-plane"></i> نشر العرض اللحظي فوراً 🚀
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: FULLSCREEN STORY VIEWER (Facebook Reels / Story Style) -->
+  <div class="modal-overlay" id="storyViewerModal" onclick="if(event.target===this) this.style.display='none'">
+    <div class="modal-content" style="max-width:420px; width:95%; height:82vh; border-radius:24px; overflow:hidden; background:#0f172a; position:relative; display:flex; flex-direction:column; box-shadow:0 25px 60px rgba(0,0,0,0.5);">
+      
+      <!-- Top Progress Bar & Store Header -->
+      <div style="position:absolute; top:0; left:0; right:0; padding:14px 16px; background:linear-gradient(to bottom, rgba(0,0,0,0.85) 0%, transparent 100%); z-index:10; display:flex; flex-direction:column; gap:8px;">
+        <div style="width:100%; height:3px; background:rgba(255,255,255,0.3); border-radius:3px; overflow:hidden;">
+          <div id="story-progress-fill" style="width:100%; height:100%; background:#38bdf8;"></div>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <img id="sv-avatar" src="assets/icon-192.svg" style="width:38px; height:38px; border-radius:50%; border:2px solid #38bdf8; object-fit:cover;">
+            <div>
+              <div id="sv-author" style="font-size:13px; font-weight:900; color:#ffffff;">متجر ZaLo</div>
+              <div style="font-size:10px; color:#94a3b8; display:flex; align-items:center; gap:6px;">
+                <span id="sv-wilaya"><i class="fa-solid fa-location-dot"></i> الجزائر</span> • 
+                <span id="sv-time">الآن</span>
+              </div>
+            </div>
+          </div>
+          <button onclick="document.getElementById('storyViewerModal').style.display='none'" style="background:rgba(0,0,0,0.5); color:white; border:none; border-radius:50%; width:30px; height:30px; cursor:pointer; font-size:14px;">✕</button>
+        </div>
+      </div>
+
+      <!-- Main Story Image -->
+      <div style="flex:1; display:flex; align-items:center; justify-content:center; background:#000000; overflow:hidden;">
+        <img id="sv-image" src="" style="width:100%; height:100%; object-fit:contain;" alt="منشور لحظي">
+      </div>
+
+      <!-- Bottom Caption & Direct WhatsApp Button -->
+      <div style="padding:16px; background:linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 80%, transparent 100%); z-index:10; display:flex; flex-direction:column; gap:10px;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-end;">
+          <p id="sv-caption" style="font-size:13px; color:#f8fafc; font-weight:700; margin:0; line-height:1.5; text-shadow:0 2px 4px rgba(0,0,0,0.8);"></p>
+          <span id="sv-price" style="font-size:15px; font-weight:900; color:#facc15; white-space:nowrap; text-shadow:0 2px 4px rgba(0,0,0,0.8);"></span>
+        </div>
+
+        <div style="display:flex; gap:8px;">
+          <a id="sv-whatsapp-btn" href="#" target="_blank" style="flex:1; height:42px; background:linear-gradient(135deg, #25D366, #128C7E); color:white; border-radius:12px; font-weight:900; font-size:12.5px; text-decoration:none; display:flex; align-items:center; justify-content:center; gap:6px; box-shadow:0 4px 12px rgba(37,211,102,0.35);">
+            <i class="fa-brands fa-whatsapp" style="font-size:16px;"></i> ⚡ تواصل واطلب فوراً
+          </a>
+          <button onclick="toggleStoryLike()" id="sv-like-btn" style="width:42px; height:42px; background:rgba(255,255,255,0.15); backdrop-filter:blur(6px); border:1px solid rgba(255,255,255,0.25); border-radius:12px; color:#fbbf24; font-size:16px; cursor:pointer; display:flex; align-items:center; justify-content:center;">
+            ⭐
+          </button>
+        </div>
+      </div>
+
     </div>
   </div>
 
@@ -3477,6 +3800,21 @@ document.addEventListener('DOMContentLoaded', () => {
     toggleVoiceAccessibility(true);
   }
   attachAccessibilitySpeechListeners();
+  
+  // Initialize Facebook Live Stories Feed
+  if (typeof initStoriesSystem === 'function') {
+    initStoriesSystem();
+  }
+
+  // Ensure sidebar button click & touch events trigger reliably
+  const tbMenu = document.querySelector('.tb-menu');
+  if (tbMenu) {
+    tbMenu.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      openSide();
+    });
+  }
 });
 
 // Routing contacts
@@ -4526,16 +4864,22 @@ window.getStoreDetails = function(storeId, storeName) {
   };
 };
 
-// Product detail modal with Facebook Store style branding and social links
+// Product detail modal with Facebook Store style branding, Star Rating Like button, and high-res image resolution
 window.openProd = function(id, name, price, img, emoji, storeId, storeName, wilaya, category, subcategory) {
   const storeInfo = getStoreDetails(storeId, storeName);
 
+  // Look up full product object in loadedProducts for additional images or high-res data if available
+  const fullProd = (state.loadedProducts || []).find(p => p.id === id || p.productId === id) || {};
+  const validImg = (img && img !== 'assets/icon-192.svg' && !img.includes('icon-192.svg')) ? img : 
+                   (fullProd.image || fullProd.image_url || fullProd.imageUrl || (fullProd.images && fullProd.images[0]) || fullProd.photo || fullProd.url || '');
+
   state.selectedProduct = { 
-    id, name, price, img, emoji, storeId, storeName, 
-    wilaya: wilaya || storeInfo.wilaya || 'الجزائر', 
-    category: category || storeInfo.category || 'عام',
-    subcategory: subcategory || storeInfo.subcategory || 'فرع عام',
-    storeInfo
+    id, name, price, img: validImg, emoji, storeId, storeName, 
+    wilaya: wilaya || fullProd.wilaya || storeInfo.wilaya || 'الجزائر', 
+    category: category || fullProd.category || storeInfo.category || 'عام',
+    subcategory: subcategory || fullProd.subcategory || storeInfo.subcategory || 'فرع عام',
+    storeInfo,
+    fullProd
   };
   state.qty = 1;
 
@@ -4543,9 +4887,9 @@ window.openProd = function(id, name, price, img, emoji, storeId, storeName, wila
   const qForm = document.getElementById('pd-quick-order-form');
   if (qForm) qForm.style.display = 'none';
 
-  // Set store cover & logo
+  // Set store cover & logo (Facebook Page style)
   const coverImg = document.getElementById('pd-store-cover-img');
-  if (coverImg) coverImg.src = storeInfo.coverImage || 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=500';
+  if (coverImg) coverImg.src = storeInfo.coverImage || 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=800';
 
   const logoImg = document.getElementById('pd-store-logo-img');
   if (logoImg) logoImg.src = storeInfo.logo || storeInfo.image || 'assets/icon-192.svg';
@@ -4560,19 +4904,39 @@ window.openProd = function(id, name, price, img, emoji, storeId, storeName, wila
   if (wilayaTag) wilayaTag.innerHTML = `<i class="fa-solid fa-location-dot"></i> ولاية: ${wilaya || storeInfo.wilaya || 'الجزائر'}`;
 
   const catTag = document.getElementById('pd-category-tag');
-  if (catTag) catTag.innerHTML = `<i class="fa-solid fa-tags"></i> التخصص: ${category || storeInfo.category || 'عام'}`;
+  if (catTag) catTag.innerHTML = `<i class="fa-solid fa-tags"></i> الصنف: ${category || storeInfo.category || 'عام'}`;
 
   const subCatTag = document.getElementById('pd-subcategory-tag');
   if (subCatTag) subCatTag.innerHTML = `<i class="fa-solid fa-code-branch"></i> الفرع: ${subcategory || storeInfo.subcategory || 'فرع عام'}`;
 
   document.getElementById('qty-v').textContent = '1';
   
+  // Real product image display with fallback
   const imgWrap = document.getElementById('pd-img-wrap');
+  const escName = (name || '').replace(/'/g, "\\'");
   if (imgWrap) {
-    imgWrap.innerHTML = img ? `<img src="${img}" style="max-width:100%; max-height:100%; object-fit:contain;">` : `<span style="font-size:72px;">${emoji||'📦'}</span>`;
+    if (validImg && validImg.length > 5 && !validImg.includes('icon-192.svg')) {
+      imgWrap.innerHTML = `<img src="${validImg}" style="max-width:100%; max-height:100%; object-fit:contain; border-radius:14px;" alt="${name}" onerror="this.onerror=null; this.parentElement.innerHTML=window.getProductFallbackVisualHTML('${escName}');">`;
+    } else {
+      imgWrap.innerHTML = window.getProductFallbackVisualHTML(name);
+    }
   }
 
-  // Render Social and Contact Links
+  // Setup Star Rating / Facebook Like Button
+  const allRatings = JSON.parse(localStorage.getItem('zalo_product_ratings') || '{}');
+  const prodRating = allRatings[id] || { count: Math.floor(Math.random() * 15) + 12, userRated: false };
+  const starBtn = document.getElementById('pd-star-like-btn');
+  const starCount = document.getElementById('pd-star-count');
+  if (starBtn && starCount) {
+    starCount.textContent = `⭐ 4.9 (${prodRating.count})`;
+    if (prodRating.userRated) {
+      starBtn.classList.add('rated');
+    } else {
+      starBtn.classList.remove('rated');
+    }
+  }
+
+  // Render Social and Contact Links (Facebook Page style)
   const socialBar = document.getElementById('pd-social-links-bar');
   if (socialBar) {
     const pPhone = storeInfo.phone || '0550000000';
@@ -4581,19 +4945,19 @@ window.openProd = function(id, name, price, img, emoji, storeId, storeName, wila
     const finalWa = cleanWaPhone.startsWith('0') ? '213' + cleanWaPhone.substring(1) : (cleanWaPhone.startsWith('213') ? cleanWaPhone : '213' + cleanWaPhone);
 
     let linksHtml = `
-      <a href="https://wa.me/${finalWa}?text=${encodeURIComponent('مرحباً متجر ' + (storeInfo.name||storeName) + '، أود الاستفسار عن المنتج: ' + name)}" target="_blank" style="background:#25D366; color:white; text-decoration:none; padding:6px 12px; border-radius:8px; font-size:11px; font-weight:800; display:inline-flex; align-items:center; gap:5px; box-shadow:0 2px 5px rgba(37,211,102,0.2);">
-        <i class="fa-brands fa-whatsapp"></i> واتساب المحل
+      <a href="https://wa.me/${finalWa}?text=${encodeURIComponent('مرحباً متجر ' + (storeInfo.name||storeName) + '، أود الاستفسار عن المنتج: ' + name)}" target="_blank" style="flex:1 1 45%; background:#25D366; color:white; text-decoration:none; padding:10px 14px; border-radius:12px; font-size:12px; font-weight:800; display:inline-flex; align-items:center; justify-content:center; gap:6px; box-shadow:0 3px 8px rgba(37,211,102,0.25);">
+        <i class="fa-brands fa-whatsapp" style="font-size:15px;"></i> واتساب المحل
       </a>
-      <a href="tel:${pPhone}" style="background:#0ea5e9; color:white; text-decoration:none; padding:6px 12px; border-radius:8px; font-size:11px; font-weight:800; display:inline-flex; align-items:center; gap:5px; box-shadow:0 2px 5px rgba(14,165,233,0.2);">
-        <i class="fa-solid fa-phone"></i> اتصال مباشر (${pPhone})
+      <a href="tel:${pPhone}" style="flex:1 1 45%; background:#0ea5e9; color:white; text-decoration:none; padding:10px 14px; border-radius:12px; font-size:12px; font-weight:800; display:inline-flex; align-items:center; justify-content:center; gap:6px; box-shadow:0 3px 8px rgba(14,165,233,0.25);">
+        <i class="fa-solid fa-phone" style="font-size:14px;"></i> اتصال مباشر (${pPhone})
       </a>
     `;
 
     if (storeInfo.website) {
       const siteUrl = storeInfo.website.startsWith('http') ? storeInfo.website : 'https://' + storeInfo.website;
       linksHtml += `
-        <a href="${siteUrl}" target="_blank" style="background:#6366f1; color:white; text-decoration:none; padding:6px 12px; border-radius:8px; font-size:11px; font-weight:800; display:inline-flex; align-items:center; gap:5px; box-shadow:0 2px 5px rgba(99,102,241,0.2);">
-          <i class="fa-solid fa-globe"></i> الموقع الإلكتروني
+        <a href="${siteUrl}" target="_blank" style="flex:1 1 100%; background:#6366f1; color:white; text-decoration:none; padding:8px 12px; border-radius:10px; font-size:11.5px; font-weight:800; display:inline-flex; align-items:center; justify-content:center; gap:6px;">
+          <i class="fa-solid fa-globe"></i> الموقع الإلكتروني الرسمي
         </a>
       `;
     }
@@ -4602,15 +4966,15 @@ window.openProd = function(id, name, price, img, emoji, storeId, storeName, wila
       const s = storeInfo.socialLinks;
       if (s.facebook) {
         const fbUrl = s.facebook.startsWith('http') ? s.facebook : 'https://' + s.facebook;
-        linksHtml += `<a href="${fbUrl}" target="_blank" style="background:#1877f2; color:white; text-decoration:none; padding:6px 10px; border-radius:8px; font-size:11px; font-weight:800; display:inline-flex; align-items:center; gap:4px;"><i class="fa-brands fa-facebook-f"></i> فيسبوك</a>`;
+        linksHtml += `<a href="${fbUrl}" target="_blank" style="background:#1877f2; color:white; text-decoration:none; padding:6px 12px; border-radius:8px; font-size:11px; font-weight:800; display:inline-flex; align-items:center; gap:4px;"><i class="fa-brands fa-facebook-f"></i> فيسبوك</a>`;
       }
       if (s.instagram) {
         const igUrl = s.instagram.startsWith('http') ? s.instagram : 'https://' + s.instagram;
-        linksHtml += `<a href="${igUrl}" target="_blank" style="background:#e4405f; color:white; text-decoration:none; padding:6px 10px; border-radius:8px; font-size:11px; font-weight:800; display:inline-flex; align-items:center; gap:4px;"><i class="fa-brands fa-instagram"></i> إنستغرام</a>`;
+        linksHtml += `<a href="${igUrl}" target="_blank" style="background:#e4405f; color:white; text-decoration:none; padding:6px 12px; border-radius:8px; font-size:11px; font-weight:800; display:inline-flex; align-items:center; gap:4px;"><i class="fa-brands fa-instagram"></i> إنستغرام</a>`;
       }
       if (s.tiktok) {
         const ttUrl = s.tiktok.startsWith('http') ? s.tiktok : 'https://' + s.tiktok;
-        linksHtml += `<a href="${ttUrl}" target="_blank" style="background:#000000; color:white; text-decoration:none; padding:6px 10px; border-radius:8px; font-size:11px; font-weight:800; display:inline-flex; align-items:center; gap:4px;"><i class="fa-brands fa-tiktok"></i> تيك توك</a>`;
+        linksHtml += `<a href="${ttUrl}" target="_blank" style="background:#000000; color:white; text-decoration:none; padding:6px 12px; border-radius:8px; font-size:11px; font-weight:800; display:inline-flex; align-items:center; gap:4px;"><i class="fa-brands fa-tiktok"></i> تيك توك</a>`;
       }
     }
 
@@ -4624,6 +4988,315 @@ window.openProd = function(id, name, price, img, emoji, storeId, storeName, wila
   if (heart) heart.style.color = isFav ? '#ef4444' : 'var(--gray)';
 
   document.getElementById('productModal').style.display = 'flex';
+};
+
+// Toggle Star Rating / Facebook Like on Product
+window.toggleProductRatingStar = function() {
+  if (!state.selectedProduct) return;
+  const id = state.selectedProduct.id;
+  const allRatings = JSON.parse(localStorage.getItem('zalo_product_ratings') || '{}');
+  const current = allRatings[id] || { count: Math.floor(Math.random() * 15) + 12, userRated: false };
+
+  const starBtn = document.getElementById('pd-star-like-btn');
+  const starCount = document.getElementById('pd-star-count');
+
+  if (!current.userRated) {
+    current.count += 1;
+    current.userRated = true;
+    allRatings[id] = current;
+    localStorage.setItem('zalo_product_ratings', JSON.stringify(allRatings));
+    
+    if (starBtn) {
+      starBtn.classList.add('rated', 'star-burst-anim');
+      setTimeout(() => starBtn.classList.remove('star-burst-anim'), 400);
+    }
+    if (starCount) starCount.textContent = `⭐ 5.0 (${current.count})`;
+    window.showToast("🌟 شكراً لتقييمك! تم تسجيل إعجابك وتأييدك للمنتج بنجاح ✨");
+  } else {
+    current.count = Math.max(1, current.count - 1);
+    current.userRated = false;
+    allRatings[id] = current;
+    localStorage.setItem('zalo_product_ratings', JSON.stringify(allRatings));
+    
+    if (starBtn) starBtn.classList.remove('rated');
+    if (starCount) starCount.textContent = `⭐ 4.9 (${current.count})`;
+    window.showToast("تم إلغاء التقييم");
+  }
+};
+
+// Open Store profile from Modal
+window.visitStoreProfileFromModal = function() {
+  if (!state.selectedProduct) return;
+  const storeInfo = state.selectedProduct.storeInfo || {};
+  const sName = storeInfo.name || state.selectedProduct.storeName || 'متجر معتمد';
+  const sCat = storeInfo.category || state.selectedProduct.category || 'عام';
+  
+  document.getElementById('productModal').style.display = 'none';
+  if (typeof viewStoreProfile === 'function') {
+    viewStoreProfile(sName, sCat);
+  }
+};
+
+// Store Page Actions (Facebook Style)
+window.toggleStoreFollow = function() {
+  const btn = document.getElementById('store-follow-btn');
+  const txt = document.getElementById('store-follow-txt');
+  if (!btn || !txt) return;
+
+  const isFollowing = btn.classList.contains('following');
+  if (isFollowing) {
+    btn.classList.remove('following');
+    btn.style.background = 'linear-gradient(135deg, #0284c7, #0369a1)';
+    txt.textContent = 'متابعة المتجر';
+    window.showToast("تم إلغاء متابعة المتجر");
+  } else {
+    btn.classList.add('following');
+    btn.style.background = '#102a43';
+    txt.textContent = 'أنت تتابع المتجر ✓';
+    window.showToast("👍 تم متابعة المتجر بنجاح! ستصلك العروض اللحظية أولاً بأول");
+  }
+};
+
+window.contactStoreWhatsApp = function() {
+  const sName = document.getElementById('store-profile-name')?.textContent || 'المتجر';
+  const waUrl = `https://wa.me/213550000000?text=${encodeURIComponent('مرحباً متجر ' + sName + '، أود الاستفسار عن منتجاتكم المعروضة في منصة ZaLo')}`;
+  window.open(waUrl, '_blank');
+};
+
+window.contactStoreCall = function() {
+  window.location.href = 'tel:0550000000';
+};
+
+window.shareStoreLink = function() {
+  const sName = document.getElementById('store-profile-name')?.textContent || 'متجر في ZaLo';
+  if (navigator.share) {
+    navigator.share({ title: sName, text: `تفضل بزيارة صفحة ${sName} في سوق ZaLo الجزائري 🇩🇿`, url: window.location.href });
+  } else {
+    navigator.clipboard?.writeText(window.location.href);
+    window.showToast("📋 تم نسخ رابط صفحة المتجر بنجاح!");
+  }
+};
+
+// Facebook Stories & Live Marketplace Feed System
+window.liveStoriesList = [];
+
+window.initStoriesSystem = function() {
+  const storedStories = JSON.parse(localStorage.getItem('zalo_live_stories') || '[]');
+  
+  if (storedStories.length === 0) {
+    // High-quality initial live stories from various wilayas
+    const defaultStories = [
+      {
+        id: 'st_1',
+        author: 'محل النور للأواني',
+        wilaya: '58 المنيعة',
+        image: 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?w=800',
+        caption: '🔥 وصول طاقم جرانيت تركي أصلي 12 قطعة متوفر الآن بالمنيعة مع التوصيل الفوري!',
+        price: '14500',
+        phone: '0658123456',
+        avatar: 'assets/icon-192.svg',
+        likes: 42,
+        time: 'منذ 10 دقائق'
+      },
+      {
+        id: 'st_2',
+        author: 'بوتيك الأناقة الوهرانية',
+        wilaya: '31 وهران',
+        image: 'https://images.unsplash.com/photo-1539109136881-3be0616acf4b?w=800',
+        caption: '✨ تشكيلة فساتين سهرة وقفاطين فاخرة متوفرة حالياً بالمتجر والشحن لكل الولايات',
+        price: '8900',
+        phone: '0550987654',
+        avatar: 'assets/icon-192.svg',
+        likes: 78,
+        time: 'منذ نصف ساعة'
+      },
+      {
+        id: 'st_3',
+        author: 'تيك ستور العاصمة',
+        wilaya: '16 الجزائر',
+        image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800',
+        caption: '⚡ ساعات ذكية Ultra 9 مع 7 أحزمة أصلية + سماعات هدية مجانية',
+        price: '4800',
+        phone: '0770112233',
+        avatar: 'assets/icon-192.svg',
+        likes: 115,
+        time: 'منذ ساعة'
+      },
+      {
+        id: 'st_4',
+        author: 'دقلة نور الأصالة',
+        wilaya: '39 الوادي',
+        image: 'https://images.unsplash.com/photo-1559181567-c3190ca9959b?w=800',
+        caption: '🌴 دقلة نور العرجون الممتازة إنتاج هذا الأسبوع، تعليب فاخر وصحي',
+        price: '950',
+        phone: '0661223344',
+        avatar: 'assets/icon-192.svg',
+        likes: 64,
+        time: 'منذ ساعتين'
+      }
+    ];
+    localStorage.setItem('zalo_live_stories', JSON.stringify(defaultStories));
+    window.liveStoriesList = defaultStories;
+  } else {
+    window.liveStoriesList = storedStories;
+  }
+
+  renderHomeStories();
+};
+
+window.renderHomeStories = function() {
+  const container = document.getElementById('home-stories-container');
+  if (!container) return;
+
+  const stories = window.liveStoriesList || [];
+  
+  let html = `
+    <!-- Add Story Button (Facebook Stories Style) -->
+    <div class="story-card-item" onclick="openCreateStoryModal()">
+      <div class="story-avatar-wrap" style="background:linear-gradient(135deg, #0284c7, #38bdf8); display:flex; align-items:center; justify-content:center;">
+        <i class="fa-solid fa-plus" style="font-size:24px; color:#ffffff;"></i>
+      </div>
+      <div class="story-label" style="font-weight:900; color:#0284c7;">+ أنشر عرضك</div>
+    </div>
+  `;
+
+  html += stories.map(st => `
+    <div class="story-card-item" onclick="openStoryViewer('${st.id}')">
+      <div class="story-avatar-wrap">
+        <img src="${st.image || st.avatar || 'images/wilaya-thumb.jpg'}" alt="${st.author}" onerror="this.src='images/wilaya-thumb.jpg'">
+        <span class="live-badge-dot">مباشر</span>
+      </div>
+      <div class="story-label" title="${st.author}">${st.author}</div>
+    </div>
+  `).join('');
+
+  container.innerHTML = html;
+};
+
+window.openCreateStoryModal = function() {
+  const modal = document.getElementById('createStoryModal');
+  if (!modal) return;
+
+  // Populate wilayas dropdown
+  const wilSelect = document.getElementById('story-wilaya-select');
+  if (wilSelect && typeof ALGERIAN_WILAYAS !== 'undefined' && wilSelect.options.length <= 1) {
+    wilSelect.innerHTML = ALGERIAN_WILAYAS.map(w => `<option value="${w.code} ${w.name}">${w.code} - ${w.name}</option>`).join('');
+  }
+
+  // Pre-fill author if merchant logged in
+  const user = window.currentUser || JSON.parse(localStorage.getItem('zalo_user') || '{}');
+  const authorInput = document.getElementById('story-author-input');
+  if (authorInput && user.storeName) {
+    authorInput.value = user.storeName;
+  }
+
+  modal.style.display = 'flex';
+};
+
+window.currentStoryBase64 = null;
+
+window.handleStoryImageUpload = function(input) {
+  if (!input.files || !input.files[0]) return;
+  const file = input.files[0];
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    window.currentStoryBase64 = e.target.result;
+    const previewBox = document.getElementById('story-image-preview-box');
+    if (previewBox) {
+      previewBox.innerHTML = `<img src="${window.currentStoryBase64}" style="width:100%; height:100%; object-fit:cover;">`;
+    }
+  };
+  reader.readAsDataURL(file);
+};
+
+window.publishLiveStoryPost = async function() {
+  const author = document.getElementById('story-author-input')?.value.trim();
+  const wilaya = document.getElementById('story-wilaya-select')?.value || 'الجزائر';
+  const price = document.getElementById('story-price-input')?.value.trim();
+  const caption = document.getElementById('story-caption-input')?.value.trim();
+  const phone = document.getElementById('story-phone-input')?.value.trim() || '0550000000';
+  const image = window.currentStoryBase64 || 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800';
+
+  if (!author || !caption) {
+    window.showToast("⚠️ يرجى إدخال اسم المتجر/العارض وكتابة وصف للعرض!");
+    return;
+  }
+
+  const newStory = {
+    id: 'st_' + Date.now(),
+    author,
+    wilaya,
+    price,
+    caption,
+    phone,
+    image,
+    avatar: 'assets/icon-192.svg',
+    likes: 1,
+    time: 'الآن'
+  };
+
+  // Add to local stories list
+  window.liveStoriesList.unshift(newStory);
+  localStorage.setItem('zalo_live_stories', JSON.stringify(window.liveStoriesList));
+  renderHomeStories();
+
+  // Sync to Supabase if available
+  try {
+    if (typeof supabase !== 'undefined' && supabase.from) {
+      await supabase.from('market_posts').insert([{
+        id: newStory.id,
+        author: newStory.author,
+        wilaya: newStory.wilaya,
+        price: newStory.price,
+        caption: newStory.caption,
+        phone: newStory.phone,
+        image_url: newStory.image,
+        created_at: new Date().toISOString()
+      }]);
+    }
+  } catch(e) {
+    console.warn("Market post sync note:", e);
+  }
+
+  document.getElementById('createStoryModal').style.display = 'none';
+  window.showToast("🚀 تم نشر العرض اللحظي بنجاح! سيظهر لكافة الزبائن بالجزائر فوراً 🇩🇿");
+};
+
+window.currentActiveStory = null;
+
+window.openStoryViewer = function(storyId) {
+  const story = (window.liveStoriesList || []).find(s => s.id === storyId);
+  if (!story) return;
+
+  window.currentActiveStory = story;
+
+  document.getElementById('sv-author').textContent = story.author;
+  document.getElementById('sv-wilaya').innerHTML = `<i class="fa-solid fa-location-dot"></i> ${story.wilaya}`;
+  document.getElementById('sv-time').textContent = story.time || 'الآن';
+  document.getElementById('sv-image').src = story.image || 'images/wilaya-thumb.jpg';
+  document.getElementById('sv-caption').textContent = story.caption;
+  document.getElementById('sv-price').textContent = story.price ? `${parseFloat(story.price).toLocaleString()} دج` : '';
+  
+  const cleanPhone = (story.phone || '0550000000').replace(/[^0-9]/g, '');
+  const finalWa = cleanPhone.startsWith('0') ? '213' + cleanPhone.substring(1) : (cleanPhone.startsWith('213') ? cleanPhone : '213' + cleanPhone);
+  
+  const waBtn = document.getElementById('sv-whatsapp-btn');
+  if (waBtn) {
+    waBtn.href = `https://wa.me/${finalWa}?text=${encodeURIComponent('مرحباً، أود الاستفسار والطلب بخصوص منشوركم اللحظي في ZaLo: ' + story.caption)}`;
+  }
+
+  document.getElementById('storyViewerModal').style.display = 'flex';
+};
+
+window.toggleStoryLike = function() {
+  if (!window.currentActiveStory) return;
+  const btn = document.getElementById('sv-like-btn');
+  if (btn) {
+    btn.innerHTML = '🌟';
+    btn.style.transform = 'scale(1.3)';
+    setTimeout(() => btn.style.transform = 'scale(1)', 200);
+  }
+  window.showToast("⭐ تم تسجيل إعجابك بالعرض اللحظي!");
 };
 
 window.toggleQuickOrderForm = function(forceShow) {
