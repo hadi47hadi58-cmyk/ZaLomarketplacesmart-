@@ -567,7 +567,7 @@
         console.warn("Auth check warning:", authErr);
       }
 
-      // Upsert profile as merchant
+      // Update profile with pending merchant status
       try {
         await supabase.from('profiles').upsert({
           id: uid,
@@ -576,15 +576,15 @@
           phone: phone,
           wilaya: wilaya,
           commune: commune,
-          role: 'merchant',
-          status: 'active',
+          role: 'customer',
+          status: 'pending',
           updated_at: new Date().toISOString()
         });
       } catch (pe) {
         console.warn("Profile update:", pe);
       }
 
-      // Create merchant request / shop
+      // Create merchant request with PENDING status for Admin Approval
       const reqPayload = {
         id: uid,
         user_id: uid,
@@ -595,25 +595,49 @@
         storeName: storeName,
         phone: phone,
         category: category,
+        subcategory: subcategory,
         wilaya: wilaya,
         commune: commune,
-        status: 'APPROVED',
+        status: 'pending',
         rc_number: rcnum,
         logo: logoB64,
         id_front: idFront,
         id_back: idBack,
         rc_doc: rcFile,
         front_image: frontFile,
-        merchant_type: storeType
+        merchant_type: storeType,
+        created_at: new Date().toISOString()
       };
 
       try {
-        await supabase.from('merchant_requests').insert(reqPayload);
+        await supabase.from('merchant_requests').upsert(reqPayload);
       } catch (me) {
         console.warn("Merchant request insert warning:", me);
       }
 
-      // Save local fallback record for merchant request (used by dashboard-admin.html and dashboard-manager.html)
+      // Also create pending record in stores table
+      try {
+        await supabase.from('stores').upsert({
+          merchant_id: uid,
+          name: storeName,
+          store_name: storeName,
+          owner_name: fullName,
+          merchant_email: email,
+          phone: phone,
+          category: category,
+          wilaya: wilaya,
+          baladiya: commune,
+          logo_url: logoB64 || 'assets/icon-192.svg',
+          cover_url: frontFile || 'assets/icon-192.svg',
+          status: 'PENDING',
+          is_verified: false,
+          created_at: new Date().toISOString()
+        });
+      } catch (se) {
+        console.warn("Store upsert warning:", se);
+      }
+
+      // Save local fallback record for merchant request (used by dashboard-admin.html)
       const newLocalRequest = {
         id: 'req_' + Date.now(),
         user_id: uid,
@@ -626,9 +650,12 @@
         wilaya: wilaya,
         commune: commune,
         category: category,
+        subcategory: subcategory,
         merchant_type: storeType,
         rc_number: rcnum,
-        status: 'APPROVED',
+        logo: logoB64 || "assets/icon-192.svg",
+        front_image: frontFile || "assets/icon-192.svg",
+        status: 'PENDING',
         created_at: new Date().toISOString()
       };
 
@@ -636,25 +663,51 @@
       try {
         localReqs = JSON.parse(localStorage.getItem('zalo_local_merchant_requests') || '[]');
       } catch (e) { localReqs = []; }
+      // Remove any existing pending request for this store/user to avoid duplicates
+      localReqs = localReqs.filter(r => r.user_id !== uid && r.store_name !== storeName);
       localReqs.unshift(newLocalRequest);
       localStorage.setItem('zalo_local_merchant_requests', JSON.stringify(localReqs));
+
+      // Also sync into stores_list_old as PENDING
+      try {
+        let oldStores = JSON.parse(localStorage.getItem('stores_list_old') || '[]');
+        oldStores = oldStores.filter(s => s.name !== storeName && s.id !== uid);
+        oldStores.unshift({
+          id: uid,
+          name: storeName,
+          store_name: storeName,
+          owner: fullName,
+          phone: phone,
+          location: wilaya,
+          wilaya: wilaya,
+          commune: commune,
+          category: category,
+          status: 'PENDING',
+          logo: logoB64 || 'assets/icon-192.svg',
+          cover: frontFile || 'assets/icon-192.svg'
+        });
+        localStorage.setItem('stores_list_old', JSON.stringify(oldStores));
+      } catch(e){}
 
       // Save merchant store settings for dashboard-store.html
       const newStoreSettings = {
         storeName: storeName,
+        name: storeName,
         phone: phone,
         category: category,
+        subcategory: subcategory,
         wilaya: wilaya,
         commune: commune,
         fb: "", ig: "", tiktok: "", tg: "",
         logoImg: logoB64 || "assets/icon-192.svg",
         coverImg: frontFile || "assets/icon-192.svg",
         workingHours: "08:00 - 22:00",
-        vatNumber: rcnum || "198273615243000"
+        vatNumber: rcnum || "198273615243000",
+        status: 'PENDING'
       };
       localStorage.setItem('zalo_merchant_store_settings', JSON.stringify(newStoreSettings));
 
-      // Set local sessions
+      // Set local sessions to pending
       localStorage.setItem('zalo_merchant_status', 'pending');
       localStorage.setItem('zalo_user_role', 'customer');
       localStorage.setItem('zalo_active_store', storeName);
@@ -665,11 +718,11 @@
       sessionStorage.setItem('reg_wilaya', wilaya);
       sessionStorage.setItem('reg_commune', commune);
 
-      showStatus("تم إرسال طلب الشراكة وإنشاء المتجر بنجاح! طلبك الآن قيد المراجعة لدى الإدارة...", "success");
+      showStatus("تم إرسال طلب الشراكة بنجاح! طلبك الآن قيد المراجعة والتدقيق لدى الإدارة وسيتم إشعارك فور القبول.", "success");
 
       setTimeout(() => {
         window.location.href = 'customer-home.html?merchant_pending=true';
-      }, 1200);
+      }, 1500);
 
     } catch (err) {
       console.error("Step 2 Submission error:", err);

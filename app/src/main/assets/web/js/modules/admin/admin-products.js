@@ -8,29 +8,32 @@ export async function fetchAllProducts() {
         if (supabase) {
             const { data, error } = await supabase
                 .from('products')
-                .select('*, stores(name)')
+                .select('*')
                 .order('created_at', { ascending: false });
 
             if (!error && data && Array.isArray(data) && data.length > 0) {
                 products = data.map(p => {
-                    const sName = p.stores?.name || p.store_name || (p.store_id === 4 ? 'ABDELALI.PHONE' : (p.store_id === 2 ? 'ZaLo kids' : (p.store_id === 3 ? 'Nadjemi Abdelhadi' : 'متجر الشريك')));
+                    const sName = p.store_name || p.storeName || (p.store_id === 4 ? 'ABDELALI.PHONE' : (p.store_id === 2 ? 'ZaLo kids' : (p.store_id === 3 ? 'Nadjemi Abdelhadi' : 'متجر الشريك المعتمد')));
+                    const pName = p.name || p.productName || 'منتج';
+                    const pImg = p.image_url || p.image || p.img || 'assets/icon-192.svg';
                     return {
                         id: p.id,
                         productId: p.id,
-                        name: p.name,
-                        productName: p.name,
+                        name: pName,
+                        productName: pName,
                         description: p.description || '',
                         price: p.price || 0,
-                        stock: p.stock || 0,
+                        stock: p.stock || p.stock_quantity || 0,
                         category: p.category || 'عام',
+                        subcategory: p.subcategory || '',
                         store_id: p.store_id,
                         storeName: sName,
                         store_name: sName,
-                        image_url: p.image_url || '',
-                        img: p.image_url || 'assets/icon-192.svg',
-                        sku: `ZL-PRD-${String(p.id).padStart(4, '0')}`,
-                        sales_count: p.sales_count || 0,
-                        computedSales: p.sales_count || 0,
+                        image_url: pImg,
+                        img: pImg,
+                        sku: p.sku || `ZL-PRD-${String(p.id).padStart(4, '0')}`,
+                        sales_count: p.sales_count || p.salesCount || 0,
+                        computedSales: p.sales_count || p.salesCount || 0,
                         rating: p.rating || 5,
                         created_at: p.created_at || new Date().toISOString()
                     };
@@ -43,21 +46,44 @@ export async function fetchAllProducts() {
 
     // 2. Fetch from LocalStorage fallback if needed
     try {
-        const localProds = JSON.parse(localStorage.getItem('products') || '[]');
-        if (Array.isArray(localProds) && localProds.length > 0) {
-            localProds.forEach(lp => {
-                const pId = lp.id || lp.productId;
-                const exists = products.some(p => p.id == pId || (p.name && p.name === (lp.name || lp.productName)));
-                if (!exists) {
-                    products.push({
-                        id: pId,
-                        productId: pId,
-                        name: lp.name || lp.productName || 'منتج',
-                        productName: lp.productName || lp.name || 'منتج',
-                        description: lp.description || '',
-                        price: lp.price || 0,
-                        stock: lp.stock || 0,
-                        category: lp.category || 'عام',
+        const localKeys = ['products', 'zalo_products'];
+        localKeys.forEach(k => {
+            const localProds = JSON.parse(localStorage.getItem(k) || '[]');
+            if (Array.isArray(localProds) && localProds.length > 0) {
+                localProds.forEach(lp => {
+                    const pId = lp.id || lp.productId;
+                    const exists = products.some(p => p.id == pId || (p.name && p.name === (lp.name || lp.productName)));
+                    if (!exists) {
+                        const pName = lp.name || lp.productName || 'منتج';
+                        const pImg = lp.image || lp.image_url || lp.img || 'assets/icon-192.svg';
+                        products.push({
+                            id: pId,
+                            productId: pId,
+                            name: pName,
+                            productName: pName,
+                            description: lp.description || '',
+                            price: lp.price || 0,
+                            stock: lp.stock || lp.stock_quantity || 0,
+                            category: lp.category || 'عام',
+                            subcategory: lp.subcategory || '',
+                            store_id: lp.store_id || lp.storeId || 1,
+                            storeName: lp.storeName || lp.store_name || 'متجر زالو',
+                            store_name: lp.store_name || lp.storeName || 'متجر زالو',
+                            image_url: pImg,
+                            img: pImg,
+                            sku: lp.sku || `ZL-PRD-${String(pId).padStart(4, '0')}`,
+                            sales_count: lp.sales_count || lp.salesCount || 0,
+                            computedSales: lp.computedSales || lp.sales_count || 0,
+                            rating: lp.rating || 5,
+                            created_at: lp.created_at || lp.createdAt || new Date().toISOString()
+                        });
+                    }
+                });
+            }
+        });
+    } catch (e) {
+        console.warn("[admin-products] LocalStorage fetch error:", e);
+    }
                         store_id: lp.store_id || lp.storeId || 1,
                         storeName: lp.storeName || lp.store_name || 'متجر زالو',
                         store_name: lp.store_name || lp.storeName || 'متجر زالو',

@@ -622,16 +622,53 @@
 
         // Helper to update Wilayas stats dynamically from real store list
         function updateWilayasFromStores() {
-            let stores = getDB("stores_list_old", MOCK_STORES);
-            if (!stores || stores.length === 0) stores = MOCK_STORES;
+            let combinedStores = [];
+            const keys = ['stores_list_old', 'zalo_stores_list_old', 'zalo_local_merchant_requests', 'zalo_merchant_requests'];
+            keys.forEach(k => {
+                try {
+                    const parsed = JSON.parse(localStorage.getItem(k) || '[]');
+                    if (Array.isArray(parsed)) {
+                        parsed.forEach(s => {
+                            if (s && (s.name || s.store_name || s.storeName)) {
+                                const sName = s.name || s.store_name || s.storeName;
+                                if (!combinedStores.some(cs => (cs.id && cs.id === s.id) || (cs.name === sName))) {
+                                    combinedStores.push(s);
+                                }
+                            }
+                        });
+                    }
+                } catch(e) {}
+            });
+
+            if (combinedStores.length === 0) {
+                combinedStores = [...MOCK_STORES];
+            }
+
+            // Also check individual store settings
+            try {
+                const singleStore = JSON.parse(localStorage.getItem('zalo_merchant_store_settings') || '{}');
+                if (singleStore && (singleStore.storeName || singleStore.name)) {
+                    const sName = singleStore.storeName || singleStore.name;
+                    if (!combinedStores.some(cs => (cs.name === sName || cs.store_name === sName))) {
+                        combinedStores.push({
+                            id: singleStore.id || 'single_' + Date.now(),
+                            name: sName,
+                            store_name: sName,
+                            location: singleStore.wilaya || '16 الجزائر',
+                            wilaya: singleStore.wilaya || '16 الجزائر',
+                            status: singleStore.status || 'APPROVED'
+                        });
+                    }
+                }
+            } catch(e) {}
 
             if (typeof ALGERIAN_WILAYAS !== 'undefined' && Array.isArray(ALGERIAN_WILAYAS)) {
                 ALGERIAN_WILAYAS.forEach(w => {
                     const wCode = String(w.code).padStart(2, '0');
                     const wName = String(w.name).replace(/\s*\(.*\)/, '').trim();
 
-                    const wilayaStores = stores.filter(st => {
-                        const loc = String(st.location || st.wilaya || '').trim();
+                    const wilayaStores = combinedStores.filter(st => {
+                        const loc = String(st.location || st.wilaya || st.address || '').trim();
                         return loc.includes(wName) || loc.startsWith(wCode) || loc.includes(wCode);
                     });
 
@@ -1781,38 +1818,61 @@ startxref
 
         // Execute Store Activation
         async function executeStoreActivation() {
-            const storeId = document.getElementById('activate-store-id').value || (window.currentActivationStore && window.currentActivationStore.id);
+            const storeId = document.getElementById('activate-store-id')?.value || (window.currentActivationStore && window.currentActivationStore.id);
             const welcomeMsg = document.getElementById('activate-welcome-msg')?.value.trim();
 
             let stores = getDB("stores_list_old", MOCK_STORES);
-            let s = stores.find(st => st.id === storeId || st.email === storeId);
+            let s = stores.find(st => st.id === storeId || st.email === storeId || (st.name && window.currentActivationStore && st.name === window.currentActivationStore.name));
             if (!s && window.currentActivationStore) s = window.currentActivationStore;
+
+            const targetStoreName = s ? (s.name || s.store_name || "متجر معتمد") : "متجر معتمد";
+            const targetEmail = s ? (s.email || "") : "";
+            const targetPhone = s ? (s.phone || "") : "";
+            const targetWilaya = s ? (s.wilaya || s.location || "16 الجزائر") : "16 الجزائر";
+            const targetBaladiya = s ? (s.baladiya || s.commune || "الجزائر") : "الجزائر";
+            const targetCategory = s ? (s.category || "عام") : "عام";
 
             try {
                 if (window.supabaseClient) {
                     const targetKey = storeId || (s && (s.id || s.email));
-                    if (targetKey) {
-                        // The database trigger handles profiles, users, and stores synchronization
-                        if (targetKey.includes("@")) {
-                            await window.supabaseClient.from('merchant_requests').update({ status: 'approved' }).eq('email', targetKey);
-                        } else {
-                            await window.supabaseClient.from('merchant_requests').update({ status: 'approved' }).eq('user_id', targetKey);
-                        }
-                        
-                        // We still upsert the store manually here to ensure custom store name properties from the admin panel are saved, but the DB trigger will also do a basic upsert.
-                        await window.supabaseClient.from('stores').upsert({
-                            id: targetKey,
-                            name: s ? (s.name || s.store_name || "متجر معتمد") : "متجر معتمد",
-                            store_name: s ? (s.name || s.store_name || "متجر معتمد") : "متجر معتمد",
-                            wilaya: s ? (s.wilaya || "الجزائر") : "الجزائر",
-                            baladiya: s ? (s.baladiya || s.commune || "الجزائر") : "الجزائر",
-                            category: s ? (s.category || "عام") : "عام",
-                            phone: s ? (s.phone || "") : "",
-                            status: "active",
+                    
+                    // 1. Update merchant_requests
+                    try {
+                        await window.supabaseClient.from('merchant_requests').update({ 
+                            status: 'approved',
                             updated_at: new Date().toISOString()
-                        });
-                        console.log("Successfully synchronized approval and store creation to Supabase!");
-                    }
+                        }).or(`id.eq.${storeId || 'null'},email.eq.${targetEmail || 'null'},store_name.eq.${targetStoreName || 'null'}`);
+                    } catch(e){}
+
+                    // 2. Upsert/Update stores table
+                    try {
+                        await window.supabaseClient.from('stores').upsert({
+                            name: targetStoreName,
+                            store_name: targetStoreName,
+                            wilaya: targetWilaya,
+                            baladiya: targetBaladiya,
+                            category: targetCategory,
+                            phone: targetPhone,
+                            email: targetEmail,
+                            merchant_email: targetEmail,
+                            status: "APPROVED",
+                            is_verified: true,
+                            updated_at: new Date().toISOString()
+                        }, { onConflict: 'name' });
+                    } catch(e){}
+
+                    // 3. Update profiles role
+                    try {
+                        if (targetEmail || (s && s.user_id)) {
+                            await window.supabaseClient.from('profiles').update({
+                                role: 'merchant',
+                                status: 'approved',
+                                updated_at: new Date().toISOString()
+                            }).or(`id.eq.${s?.user_id || 'null'},email.eq.${targetEmail || 'null'}`);
+                        }
+                    } catch(e){}
+
+                    console.log("Successfully synchronized approval and store creation to Supabase!");
                 }
             } catch(e) {
                 console.error("Failed to sync approval to Supabase:", e);
@@ -1822,13 +1882,45 @@ startxref
                 s.status = "APPROVED";
             } else {
                 s = {
-                    id: storeId,
-                    name: "متجر معتمد جديد",
+                    id: storeId || 's_' + Date.now(),
+                    name: targetStoreName,
+                    store_name: targetStoreName,
+                    wilaya: targetWilaya,
+                    location: targetWilaya,
                     status: "APPROVED"
                 };
                 stores.unshift(s);
             }
             setDB("stores_list_old", stores);
+
+            // Update all related local storage lists
+            const updateStorageStatus = (key) => {
+                try {
+                    let list = JSON.parse(localStorage.getItem(key) || '[]');
+                    if (Array.isArray(list)) {
+                        list = list.map(item => {
+                            if (item.id == storeId || item.id === storeId || (item.name && item.name === targetStoreName) || (item.store_name && item.store_name === targetStoreName)) {
+                                return { ...item, status: 'APPROVED' };
+                            }
+                            return item;
+                        });
+                        localStorage.setItem(key, JSON.stringify(list));
+                    }
+                } catch(e){}
+            };
+            updateStorageStatus('zalo_local_merchant_requests');
+            updateStorageStatus('zalo_merchant_requests');
+            updateStorageStatus('zalo_stores_list_old');
+            updateStorageStatus('stores_list_old');
+
+            // Save status override
+            try {
+                let overrides = JSON.parse(localStorage.getItem('zalo_store_status_overrides') || '{}');
+                if (storeId) overrides[String(storeId)] = 'APPROVED';
+                if (targetStoreName) overrides[targetStoreName] = 'APPROVED';
+                if (targetEmail) overrides[targetEmail] = 'APPROVED';
+                localStorage.setItem('zalo_store_status_overrides', JSON.stringify(overrides));
+            } catch(e){}
             
             // Store merchant activation flags in local storage
             localStorage.setItem('zalo_merchant_status', 'approved');
@@ -1841,10 +1933,12 @@ startxref
             closeActivationConfirmModal();
             closeDocumentsModal();
 
-            alert(`🎉 تم تفعيل متجر "${s.name || 'التاجر'}" بنجاح!\n\nتم تحديث حسابه إلى (معتمد) على السحابة وجميع الأجهزة.\nيمكن للتاجر الآن الدخول المباشر إلى لوحة تحكمه وإدارة منتجاته.`);
+            alert(`🎉 تم تفعيل متجر "${s.name || s.store_name || 'التاجر'}" بنجاح!\n\nتم تحديث حسابه إلى (معتمد) على السحابة وجميع الأجهزة.\nيمكن للتاجر الآن الدخول المباشر إلى لوحة تحكمه وإدارة منتجاته.`);
 
             renderRegistrations();
             renderStats();
+            renderWilayaTable();
+            if (typeof renderGlobalStoresTable === 'function') renderGlobalStoresTable();
         }
 
         // 📲 QR Code Control Center Functions

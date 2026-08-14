@@ -3666,7 +3666,8 @@ async function syncMerchantRequestStatus(user) {
         .maybeSingle();
 
       if (storeRow) {
-        if (storeRow.status === 'approved' || storeRow.status === 'active' || storeRow.is_verified || storeRow.status !== 'rejected') {
+        const sStatus = String(storeRow.status || '').toUpperCase();
+        if (sStatus === 'APPROVED' || sStatus === 'ACTIVE' || storeRow.is_verified === true) {
           isApproved = true;
           isPending = false;
           localStorage.setItem('zalo_user_role', 'MERCHANT');
@@ -3675,6 +3676,8 @@ async function syncMerchantRequestStatus(user) {
             localStorage.setItem('zalo_active_store', storeRow.name || storeRow.store_name);
             sessionStorage.setItem('merchant_store_name', storeRow.name || storeRow.store_name);
           }
+        } else if (sStatus === 'PENDING') {
+          if (!isApproved) isPending = true;
         }
       }
     }
