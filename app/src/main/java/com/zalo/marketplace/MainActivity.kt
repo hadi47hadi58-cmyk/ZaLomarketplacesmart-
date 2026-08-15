@@ -108,15 +108,21 @@ class MainActivity : ComponentActivity() {
             e.printStackTrace()
         }
         
-        // Pre-create the WebView Code Cache directories to prevent Chromium opendir error logs
+        // Pre-create WebView and Chromium cache/index directories to prevent index file and opendir error logs
         try {
-            val codeCacheJsDir = java.io.File(cacheDir, "WebView/Default/HTTP Cache/Code Cache/js")
-            if (!codeCacheJsDir.exists()) {
-                codeCacheJsDir.mkdirs()
-            }
-            val codeCacheWasmDir = java.io.File(cacheDir, "WebView/Default/HTTP Cache/Code Cache/wasm")
-            if (!codeCacheWasmDir.exists()) {
-                codeCacheWasmDir.mkdirs()
+            val cacheBase = java.io.File(cacheDir, "WebView/Default/HTTP Cache")
+            if (!cacheBase.exists()) cacheBase.mkdirs()
+            java.io.File(cacheBase, "index-dir").mkdirs()
+            java.io.File(cacheBase, "Code Cache/js").mkdirs()
+            java.io.File(cacheBase, "Code Cache/wasm").mkdirs()
+            
+            val dataDirectory = applicationInfo.dataDir
+            if (dataDirectory != null) {
+                val appWebviewCache = java.io.File(dataDirectory, "app_webview/Default/HTTP Cache")
+                if (!appWebviewCache.exists()) appWebviewCache.mkdirs()
+                java.io.File(appWebviewCache, "index-dir").mkdirs()
+                java.io.File(appWebviewCache, "Code Cache/js").mkdirs()
+                java.io.File(appWebviewCache, "Code Cache/wasm").mkdirs()
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -405,17 +411,15 @@ fun PureWebContainerScreen(
                     // Enable standard WebView caching to make image and asset loading fast
                     // clearCache(true) // Removed to prevent wiping the cache on every single app launch
                     try {
-                        val jsDir = java.io.File(activity.cacheDir, "WebView/Default/HTTP Cache/Code Cache/js")
-                        if (!jsDir.exists()) {
-                            jsDir.mkdirs()
-                        }
-                        val wasmDir = java.io.File(activity.cacheDir, "WebView/Default/HTTP Cache/Code Cache/wasm")
-                        if (!wasmDir.exists()) {
-                            wasmDir.mkdirs()
-                        }
+                        val cacheBase = java.io.File(activity.cacheDir, "WebView/Default/HTTP Cache")
+                        if (!cacheBase.exists()) cacheBase.mkdirs()
+                        java.io.File(cacheBase, "index-dir").mkdirs()
+                        java.io.File(cacheBase, "Code Cache/js").mkdirs()
+                        java.io.File(cacheBase, "Code Cache/wasm").mkdirs()
                     } catch (e: Exception) {
                         e.printStackTrace()
                     }
+                    setLayerType(android.view.View.LAYER_TYPE_HARDWARE, null)
                     settings.apply {
                         javaScriptEnabled = true
                         domStorageEnabled = true
@@ -428,6 +432,7 @@ fun PureWebContainerScreen(
                         useWideViewPort = true
                         mixedContentMode = WebSettings.MIXED_CONTENT_NEVER_ALLOW
                         cacheMode = WebSettings.LOAD_DEFAULT
+                        mediaPlaybackRequiresUserGesture = false
                     }
                     addJavascriptInterface(WebAppInterface(activity, this), "AndroidInterface")
                     loadUrl("https://appassets.androidplatform.net/assets/web/splash.html")
