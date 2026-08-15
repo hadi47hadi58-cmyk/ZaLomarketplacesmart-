@@ -1780,18 +1780,7 @@ body { margin: 0; padding: 0;
       </div>
     </div>
 
-    <!-- Regional Tabbed Control Bar with local sky-blue themed photo backgrounds -->
-    <div class="regional-tabs-container" style="padding: 16px 16px 8px 16px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
-      <button class="regional-tab-btn" id="tab-north" onclick="switchRegion('north')" style="background-image: linear-gradient(135deg, rgba(14, 165, 233, 0.8), rgba(2, 132, 199, 0.8)), url('images/hero-north.jpg');">
-        <span>شمال الجزائري</span>
-      </button>
-      <button class="regional-tab-btn" id="tab-center" onclick="switchRegion('center')" style="background-image: linear-gradient(135deg, rgba(14, 165, 233, 0.8), rgba(2, 132, 199, 0.8)), url('images/hero-center.jpg');">
-        <span>وسط الجزائري</span>
-      </button>
-      <button class="regional-tab-btn active" id="tab-south" onclick="switchRegion('south')" style="background-image: linear-gradient(135deg, rgba(14, 165, 233, 0.8), rgba(2, 132, 199, 0.8)), url('images/hero-south.jpg');">
-        <span>جنوب الجزائري</span>
-      </button>
-    </div>
+    
 
     <!-- Wilaya / Store Selector Banner Button -->
     <div style="padding: 10px 16px 16px 16px;">
@@ -1806,6 +1795,20 @@ body { margin: 0; padding: 0;
 
     <!-- Hidden / Collapsible Wilaya Grid for picker modal -->
     <div id="wilaya-picker-modal-container" style="display: none; padding: 0 16px 16px 16px;">
+      <div style="font-size: 13px; font-weight: 800; color: #0f172a; margin: 8px 0 4px; text-align: right;">اختر الإقليم:</div>
+      <!-- Regional Tabbed Control Bar with local sky-blue themed photo backgrounds -->
+    <div class="regional-tabs-container" style="padding: 16px 16px 8px 16px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
+      <button class="regional-tab-btn" id="tab-north" onclick="switchRegion('north')" style="background-image: linear-gradient(135deg, rgba(14, 165, 233, 0.8), rgba(2, 132, 199, 0.8)), url('images/hero-north.jpg');">
+        <span>شمال الجزائري</span>
+      </button>
+      <button class="regional-tab-btn" id="tab-center" onclick="switchRegion('center')" style="background-image: linear-gradient(135deg, rgba(14, 165, 233, 0.8), rgba(2, 132, 199, 0.8)), url('images/hero-center.jpg');">
+        <span>وسط الجزائري</span>
+      </button>
+      <button class="regional-tab-btn active" id="tab-south" onclick="switchRegion('south')" style="background-image: linear-gradient(135deg, rgba(14, 165, 233, 0.8), rgba(2, 132, 199, 0.8)), url('images/hero-south.jpg');">
+        <span>جنوب الجزائري</span>
+      </button>
+    </div>
+
       <div class="wilaya-grid-new" id="wilaya-grid-container-new">
         <!-- Loaded dynamically -->
       </div>
