@@ -3200,20 +3200,30 @@ window.selectSubCategoryNew = function(subCatName, mainCatName) {
   state.selectedCategoryNew = subCatName;
   state.selectedMainCategory = mainCatName;
   const storesTitle = document.getElementById('stores-title-new');
-  if (storesTitle) storesTitle.innerText = `منتجات ${subCatName} في ${state.selectedBaladiya || state.selectedWilaya || 'المنطقة'}`;
+  const activeWilaya = state.selectedBaladiya || state.selectedWilaya || 'المنطقة';
+  if (storesTitle) storesTitle.innerText = `منتجات ${subCatName} في ${activeWilaya}`;
 
-  // Filter real loaded products without fake dummy generation
+  // Filter real loaded products (including live stories) with smart category matching
+  const cleanActiveWilaya = (state.selectedWilaya || '').replace(/^[0-9\s\-]+/, '').trim().toLowerCase();
+  
   const filteredProducts = (state.loadedProducts || []).filter(p => {
-    const pCat = (p.category || '').toLowerCase();
-    const pSub = (p.subcategory || p.sub_category || '').toLowerCase();
-    const targetSub = subCatName.toLowerCase();
-    const targetMain = (mainCatName || '').toLowerCase();
+    // Check Category and Subcategory matching
+    const matchesCat = (typeof window.matchesCategoryOrSubcategory === 'function') 
+      ? window.matchesCategoryOrSubcategory(p, mainCatName, subCatName)
+      : true;
 
-    const matchesCat = pCat.includes(targetMain) || pCat.includes(targetSub) || pSub.includes(targetSub) || targetSub.includes('جميع فروع');
-    const matchesWilaya = !state.selectedWilaya || (p.wilaya && p.wilaya.includes(state.selectedWilaya));
-    const matchesBaladiya = !state.selectedBaladiya || (p.baladiya && p.baladiya.includes(state.selectedBaladiya)) || (p.commune && p.commune.includes(state.selectedBaladiya));
+    // Check Wilaya matching (if a specific wilaya was chosen)
+    if (!cleanActiveWilaya || cleanActiveWilaya === 'الكل') {
+      return matchesCat;
+    }
 
-    return matchesCat && (matchesWilaya || matchesBaladiya);
+    const pWilaya = (p.wilaya || p.wilayaName || p.store_wilaya || '').replace(/^[0-9\s\-]+/, '').trim().toLowerCase();
+    const pStore = (p.storeName || p.store_name || '').toLowerCase();
+    const pDesc = (p.description || '').toLowerCase();
+
+    const matchesWilaya = !pWilaya || pWilaya.includes(cleanActiveWilaya) || cleanActiveWilaya.includes(pWilaya) || pStore.includes(cleanActiveWilaya) || pDesc.includes(cleanActiveWilaya);
+
+    return matchesCat && matchesWilaya;
   });
 
   renderProductsInGrid(filteredProducts, 'stores-list-container');
@@ -4470,32 +4480,33 @@ window.getProductCardImageHTML = function(pName, imgUrl) {
 
 window.getProductFallbackVisualHTML = function(pName) {
   const nameLower = (pName || '').toLowerCase();
-  let icon = '🛍️';
-  let gradient = 'linear-gradient(135deg, #0ea5e9, #0284c7)';
-  let tagText = 'منتج مميز';
+  let realPhoto = 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500'; // Real high quality product photography
+  let tagText = 'منتج معتمد';
 
   if (nameLower.includes('ساعة') || nameLower.includes('watch') || nameLower.includes('ذكية')) {
-    icon = '⌚';
-    gradient = 'linear-gradient(135deg, #0f172a, #334155)';
+    realPhoto = 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500';
     tagText = 'ساعات وإلكترونيات';
   } else if (nameLower.includes('هاتف') || nameLower.includes('حامل') || nameLower.includes('phone') || nameLower.includes('شاحن')) {
-    icon = '📱';
-    gradient = 'linear-gradient(135deg, #0284c7, #0369a1)';
+    realPhoto = 'https://images.unsplash.com/photo-1586105251261-72a756497a11?w=500';
     tagText = 'ملحقات الهواتف';
   } else if (nameLower.includes('طفل') || nameLower.includes('اطفال') || nameLower.includes('بيبي') || nameLower.includes('دفتر') || nameLower.includes('فراش')) {
-    icon = '👶';
-    gradient = 'linear-gradient(135deg, #f43f5e, #be123c)';
+    realPhoto = 'https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?w=500';
     tagText = 'مستلزمات أطفال';
-  } else if (nameLower.includes('حذاء') || nameLower.includes('ملابس') || nameLower.includes('قميص') || nameLower.includes('فستان')) {
-    icon = '👟';
-    gradient = 'linear-gradient(135deg, #8b5cf6, #6d28d9)';
+  } else if (nameLower.includes('حذاء') || nameLower.includes('ملابس') || nameLower.includes('قميص') || nameLower.includes('فستان') || nameLower.includes('أناقة')) {
+    realPhoto = 'https://images.unsplash.com/photo-1539109136881-3be0616acf4b?w=500';
     tagText = 'أزياء وموضة';
+  } else if (nameLower.includes('أواني') || nameLower.includes('مطبخ') || nameLower.includes('منزل') || nameLower.includes('جرانيت')) {
+    realPhoto = 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?w=500';
+    tagText = 'أواني ومنزل';
+  } else if (nameLower.includes('تمر') || nameLower.includes('دقلة') || nameLower.includes('غذاء')) {
+    realPhoto = 'https://images.unsplash.com/photo-1559181567-c3190ca9959b?w=500';
+    tagText = 'منتجات غذائية';
   }
 
   return `
-    <div style="width:100%; height:100%; background: ${gradient}; display:flex; flex-direction:column; align-items:center; justify-content:center; position:relative; overflow:hidden; border-radius:12px;">
-      <span style="font-size: 42px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.35)); transition: transform 0.3s;">${icon}</span>
-      <span style="font-size: 9.5px; font-weight: 800; color: #ffffff; background: rgba(0,0,0,0.35); padding: 3px 10px; border-radius: 12px; margin-top: 6px; letter-spacing: 0.3px; backdrop-filter: blur(4px);">${tagText}</span>
+    <div style="width:100%; height:100%; position:relative; overflow:hidden; border-radius:12px; background:#f1f5f9;">
+      <img src="${realPhoto}" style="width:100%; height:100%; object-fit:cover;" alt="${pName}" />
+      <span style="position:absolute; bottom:6px; right:6px; font-size:9.5px; font-weight:800; color:#ffffff; background:rgba(15,23,42,0.75); padding:2px 8px; border-radius:8px; letter-spacing:0.2px; backdrop-filter:blur(4px);">${tagText}</span>
     </div>
   `;
 };
