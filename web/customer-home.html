@@ -1821,23 +1821,7 @@ body {
       <!-- Dynamic main categories populated via JS -->
     </div>
 
-    <!-- Facebook Stories & Live Marketplace Feed (عروض وقصص السوق اللحظية فوق شبكة المنتجات) -->
-    <div class="stories-section-wrap" style="background:#ffffff; margin: 12px 14px 4px; padding:12px 14px; border:1px solid #e2e8f0; border-radius:18px; box-shadow:0 4px 15px rgba(0,0,0,0.03);">
-      <div class="stories-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-        <div style="font-size:13px; font-weight:900; color:var(--navy); display:flex; align-items:center; gap:6px;">
-          <i class="fa-solid fa-bolt" style="color:#eab308; font-size:15px;"></i>
-          <span>عروض وقصص السوق اللحظية</span>
-          <span style="font-size:10px; background:#fee2e2; color:#ef4444; padding:2px 8px; border-radius:12px; font-weight:800; animation:pulse 2s infinite;">مباشر 🔴</span>
-        </div>
-        <button onclick="openCreateStoryModal()" style="background:#f0f9ff; color:#0284c7; border:1.5px solid #bae6fd; padding:5px 12px; border-radius:14px; font-size:11px; font-weight:800; cursor:pointer; display:flex; align-items:center; gap:5px; transition: all 0.2s ease;">
-          <i class="fa-solid fa-plus-circle"></i> أنشر صورة لحظية
-        </button>
-      </div>
-      
-      <div class="stories-scroll" id="home-stories-container">
-        <!-- Rendered dynamically with add button + merchant live stories -->
-      </div>
-    </div>
+
 
     <div class="screen-title" style="margin-top: 14px;">
       <i class="fa-solid fa-cubes"></i> شبكة المنتجات المتاحة
@@ -4513,46 +4497,10 @@ window.getProductCardImageHTML = function(pName, imgUrl) {
 };
 
 window.getProductFallbackVisualHTML = function(pName) {
-  const nameLower = (pName || '').toLowerCase();
-  let realPhoto = 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500'; // Real high quality product photography
-  let tagText = 'منتج معتمد';
-
-  if (nameLower.includes('ساعة') || nameLower.includes('watch') || nameLower.includes('ذكية')) {
-    realPhoto = 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500';
-    tagText = 'ساعات وإلكترونيات';
-  } else if (nameLower.includes('حامل') || nameLower.includes('stand') || nameLower.includes('holder') || nameLower.includes('تثبيت') || nameLower.includes('سيبور')) {
-    realPhoto = 'https://images.unsplash.com/photo-1586105251261-72a756497a11?w=500';
-    tagText = 'حامل وملحقات هواتف';
-  } else if (nameLower.includes('هاتف') || nameLower.includes('phone') || nameLower.includes('شاحن') || nameLower.includes('سماعات') || nameLower.includes('airpods') || nameLower.includes('كابل') || nameLower.includes('écouteur')) {
-    realPhoto = 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=500';
-    tagText = 'ملحقات الهواتف';
-  } else if (nameLower.includes('سيارة') || nameLower.includes('مركبة') || nameLower.includes('زيت') || nameLower.includes('عجلة') || nameLower.includes('قطع غيار') || nameLower.includes('محرك')) {
-    realPhoto = 'https://images.unsplash.com/photo-1486006920555-c77dce18193b?w=500';
-    tagText = 'قطع غيار سيارات';
-  } else if (nameLower.includes('طفل') || nameLower.includes('اطفال') || nameLower.includes('بيبي') || nameLower.includes('دفتر') || nameLower.includes('فراش') || nameLower.includes('رضيع')) {
-    realPhoto = 'https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?w=500';
-    tagText = 'مستلزمات أطفال';
-  } else if (nameLower.includes('حذاء') || nameLower.includes('ملابس') || nameLower.includes('قميص') || nameLower.includes('فستان') || nameLower.includes('أناقة') || nameLower.includes('قفطان') || nameLower.includes('سروال')) {
-    realPhoto = 'https://images.unsplash.com/photo-1539109136881-3be0616acf4b?w=500';
-    tagText = 'أزياء وموضة';
-  } else if (nameLower.includes('أواني') || nameLower.includes('مطبخ') || nameLower.includes('منزل') || nameLower.includes('جرانيت') || nameLower.includes('طاجين') || nameLower.includes('كوكوط')) {
-    realPhoto = 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?w=500';
-    tagText = 'أواني ومنزل';
-  } else if (nameLower.includes('تمر') || nameLower.includes('دقلة') || nameLower.includes('غذاء') || nameLower.includes('عسل') || nameLower.includes('زيت زيتون') || nameLower.includes('قهوة')) {
-    realPhoto = 'https://images.unsplash.com/photo-1559181567-c3190ca9959b?w=500';
-    tagText = 'منتجات غذائية';
-  } else if (nameLower.includes('عطر') || nameLower.includes('تجميل') || nameLower.includes('مكياج') || nameLower.includes('كريم') || nameLower.includes('بشرة')) {
-    realPhoto = 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=500';
-    tagText = 'تجميل وعناية';
-  } else if (nameLower.includes('بناء') || nameLower.includes('عتاد') || nameLower.includes('مطرقة') || nameLower.includes('مثقاب') || nameLower.includes('دهان')) {
-    realPhoto = 'https://images.unsplash.com/photo-1581783898377-1c85bf937427?w=500';
-    tagText = 'أدوات وعتاد';
-  }
-
   return `
-    <div style="width:100%; height:100%; position:relative; overflow:hidden; border-radius:12px; background:#f1f5f9;">
-      <img src="${realPhoto}" style="width:100%; height:100%; object-fit:cover;" alt="${pName}" />
-      <span style="position:absolute; bottom:6px; right:6px; font-size:9.5px; font-weight:800; color:#ffffff; background:rgba(15,23,42,0.75); padding:2px 8px; border-radius:8px; letter-spacing:0.2px; backdrop-filter:blur(4px);">${tagText}</span>
+    <div style="width:100%; height:100%; position:relative; overflow:hidden; border-radius:12px; background:#f1f5f9; display:flex; align-items:center; justify-content:center;">
+      <img src="assets/icon-192.svg" style="width:60%; height:60%; object-fit:contain; opacity:0.5;" alt="${pName}" />
+      <span style="position:absolute; bottom:6px; right:6px; font-size:9.5px; font-weight:800; color:#64748b; background:rgba(255,255,255,0.9); padding:2px 8px; border-radius:8px; border: 1px solid #e2e8f0;">صورة غير متوفرة</span>
     </div>
   `;
 };
@@ -6116,75 +6064,12 @@ window.checkoutCart = async function() {
     }
     updateCartBadge();
     
-    // Prepare Receipt Modal Details
-    const receiptContainer = document.getElementById('receipt-details-content');
-    let grandTotal = 0;
-    let itemsTextList = [];
-
-    let summaryHtml = `
-      <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--bd); padding-bottom:6px;">
-        <span style="color:var(--gray);">اسم المشتري:</span>
-        <span style="font-weight:bold; color:var(--navy);">${name} (${phone})</span>
-      </div>
-      <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--bd); padding-bottom:6px;">
-        <span style="color:var(--gray);">مكان التسليم:</span>
-        <span style="font-weight:bold; color:#0369a1;">ولاية ${wilaya} - ${addr}</span>
-      </div>
-      <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--bd); padding-bottom:6px;">
-        <span style="color:var(--gray);">طريقة الدفع:</span>
-        <span style="font-weight:bold; color:#15803d;">${pay === 'cod' ? 'الدفع عند الاستلام (COD)' : pay}</span>
-      </div>
-      <div style="margin-top:4px; font-weight:800; color:var(--navy);">تفاصيل المنتجات المشتراة:</div>
-    `;
-
-    cart.forEach(item => {
-      const itemSubtotal = item.price * item.qty;
-      grandTotal += itemSubtotal;
-      itemsTextList.push(`• ${item.name} (الكمية: ${item.qty}) = ${itemSubtotal.toLocaleString()} دج [${item.storeName}]`);
-      summaryHtml += `
-        <div style="display:flex; justify-content:space-between; font-size:11.5px; background:#fff; padding:6px 10px; border-radius:8px; border:1px solid var(--bd);">
-          <span>${item.emoji||'📦'} ${item.name} <strong style="color:var(--brand-gold);">x${item.qty}</strong></span>
-          <strong style="color:var(--metallic-gold);">${itemSubtotal.toLocaleString()} دج</strong>
-        </div>
-      `;
-    });
-
-    summaryHtml += `
-      <div style="display:flex; justify-content:space-between; font-size:13.5px; font-weight:900; color:var(--navy); background:#fef3c7; padding:8px 12px; border-radius:10px; border:1px solid #fde047; margin-top:4px;">
-        <span>الإجمالي النهائي:</span>
-        <span style="color:#b45309;">${grandTotal.toLocaleString()} دج</span>
-      </div>
-    `;
-
-    if (receiptContainer) receiptContainer.innerHTML = summaryHtml;
-
-    // Generate WhatsApp Message
-    const waText = `🛍️ *وصل إثبات الطلب - منصة ZaLo الموحدة*\n\n` +
-      `👤 *المشتري:* ${name}\n` +
-      `📞 *الهاتف:* ${phone}\n` +
-      `📍 *ولاية التسليم:* ${wilaya}\n` +
-      `🏠 *العنوان:* ${addr}\n` +
-      `💳 *طريقة الدفع:* الدفع يد بلمس عند الاستلام\n\n` +
-      `📦 *قائمة المنتجات:*\n` +
-      itemsTextList.join('\n') + `\n\n` +
-      `💰 *المجموع الإجمالي شامل التسليم:* ${grandTotal.toLocaleString()} دج\n\n` +
-      `أرجو تأكيد تجهيز الطلبية والشحن الفوري لولايتي وشكراً!`;
-
-    const storePhoneClean = '0550000000'; // Default admin hotline fallback
-    const waLink = document.getElementById('receipt-whatsapp-link');
-    if (waLink) {
-      waLink.href = `https://wa.me/213${storePhoneClean.substring(1)}?text=${encodeURIComponent(waText)}`;
-    }
-
-    // Display Receipt Modal
-    const rModal = document.getElementById('orderReceiptModal');
-    if (rModal) rModal.style.display = 'flex';
-
     if (typeof loadCustomerOrders === 'function') {
       loadCustomerOrders();
     }
 
     window.showToast(`✨ تم تسجيل وتأكيد ${successfulOrders} طلبيات بنجاح!`);
+    switchTab('orders');
   } else {
     window.showToast("❌ فشل تأكيد الطلبات، يرجى تكرار المحاولة.");
   }

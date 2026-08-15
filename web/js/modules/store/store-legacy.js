@@ -769,7 +769,13 @@
             } catch(e) {}
 
             const realStoreName = currentStoreSettings.storeName || currentStoreSettings.name || localStorage.getItem('zalo_active_store') || sessionStorage.getItem('merchant_store_name') || 'متجر معتمد';
-            const realStoreId = currentStoreSettings.id || localStorage.getItem('zalo_uid') || localStorage.getItem('user_uid') || 'store_' + Date.now();
+            
+            let realStoreId = currentStoreSettings.id || localStorage.getItem('zalo_uid') || localStorage.getItem('user_uid');
+            if (!realStoreId) {
+                realStoreId = 'store_' + Date.now();
+                localStorage.setItem('zalo_uid', realStoreId); // Save it so they own it
+            }
+
             const realWilaya = currentStoreSettings.wilaya || currentStoreSettings.location || localStorage.getItem('zalo_selected_wilaya') || 'الجزائر';
             const realPhone = currentStoreSettings.phone || currentStoreSettings.storePhone || '';
 
@@ -815,11 +821,11 @@
             products.unshift(newProd);
             setDB("products", products);
 
-            // Also keep zalo_products synced
+            // Also keep zalo_products synced directly (avoiding DB_KEY_PREFIX bug)
             try {
-                let zp = getDB("zalo_products", []);
+                let zp = JSON.parse(localStorage.getItem("zalo_products") || "[]");
                 zp.unshift(newProd);
-                setDB("zalo_products", zp);
+                localStorage.setItem("zalo_products", JSON.stringify(zp));
             } catch(e) {}
 
             // Write to Supabase table products if active
