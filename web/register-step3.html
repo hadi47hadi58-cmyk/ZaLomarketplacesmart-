@@ -578,7 +578,7 @@
           wilaya: wilaya,
           commune: commune,
           role: 'merchant',
-          status: 'pending',
+          status: 'active',
           store_name: storeName,
           updated_at: new Date().toISOString()
         });
@@ -597,7 +597,7 @@
         subcategory: subcategory,
         wilaya: wilaya,
         commune: commune,
-        status: 'PENDING',
+        status: 'APPROVED',
         rc_number: rcnum,
         logo: logoB64,
         id_front: idFront,
@@ -630,7 +630,7 @@
             wilaya: wilaya,
             commune: commune,
             category: category,
-            status: 'PENDING_APPROVAL'
+            status: 'ACTIVE'
           });
           if (storeError) console.warn("Stores upsert warning:", storeError.message);
         }
@@ -652,9 +652,9 @@
 
       localStorage.setItem('user_uid', uid);
       localStorage.setItem('user_email', email);
-      localStorage.setItem('zalo_merchant_status', 'pending');
-      localStorage.setItem('user_role', 'customer');
-      localStorage.setItem('zalo_user_role', 'customer');
+      localStorage.setItem('zalo_merchant_status', 'approved');
+      localStorage.setItem('user_role', 'merchant');
+      localStorage.setItem('zalo_user_role', 'merchant');
 
       if (storeName) {
         localStorage.setItem('zalo_active_store', storeName);
@@ -684,10 +684,10 @@
       sessionStorage.removeItem('reg_wilaya');
       sessionStorage.removeItem('reg_commune');
 
-      window.showToast?.("تم إرسال طلب تسجيل متجرك بنجاح!") || alert("تم إرسال طلب تسجيل متجرك بنجاح!");
+      window.showToast?.("🎉 تم افتتاح متجرك بنجاح! جاري تحويلك للوحة التحكم...") || alert("🎉 تم افتتاح متجرك بنجاح! جاري تحويلك للوحة التحكم...");
 
       setTimeout(() => {
-        window.location.href = 'customer-home.html?merchant_pending=true';
+        window.location.href = 'dashboard-store.html';
       }, 1000);
 
     } catch (err) {
