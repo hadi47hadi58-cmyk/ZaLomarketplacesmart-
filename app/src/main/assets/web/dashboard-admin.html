@@ -301,7 +301,34 @@
                 <!-- Section 1: Home & Stats -->
                 <div id="section-home" class="space-y-6">
 
-            <!-- Banner exact styling for ZaLo -->
+            
+                <!-- ADMIN/MANAGER INSTANT PUBLISH CARD (Stories / Reels / Feed Post) -->
+                <section class="bg-gradient-to-tr from-emerald-50 to-white border border-emerald-200 rounded-3xl p-6 space-y-4 text-right shadow-sm mt-6 mb-6">
+                    <div class="border-b border-emerald-100 pb-3 flex justify-between items-center">
+                        <span class="text-xs bg-[#113f1c] text-white px-3 py-1 rounded-full font-bold">الإدارة المركزية</span>
+                        <h3 class="text-base font-black text-slate-800 flex items-center gap-2">
+                            <i class="fa-solid fa-bullhorn text-[#d4af37]"></i>
+                            <span>النشر اللحظي العام (صورة أو فيديو قصير للمنصة)</span>
+                        </h3>
+                    </div>
+                    <form onsubmit="merchantPublishInstantPost(event)" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-[11px] text-slate-600 font-bold mb-1">عنوان الإعلان أو العرض العام</label>
+                            <input id="merchant-post-title" type="text" class="w-full bg-white border border-slate-200 text-xs text-slate-800 rounded-xl py-2.5 px-3 focus:outline-none focus:border-emerald-400 font-bold" placeholder="مثال: إعلان رسمي لجميع ولايات الجزائر" required>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] text-slate-600 font-bold mb-1">رابط الصورة أو الفيديو القصير (URL)</label>
+                            <input id="merchant-post-media" type="url" class="w-full bg-white border border-slate-200 text-xs text-slate-800 rounded-xl py-2.5 px-3 focus:outline-none focus:border-emerald-400 font-bold" placeholder="https://... (صورة أو فيديو)" required>
+                        </div>
+                        <div class="flex items-end">
+                            <button type="submit" class="w-full bg-gradient-to-r from-[#113f1c] to-[#1e5a2b] hover:opacity-95 text-white text-xs font-black py-2.5 rounded-xl shadow-md transition flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-paper-plane"></i> نشر رسمي فوري ⚡
+                            </button>
+                        </div>
+                    </form>
+                </section>
+
+<!-- Banner exact styling for ZaLo -->
             <div class="bg-white border-2 border-slate-200 rounded-3xl p-6 relative overflow-hidden shadow-sm text-right flex flex-col md:flex-row justify-between items-center gap-4">
                 <div class="absolute top-0 right-0 w-48 h-48 bg-amber-200/20 rounded-full blur-3xl"></div>
                 <div class="flex items-center gap-4 relative z-10">
@@ -1794,5 +1821,33 @@
 
     <!-- Embedded State Logic -->
     <script src="js/modules/admin/admin-legacy.js"></script>
+
+<script>
+window.merchantPublishInstantPost = function(e) {
+    if (e) e.preventDefault();
+    const title = document.getElementById('merchant-post-title').value.trim();
+    const media = document.getElementById('merchant-post-media').value.trim();
+    if (!title || !media) {
+        alert('يرجى إدخال العنوان ورابط الصورة أو الفيديو');
+        return;
+    }
+    const newStory = {
+        id: 'post_' + Date.now(),
+        name: localStorage.getItem('zalo_merchant_name') || localStorage.getItem('zalo_admin_name') || 'تاجر معتمد',
+        wilaya: localStorage.getItem('zalo_merchant_wilaya') || 'الجزائر',
+        image: media,
+        caption: title,
+        likes: 1,
+        time: 'الآن'
+    };
+    let current = JSON.parse(localStorage.getItem('zalo_live_stories') || '[]');
+    current = [newStory, ...current];
+    localStorage.setItem('zalo_live_stories', JSON.stringify(current));
+    alert('تم نشر العرض أو الفيديو اللحظي بنجاح في سوق الجزائر! 🎉');
+    document.getElementById('merchant-post-title').value = '';
+    document.getElementById('merchant-post-media').value = '';
+};
+</script>
+
 </body>
 </html>

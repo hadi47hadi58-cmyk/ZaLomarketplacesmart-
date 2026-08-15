@@ -1766,20 +1766,29 @@ body { margin: 0; padding: 0;
     </div>
 
     <!-- Wilaya / Store Selector Banner Button -->
-    <div style="padding: 12px 16px 8px 16px;">
-      <button onclick="window.openWilayaPickerModal && window.openWilayaPickerModal()" style="width: 100%; background: linear-gradient(135deg, #0284c7, #0369a1); color: white; border: none; padding: 16px 20px; border-radius: 20px; font-weight: 900; font-size: 14.5px; cursor: pointer; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 6px 20px rgba(2,132,199,0.3); transition: transform 0.2s;">
-        <span style="display: flex; align-items: center; gap: 12px;">
-          <i class="fa-solid fa-map-location-dot" style="font-size: 20px; background: rgba(255,255,255,0.2); padding: 8px; border-radius: 12px;"></i>
-          تصفح متاجرك و منتجاتك في ولايتك
-        </span>
-        <span style="background: rgba(255,255,255,0.2); padding: 6px 12px; border-radius: 10px; font-size: 12px;" id="current-wilaya-display-badge">الجزائر 📍</span>
+        <div style="padding: 12px 16px 8px 16px;">
+      <button onclick="openWilayaPickerModal()" style="width: 100%; background: linear-gradient(135deg, #0284c7, #0369a1); color: white; border: none; padding: 16px 20px; border-radius: 20px; font-weight: 900; font-size: 14.5px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 20px rgba(2,132,199,0.3); transition: transform 0.2s;">
+        تصفح متاجرك و منتجاتك في ولايتك
       </button>
     </div>
 
-    <!-- Promo Banner -->
-    <div class="banner-mockup" style="margin: 0 16px 12px 16px;">
-      <div class="banner-text-content">
-        عرض خاص: خصم 20% على كل المنتجات 🎉
+    <!-- Promo Banner / Best Selling Stores Button -->
+    <div class="banner-mockup" onclick="openTopStoresModal()" style="margin: 0 16px 12px 16px; cursor: pointer; background: linear-gradient(135deg, #0f172a, #1e293b); border: 2px solid #38bdf8; border-radius: 20px; padding: 16px; text-align: center; box-shadow: 0 6px 20px rgba(2,132,199,0.2);">
+      <div class="banner-text-content" style="font-size: 14px; font-weight: 900; color: #ffffff; display: flex; align-items: center; justify-content: center; gap: 8px;">
+        <i class="fa-solid fa-store" style="color: #38bdf8; font-size: 18px;"></i>
+        <span>إعلانات خاصة للمتاجر (المتاجر الأكثر مبيعا للمنتجات 🌟)</span>
+      </div>
+    </div>
+
+    <!-- Facebook Stories & Live Posts Feed Section (Below Promo Banner) -->
+    <div class="stories-section-wrap" style="margin: 0 16px 12px 16px; border-radius: 20px; box-shadow: 0 6px 20px rgba(2,132,199,0.15); border: 2px solid #38bdf8; background: #f0f9ff; padding: 14px 16px;">
+      <div class="stories-header" style="display: flex; align-items: center; justify-content: center; margin-bottom: 12px; background: linear-gradient(135deg, #0284c7, #0369a1); padding: 12px 16px; border-radius: 16px; box-shadow: 0 4px 15px rgba(2,132,199,0.25);">
+        <h3 style="font-size: 13.5px; font-weight: 900; color: #ffffff; display: flex; align-items: center; gap: 8px; margin: 0; text-align: center;">
+          <i class="fa-solid fa-bolt" style="color: #ffffff;"></i> منشورات منتجات السوق الجزائري الموحد
+        </h3>
+      </div>
+      <div class="stories-scroll" id="home-stories-container" style="display: flex; gap: 12px; overflow-x: auto; padding-bottom: 8px;">
+        <!-- Dynamically rendered stories -->
       </div>
     </div>
 
@@ -1876,7 +1885,7 @@ body { margin: 0; padding: 0;
       
       <!-- Shipping form (Shows if cart is not empty) -->
       <div id="cart-checkout-form-container" style="display: none; background: #ffffff; border: 1.5px solid var(--metallic-gold); border-radius: 16px; padding: 16px; flex-direction: column; gap: 12px; margin-top: 10px;">
-        <h4 style="font-size: 14px; font-weight: 800; color: var(--navy); border-bottom: 1px solid var(--bd); padding-bottom: 8px;">📍 تفاصيل توصيل الطلب والشحن</h4>
+        <h4 style="font-size: 14px; font-weight: 800; color: var(--navy); border-bottom: 1px solid var(--bd); padding-bottom: 8px;"> تفاصيل توصيل الطلب والشحن</h4>
         
         <div class="form-group">
           <label>اسم المستلم الثلاثي بالكامل *</label>
@@ -2804,21 +2813,27 @@ window.handleWilayaSearch = function(query) {
 };
 
 window.openWilayaPickerModal = function() {
-  const picker = document.getElementById('wilaya-picker-modal-container');
+  const picker = document.getElementById(wilaya-picker-modal-container);
   if (picker) {
-    if (picker.style.display === 'none' || !picker.style.display) {
-      picker.style.display = 'block';
-      picker.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    if (picker.style.display === none || !picker.style.display) {
+      picker.style.display = block;
+      if (typeof renderStateSelectionUI === function) renderStateSelectionUI();
+      picker.scrollIntoView({ behavior: smooth, block: start });
     } else {
-      picker.style.display = 'none';
+      picker.style.display = none;
     }
-  } else {
-    // Fallback switch to region/wilaya tab if exists
-    if (typeof switchTab === 'function') switchTab('home');
+  }
+  const modal = document.getElementById(changeWilayaModal);
+  if (modal) {
+    modal.style.display = flex;
+    if (typeof renderAppWilayasGrid === function) {
+      const list = (typeof WILAYAS !== undefined && Array.isArray(WILAYAS) && WILAYAS.length > 0) ? WILAYAS : ((typeof ALGERIA_WILAYAS !== undefined && Array.isArray(ALGERIA_WILAYAS)) ? ALGERIA_WILAYAS : []);
+      renderAppWilayasGrid(list);
+    }
   }
 };
 
-window.selectWilaya = function(name) {
+window.selectWilaya = function(name) {  const badge = document.getElementById(current-wilaya-display-badge);  if (badge) {    badge.textContent = (name === الجزائر || name === الكل) ?  : `${name} `;  }
   state.selectedWilaya = name;
   
   // Save selected state in local storage & filter products
@@ -4497,7 +4512,7 @@ function renderProductsList(list) {
           <div class="pcard-title-text" onclick="openProductDetails('${pId}')">${pName}</div>
           <div style="font-size:10px; color:#0ea5e9; font-weight:700; margin:2px 0; display:flex; align-items:center; justify-content:space-between;">
             <span style="display:flex; align-items:center; gap:3px;"><i class="fa-solid fa-shop" style="font-size:9px;"></i> ${storeName}</span>
-            ${pWilaya ? `<span style="font-size:9.5px; color:#64748b;">📍 ${pWilaya}</span>` : ''}
+            ${pWilaya ? `<span style="font-size:9.5px; color:#64748b;"> ${pWilaya}</span>` : ''}
           </div>
           <div class="pcard-price-row">
             <span class="pcard-price-value">${price.toLocaleString()} دج</span> <span class="pcard-coin-emoji">💰</span>
@@ -5206,23 +5221,7 @@ window.initStoriesSystem = function() {
   renderHomeStories();
 };
 
-window.renderHomeStories = function() {
-  const container = document.getElementById('home-stories-container');
-  if (!container) return;
-
-  const stories = window.liveStoriesList || [];
-  
-  let html = `
-    <!-- Add Story Button (Facebook Stories Style) -->
-    <div class="story-card-item" onclick="openCreateStoryModal()">
-      <div class="story-avatar-wrap" style="background:linear-gradient(135deg, #0284c7, #38bdf8); display:flex; align-items:center; justify-content:center;">
-        <i class="fa-solid fa-plus" style="font-size:24px; color:#ffffff;"></i>
-      </div>
-      <div class="story-label" style="font-weight:900; color:#0284c7;">+ أنشر عرضك</div>
-    </div>
-  `;
-
-  html += stories.map(st => `
+window.renderHomeStories = function() {  const container = document.getElementById(home-stories-container);  if (!container) return;  const stories = window.liveStoriesList || [];    let html = stories.map(st => `
     <div class="story-card-item" onclick="openStoryViewer('${st.id}')">
       <div class="story-avatar-wrap">
         <img src="${st.image || st.avatar || 'images/wilaya-thumb.jpg'}" alt="${st.author}" onerror="this.src='images/wilaya-thumb.jpg'">
@@ -5617,7 +5616,7 @@ window.submitQuickDirectOrder = async function() {
     `رقم الطلب: #${orderId.substring(0,8)}\n` +
     `👤 *الزبون:* ${name}\n` +
     `📞 *الهاتف:* ${phone}\n` +
-    `📍 *الولاية والبلدية:* ${wilaya} - ${address}\n` +
+    ` *الولاية والبلدية:* ${wilaya} - ${address}\n` +
     `🏪 *المتجر:* ${p.storeName}\n` +
     `📦 *المنتج:* ${p.name} (الكمية: ${qty})\n` +
     `💰 *المبلغ:* ${totalAmount.toLocaleString()} دج\n\n` +
@@ -6285,6 +6284,65 @@ window.applyActiveWilayaFilter = function() {
       renderProductsList(filtered);
     }
   }
+};
+</script>
+
+
+<script>
+document.addEventListener(DOMContentLoaded, () => {
+    const saved = localStorage.getItem(zalo_selected_wilaya) || الجزائر;
+    const badge = document.getElementById(current-wilaya-display-badge);
+    if (badge) {
+        badge.textContent = (saved === الجزائر || saved === الكل) ?  : `${saved} `;
+    }
+});
+</script>
+
+
+<!-- Top Best Selling Stores Modal -->
+<div id="topStoresModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 9999; align-items: center; justify-content: center; padding: 16px;" onclick="if(event.target===this) this.style.display='none'">
+    <div style="background: white; width: 100%; max-width: 500px; border-radius: 24px; padding: 20px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); text-align: right; max-height: 85vh; overflow-y: auto;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f1f5f9; padding-bottom: 12px; margin-bottom: 16px;">
+            <button onclick="document.getElementById('topStoresModal').style.display='none'" style="background: #f1f5f9; border: none; width: 32px; height: 32px; border-radius: 50%; font-weight: bold; cursor: pointer;">✕</button>
+            <h3 style="font-size: 16px; font-weight: 900; color: #0f172a; display: flex; align-items: center; gap: 8px; margin: 0;">
+                <i class="fa-solid fa-award" style="color: #0284c7;"></i> المتاجر الأكثر مبيعا للمنتجات 🌟
+            </h3>
+        </div>
+        <div id="top-stores-list" style="display: flex; flex-direction: column; gap: 12px;">
+            <!-- Rendered dynamically -->
+        </div>
+    </div>
+</div>
+
+<script>
+window.openTopStoresModal = function() {
+    const modal = document.getElementById('topStoresModal');
+    if (!modal) return;
+    const container = document.getElementById('top-stores-list');
+    
+    const topStores = [
+        { name: "متجر الأمانة للإلكترونيات والأجهزة", wilaya: "الجزائر العاصمة", sales: "1,420 طلب", rating: "4.9 ⭐", img: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=150" },
+        { name: "سوق الجزائر المركزي للملابس", wilaya: "وهران", sales: "1,180 طلب", rating: "4.8 ⭐", img: "https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=150" },
+        { name: "مؤسسة الهلال لقطع الغيار والمعدات", wilaya: "قسنطينة", sales: "950 طلب", rating: "4.7 ⭐", img: "https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=150" },
+        { name: "متجر العاصمة للسلع المنزلية", wilaya: "البليدة", sales: "890 طلب", rating: "4.8 ⭐", img: "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=150" },
+    ];
+
+    container.innerHTML = topStores.map(s => `
+        <div style="display: flex; align-items: center; justify-content: space-between; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 16px; padding: 12px 16px; gap: 12px;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <img src="${s.img}" style="width: 48px; height: 48px; border-radius: 12px; object-fit: cover;" alt="">
+                <div>
+                    <h4 style="font-size: 13px; font-weight: 900; color: #0f172a; margin: 0 0 4px 0;">${s.name}</h4>
+                    <div style="font-size: 11px; color: #64748b; font-weight: 700;">📍 ${s.wilaya} • ${s.sales}</div>
+                </div>
+            </div>
+            <div style="background: #e0f2fe; color: #0284c7; padding: 6px 12px; border-radius: 10px; font-size: 12px; font-weight: 900;">
+                ${s.rating}
+            </div>
+        </div>
+    `).join('');
+
+    modal.style.display = 'flex';
 };
 </script>
 

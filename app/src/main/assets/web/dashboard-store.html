@@ -516,7 +516,34 @@
                         </h3>
                     </div>
 
-                    <!-- Quick add product form integrated with app.js functions -->
+                    
+                <!-- MERCHANT INSTANT PUBLISH CARD (Stories / Reels / Feed Post) -->
+                <section class="lg:col-span-12 bg-gradient-to-tr from-sky-50 to-white border border-sky-200 rounded-3xl p-6 space-y-4 text-right shadow-sm mt-4">
+                    <div class="border-b border-sky-100 pb-3 flex justify-between items-center">
+                        <span class="text-xs bg-sky-600 text-white px-3 py-1 rounded-full font-bold">بث مباشر وقصص فورية</span>
+                        <h3 class="text-base font-black text-slate-800 flex items-center gap-2">
+                            <i class="fa-solid fa-bolt text-sky-500"></i>
+                            <span>النشر اللحظي (صورة أو فيديو قصير لعرضك)</span>
+                        </h3>
+                    </div>
+                    <form onsubmit="merchantPublishInstantPost(event)" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-[11px] text-slate-600 font-bold mb-1">عنوان العرض أو المنتج اللحظي</label>
+                            <input id="merchant-post-title" type="text" class="w-full bg-white border border-slate-200 text-xs text-slate-800 rounded-xl py-2.5 px-3 focus:outline-none focus:border-sky-400 font-bold" placeholder="مثال: تخفيضات حصرية لمدة ساعة!" required>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] text-slate-600 font-bold mb-1">رابط الصورة أو الفيديو القصير (URL)</label>
+                            <input id="merchant-post-media" type="url" class="w-full bg-white border border-slate-200 text-xs text-slate-800 rounded-xl py-2.5 px-3 focus:outline-none focus:border-sky-400 font-bold" placeholder="https://... (صورة أو فيديو)" required>
+                        </div>
+                        <div class="flex items-end">
+                            <button type="submit" class="w-full bg-gradient-to-r from-sky-500 to-[#0284c7] hover:from-sky-600 hover:to-sky-700 text-white text-xs font-black py-2.5 rounded-xl shadow-md transition flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-paper-plane"></i> نشر لحظي الآن ⚡
+                            </button>
+                        </div>
+                    </form>
+                </section>
+
+<!-- Quick add product form integrated with app.js functions -->
                     <form id="add-product-form" class="space-y-3.5" onsubmit="merchantAddProduct(event)">
                     <div>
                         <label class="block text-[11px] text-slate-600 font-bold mb-1">اسم المنتج أو السلعة *</label>
@@ -1027,5 +1054,33 @@
         </form>
     </div>
 </div>
+
+<script>
+window.merchantPublishInstantPost = function(e) {
+    if (e) e.preventDefault();
+    const title = document.getElementById('merchant-post-title').value.trim();
+    const media = document.getElementById('merchant-post-media').value.trim();
+    if (!title || !media) {
+        alert('يرجى إدخال العنوان ورابط الصورة أو الفيديو');
+        return;
+    }
+    const newStory = {
+        id: 'post_' + Date.now(),
+        name: localStorage.getItem('zalo_merchant_name') || localStorage.getItem('zalo_admin_name') || 'تاجر معتمد',
+        wilaya: localStorage.getItem('zalo_merchant_wilaya') || 'الجزائر',
+        image: media,
+        caption: title,
+        likes: 1,
+        time: 'الآن'
+    };
+    let current = JSON.parse(localStorage.getItem('zalo_live_stories') || '[]');
+    current = [newStory, ...current];
+    localStorage.setItem('zalo_live_stories', JSON.stringify(current));
+    alert('تم نشر العرض أو الفيديو اللحظي بنجاح في سوق الجزائر! 🎉');
+    document.getElementById('merchant-post-title').value = '';
+    document.getElementById('merchant-post-media').value = '';
+};
+</script>
+
 </body>
 </html>
