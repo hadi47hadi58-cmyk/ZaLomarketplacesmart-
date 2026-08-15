@@ -1823,6 +1823,18 @@ body { margin: 0; padding: 0;
 
 
 
+    <div class="stories-section-wrap" style="padding: 12px 16px 8px; background: #ffffff; border-bottom: 1px solid #f1f5f9; margin-top: 10px;">
+      <div class="stories-header" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+        <h3 style="font-size: 13px; font-weight: 800; color: var(--navy); display: flex; align-items: center; gap: 6px;">
+          <i class="fa-solid fa-bolt" style="color: var(--metallic-gold);"></i> عروض وقصص السوق اللحظية
+        </h3>
+        <span class="badge" style="background: rgba(239, 68, 68, 0.1); color: var(--red);">مباشر 🔴</span>
+      </div>
+      <div class="stories-scroll" id="home-stories-container" style="display: flex; gap: 12px; overflow-x: auto; padding-bottom: 8px; scrollbar-width: none; -webkit-overflow-scrolling: touch;">
+        <!-- JS renders here -->
+      </div>
+    </div>
+
     <div class="screen-title" style="margin-top: 14px;">
       <i class="fa-solid fa-cubes"></i> شبكة المنتجات المتاحة
     </div>
@@ -4563,6 +4575,12 @@ function renderProductsList(list) {
     const pId = p.id || p.productId;
     const pName = p.name || p.productName || '';
     const imgUrl = p.image || p.imageURL || p.imageUrl || p.image_url || p.url || '';
+    
+    // Skip products without a valid image (remove fake images / fallbacks completely as requested)
+    if (!imgUrl || imgUrl === 'assets/icon-192.svg' || imgUrl.includes('icon-192.svg') || imgUrl.includes('location_map')) {
+      return;
+    }
+
     const price = parseFloat(p.price) || 0;
     const storeName = p.storeName || p.store_name || p.shopName || 'متجر معتمد';
     const pWilaya = p.wilaya || p.wilayaName || '';
@@ -5246,56 +5264,7 @@ window.initStoriesSystem = function() {
 
   if (storedStories.length === 0) {
     // High-quality initial live stories from various wilayas
-    const defaultStories = [
-      {
-        id: 'st_1',
-        author: 'محل النور للأواني',
-        wilaya: '58 المنيعة',
-        image: 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?w=800',
-        caption: '🔥 وصول طاقم جرانيت تركي أصلي 12 قطعة متوفر الآن بالمنيعة مع التوصيل الفوري!',
-        price: '14500',
-        phone: '0658123456',
-        avatar: 'assets/icon-192.svg',
-        likes: 42,
-        time: 'منذ 10 دقائق'
-      },
-      {
-        id: 'st_2',
-        author: 'بوتيك الأناقة الوهرانية',
-        wilaya: '31 وهران',
-        image: 'https://images.unsplash.com/photo-1539109136881-3be0616acf4b?w=800',
-        caption: '✨ تشكيلة فساتين سهرة وقفاطين فاخرة متوفرة حالياً بالمتجر والشحن لكل الولايات',
-        price: '8900',
-        phone: '0550987654',
-        avatar: 'assets/icon-192.svg',
-        likes: 78,
-        time: 'منذ نصف ساعة'
-      },
-      {
-        id: 'st_3',
-        author: 'تيك ستور العاصمة',
-        wilaya: '16 الجزائر',
-        image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800',
-        caption: '⚡ ساعات ذكية Ultra 9 مع 7 أحزمة أصلية + سماعات هدية مجانية',
-        price: '4800',
-        phone: '0770112233',
-        avatar: 'assets/icon-192.svg',
-        likes: 115,
-        time: 'منذ ساعة'
-      },
-      {
-        id: 'st_4',
-        author: 'دقلة نور الأصالة',
-        wilaya: '39 الوادي',
-        image: 'https://images.unsplash.com/photo-1559181567-c3190ca9959b?w=800',
-        caption: '🌴 دقلة نور العرجون الممتازة إنتاج هذا الأسبوع، تعليب فاخر وصحي',
-        price: '950',
-        phone: '0661223344',
-        avatar: 'assets/icon-192.svg',
-        likes: 64,
-        time: 'منذ ساعتين'
-      }
-    ];
+    const defaultStories = [];
     localStorage.setItem('zalo_live_stories', JSON.stringify(defaultStories));
     window.liveStoriesList = defaultStories;
   } else {
