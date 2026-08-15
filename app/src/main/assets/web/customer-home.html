@@ -4,14 +4,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>بوابة الزبون - ZaLo</title>
+<link rel="manifest" href="manifest.json"><meta name="theme-color" content="#ffffff"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default"><title>بوابة الزبون - ZaLo</title>
 <link rel="icon" href="assets/logo.svg">
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Great+Vibes&display=swap" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 <script src="js/categories.js"></script>
 <script src="js/indexed-db-cache.js"></script>
 <style>
-:root {
+* { margin: 0; padding: 0; box-sizing: border-box; } :root {
   --brand-green: #0ea5e9; /* Sky Blue replaces green */
   --brand-gold: #d4af37;
   --g1: #0ea5e9;
@@ -268,7 +268,7 @@
 }
 
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body {
+body { margin: 0; padding: 0; 
   font-family: 'Cairo', sans-serif;
   background: var(--bg);
   color: var(--text);
@@ -282,7 +282,7 @@ body {
 
 .container-app {
   width: 100%;
-  max-width: 500px;
+  
   background: var(--white);
   min-height: 100dvh;
   display: flex;
@@ -916,7 +916,7 @@ body {
   cursor: pointer;
 }
 
-.modal-body {
+.modal-body { margin: 0; padding: 0; 
   padding: 18px;
   overflow-y: auto;
   font-size: 13px;
@@ -5975,103 +5975,129 @@ window.removeFromCart = function(id) {
 
 // Checkout
 window.checkoutCart = async function() {
-  const cart = JSON.parse(localStorage.getItem('zalo_cart') || '[]');
-  if (cart.length === 0) {
-    window.showToast("⚠️ سلتك فارغة حالياً!"); return;
-    
-  }
+  try {
+    const cart = JSON.parse(localStorage.getItem('zalo_cart') || '[]');
+    if (!Array.isArray(cart)) {
+      localStorage.setItem('zalo_cart', '[]');
+      window.showToast("⚠️ سلتك فارغة حالياً!"); return;
+    }
+    if (cart.length === 0) {
+      window.showToast("⚠️ سلتك فارغة حالياً!"); return;
+    }
 
-  const name = document.getElementById('cart-name').value.trim();
-  const phone = document.getElementById('cart-phone').value.trim();
-  const addr = document.getElementById('cart-addr').value.trim();
-  const wilaya = document.getElementById('cart-wil').value;
-  const pay = document.getElementById('cart-pay').value;
+    const name = document.getElementById('cart-name').value.trim();
+    const phone = document.getElementById('cart-phone').value.trim();
+    const addr = document.getElementById('cart-addr').value.trim();
+    const wilaya = document.getElementById('cart-wil').value;
+    const pay = document.getElementById('cart-pay').value;
 
-  if (!name || !phone || !addr || !wilaya) {
-    window.showToast("⚠️ يرجى تعبئة كافة الحقول المطلوبة للتسليم!"); return;
-    
-  }
+    if (!name || !phone || !addr || !wilaya) {
+      window.showToast("⚠️ يرجى تعبئة كافة الحقول المطلوبة للتسليم!"); return;
+    }
 
-  // Segment by storeId
-  const groups = {};
-  cart.forEach(item => {
-    const sId = item.storeId || 'direct';
-    if (!groups[sId]) groups[sId] = [];
-    groups[sId].push(item);
-  });
+    // Segment by storeId
+    const groups = {};
+    cart.forEach(item => {
+      const sId = item.storeId || 'direct';
+      if (!groups[sId]) groups[sId] = [];
+      groups[sId].push(item);
+    });
 
-  const customerId = window.currentUser ? window.currentUser.id : 'anonymous';
-  let successfulOrders = 0;
-  const localOrders = JSON.parse(localStorage.getItem('zalo_local_orders') || '[]');
-
-  for (const storeId in groups) {
-    const groupItems = groups[storeId];
-    const storeName = groupItems[0].storeName || 'محل شريك';
-    const subtotal = groupItems.reduce((sum, i) => sum + (i.price * i.qty), 0);
-    const orderId = 'ord_' + Math.random().toString(36).substring(2, 11);
-
-    const firstItem = groupItems[0] || {};
-    const pName = groupItems.map(i => `${i.name || i.productName} (×${i.qty})`).join(' + ');
-    const totalQty = groupItems.reduce((sum, i) => sum + (parseInt(i.qty) || 1), 0);
-    const wilayaNum = parseInt(wilaya.toString().replace(/[^0-9]/g, ''), 10) || 16;
-
-    const orderPayload = {
-      id: orderId,
-      product_name: pName,
-      quantity: totalQty,
-      shipping_wilaya: wilayaNum,
-      customer_id: customerId,
-      customer_name: name,
-      customer_phone: phone,
-      address: addr,
-      delivery_address: addr,
-      wilaya: wilayaNum.toString(),
-      commune: 'غير محدد',
-      store_id: storeId,
-      store_name: storeName,
-      total_amount: subtotal,
-      payment_method: pay,
-      payment_status: 'pending',
-      status: 'pending',
-      items: JSON.stringify(groupItems),
-      created_at: new Date().toISOString(),
-      // Additional fallback keys
-      customerName: name,
-      customerPhone: phone,
-      storeId: storeId,
-      storeName: storeName,
-      totalAmount: subtotal,
-      paymentMethod: pay,
-      createdAt: new Date().toISOString()
-    };
-
+    const customerId = window.currentUser ? window.currentUser.id : 'anonymous';
+    let successfulOrders = 0;
+    let localOrders = [];
     try {
-      const { error } = await supabase.from('orders').insert(orderPayload);
-      if (error) throw error;
-      successfulOrders++;
-    } catch(err) {
-      console.warn("Direct online order submission failed, storing offline:", err);
-      localOrders.push(orderPayload);
-      successfulOrders++;
-    }
-  }
-
-  if (successfulOrders > 0) {
-    localStorage.setItem('zalo_local_orders', JSON.stringify(localOrders));
-    localStorage.removeItem('zalo_cart');
-    if (window.ZaLoDB) {
-      window.ZaLoDB.saveCart([]);
-    }
-    updateCartBadge();
-    
-    if (typeof loadCustomerOrders === 'function') {
-      loadCustomerOrders();
+      localOrders = JSON.parse(localStorage.getItem('zalo_local_orders') || '[]');
+      if (!Array.isArray(localOrders)) localOrders = [];
+    } catch(e) {
+      localOrders = [];
     }
 
-    window.showToast(`✨ تم تسجيل وتأكيد ${successfulOrders} طلبيات بنجاح!`);
-    switchTab('orders');
-  } else {
-    window.showToast("❌ فشل تأكيد الطلبات، يرجى تكرار المحاولة.");
+    for (const storeId in groups) {
+      const groupItems = groups[storeId];
+      const storeName = groupItems[0].storeName || 'محل شريك';
+      const subtotal = groupItems.reduce((sum, i) => sum + (i.price * i.qty), 0);
+      const orderId = 'ord_' + Math.random().toString(36).substring(2, 11);
+
+      const firstItem = groupItems[0] || {};
+      const pName = groupItems.map(i => `${i.name || i.productName} (×${i.qty})`).join(' + ');
+      const totalQty = groupItems.reduce((sum, i) => sum + (parseInt(i.qty) || 1), 0);
+      const wilayaNum = parseInt(wilaya.toString().replace(/[^0-9]/g, ''), 10) || 16;
+
+      const orderPayload = {
+        id: orderId,
+        product_name: pName,
+        quantity: totalQty,
+        shipping_wilaya: wilayaNum,
+        customer_id: customerId,
+        customer_name: name,
+        customer_phone: phone,
+        address: addr,
+        delivery_address: addr,
+        wilaya: wilayaNum.toString(),
+        commune: 'غير محدد',
+        store_id: storeId,
+        store_name: storeName,
+        total_amount: subtotal,
+        payment_method: pay,
+        payment_status: 'pending',
+        status: 'pending',
+        items: JSON.stringify(groupItems),
+        created_at: new Date().toISOString(),
+        // Additional fallback keys
+        customerName: name,
+        customerPhone: phone,
+        storeId: storeId,
+        storeName: storeName,
+        totalAmount: subtotal,
+        paymentMethod: pay,
+        createdAt: new Date().toISOString()
+      };
+
+      try {
+        let sb = typeof supabase !== 'undefined' ? supabase : window.supabaseClient;
+        if (sb && sb.from) {
+          const { error } = await sb.from('orders').insert(orderPayload);
+          if (error) throw error;
+        } else {
+          throw new Error("Supabase is offline or undefined");
+        }
+        successfulOrders++;
+      } catch(err) {
+        console.warn("Direct online order submission failed, storing offline:", err);
+        localOrders.push(orderPayload);
+        successfulOrders++;
+      }
+    }
+
+    if (successfulOrders > 0) {
+      localStorage.setItem('zalo_local_orders', JSON.stringify(localOrders));
+      localStorage.setItem('zalo_cart', '[]');
+      if (window.ZaLoDB) {
+        window.ZaLoDB.saveCart([]);
+      }
+      if (typeof window.updateCartBadge === 'function') {
+        window.updateCartBadge();
+      }
+      
+      if (typeof window.loadCustomerOrders === 'function') {
+        window.loadCustomerOrders();
+      }
+
+      window.showToast(`✨ تم تسجيل وتأكيد ${successfulOrders} طلبيات بنجاح!`);
+      if (typeof window.switchTab === 'function') {
+        window.switchTab('orders');
+      }
+    } else {
+      window.showToast("❌ فشل تأكيد الطلبات، يرجى تكرار المحاولة.");
+    }
+  } catch (globalError) {
+    console.error("Critical error in checkoutCart:", globalError);
+    if (typeof window.zaloErrorHandler !== 'undefined') {
+      window.zaloErrorHandler.showError("خطأ داخلي أثناء معالجة الطلب: " + globalError.message);
+    } else {
+      alert("حدث خطأ داخلي: " + globalError.message);
+    }
   }
 };
 
