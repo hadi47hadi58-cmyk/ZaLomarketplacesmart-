@@ -4461,6 +4461,40 @@ async function loadProducts() {
     }
   }
 
+  // Preserve user-published live stories products
+  try {
+    const rawStories = localStorage.getItem('zalo_live_stories');
+    if (rawStories) {
+      const parsedStories = JSON.parse(rawStories);
+      if (Array.isArray(parsedStories) && parsedStories.length > 0) {
+        const liveProds = parsedStories.map(st => ({
+          id: st.id,
+          name: st.caption.length > 50 ? st.caption.substring(0, 50) + '...' : st.caption,
+          productName: st.caption,
+          description: st.caption,
+          category: st.category || 'عام',
+          subcategory: st.subcategory || 'عام',
+          price: parseFloat(st.price) || 0,
+          image: st.image,
+          imageUrl: st.image,
+          image_url: st.image,
+          storeId: 'store_' + (st.author || '').replace(/\s+/g, '_'),
+          storeName: st.author,
+          store_name: st.author,
+          wilaya: st.wilaya,
+          phone: st.phone,
+          isLiveOffer: true,
+          rating: 5.0,
+          ratingCount: st.likes || 1,
+          emoji: '🔥'
+        }));
+        const existingIds = new Set(merged.map(p => p.id));
+        const storiesToAdd = liveProds.filter(lp => !existingIds.has(lp.id));
+        merged = [...storiesToAdd, ...merged];
+      }
+    }
+  } catch(e) {}
+
   state.loadedProducts = merged;
   if (typeof initStoriesSystem === 'function') initStoriesSystem();
   applyActiveWilayaFilter();
@@ -4486,21 +4520,33 @@ window.getProductFallbackVisualHTML = function(pName) {
   if (nameLower.includes('ساعة') || nameLower.includes('watch') || nameLower.includes('ذكية')) {
     realPhoto = 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500';
     tagText = 'ساعات وإلكترونيات';
-  } else if (nameLower.includes('هاتف') || nameLower.includes('حامل') || nameLower.includes('phone') || nameLower.includes('شاحن')) {
+  } else if (nameLower.includes('حامل') || nameLower.includes('stand') || nameLower.includes('holder') || nameLower.includes('تثبيت') || nameLower.includes('سيبور')) {
     realPhoto = 'https://images.unsplash.com/photo-1586105251261-72a756497a11?w=500';
+    tagText = 'حامل وملحقات هواتف';
+  } else if (nameLower.includes('هاتف') || nameLower.includes('phone') || nameLower.includes('شاحن') || nameLower.includes('سماعات') || nameLower.includes('airpods') || nameLower.includes('كابل') || nameLower.includes('écouteur')) {
+    realPhoto = 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=500';
     tagText = 'ملحقات الهواتف';
-  } else if (nameLower.includes('طفل') || nameLower.includes('اطفال') || nameLower.includes('بيبي') || nameLower.includes('دفتر') || nameLower.includes('فراش')) {
+  } else if (nameLower.includes('سيارة') || nameLower.includes('مركبة') || nameLower.includes('زيت') || nameLower.includes('عجلة') || nameLower.includes('قطع غيار') || nameLower.includes('محرك')) {
+    realPhoto = 'https://images.unsplash.com/photo-1486006920555-c77dce18193b?w=500';
+    tagText = 'قطع غيار سيارات';
+  } else if (nameLower.includes('طفل') || nameLower.includes('اطفال') || nameLower.includes('بيبي') || nameLower.includes('دفتر') || nameLower.includes('فراش') || nameLower.includes('رضيع')) {
     realPhoto = 'https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?w=500';
     tagText = 'مستلزمات أطفال';
-  } else if (nameLower.includes('حذاء') || nameLower.includes('ملابس') || nameLower.includes('قميص') || nameLower.includes('فستان') || nameLower.includes('أناقة')) {
+  } else if (nameLower.includes('حذاء') || nameLower.includes('ملابس') || nameLower.includes('قميص') || nameLower.includes('فستان') || nameLower.includes('أناقة') || nameLower.includes('قفطان') || nameLower.includes('سروال')) {
     realPhoto = 'https://images.unsplash.com/photo-1539109136881-3be0616acf4b?w=500';
     tagText = 'أزياء وموضة';
-  } else if (nameLower.includes('أواني') || nameLower.includes('مطبخ') || nameLower.includes('منزل') || nameLower.includes('جرانيت')) {
+  } else if (nameLower.includes('أواني') || nameLower.includes('مطبخ') || nameLower.includes('منزل') || nameLower.includes('جرانيت') || nameLower.includes('طاجين') || nameLower.includes('كوكوط')) {
     realPhoto = 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?w=500';
     tagText = 'أواني ومنزل';
-  } else if (nameLower.includes('تمر') || nameLower.includes('دقلة') || nameLower.includes('غذاء')) {
+  } else if (nameLower.includes('تمر') || nameLower.includes('دقلة') || nameLower.includes('غذاء') || nameLower.includes('عسل') || nameLower.includes('زيت زيتون') || nameLower.includes('قهوة')) {
     realPhoto = 'https://images.unsplash.com/photo-1559181567-c3190ca9959b?w=500';
     tagText = 'منتجات غذائية';
+  } else if (nameLower.includes('عطر') || nameLower.includes('تجميل') || nameLower.includes('مكياج') || nameLower.includes('كريم') || nameLower.includes('بشرة')) {
+    realPhoto = 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=500';
+    tagText = 'تجميل وعناية';
+  } else if (nameLower.includes('بناء') || nameLower.includes('عتاد') || nameLower.includes('مطرقة') || nameLower.includes('مثقاب') || nameLower.includes('دهان')) {
+    realPhoto = 'https://images.unsplash.com/photo-1581783898377-1c85bf937427?w=500';
+    tagText = 'أدوات وعتاد';
   }
 
   return `
@@ -4683,6 +4729,25 @@ window.matchesCategoryOrSubcategory = function(p, mainCatName, subCatName) {
   }
 
   return false;
+};
+
+// Add to cart directly by Product ID
+window.addToCartDirectById = function(pId) {
+  const p = (state.loadedProducts || []).find(item => item.id === pId || item.productId === pId);
+  if (p) {
+    window.addToCartDirect(
+      p.id,
+      p.name || p.productName || 'منتج ZaLo',
+      p.price || 0,
+      p.image || p.imageUrl || p.image_url || '',
+      p.emoji || '📦',
+      p.storeId || 'direct',
+      p.storeName || p.store_name || 'محل شريك',
+      1
+    );
+  } else {
+    window.addToCartDirect(pId, 'منتج ZaLo', 0, '', '📦', 'direct', 'محل شريك', 1);
+  }
 };
 
 // Render home category slider dynamically
@@ -5906,7 +5971,7 @@ window.loadCartItems = function() {
       </div>
     `;
     form.style.display = 'none';
-    
+    return;
   }
 
   container.innerHTML = '';
@@ -6115,6 +6180,10 @@ window.checkoutCart = async function() {
     const rModal = document.getElementById('orderReceiptModal');
     if (rModal) rModal.style.display = 'flex';
 
+    if (typeof loadCustomerOrders === 'function') {
+      loadCustomerOrders();
+    }
+
     window.showToast(`✨ تم تسجيل وتأكيد ${successfulOrders} طلبيات بنجاح!`);
   } else {
     window.showToast("❌ فشل تأكيد الطلبات، يرجى تكرار المحاولة.");
@@ -6159,10 +6228,14 @@ window.loadCustomerOrders = async function() {
         </div>
       `;
       tracker.style.display = 'none';
-      
+      return;
     }
 
-    orders.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
+    orders.sort((a,b) => {
+      const timeA = new Date(a.created_at || a.createdAt || Date.now()).getTime();
+      const timeB = new Date(b.created_at || b.createdAt || Date.now()).getTime();
+      return timeB - timeA;
+    });
 
     container.innerHTML = '';
     let shippingOrder = null;
@@ -6192,9 +6265,20 @@ window.loadCustomerOrders = async function() {
       let itemsHtml = items.map(it => `
         <div style="display:flex; justify-content:space-between; font-size:12px; border-bottom:1px solid rgba(0,0,0,0.03); padding:4px 0;">
           <span style="color:var(--navy);">${it.emoji||'📦'} ${it.name} <span style="color:var(--gray);">x${it.qty}</span></span>
-          <span style="color:var(--metallic-gold); font-weight:800;">${(it.price * it.qty).toLocaleString()} دج</span>
+          <span style="color:var(--metallic-gold); font-weight:800;">${((Number(it.price) || 0) * (Number(it.qty) || 1)).toLocaleString()} دج</span>
         </div>
       `).join('');
+
+      if (!itemsHtml && (ord.product_name || ord.productName)) {
+        itemsHtml = `
+          <div style="display:flex; justify-content:space-between; font-size:12px; padding:4px 0;">
+            <span style="color:var(--navy);">📦 ${ord.product_name || ord.productName} <span style="color:var(--gray);">x${ord.quantity || 1}</span></span>
+            <span style="color:var(--metallic-gold); font-weight:800;">${Number(ord.total_amount || ord.totalAmount || 0).toLocaleString()} دج</span>
+          </div>
+        `;
+      }
+
+      const totalAmt = Number(ord.total_amount || ord.totalAmount || 0);
 
       container.innerHTML += `
         <div class="order-card">
@@ -6207,11 +6291,11 @@ window.loadCustomerOrders = async function() {
           </div>
           <div style="display:flex; justify-content:space-between; align-items:center; font-size:12px;">
             <span style="color:var(--gray);">الموفر:</span>
-            <span style="font-weight:700;"><i class="fa-solid fa-store" style="color:var(--metallic-gold);"></i> ${ord.storeName || 'شريك معتمد'}</span>
+            <span style="font-weight:700;"><i class="fa-solid fa-store" style="color:var(--metallic-gold);"></i> ${ord.store_name || ord.storeName || 'شريك معتمد'}</span>
           </div>
           <div style="display:flex; justify-content:space-between; align-items:center; font-size:13px; font-weight:900;">
             <span style="color:var(--navy);">المجموع شامل التوصيل:</span>
-            <span style="color:var(--metallic-gold);">${Number(ord.totalAmount || 0).toLocaleString()} دج</span>
+            <span style="color:var(--metallic-gold);">${totalAmt.toLocaleString()} دج</span>
           </div>
         </div>
       `;
