@@ -1033,20 +1033,6 @@
             });
         }
 
-                        <select onchange="updateMerchantOrderStatus('${o.orderId || o.id}', this.value)" class="bg-slate-50 border border-slate-200 text-[10px] text-slate-800 rounded-xl px-2.5 py-1.5 focus:outline-none focus:border-sky-400 font-bold">
-                            <option value="">تحديث حالة الشحن...</option>
-                            <option value="قيد المراجعة">جاري المعالجة والمطابقة</option>
-                            <option value="جاري الشحن">جاري الشحن والمناولة</option>
-                            <option value="تم التسليم">تم التسليم النهائي للمنزل</option>
-                            <option value="إلغاء المعاملة">إلغاء وتجميد الطلب</option>
-                        </select>
-                        <button class="bg-sky-50 hover:bg-sky-500 hover:text-white text-sky-600 text-[10px] px-3 py-1.5 rounded-xl font-bold transition" onclick="simulateMerchantChat('${o.customerName || 'user_customer'}')">سؤال الزبون <i class="fa-regular fa-message"></i></button>
-                    </div>
-                `;
-                container.appendChild(card);
-            });
-        }
-
         // Update Order Status locally and remotely
         async function updateMerchantOrderStatus(orderId, val) {
             if (!val) return;

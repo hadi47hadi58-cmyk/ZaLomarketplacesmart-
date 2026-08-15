@@ -6289,11 +6289,11 @@ window.applyActiveWilayaFilter = function() {
 
 
 <script>
-document.addEventListener(DOMContentLoaded, () => {
-    const saved = localStorage.getItem(zalo_selected_wilaya) || الجزائر;
-    const badge = document.getElementById(current-wilaya-display-badge);
+document.addEventListener("DOMContentLoaded", () => {
+    const saved = localStorage.getItem("zalo_selected_wilaya") || "الجزائر";
+    const badge = document.getElementById("current-wilaya-display-badge");
     if (badge) {
-        badge.textContent = (saved === الجزائر || saved === الكل) ?  : `${saved} `;
+        badge.textContent = (saved === "الجزائر" || saved === "الكل") ? "" : saved;
     }
 });
 </script>
