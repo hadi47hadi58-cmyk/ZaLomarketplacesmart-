@@ -1755,9 +1755,9 @@ body { margin: 0; padding: 0;
 
 
   <!-- SCREEN 1: HOME (الرئيسية - واجهة الولايات الجديدة المحدثة) -->
-  <div class="screen active" id="screen-home" style="position: relative; min-height: 100vh; background-color: #f8fafc; direction: rtl;">
-    
-    <!-- Fast Search Box in place of old active banner -->
+  <div class="screen active" <div class="screen active" id="screen-home" style="position: relative; min-height: 100vh; background-color: #f8fafc; direction: rtl;">
+
+    <!-- Fast Search Box -->
     <div style="background: #102a43; padding: 12px 16px; border-bottom: 2.5px solid var(--brand-gold); box-shadow: 0 4px 10px rgba(0,0,0,0.06); direction: rtl;">
       <div style="position: relative; width: 100%;">
         <i class="fa-solid fa-magnifying-glass" style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: var(--navy); font-size: 15px; z-index: 10;"></i>
@@ -1765,12 +1765,8 @@ body { margin: 0; padding: 0;
       </div>
     </div>
 
-
-
-    
-
     <!-- Wilaya / Store Selector Banner Button -->
-    <div style="padding: 10px 16px 16px 16px;">
+    <div style="padding: 12px 16px 8px 16px;">
       <button onclick="window.openWilayaPickerModal && window.openWilayaPickerModal()" style="width: 100%; background: linear-gradient(135deg, #0284c7, #0369a1); color: white; border: none; padding: 16px 20px; border-radius: 20px; font-weight: 900; font-size: 14.5px; cursor: pointer; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 6px 20px rgba(2,132,199,0.3); transition: transform 0.2s;">
         <span style="display: flex; align-items: center; gap: 12px;">
           <i class="fa-solid fa-map-location-dot" style="font-size: 20px; background: rgba(255,255,255,0.2); padding: 8px; border-radius: 12px;"></i>
@@ -1780,183 +1776,35 @@ body { margin: 0; padding: 0;
       </button>
     </div>
 
-    <!-- Hidden / Collapsible Wilaya Grid for picker modal -->
-    <div id="wilaya-picker-modal-container" style="display: none; padding: 0 16px 16px 16px;">
-      <div style="font-size: 13px; font-weight: 800; color: #0f172a; margin: 8px 0 4px; text-align: right;">اختر الإقليم:</div>
-      <!-- Regional Tabbed Control Bar with local sky-blue themed photo backgrounds -->
-    <div class="regional-tabs-container" style="padding: 16px 16px 8px 16px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
-      <button class="regional-tab-btn" id="tab-north" onclick="switchRegion('north')" style="background-image: linear-gradient(135deg, rgba(14, 165, 233, 0.8), rgba(2, 132, 199, 0.8)), url('images/hero-north.jpg');">
-        <span>شمال الجزائري</span>
-      </button>
-      <button class="regional-tab-btn" id="tab-center" onclick="switchRegion('center')" style="background-image: linear-gradient(135deg, rgba(14, 165, 233, 0.8), rgba(2, 132, 199, 0.8)), url('images/hero-center.jpg');">
-        <span>وسط الجزائري</span>
-      </button>
-      <button class="regional-tab-btn active" id="tab-south" onclick="switchRegion('south')" style="background-image: linear-gradient(135deg, rgba(14, 165, 233, 0.8), rgba(2, 132, 199, 0.8)), url('images/hero-south.jpg');">
-        <span>جنوب الجزائري</span>
-      </button>
-    </div>
-
-      <div class="wilaya-grid-new" id="wilaya-grid-container-new">
-        <!-- Loaded dynamically -->
-      </div>
-    </div>
-
     <!-- Promo Banner -->
-    <div class="banner-mockup">
+    <div class="banner-mockup" style="margin: 0 16px 12px 16px;">
       <div class="banner-text-content">
         عرض خاص: خصم 20% على كل المنتجات 🎉
       </div>
     </div>
 
-    <!-- Category horizontal slider (التخصصات والفئات العامة) -->
-    <div class="categories-container-mockup" id="categories-slider">
-      <!-- Dynamic main categories populated via JS -->
-    </div>
-
-
-
-    <div class="stories-section-wrap" style="padding: 12px 16px 8px; background: #ffffff; border-bottom: 1px solid #f1f5f9; margin-top: 10px;">
-      <div class="stories-header" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
-        <h3 style="font-size: 13px; font-weight: 800; color: var(--navy); display: flex; align-items: center; gap: 6px;">
-          <i class="fa-solid fa-bolt" style="color: var(--metallic-gold);"></i> عروض وقصص السوق اللحظية
-        </h3>
-        <span class="badge" style="background: rgba(239, 68, 68, 0.1); color: var(--red);">مباشر 🔴</span>
-      </div>
-      <div class="stories-scroll" id="home-stories-container" style="display: flex; gap: 12px; overflow-x: auto; padding-bottom: 8px; scrollbar-width: none; -webkit-overflow-scrolling: touch;">
-        <!-- JS renders here -->
-      </div>
-    </div>
-
-    <div class="screen-title" style="margin-top: 14px;">
-      <i class="fa-solid fa-cubes"></i> شبكة المنتجات المتاحة
-    </div>
-
-    <!-- Products grid -->
-    <div class="products-grid-mockup" id="home-pgrid">
-      <div style="grid-column: span 2; text-align: center; padding: 40px 0; color: var(--gray);">
-        <i class="fa-solid fa-spinner fa-spin" style="font-size: 24px; color: var(--metallic-gold); margin-bottom: 8px;"></i>
-        <p>جاري مزامنة وجلب المنتجات...</p>
-      </div>
-    </div>
-
-  </div>
-
-  <!-- SCREEN: BALADIYA SELECTION (واجهة البلديات) -->
-  <div class="screen" id="screen-baladiyas">
-    <div class="section-header-new">
-      <div class="back-btn-new" onclick="showScreen('screen-home')"><i class="fa-solid fa-arrow-right"></i></div>
-      <h2 id="baladiya-title">اختر البلدية</h2>
-    </div>
-    
-    <!-- GORGEOUS LANDMARK CARD BANNER -->
-    <div id="wilaya-detail-banner"></div>
-
-    <div class="baladiya-list" id="baladiya-list-container">
-      <!-- Will be populated by JS -->
-    </div>
-  </div>
-
-  <!-- SCREEN: CATEGORY SELECTION (واجهة التخصصات) -->
-  <div class="screen" id="screen-categories-new">
-    <div class="section-header-new">
-      <div class="back-btn-new" onclick="showScreen('screen-baladiyas')"><i class="fa-solid fa-arrow-right"></i></div>
-      <h2 id="category-title-new">ماذا تبحث في هذه البلدية؟</h2>
-    </div>
-    <div class="category-list" id="category-list-container">
-      <!-- Will be populated by JS -->
-    </div>
-  </div>
-
-  <!-- SCREEN: STORES LIST (واجهة المتاجر) -->
-  <div class="screen" id="screen-stores-list">
-    <div class="section-header-new">
-      <div class="back-btn-new" onclick="showScreen('screen-categories-new')"><i class="fa-solid fa-arrow-right"></i></div>
-      <h2 id="stores-title-new">المتاجر المتوفرة</h2>
-    </div>
-    <div class="category-list" id="stores-list-container" style="gap: 15px;">
-      <!-- Will be populated by JS -->
-    </div>
-  </div>
-
-  <!-- SCREEN: STORE PROFILE (واجهة المتجر - فيسبوك بيج ستايل ممتدة) -->
-  <div class="screen" id="screen-store-profile" style="background:#f8fafc;">
-    <div class="store-profile-header" style="position:relative; width:100%; background:#ffffff; box-shadow:0 4px 15px rgba(0,0,0,0.04);">
-      
-      <!-- Back button & Share -->
-      <div style="position:absolute; top:15px; left:15px; right:15px; z-index:20; display:flex; justify-content:space-between; align-items:center;">
-        <div class="back-btn-new" style="background:rgba(0,0,0,0.5); border-radius:50%; color:white; width:36px; height:36px; display:flex; align-items:center; justify-content:center; cursor:pointer;" onclick="showScreen('screen-stores-list')">
-          <i class="fa-solid fa-arrow-right"></i>
-        </div>
-        <div style="background:rgba(0,0,0,0.5); border-radius:50%; color:white; width:36px; height:36px; display:flex; align-items:center; justify-content:center; cursor:pointer;" onclick="window.shareStoreLink()">
-          <i class="fa-solid fa-share-nodes"></i>
-        </div>
-      </div>
-
-      <!-- Large Facebook Cover Photo -->
-      <div class="store-cover" style="height:220px; width:100%; position:relative; overflow:hidden; background:linear-gradient(135deg, #0f172a, #334155);">
-        <img id="store-cover-img" src="images/wilaya-thumb.jpg" alt="Cover" style="width:100%; height:100%; object-fit:cover; opacity:0.9;">
-        <div style="position:absolute; inset:0; background:linear-gradient(to bottom, transparent 40%, rgba(0,0,0,0.7) 100%);"></div>
-      </div>
-
-      <!-- Store Avatar (Facebook Page Style) -->
-      <div class="store-avatar-container" style="position:absolute; bottom:-45px; right:20px; width:105px; height:105px; border-radius:50%; background:#fff; padding:4px; box-shadow:0 6px 20px rgba(0,0,0,0.18); border:3px solid #fff; z-index:10;">
-        <img id="store-logo-img" src="images/wilaya-thumb.jpg" alt="Logo" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">
-      </div>
-    </div>
-
-    <!-- Store Info & Facebook-Style Action Buttons -->
-    <div class="store-info-section" style="padding:55px 20px 16px; background:#ffffff; border-bottom:1px solid #e2e8f0;">
-      <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-        <div>
-          <h1 class="store-title-new" id="store-profile-name" style="font-size:22px; font-weight:900; color:var(--navy); margin-bottom:4px; display:flex; align-items:center; gap:8px;">
-            اسم المتجر <span style="color:#0284c7; font-size:16px;" title="متجر رسمي موثق"><i class="fa-solid fa-circle-check"></i></span>
-          </h1>
-          <div class="store-meta-new" style="font-size:12.5px; color:#64748b; display:flex; flex-wrap:wrap; align-items:center; gap:12px; margin-top:6px;">
-            <span id="store-profile-category" style="background:#e0f2fe; color:#0369a1; padding:2px 10px; border-radius:12px; font-weight:800;"><i class="fa-solid fa-tag"></i> تخصص</span>
-            <span id="store-profile-location" style="background:#f1f5f9; color:#334155; padding:2px 10px; border-radius:12px; font-weight:700;"><i class="fa-solid fa-location-dot"></i> الجزائر</span>
-            <span style="color:#f59e0b; font-weight:800;"><i class="fa-solid fa-star"></i> 4.9 (تقييمات ممتازة)</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Facebook Page Style Primary Action Row -->
-      <div style="margin-top:16px; display:grid; grid-template-columns: 1.2fr 1fr 1fr; gap:8px;">
-        <button id="store-follow-btn" onclick="toggleStoreFollow()" class="btn-p" style="background:linear-gradient(135deg, #0284c7, #0369a1); font-size:12px; font-weight:800; height:40px; border-radius:12px; display:flex; align-items:center; justify-content:center; gap:6px;">
-          <i class="fa-solid fa-thumbs-up"></i> <span id="store-follow-txt">متابعة المتجر</span>
+    <!-- Hidden / Collapsible Wilaya Grid for picker modal -->
+    <div id="wilaya-picker-modal-container" style="display: none; padding: 0 16px 16px 16px;">
+      <div style="font-size: 13px; font-weight: 800; color: #0f172a; margin: 8px 0 4px; text-align: right;">اختر الإقليم:</div>
+      <!-- Regional Tabbed Control Bar with local sky-blue themed photo backgrounds -->
+      <div class="regional-tabs-container" style="padding: 8px 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
+        <button class="regional-tab-btn" id="tab-north" onclick="switchRegion('north')" style="background-image: linear-gradient(135deg, rgba(14, 165, 233, 0.8), rgba(2, 132, 199, 0.8)), url('images/hero-north.jpg');">
+          <span>شمال الجزائري</span>
         </button>
-        <button id="store-whatsapp-btn" onclick="window.contactStoreWhatsApp()" class="btn-p" style="background:linear-gradient(135deg, #16a34a, #15803d); font-size:12px; font-weight:800; height:40px; border-radius:12px; display:flex; align-items:center; justify-content:center; gap:6px;">
-          <i class="fa-brands fa-whatsapp"></i> واتساب
+        <button class="regional-tab-btn" id="tab-center" onclick="switchRegion('center')" style="background-image: linear-gradient(135deg, rgba(14, 165, 233, 0.8), rgba(2, 132, 199, 0.8)), url('images/hero-center.jpg');">
+          <span>وسط الجزائري</span>
         </button>
-        <button id="store-call-btn" onclick="window.contactStoreCall()" class="btn-s" style="font-size:12px; font-weight:800; height:40px; border-radius:12px; display:flex; align-items:center; justify-content:center; gap:6px;">
-          <i class="fa-solid fa-phone"></i> اتصال
+        <button class="regional-tab-btn active" id="tab-south" onclick="switchRegion('south')" style="background-image: linear-gradient(135deg, rgba(14, 165, 233, 0.8), rgba(2, 132, 199, 0.8)), url('images/hero-south.jpg');">
+          <span>جنوب الجزائري</span>
         </button>
       </div>
 
-      <!-- Store Badges & Fast Delivery Note -->
-      <div style="margin-top:14px; padding:10px 12px; background:#f8fafc; border:1px solid #f1f5f9; border-radius:12px; display:flex; justify-content:space-around; text-align:center; font-size:11px;">
-        <div><strong style="color:#0284c7; display:block; font-size:13px;">🚚 توصيل</strong> 69 ولاية</div>
-        <div style="border-right:1px solid #e2e8f0; padding-right:12px;"><strong style="color:#16a34a; display:block; font-size:13px;">⚡ الرد</strong> فوري</div>
-        <div style="border-right:1px solid #e2e8f0; padding-right:12px;"><strong style="color:#d97706; display:block; font-size:13px;">🛡️ ضمان</strong> المعاينة قبل الدفع</div>
+      <div class="wilaya-grid-new" id="wilaya-grid-container-new" style="margin-top: 8px;">
+        <!-- Loaded dynamically -->
       </div>
     </div>
 
-    <!-- Products Showcase Header -->
-    <div class="screen-title" style="margin-top:0; background:#fff; padding:14px 18px; border-bottom:1px solid #e2e8f0; display:flex; justify-content:space-between; align-items:center;">
-      <span style="font-size:14px; font-weight:900; color:var(--navy); display:flex; align-items:center; gap:8px;">
-        <i class="fa-solid fa-box-open" style="color:var(--metallic-gold);"></i> معروضات وسلع المتجر
-      </span>
-      <span id="store-products-count" style="font-size:11px; background:#f1f5f9; color:var(--navy); padding:2px 8px; border-radius:10px; font-weight:700;"></span>
-    </div>
-
-    <div class="products-grid-mockup" id="store-products-grid" style="padding:16px;">
-      <!-- Products will be filtered here -->
-    </div>
-  </div>
-
-  <!-- SCREEN 6: GENERAL PRODUCTS (المنتجات العامة) DELETED -->
-
-
-  <!-- SCREEN 2: CATEGORIES (الأقسام والتخصصات) -->
+    <!-- SCREEN 2: CATEGORIES (الأقسام والتخصصات) -->
   <div class="screen" id="screen-cats">
     <!-- View 1: Main Categories List -->
     <div id="cats-main-list-view">
