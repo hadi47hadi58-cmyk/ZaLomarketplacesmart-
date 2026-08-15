@@ -79,10 +79,10 @@ export async function fetchAllProducts() {
     // 3. Guaranteed foundation products fallback if both are empty
     if (products.length === 0) {
         products = [
-            { id: 1, productId: 1, name: "حامل الهواتف المحمولة", productName: "حامل الهواتف المحمولة", price: 1300, stock: 13, category: "هواتف وإلكترونيات", store_id: 4, storeName: "ABDELALI.PHONE", store_name: "ABDELALI.PHONE", sku: "ZL-PRD-0001", computedSales: 0, img: "assets/icon-192.svg" },
-            { id: 2, productId: 2, name: "ساعة ذكية رياضية", productName: "ساعة ذكية رياضية", price: 2500, stock: 10, category: "هواتف وإلكترونيات", store_id: 4, storeName: "ABDELALI.PHONE", store_name: "ABDELALI.PHONE", sku: "ZL-PRD-0002", computedSales: 0, img: "assets/icon-192.svg" },
-            { id: 3, productId: 3, name: "حامل دفتر الصحي الاطفال", productName: "حامل دفتر الصحي الاطفال", price: 3000, stock: 5, category: "ملابس وأزياء", store_id: 2, storeName: "ZaLo kids", store_name: "ZaLo kids", sku: "ZL-PRD-0003", computedSales: 0, img: "assets/icon-192.svg" },
-            { id: 4, productId: 4, name: "فراش تغيير ملابس اطفال", productName: "فراش تغيير ملابس اطفال", price: 4500, stock: 8, category: "ملابس وأزياء", store_id: 2, storeName: "ZaLo kids", store_name: "ZaLo kids", sku: "ZL-PRD-0004", computedSales: 0, img: "assets/icon-192.svg" }
+            { id: 1, productId: 1, name: "حامل الهواتف المحمولة الذكي", productName: "حامل الهواتف المحمولة الذكي", price: 1300, stock: 13, category: "هواتف وإلكترونيات", store_id: 4, storeName: "ABDELALI.PHONE", store_name: "ABDELALI.PHONE", sku: "ZL-PRD-0001", computedSales: 12, img: "https://images.unsplash.com/photo-1586105251261-72a756497a11?w=600" },
+            { id: 2, productId: 2, name: "ساعة ذكية رياضية Ultra", productName: "ساعة ذكية رياضية Ultra", price: 2500, stock: 10, category: "هواتف وإلكترونيات", store_id: 4, storeName: "ABDELALI.PHONE", store_name: "ABDELALI.PHONE", sku: "ZL-PRD-0002", computedSales: 8, img: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600" },
+            { id: 3, productId: 3, name: "حامل الدفتر الصحي للأطفال مطرز", productName: "حامل الدفتر الصحي للأطفال مطرز", price: 3000, stock: 5, category: "ملابس وأزياء", store_id: 2, storeName: "ZaLo kids", store_name: "ZaLo kids", sku: "ZL-PRD-0003", computedSales: 15, img: "https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?w=600" },
+            { id: 4, productId: 4, name: "فراش تغيير ملابس أطفال قطني", productName: "فراش تغيير ملابس أطفال قطني", price: 4500, stock: 8, category: "ملابس وأزياء", store_id: 2, storeName: "ZaLo kids", store_name: "ZaLo kids", sku: "ZL-PRD-0004", computedSales: 6, img: "https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=600" }
         ];
     }
 

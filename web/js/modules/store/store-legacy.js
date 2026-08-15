@@ -30,8 +30,8 @@
             if (!sidebar) return;
 
             sidebar.style.display = 'flex';
-            sidebar.classList.remove('hidden', 'lg:hidden');
-            sidebar.classList.add('flex', 'lg:flex');
+            sidebar.classList.remove('hidden');
+            sidebar.classList.add('flex');
 
             if (overlay && window.innerWidth < 1024) {
                 overlay.style.display = 'block';
@@ -44,9 +44,15 @@
             const overlay = document.getElementById('sidebar-overlay');
             if (!sidebar) return;
 
-            sidebar.style.display = 'none';
-            sidebar.classList.add('hidden', 'lg:hidden');
-            sidebar.classList.remove('flex', 'lg:flex');
+            if (window.innerWidth < 1024) {
+                sidebar.style.display = 'none';
+                sidebar.classList.add('hidden');
+                sidebar.classList.remove('flex');
+            } else {
+                sidebar.style.display = 'flex';
+                sidebar.classList.remove('hidden');
+                sidebar.classList.add('flex');
+            }
 
             if (overlay) {
                 overlay.style.display = 'none';
@@ -59,10 +65,12 @@
             if (!sidebar) return;
 
             const computedDisplay = window.getComputedStyle(sidebar).display;
-            if (computedDisplay === 'none' || sidebar.style.display === 'none') {
+            if (computedDisplay === 'none' || sidebar.style.display === 'none' || sidebar.classList.contains('hidden')) {
                 window.openSidebar();
             } else {
-                window.closeSidebar();
+                if (window.innerWidth < 1024) {
+                    window.closeSidebar();
+                }
             }
         };
 
