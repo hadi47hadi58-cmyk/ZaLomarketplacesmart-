@@ -2813,27 +2813,30 @@ window.handleWilayaSearch = function(query) {
 };
 
 window.openWilayaPickerModal = function() {
-  const picker = document.getElementById(wilaya-picker-modal-container);
+  const picker = document.getElementById('wilaya-picker-modal-container');
   if (picker) {
-    if (picker.style.display === none || !picker.style.display) {
-      picker.style.display = block;
-      if (typeof renderStateSelectionUI === function) renderStateSelectionUI();
-      picker.scrollIntoView({ behavior: smooth, block: start });
+    if (picker.style.display === 'none' || !picker.style.display) {
+      picker.style.display = 'block';
+      if (typeof renderStateSelectionUI === 'function') renderStateSelectionUI();
+      picker.scrollIntoView({ behavior: 'smooth', block: 'start' });
     } else {
-      picker.style.display = none;
+      picker.style.display = 'none';
     }
   }
-  const modal = document.getElementById(changeWilayaModal);
+  const modal = document.getElementById('changeWilayaModal');
   if (modal) {
-    modal.style.display = flex;
-    if (typeof renderAppWilayasGrid === function) {
-      const list = (typeof WILAYAS !== undefined && Array.isArray(WILAYAS) && WILAYAS.length > 0) ? WILAYAS : ((typeof ALGERIA_WILAYAS !== undefined && Array.isArray(ALGERIA_WILAYAS)) ? ALGERIA_WILAYAS : []);
+    modal.style.display = 'flex';
+    if (typeof renderAppWilayasGrid === 'function') {
+      const list = (typeof WILAYAS !== 'undefined' && Array.isArray(WILAYAS) && WILAYAS.length > 0) ? WILAYAS : ((typeof ALGERIA_WILAYAS !== 'undefined' && Array.isArray(ALGERIA_WILAYAS)) ? ALGERIA_WILAYAS : []);
       renderAppWilayasGrid(list);
     }
   }
 };
-
-window.selectWilaya = function(name) {  const badge = document.getElementById(current-wilaya-display-badge);  if (badge) {    badge.textContent = (name === الجزائر || name === الكل) ?  : `${name} `;  }
+window.selectWilaya = function(name) {
+  const badge = document.getElementById('current-wilaya-display-badge');
+  if (badge) {
+    badge.textContent = (name === 'الجزائر' || name === 'الكل') ? '' : `${name} `;
+  }
   state.selectedWilaya = name;
   
   // Save selected state in local storage & filter products
