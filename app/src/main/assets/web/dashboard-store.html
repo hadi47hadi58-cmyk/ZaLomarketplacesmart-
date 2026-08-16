@@ -550,18 +550,35 @@
                             <span>النشر اللحظي (صورة أو فيديو قصير لعرضك)</span>
                         </h3>
                     </div>
-                    <form onsubmit="merchantPublishInstantPost(event)" class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div>
+                    <form onsubmit="merchantPublishInstantPost(event)" class="grid grid-cols-1 md:grid-cols-12 gap-3">
+                        <div class="md:col-span-4">
                             <label class="block text-[11px] text-slate-600 font-bold mb-1">عنوان العرض أو المنتج اللحظي</label>
                             <input id="merchant-post-title" type="text" class="w-full bg-white border border-slate-200 text-xs text-slate-800 rounded-xl py-2.5 px-3 focus:outline-none focus:border-sky-400 font-bold" placeholder="مثال: تخفيضات حصرية لمدة ساعة!" required>
                         </div>
-                        <div>
-                            <label class="block text-[11px] text-slate-600 font-bold mb-1">رابط الصورة أو الفيديو القصير (URL)</label>
-                            <input id="merchant-post-media" type="url" class="w-full bg-white border border-slate-200 text-xs text-slate-800 rounded-xl py-2.5 px-3 focus:outline-none focus:border-sky-400 font-bold" placeholder="https://... (صورة أو فيديو)" required>
+                        
+                        <!-- File Upload: Image -->
+                        <div class="md:col-span-3">
+                            <label class="block text-[11px] text-slate-600 font-bold mb-1"><i class="fa-solid fa-image text-sky-500"></i> رفع صورة العرض</label>
+                            <div class="relative bg-white border border-dashed border-sky-300 hover:border-sky-500 rounded-xl py-2 px-3 text-center cursor-pointer transition">
+                                <input type="file" id="merchant-post-img-file" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer" onchange="previewInstantImg(this)">
+                                <span id="instant-img-lbl" class="text-xs text-sky-600 font-bold"><i class="fa-solid fa-cloud-arrow-up"></i> اختيار صورة</span>
+                            </div>
                         </div>
-                        <div class="flex items-end">
+
+                        <!-- File Upload: Video (Max 20s) -->
+                        <div class="md:col-span-3">
+                            <label class="block text-[11px] text-slate-600 font-bold mb-1"><i class="fa-solid fa-video text-rose-500"></i> رفع فيديو (أقصاه 20ثا)</label>
+                            <div class="relative bg-white border border-dashed border-rose-300 hover:border-rose-500 rounded-xl py-2 px-3 text-center cursor-pointer transition">
+                                <input type="file" id="merchant-post-vid-file" accept="video/*" capture="environment" class="absolute inset-0 opacity-0 cursor-pointer" onchange="if(window.validateInstantVideo) window.validateInstantVideo(this); previewInstantVid(this);">
+                                <span id="instant-vid-lbl" class="text-xs text-rose-600 font-bold"><i class="fa-solid fa-camera text-sm"></i> التقاط/رفع فيديو</span>
+                            </div>
+                        </div>
+
+                        <input id="merchant-post-media" type="hidden" value="">
+
+                        <div class="md:col-span-2 flex items-end">
                             <button type="submit" class="w-full bg-gradient-to-r from-sky-500 to-[#0284c7] hover:from-sky-600 hover:to-sky-700 text-white text-xs font-black py-2.5 rounded-xl shadow-md transition flex items-center justify-center gap-2">
-                                <i class="fa-solid fa-paper-plane"></i> نشر لحظي الآن ⚡
+                                <i class="fa-solid fa-paper-plane"></i> نشر لحظي ⚡
                             </button>
                         </div>
                     </form>
@@ -1112,35 +1129,130 @@ window.merchantPublishInstantPost = function(e) {
         return;
     }
 
-    const title = document.getElementById('merchant-post-title').value.trim();
-    const media = document.getElementById('merchant-post-media').value.trim();
-    if (!title || !media) {
-        alert('يرجى إدخال العنوان ورابط الصورة أو الفيديو');
+window.uploadedInstantMedia = { url: '', isVideo: false };
+
+window.previewInstantImg = function(input) {
+    if (!input.files || !input.files[0]) return;
+    const file = input.files[0];
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        window.uploadedInstantMedia = { url: e.target.result, isVideo: false };
+        const lbl = document.getElementById('instant-img-lbl');
+        if (lbl) {
+            lbl.innerText = '✅ تم تحديد صورة';
+            lbl.className = 'text-xs text-emerald-600 font-black';
+        }
+    };
+    reader.readAsDataURL(file);
+};
+
+window.previewInstantVid = function(input) {
+    if (!input.files || !input.files[0]) return;
+    const file = input.files[0];
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        window.uploadedInstantMedia = { url: e.target.result, isVideo: true };
+        const lbl = document.getElementById('instant-vid-lbl');
+        if (lbl) {
+            lbl.innerText = '✅ تم تحديد فيديو';
+            lbl.className = 'text-xs text-emerald-600 font-black';
+        }
+    };
+    reader.readAsDataURL(file);
+};
+
+window.merchantPublishInstantPost = function(e) {
+    if (e) e.preventDefault();
+    let storeId = localStorage.getItem('zalo_current_store_id') || 'default_store';
+    const isPaused = localStorage.getItem('zalo_publishing_paused_' + storeId) === 'true';
+    const isVerified = localStorage.getItem('zalo_merchant_verified_' + storeId) === 'true';
+    const existingStories = JSON.parse(localStorage.getItem('zalo_live_stories') || '[]');
+
+    if (isPaused || (!isVerified && existingStories.length >= 3)) {
+        const msgTitle = isPaused ? 'النشر موقوف من قبل الإدارة! 🛑' : 'تم الوصول للحد الأقصى للنشر اللحظي (3 عروض)! ⚠️';
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                icon: 'warning',
+                title: msgTitle,
+                html: `
+                    <div class="text-right space-y-3">
+                        <p class="text-xs text-slate-700 font-bold leading-relaxed">يرجى استكمال رفع وثائق المحل ودفع اشتراك التاجر لتفعيل النشر المباشر والقصص اللحظية اللاحدودية.</p>
+                        <div class="pt-2 text-center">
+                            <a href="https://wa.me/213658000000?text=${encodeURIComponent('مرحباً إدارة ZaLo، أود استكمال وثائق المتجر ودفع الاشتراك لتفعيل البث والقصص اللحظية.')}" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-xl text-xs font-black">
+                                <i class="fa-brands fa-whatsapp text-sm"></i>
+                                <span>تواصل عبر الواتساب لتفعيل الاشتراك 💬</span>
+                            </a>
+                        </div>
+                    </div>
+                `,
+                confirmButtonText: 'حسناً'
+            });
+        } else {
+            alert(msgTitle + '\nيرجى التواصل مع الإدارة عبر الواتساب لتفعيل الاشتراك.');
+        }
         return;
     }
+
+    const title = document.getElementById('merchant-post-title').value.trim();
+    const media = window.uploadedInstantMedia?.url || document.getElementById('merchant-post-media')?.value?.trim();
+    const isVideo = window.uploadedInstantMedia?.isVideo || false;
+
+    if (!title || !media) {
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({ icon: 'warning', title: 'تنبيه', text: 'يرجى اختيار صورة أو تسجيل/رفع فيديو للعرض اللحظي أولاً!' });
+        } else {
+            alert('يرجى اختيار صورة أو تسجيل/رفع فيديو للعرض اللحظي أولاً!');
+        }
+        return;
+    }
+
+    const storeName = localStorage.getItem('zalo_merchant_name') || localStorage.getItem('zalo_admin_name') || 'متجر ZaLo المعتمد';
+    const storeWilaya = localStorage.getItem('zalo_merchant_wilaya') || 'المنيعة (58)';
+    const storeLogo = localStorage.getItem('zalo_merchant_logo') || 'assets/icon-192.svg';
+    const storePhone = localStorage.getItem('zalo_merchant_phone') || '0658000000';
+
     const newStory = {
         id: 'post_' + Date.now(),
-        name: localStorage.getItem('zalo_merchant_name') || localStorage.getItem('zalo_admin_name') || 'تاجر معتمد',
-        wilaya: localStorage.getItem('zalo_merchant_wilaya') || 'الجزائر',
+        author: storeName,
+        store_name: storeName,
+        name: storeName,
+        logo: storeLogo,
+        wilaya: storeWilaya,
+        phone: storePhone,
         image: media,
+        video: isVideo ? media : '',
+        isVideo: isVideo,
         caption: title,
+        title: title,
         likes: 1,
-        time: 'الآن'
+        rating: '5.0',
+        reposts: 0,
+        time: 'الآن',
+        created_at: new Date().toISOString()
     };
+
     let current = JSON.parse(localStorage.getItem('zalo_live_stories') || '[]');
     current = [newStory, ...current];
     localStorage.setItem('zalo_live_stories', JSON.stringify(current));
+
     if (typeof Swal !== 'undefined') {
         Swal.fire({
             icon: 'success',
             title: 'تم نشر البث والقصة بنجاح! ⚡',
-            text: 'أصبح العرض اللحظي متاحاً للمشترين والزبائن الآن في الصفحة الرئيسية.',
+            text: 'أصبح العرض اللحظي متاحاً للمشترين والزبائن الآن في الصفحة الرئيسية بطابع بطاقات فيسبوك.',
             confirmButtonText: 'ممتاز'
         });
     } else {
         alert('تم نشر العرض أو الفيديو اللحظي بنجاح في سوق الجزائر! 🎉');
     }
+
     document.getElementById('merchant-post-title').value = '';
+    window.uploadedInstantMedia = { url: '', isVideo: false };
+    const imgLbl = document.getElementById('instant-img-lbl');
+    if (imgLbl) { imgLbl.innerText = 'اختيار صورة'; imgLbl.className = 'text-xs text-sky-600 font-bold'; }
+    const vidLbl = document.getElementById('instant-vid-lbl');
+    if (vidLbl) { vidLbl.innerText = 'التقاط/رفع فيديو'; vidLbl.className = 'text-xs text-rose-600 font-bold'; }
+};
     document.getElementById('merchant-post-media').value = '';
 };
 </script>

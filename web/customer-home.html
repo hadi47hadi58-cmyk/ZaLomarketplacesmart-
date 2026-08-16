@@ -1784,6 +1784,8 @@ body { margin: 0; padding: 0;
       <div class="stories-scroll" id="home-stories-container" style="display: flex; gap: 12px; overflow-x: auto; padding-bottom: 8px;">
         <!-- Dynamically rendered stories -->
       </div>
+      <!-- Facebook-style Instant Posts Feed -->
+      <div id="facebook-feed-container" style="display: flex; flex-direction: column; gap: 14px; margin-top: 14px;"></div>
     </div>
 
     <!-- Hidden / Collapsible Wilaya Grid for picker modal -->
@@ -2807,25 +2809,21 @@ window.handleWilayaSearch = function(query) {
 };
 
 window.openWilayaPickerModal = function() {
-  const picker = document.getElementById('wilaya-picker-modal-container');
-  if (picker) {
-    if (picker.style.display === 'none' || !picker.style.display) {
-      picker.style.display = 'block';
-      if (typeof renderStateSelectionUI === 'function') renderStateSelectionUI();
-      picker.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    } else {
-      picker.style.display = 'none';
-    }
-  }
+  // Hide old modal if exists
   const modal = document.getElementById('changeWilayaModal');
   if (modal) {
-    modal.style.display = 'flex';
-    if (typeof renderAppWilayasGrid === 'function') {
-      const list = (typeof WILAYAS !== 'undefined' && Array.isArray(WILAYAS) && WILAYAS.length > 0) ? WILAYAS : ((typeof ALGERIA_WILAYAS !== 'undefined' && Array.isArray(ALGERIA_WILAYAS)) ? ALGERIA_WILAYAS : []);
-      renderAppWilayasGrid(list);
-    }
+    modal.style.display = 'none';
+  }
+
+  // Open and scroll to the numbered Wilayas grid (01..69) directly
+  const picker = document.getElementById('wilaya-picker-modal-container');
+  if (picker) {
+    picker.style.display = 'block';
+    if (typeof renderStateSelectionUI === 'function') renderStateSelectionUI();
+    picker.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 };
+
 window.selectWilaya = function(name) {
   const badge = document.getElementById('current-wilaya-display-badge');
   if (badge) {
@@ -2839,15 +2837,19 @@ window.selectWilaya = function(name) {
     window.applyActiveWilayaFilter();
   }
 
-  document.getElementById('baladiya-title').innerText = `بلديات ولاية ${name}`;
+  // Update Baladiyas UI
+  const baladiyaTitle = document.getElementById('baladiya-title');
+  if (baladiyaTitle) baladiyaTitle.innerText = `بلديات ولاية ${name}`;
   const list = BALADIYAS[name] || BALADIYAS["default"];
   const container = document.getElementById('baladiya-list-container');
-  container.innerHTML = list.map(b => `
-    <div class="baladiya-item" onclick="selectBaladiya('${b}')">
-      <span>${b}</span>
-      <i class="fa-solid fa-angle-left"></i>
-    </div>
-  `).join('');
+  if (container) {
+    container.innerHTML = list.map(b => `
+      <div class="baladiya-item" onclick="selectBaladiya('${b}')">
+        <span>${b}</span>
+        <i class="fa-solid fa-angle-left"></i>
+      </div>
+    `).join('');
+  }
 
   // Landmark Prompt integration
   const wilayaObj = ALGERIA_WILAYAS.find(w => w.name === name);
@@ -2879,7 +2881,28 @@ window.selectWilaya = function(name) {
     banner.style.display = 'none';
   }
 
-  showScreen('screen-baladiyas');
+  // Refresh and show Categories, Branches, and Stores section for this selected Wilaya
+  if (typeof renderStateSelectionUI === 'function') {
+    renderStateSelectionUI();
+  }
+
+  // Scroll smoothly down to the Categories / Stores / Feed section
+  const targetSection = document.getElementById('screen-cats') || document.getElementById('home-pgrid') || document.getElementById('facebook-feed-container');
+  if (targetSection) {
+    targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  if (typeof Swal !== 'undefined') {
+    Swal.fire({
+      toast: true,
+      position: 'top-end',
+      icon: 'success',
+      title: `تم دخول ولاية ${name} 🇩🇿`,
+      text: 'تم تصفية الأقسام والتخصصات والمتاجر والسلع وفق ولايتك!',
+      showConfirmButton: false,
+      timer: 2000
+    });
+  }
 };
 
 let currentPromptToCopy = "";
@@ -5218,17 +5241,170 @@ window.initStoriesSystem = function() {
   renderHomeStories();
 };
 
-window.renderHomeStories = function() {  const container = document.getElementById(home-stories-container);  if (!container) return;  const stories = window.liveStoriesList || [];    let html = stories.map(st => `
-    <div class="story-card-item" onclick="openStoryViewer('${st.id}')">
-      <div class="story-avatar-wrap">
-        <img src="${st.image || st.avatar || 'images/wilaya-thumb.jpg'}" alt="${st.author}" onerror="this.src='images/wilaya-thumb.jpg'">
-        <span class="live-badge-dot">مباشر</span>
+window.renderHomeStories = function() {
+  const container = document.getElementById('home-stories-container');
+  const fbContainer = document.getElementById('facebook-feed-container');
+  
+  let stories = [];
+  try {
+    stories = JSON.parse(localStorage.getItem('zalo_live_stories') || '[]');
+  } catch(e) {}
+  if (!stories || stories.length === 0) {
+    stories = window.liveStoriesList || [];
+  }
+
+  if (container) {
+    let html = stories.map(st => `
+      <div class="story-card-item" onclick="openStoryViewer('${st.id}')">
+        <div class="story-avatar-wrap">
+          <img src="${st.logo || st.image || st.avatar || 'images/wilaya-thumb.jpg'}" alt="${st.author || 'تاجر'}" onerror="this.src='images/wilaya-thumb.jpg'">
+          <span class="live-badge-dot">مباشر</span>
+        </div>
+        <div class="story-label" title="${st.author || 'تاجر'}">${st.author || 'تاجر'}</div>
       </div>
-      <div class="story-label" title="${st.author}">${st.author}</div>
-    </div>
-  `).join('');
+    `).join('');
+    container.innerHTML = html;
+  }
+
+  if (fbContainer) {
+    window.renderFacebookFeed(stories, fbContainer);
+  }
+};
+
+window.renderFacebookFeed = function(stories, container) {
+  if (!container) container = document.getElementById('facebook-feed-container');
+  if (!container) return;
+
+  if (!stories || stories.length === 0) {
+    container.innerHTML = `
+      <div style="text-align: center; padding: 20px; background: white; border-radius: 16px; border: 1px solid #e2e8f0; font-size: 12px; color: #64748b; font-weight: 700;">
+        <i class="fa-solid fa-store-slash" style="font-size: 24px; color: #38bdf8; margin-bottom: 8px; display: block;"></i>
+        لا توجد منشورات حية حالياً. كن أول تاجر ينشر عرضاً لحظياً وسيقوم كل زبائن الجزائر بمتابعتك! 🚀
+      </div>
+    `;
+    return;
+  }
+
+  let html = stories.map(st => {
+    const isVid = st.isVideo || (st.video && st.video.length > 5) || (st.image && (st.image.endsWith('.mp4') || st.image.includes('video') || st.image.includes('data:video')));
+    const mediaSrc = st.video || st.image || 'images/wilaya-thumb.jpg';
+
+    return `
+      <div class="fb-post-card" style="background: white; border-radius: 20px; border: 1px solid #e2e8f0; padding: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); text-align: right;">
+        <!-- Header Bar: Avatar, Name, Time, Badge -->
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="width: 44px; height: 44px; border-radius: 50%; overflow: hidden; border: 2px solid #0ea5e9; padding: 1px; background: #f8fafc; flex-shrink: 0;">
+              <img src="${st.logo || st.image || 'images/wilaya-thumb.jpg'}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" onerror="this.src='images/wilaya-thumb.jpg'">
+            </div>
+            <div>
+              <div style="font-size: 13.5px; font-weight: 800; color: #0f172a; display: flex; align-items: center; gap: 6px;">
+                <span>${st.author || st.store_name || 'متجر معتمد'}</span>
+                <i class="fa-solid fa-circle-check" style="color: #0ea5e9; font-size: 12px;" title="تاجر معتمد"></i>
+              </div>
+              <div style="font-size: 11px; font-weight: 600; color: #64748b; display: flex; align-items: center; gap: 4px;">
+                <span>${st.wilaya || 'الجزائر'}</span>
+                <span>•</span>
+                <span>محتوى معتمد 🌐</span>
+              </div>
+            </div>
+          </div>
+          <span style="font-size: 10px; background: #e0f2fe; color: #0284c7; padding: 3px 8px; border-radius: 12px; font-weight: 800;">
+            <i class="fa-solid fa-bolt text-amber-500"></i> بث لحظي
+          </span>
+        </div>
+
+        <!-- Caption -->
+        <div style="font-size: 13px; font-weight: 700; color: #1e293b; line-height: 1.5; margin-bottom: 10px;">
+          ${st.caption || st.title || 'عرض خاص ومحدود من متجرنا'}
+        </div>
+
+        <!-- Media: Photo or 20s Video -->
+        <div style="border-radius: 14px; overflow: hidden; background: #0f172a; margin-bottom: 12px; max-height: 380px; display: flex; align-items: center; justify-content: center;">
+          ${isVid ? `
+            <video controls autoplay loop muted playsinline style="width: 100%; max-height: 380px; object-fit: contain;">
+              <source src="${mediaSrc}">
+              متصفحك لا يدعم تشغيل الفيديو
+            </video>
+          ` : `
+            <img src="${mediaSrc}" style="width: 100%; max-height: 380px; object-fit: cover;" onerror="this.src='images/wilaya-thumb.jpg'">
+          `}
+        </div>
+
+        <!-- Action Footer Bar: Like, Rating Star, Repost, Order Button -->
+        <div style="display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #f1f5f9; padding-top: 10px; margin-top: 4px; gap: 6px; flex-wrap: wrap;">
+          <!-- Like Button -->
+          <button onclick="likeFbPost('${st.id}')" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 6px 10px; display: flex; align-items: center; gap: 5px; cursor: pointer; font-family: Cairo, sans-serif; font-size: 11px; font-weight: 800; color: #0f172a;">
+            <i class="fa-solid fa-thumbs-up" style="color: #0ea5e9;"></i>
+            <span>إعجاب</span>
+            <span id="fb-likes-${st.id}" style="background: #e0f2fe; color: #0284c7; padding: 1px 6px; border-radius: 10px; font-size: 10px;">${st.likes || 12}</span>
+          </button>
+
+          <!-- Rating Button -->
+          <button onclick="rateFbPost('${st.id}')" style="background: #fffbebfb; border: 1px solid #fef3c7; border-radius: 12px; padding: 6px 10px; display: flex; align-items: center; gap: 5px; cursor: pointer; font-family: Cairo, sans-serif; font-size: 11px; font-weight: 800; color: #b45309;">
+            <i class="fa-solid fa-star" style="color: #f59e0b;"></i>
+            <span>تقييم 🌟</span>
+            <span id="fb-rating-${st.id}" style="background: #fef3c7; color: #92400e; padding: 1px 6px; border-radius: 10px; font-size: 10px;">${st.rating || '5.0'}</span>
+          </button>
+
+          <!-- Repost Button -->
+          <button onclick="repostFbPost('${st.id}')" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 6px 10px; display: flex; align-items: center; gap: 5px; cursor: pointer; font-family: Cairo, sans-serif; font-size: 11px; font-weight: 800; color: #0f172a;">
+            <i class="fa-solid fa-repeat" style="color: #10b981;"></i>
+            <span>إعادة نشر 🔄</span>
+            <span id="fb-reposts-${st.id}" style="background: #d1fae5; color: #065f46; padding: 1px 6px; border-radius: 10px; font-size: 10px;">${st.reposts || 4}</span>
+          </button>
+
+          <!-- Direct Order WhatsApp Button -->
+          <a href="https://wa.me/${(st.phone || '213658000000').replace(/[^0-9]/g, '')}?text=${encodeURIComponent('مرحباً ' + (st.author || '') + '، أود طلب السلعة المعروضة في المنشور اللحظي: ' + (st.caption || ''))}" target="_blank" style="background: linear-gradient(135deg, #10b981, #059669); color: white; border-radius: 12px; padding: 6px 12px; display: flex; align-items: center; gap: 5px; text-decoration: none; font-family: Cairo, sans-serif; font-size: 11px; font-weight: 900; box-shadow: 0 2px 6px rgba(16,185,129,0.3);">
+            <i class="fa-brands fa-whatsapp text-sm"></i>
+            <span>اطلب الآن</span>
+          </a>
+        </div>
+      </div>
+    `;
+  }).join('');
 
   container.innerHTML = html;
+};
+
+window.likeFbPost = function(id) {
+  let el = document.getElementById('fb-likes-' + id);
+  if (el) {
+    let count = parseInt(el.textContent || '0', 10) + 1;
+    el.textContent = count;
+  }
+  if (typeof Swal !== 'undefined') {
+    Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'تمت إضافتك كمعجب بالمنشور! 👍', showConfirmButton: false, timer: 1500 });
+  }
+};
+
+window.rateFbPost = function(id) {
+  if (typeof Swal !== 'undefined') {
+    Swal.fire({
+      title: 'تقييم المنشور والتاجر 🌟',
+      input: 'select',
+      inputOptions: { '5': '⭐⭐⭐⭐⭐ (5/5 ممتازة)', '4': '⭐⭐⭐⭐ (4/5 جيدة جداً)', '3': '⭐⭐⭐ (3/5 متوسطة)' },
+      confirmButtonText: 'إرسال التقييم',
+      showCancelButton: true
+    }).then(res => {
+      if (res.isConfirmed) {
+        let el = document.getElementById('fb-rating-' + id);
+        if (el) el.textContent = res.value + '.0 ⭐';
+        Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'شكراً على تقييمك للتاجر! 🌟', showConfirmButton: false, timer: 1500 });
+      }
+    });
+  }
+};
+
+window.repostFbPost = function(id) {
+  let el = document.getElementById('fb-reposts-' + id);
+  if (el) {
+    let count = parseInt(el.textContent || '0', 10) + 1;
+    el.textContent = count;
+  }
+  if (typeof Swal !== 'undefined') {
+    Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'تم إعادة نشر العرض وإعادة توجيهه للمجتمع! 🔄', showConfirmButton: false, timer: 1500 });
+  }
 };
 
 window.handleStoryCategoryChange = function() {
