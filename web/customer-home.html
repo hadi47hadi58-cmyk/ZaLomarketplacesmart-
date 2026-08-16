@@ -1920,13 +1920,11 @@ body { margin: 0; padding: 0;
         <span style="font-size: 11px; background: #e0f2fe; color: #0284c7; padding: 4px 10px; border-radius: 20px; font-weight: 700;">9 تخصصات رئيسية</span>
       </div>
       <div style="padding: 16px; display: flex; flex-direction: column; gap: 12px;" id="cats-main-cards-container">
-        <!-- Dynamic main categories from ZALO_CATEGORIES -->
+        <!-- Dynamic main categories -->
       </div>
     </div>
-
-    <!-- View 2: Selected Category Subcategories & Products Detail View -->
+    
     <div id="cats-detail-view" style="display: none; padding: 16px;">
-      <!-- Header with back button -->
       <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px; background: white; padding: 12px 14px; border-radius: 16px; border: 1.5px solid var(--bd); box-shadow: 0 2px 8px rgba(0,0,0,0.02);">
         <button onclick="closeCategoryDetailView()" style="background: #f1f5f9; border: none; border-radius: 12px; width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--navy); font-size: 15px; transition: all 0.2s;">
           <i class="fa-solid fa-arrow-right"></i>
@@ -1936,8 +1934,6 @@ body { margin: 0; padding: 0;
           <span id="cat-detail-subtitle" style="font-size: 11px; color: var(--gray); font-weight: 600;">اختر الفرع للفلترة أو استعرض كافة المعروضات</span>
         </div>
       </div>
-
-      <!-- Subcategories Pills Horizontal Bar -->
       <div style="margin-bottom: 16px;">
         <div style="font-size: 11.5px; font-weight: 800; color: var(--navy); margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
           <i class="fa-solid fa-code-branch" style="color: #0ea5e9;"></i> الفروع والتخصصات الفرعية:
@@ -2052,11 +2048,37 @@ body { margin: 0; padding: 0;
 
         <div id="application-status-container" style="display: none; font-size: 12px; font-weight: bold; text-align: center; padding: 10px; border-radius: 8px; background: rgba(0,0,0,0.03);"></div>
       </div>
-
     </div>
   </div>
 
 
+  <!-- SCREEN: STORE VIEW (واجهة المتجر) -->
+  <div class="screen" id="screen-store-view" style="padding-bottom: 80px;">
+    <!-- Store Header -->
+    <div id="store-view-header" style="height: 180px; background-size: cover; background-position: center; position: relative; background-image: url('assets/icon-192.svg');">
+      <div style="position: absolute; inset: 0; background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.7));"></div>
+      <button onclick="switchTab('home')" style="position: absolute; top: 12px; right: 12px; background: white; width: 36px; height: 36px; border-radius: 50%; border: none; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.2); cursor: pointer; z-index: 20;">
+        <i class="fa-solid fa-arrow-right"></i>
+      </button>
+      <div style="position: absolute; bottom: -30px; right: 16px; display: flex; align-items: flex-end; gap: 12px;">
+        <img id="store-view-logo" src="assets/icon-192.svg" style="width: 70px; height: 70px; border-radius: 16px; border: 3px solid white; background: white; object-fit: cover; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+        <div style="padding-bottom: 5px;">
+          <h2 id="store-view-name" style="font-size: 18px; font-weight: 900; color: #0f172a; margin: 0; text-shadow: 0 1px 3px rgba(255,255,255,0.8);">اسم المتجر</h2>
+          <p id="store-view-location" style="font-size: 11px; font-weight: 700; color: #64748b; margin: 0;"><i class="fa-solid fa-location-dot"></i> ولاية</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Store Navigation -->
+    <div style="margin-top: 40px; border-bottom: 1px solid #f1f5f9; display: flex; padding: 0 16px; gap: 20px;">
+      <button class="store-nav-btn active" style="padding: 10px 0; border-bottom: 3px solid var(--sky); color: var(--sky); font-weight: 800; background:none; border-top:none; border-left:none; border-right:none; cursor:pointer;">المنتجات</button>
+      <button class="store-nav-btn" style="padding: 10px 0; border-bottom: 3px solid transparent; color: #64748b; font-weight: 800; background:none; border-top:none; border-left:none; border-right:none; cursor:pointer;">حول المتجر</button>
+    </div>
+
+    <!-- Store Products Feed -->
+    <div id="store-products-grid" style="padding: 16px; display: flex; flex-direction: column; gap: 16px;">
+      <!-- Store products will be rendered here -->
+    </div>
   <!-- SCREEN 6: ORDERS (طلباتي والتتبع) - Triggered via Sidebar -->
   <div class="screen" id="screen-orders">
     <div class="screen-title"><i class="fa-solid fa-clipboard-list"></i> طلبيات الشراء وتتبع الشاحنات</div>
@@ -4498,6 +4520,8 @@ window.switchTab = function(tabId) {
     if (typeof syncMerchantRequestStatus === 'function') {
       syncMerchantRequestStatus(window.currentUser);
     }
+  } else if (tabId === 'wilaya-hub') {
+    if (typeof window.renderWilayaDiscoveryHub === 'function') window.renderWilayaDiscoveryHub();
   }
 };
 
@@ -4805,11 +4829,21 @@ function renderProductsList(list) {
     const safeStore = storeName.replace(/'/g, "\\'").replace(/"/g, '&quot;');
     const safeImage = imgUrl.replace(/'/g, "\\'");
 
+    let imagesHtml = `<img src="${imgUrl}" style="width: 100%; max-height: 450px; object-fit: contain;" onerror="this.src='assets/icon-192.svg'">`;
+    if (imgUrl.startsWith('[')) {
+      try {
+        const imgs = JSON.parse(imgUrl);
+        if (Array.isArray(imgs)) {
+          imagesHtml = imgs.map(src => `<img src="${src}" style="width: 100%; max-height: 450px; object-fit: contain; margin-bottom: 8px;" onerror="this.style.display='none'">`).join('');
+        }
+      } catch(e) {}
+    }
+
     grid.innerHTML += `
       <div class="fb-post-card" style="background: white; border-radius: 20px; border: 1px solid #e2e8f0; padding: 16px; text-align: right; margin-bottom: 16px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); overflow: hidden;">
         <!-- Post Header: Store Info -->
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
-          <div style="display: flex; align-items: center; gap: 10px;">
+          <div style="display: flex; align-items: center; gap: 10px; cursor: pointer;" onclick="window.openStoreView('${p.storeId || p.store_id}', '${safeStore}')">
             <div style="width: 42px; height: 42px; border-radius: 50%; border: 1.5px solid #0ea5e9; padding: 1px; background: #f8fafc; flex-shrink: 0; overflow: hidden;">
               <img src="${storeLogo}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" onerror="this.src='assets/icon-192.svg'">
             </div>
@@ -4821,7 +4855,7 @@ function renderProductsList(list) {
               <div style="font-size: 10px; font-weight: 700; color: #64748b; display: flex; align-items: center; gap: 4px;">
                 <span style="color: #0284c7;"><i class="fa-solid fa-location-dot"></i> ${pWilaya}</span>
                 <span>•</span>
-                <span style="color: #d4af37;"><i class="fa-solid fa-tag"></i> ${pCategory}</span>
+                <span style="color: #d4af37;"><i class="fa-solid fa-tag"></i> ${p.category || 'عام'}</span>
               </div>
             </div>
           </div>
@@ -4840,9 +4874,9 @@ function renderProductsList(list) {
         <div style="font-size: 14px; font-weight: 700; color: #1e293b; line-height: 1.6; margin-bottom: 12px; white-space: pre-wrap;">${pName}
         <span style="color: #0284c7; font-weight: 900;">#السوق_الجزائري #ZaLo</span></div>
 
-        <!-- Post Media: Large Image -->
-        <div onclick="openProductDetails('${pId}')" style="border-radius: 16px; overflow: hidden; background: #f8fafc; margin-bottom: 14px; cursor: pointer; border: 1px solid #f1f5f9; max-height: 450px; display: flex; align-items: center; justify-content: center;">
-          <img src="${imgUrl}" style="width: 100%; max-height: 450px; object-fit: contain;" onerror="this.src='assets/icon-192.svg'">
+        <!-- Post Media: Large Image(s) -->
+        <div onclick="openProductDetails('${pId}')" style="border-radius: 16px; overflow: hidden; background: #f8fafc; margin-bottom: 14px; cursor: pointer; border: 1px solid #f1f5f9; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+          ${imagesHtml}
         </div>
 
         <!-- Price Tag Highlight -->
@@ -7084,6 +7118,69 @@ window.applyActiveWilayaFilter = function() {
       if (oldTip) oldTip.remove();
       renderProductsList(filtered);
     }
+  }
+};
+
+window.openStoreView = async function(storeId, storeName) {
+  switchTab('store-view');
+  document.getElementById('store-view-name').textContent = storeName;
+  const grid = document.getElementById('store-products-grid');
+  grid.innerHTML = '<div style="text-align:center; padding:20px; color:var(--gray);">جاري تحميل منتجات المتجر...</div>';
+
+  try {
+    const { data: store, error: storeErr } = await window.supabase
+      .from('stores')
+      .select('*')
+      .eq('id', storeId)
+      .single();
+    
+    if (store) {
+      if (store.logo_url) document.getElementById('store-view-logo').src = store.logo_url;
+      if (store.cover_url) document.getElementById('store-view-header').style.backgroundImage = `url('${store.cover_url}')`;
+      document.getElementById('store-view-location').innerHTML = `<i class="fa-solid fa-location-dot"></i> ${store.wilaya || 'غير محدد'}`;
+    }
+
+    const { data: products, error } = await window.supabase
+      .from('products')
+      .select('*')
+      .eq('store_id', storeId)
+      .eq('status', 'active');
+
+    if (error) throw error;
+
+    if (!products || products.length === 0) {
+      grid.innerHTML = '<div style="text-align:center; padding:20px; color:var(--gray);">لا توجد منتجات معروضة حالياً لهذا المتجر.</div>';
+      return;
+    }
+
+    grid.innerHTML = '';
+    products.forEach(p => {
+      let imgUrl = p.image_url || 'assets/icon-192.svg';
+      if (imgUrl.startsWith('[')) {
+        try {
+          const imgs = JSON.parse(imgUrl);
+          if (imgs.length > 0) imgUrl = imgs[0];
+        } catch(e) {}
+      }
+
+      grid.innerHTML += `
+        <div class="fb-post-card" style="background: white; border-radius: 16px; border: 1px solid #e2e8f0; padding: 12px; text-align: right;">
+          <div style="font-weight: 800; font-size: 14px; margin-bottom: 8px;">${p.name}</div>
+          <div onclick="openProductDetails('${p.id}')" style="border-radius: 12px; overflow: hidden; background: #f8fafc; margin-bottom: 8px; cursor: pointer;">
+            <img src="${imgUrl}" style="width: 100%; height: 200px; object-fit: contain;">
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="color: var(--sky); font-weight: 900; font-size: 15px;">${p.price} د.ج</div>
+            <button onclick="openProductDetails('${p.id}')" style="background: #f1f5f9; border: none; color: #0284c7; padding: 5px 10px; border-radius: 8px; font-size: 11px; font-weight: 800; cursor: pointer;">
+                عرض التفاصيل
+            </button>
+          </div>
+        </div>
+      `;
+    });
+  } catch (err) {
+    console.error("Error opening store view:", err);
+    grid.innerHTML = '<div style="text-align:center; padding:20px; color:var(--gray);">عذراً، حدث خطأ أثناء تحميل البيانات.</div>';
   }
 };
 </script>

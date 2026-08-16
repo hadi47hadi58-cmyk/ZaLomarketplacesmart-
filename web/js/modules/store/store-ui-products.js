@@ -92,9 +92,17 @@ export async function renderMerchantProductsReal() {
         const div = document.createElement('div');
         div.className = "bg-white p-4 rounded-xl shadow-sm border border-slate-100 hover:shadow-md transition group flex flex-col relative";
         
+        let displayImg = p.image_url || 'https://via.placeholder.com/400';
+        if (displayImg.startsWith('[')) {
+            try {
+                const imgs = JSON.parse(displayImg);
+                if (Array.isArray(imgs) && imgs.length > 0) displayImg = imgs[0];
+            } catch(e) {}
+        }
+
         div.innerHTML = `
             <div class="relative w-full h-48 bg-slate-50 rounded-lg mb-4 overflow-hidden">
-                <img src="${p.image_url || 'https://via.placeholder.com/400'}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                <img src="${displayImg}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
                 <div class="absolute top-2 right-2 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-md text-xs font-bold text-slate-700 shadow-sm flex items-center gap-1">
                     <i class="fa-solid fa-tag text-indigo-500"></i> ${p.category || 'غير محدد'}
                 </div>
@@ -230,45 +238,42 @@ window.merchantAddProductReal = async function(e) {
         }
 
         const imgUrl = (window.uploadedAnglesPreview && window.uploadedAnglesPreview.length > 0) 
-            ? window.uploadedAnglesPreview[0] 
+            ? (window.uploadedAnglesPreview.length === 1 ? window.uploadedAnglesPreview[0] : JSON.stringify(window.uploadedAnglesPreview))
             : 'assets/icon-192.svg';
 
         const pId = 'p_' + Date.now();
         
-        // Try inserting to Supabase products table
+        // Try inserting/updating to Supabase products table
         try {
-            const { error } = await window.supabase
-                .from('products')
-                .insert({
-                    id: pId,
-                    store_id: store.id,
-                    name: name,
-                    price: price,
-                    category: category,
-                    subcategory: subcategory,
-                    description: desc,
-                    stock: stock,
-                    sku: sku,
-                    weight: weight,
-                    min_order: minOrder,
-                    image_url: imgUrl,
-                    status: 'active'
-                });
-                
-            if (error) {
-                console.warn("Supabase insert warning, trying fallback:", error);
-                // If specific column doesn't exist, try minimal payload
-                await window.supabase
+            const productData = {
+                name: name,
+                price: price,
+                category: category,
+                subcategory: subcategory,
+                description: desc,
+                stock: stock,
+                sku: sku,
+                weight: weight,
+                min_order: minOrder,
+                image_url: imgUrl,
+                status: 'active'
+            };
+
+            if (window.editingProductId) {
+                const { error } = await window.supabase
+                    .from('products')
+                    .update(productData)
+                    .eq('id', window.editingProductId);
+                if (error) throw error;
+            } else {
+                const { error } = await window.supabase
                     .from('products')
                     .insert({
+                        id: pId,
                         store_id: store.id,
-                        name: name,
-                        price: price,
-                        category: category,
-                        description: desc,
-                        stock: stock,
-                        image_url: imgUrl
+                        ...productData
                     });
+                if (error) throw error;
             }
         } catch(sbErr) {
             console.warn("Supabase sync error (offline/local fallback used):", sbErr);
@@ -277,25 +282,32 @@ window.merchantAddProductReal = async function(e) {
         // Also save to LocalStorage for instant UI refresh
         try {
             const localProducts = JSON.parse(localStorage.getItem('zalo_products') || '[]');
-            localProducts.push({
-                productId: pId,
-                id: pId,
-                productName: name,
-                name: name,
-                price: price,
-                stock: stock,
-                category: category,
-                subcategory: subcategory,
-                description: desc,
-                sku: sku,
-                weight: weight,
-                minOrder: minOrder,
-                storeId: store.id,
-                storeName: store.name || 'متجري',
-                image: imgUrl,
-                image_url: imgUrl,
-                status: 'active'
-            });
+            if (window.editingProductId) {
+                const idx = localProducts.findIndex(p => String(p.id) === String(window.editingProductId));
+                if (idx >= 0) {
+                    localProducts[idx] = { ...localProducts[idx], productName: name, name, price, stock, category, subcategory, description: desc, sku, weight, minOrder, image: imgUrl, image_url: imgUrl };
+                }
+            } else {
+                localProducts.push({
+                    productId: pId,
+                    id: pId,
+                    productName: name,
+                    name: name,
+                    price: price,
+                    stock: stock,
+                    category: category,
+                    subcategory: subcategory,
+                    description: desc,
+                    sku: sku,
+                    weight: weight,
+                    minOrder: minOrder,
+                    storeId: store.id,
+                    storeName: store.name || 'متجري',
+                    image: imgUrl,
+                    image_url: imgUrl,
+                    status: 'active'
+                });
+            }
             localStorage.setItem('zalo_products', JSON.stringify(localProducts));
         } catch(locErr) {
             console.warn("LocalStorage save error:", locErr);
@@ -304,18 +316,19 @@ window.merchantAddProductReal = async function(e) {
         if (typeof Swal !== 'undefined') {
             Swal.fire({
                 icon: 'success',
-                title: 'تمت إضافة السلعة بنجاح! 🚀',
-                text: `تم نشر "${name}" في متجرك وأصبحت متاحة للزبائن`,
+                title: window.editingProductId ? 'تم تعديل السلعة بنجاح! ✏️' : 'تمت إضافة السلعة بنجاح! 🚀',
+                text: window.editingProductId ? `تم تحديث "${name}" بنجاح` : `تم نشر "${name}" في متجرك وأصبحت متاحة للزبائن`,
                 confirmButtonColor: '#10b981',
                 confirmButtonText: 'ممتاز'
             });
         } else {
-            alert('تمت إضافة السلعة بنجاح! 🚀');
+            alert(window.editingProductId ? 'تم التعديل بنجاح!' : 'تمت إضافة السلعة بنجاح! 🚀');
         }
         
         // Hide modal if open
         document.getElementById('add-product-modal')?.classList.add('hidden');
         e.target.reset();
+        window.editingProductId = null; // Clear editing mode
         
         // Reset SKU with new random number
         const skuInput = document.getElementById('prod-sku');
@@ -372,5 +385,48 @@ window.deleteProductReal = async function(id) {
 }
 
 window.editProductReal = async function(id) {
-    alert("ميزة التعديل ستتوفر قريباً في الإصدار القادم.");
+    const products = await fetchStoreProducts();
+    const p = products.find(prod => String(prod.id) === String(id));
+    if (!p) return;
+
+    if(document.getElementById('prod-name')) document.getElementById('prod-name').value = p.name || '';
+    if(document.getElementById('prod-price')) document.getElementById('prod-price').value = p.price || 0;
+    if(document.getElementById('prod-stock')) document.getElementById('prod-stock').value = p.stock || p.stock_quantity || 0;
+    if(document.getElementById('prod-sku')) document.getElementById('prod-sku').value = p.sku || '';
+    if(document.getElementById('prod-weight')) document.getElementById('prod-weight').value = p.weight || 0.1;
+    if(document.getElementById('prod-min-order')) document.getElementById('prod-min-order').value = p.min_order || p.minOrder || 1;
+    if(document.getElementById('prod-desc')) document.getElementById('prod-desc').value = p.description || '';
+    
+    if (document.getElementById('prod-main-category')) {
+        document.getElementById('prod-main-category').value = p.category || 'أخرى';
+    } else if (document.getElementById('prod-category')) {
+        document.getElementById('prod-category').value = p.category || 'أخرى';
+    }
+
+    // Set editing mode
+    window.editingProductId = id;
+    
+    // Support unified form or old modal
+    const submitBtn = document.querySelector('#add-product-modal form button[type="submit"]') || document.querySelector('#merchant-unified-form button[type="submit"]');
+    if (submitBtn) submitBtn.innerHTML = '<i class="fa-solid fa-save ml-2"></i> حفظ تعديلات العرض والمنتج';
+
+    // Scroll to form if on dashboard
+    if(document.getElementById('merchant-unified-form')) {
+        document.getElementById('merchant-unified-form').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } else if(typeof window.openAddProductModal === 'function') {
+        window.openAddProductModal();
+    }
 }
+
+// Reset editing mode when modal is opened manually
+const originalOpenAddProductModal = window.openAddProductModal;
+window.openAddProductModal = function() {
+    if (!window.editingProductId) {
+        const form = document.querySelector('#add-product-modal form');
+        if (form) form.reset();
+        const submitBtn = document.querySelector('#add-product-modal form button[type="submit"]');
+        if (submitBtn) submitBtn.innerHTML = '<i class="fa-solid fa-check ml-2"></i> إضافة المنتج للحساب';
+    }
+    if (typeof originalOpenAddProductModal === 'function') originalOpenAddProductModal();
+    else document.getElementById('add-product-modal')?.classList.remove('hidden');
+};

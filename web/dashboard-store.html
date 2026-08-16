@@ -478,10 +478,64 @@
                         <div>
                             <label class="block text-[11px] text-slate-600 font-black mb-1">ولاية النشاط والفرز الجغرافي *</label>
                             <select id="settings-wilaya" class="w-full bg-slate-50 border border-slate-200 text-[11px] rounded-xl py-2.5 px-3 focus:outline-none focus:border-sky-400 font-black text-slate-800">
-                                <option value="58 المنيعة">58 المنيعة</option>
+                                <option value="01 أدرار">01 أدرار</option>
+                                <option value="02 الشلف">02 الشلف</option>
+                                <option value="03 الأغواط">03 الأغواط</option>
+                                <option value="04 أم البواقي">04 أم البواقي</option>
+                                <option value="05 باتنة">05 باتنة</option>
+                                <option value="06 بجاية">06 بجاية</option>
+                                <option value="07 بسكرة">07 بسكرة</option>
+                                <option value="08 بشار">08 بشار</option>
+                                <option value="09 البليدة">09 البليدة</option>
+                                <option value="10 البويرة">10 البويرة</option>
+                                <option value="11 تمنراست">11 تمنراست</option>
+                                <option value="12 تبسة">12 تبسة</option>
+                                <option value="13 تلمسان">13 تلمسان</option>
+                                <option value="14 تيارت">14 تيارت</option>
+                                <option value="15 تيزي وزو">15 تيزي وزو</option>
                                 <option value="16 الجزائر العاصمة">16 الجزائر العاصمة</option>
-                                <option value="31 وهران">31 وهران</option>
+                                <option value="17 الجلفة">17 الجلفة</option>
+                                <option value="18 جيجل">18 جيجل</option>
+                                <option value="19 سطيف">19 سطيف</option>
+                                <option value="20 سعيدة">20 سعيدة</option>
+                                <option value="21 سكيكدة">21 سكيكدة</option>
+                                <option value="22 سيدي بلعباس">22 سيدي بلعباس</option>
+                                <option value="23 عنابة">23 عنابة</option>
+                                <option value="24 قالمة">24 قالمة</option>
                                 <option value="25 قسنطينة">25 قسنطينة</option>
+                                <option value="26 المدية">26 المدية</option>
+                                <option value="27 مستغانم">27 مستغانم</option>
+                                <option value="28 المسيلة">28 المسيلة</option>
+                                <option value="29 معسكر">29 معسكر</option>
+                                <option value="30 ورقلة">30 ورقلة</option>
+                                <option value="31 وهران">31 وهران</option>
+                                <option value="32 البيض">32 البيض</option>
+                                <option value="33 إليزي">33 إليزي</option>
+                                <option value="34 برج بوعريريج">34 برج بوعريريج</option>
+                                <option value="35 بومرداس">35 بومرداس</option>
+                                <option value="36 الطارف">36 الطارف</option>
+                                <option value="37 تندوف">37 تندوف</option>
+                                <option value="38 تيسمسيلت">38 تيسمسيلت</option>
+                                <option value="39 الوادي">39 الوادي</option>
+                                <option value="40 خنشلة">40 خنشلة</option>
+                                <option value="41 سوق أهراس">41 سوق أهراس</option>
+                                <option value="42 تيبازة">42 تيبازة</option>
+                                <option value="43 ميلة">43 ميلة</option>
+                                <option value="44 عين الدفلى">44 عين الدفلى</option>
+                                <option value="45 النعامة">45 النعامة</option>
+                                <option value="46 عين تموشنت">46 عين تموشنت</option>
+                                <option value="47 غرداية">47 غرداية</option>
+                                <option value="48 غليزان">48 غليزان</option>
+                                <option value="49 تيميمون">49 تيميمون</option>
+                                <option value="50 برج باجي مختار">50 برج باجي مختار</option>
+                                <option value="51 أولاد جلال">51 أولاد جلال</option>
+                                <option value="52 بني عباس">52 بني عباس</option>
+                                <option value="53 إن صالح">53 إن صالح</option>
+                                <option value="54 إن قزام">54 إن قزام</option>
+                                <option value="55 تقرت">55 تقرت</option>
+                                <option value="56 جانت">56 جانت</option>
+                                <option value="57 المغير">57 المغير</option>
+                                <option value="58 المنيعة">58 المنيعة</option>
                             </select>
                         </div>
                         <div>
@@ -628,17 +682,17 @@
                             <div class="grid grid-cols-2 gap-2">
                                 <!-- Photo Upload -->
                                 <div class="relative bg-white border-2 border-dashed border-sky-300 hover:border-sky-500 rounded-xl p-2.5 text-center cursor-pointer transition flex flex-col items-center justify-center min-h-[85px]">
-                                    <input type="file" id="merchant-unified-img-file" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer z-10" onchange="previewUnifiedImg(this)">
+                                    <input type="file" id="merchant-unified-img-file" accept="image/*" multiple class="absolute inset-0 opacity-0 cursor-pointer z-10" onchange="previewUnifiedImg(this)">
                                     <div id="unified-img-lbl" class="text-xs text-sky-600 font-bold flex flex-col items-center gap-1">
                                         <i class="fa-solid fa-cloud-arrow-up text-lg text-sky-500"></i>
-                                        <span>اختيار صورة</span>
+                                        <span>اختيار صور (متعدد)</span>
                                     </div>
                                     <img id="unified-img-preview" class="hidden w-16 h-16 object-cover rounded-lg border border-sky-400 shadow-sm mt-1">
                                 </div>
 
                                 <!-- Video Upload (Max 20s) -->
                                 <div class="relative bg-white border-2 border-dashed border-rose-300 hover:border-rose-500 rounded-xl p-2.5 text-center cursor-pointer transition flex flex-col items-center justify-center min-h-[85px]">
-                                    <input type="file" id="merchant-unified-vid-file" accept="video/*" capture="environment" class="absolute inset-0 opacity-0 cursor-pointer z-10" onchange="validateAndPreviewUnifiedVid(this)">
+                                    <input type="file" id="merchant-unified-vid-file" accept="video/*" class="absolute inset-0 opacity-0 cursor-pointer z-10" onchange="validateAndPreviewUnifiedVid(this)">
                                     <div id="unified-vid-lbl" class="text-xs text-rose-600 font-bold flex flex-col items-center gap-1">
                                         <i class="fa-solid fa-video text-lg text-rose-500"></i>
                                         <span>فيديو (أقصاه 20ثا)</span>
@@ -671,20 +725,10 @@
                         <span>سلع المعرض المتاحة للزبائن</span>
                     </h3>
                 </div>
-                <div class="overflow-x-auto w-full">
-                    <table class="w-full text-right text-xs">
-                        <thead class="bg-slate-50 text-slate-500 font-black">
-                            <tr>
-                                <th class="p-3 text-right">اسم المنتج والسلعة</th>
-                                <th class="p-3 text-right">السعر</th>
-                                <th class="p-3 text-right">الكمية</th>
-                                <th class="p-3 text-center">التحكم والعمليات</th>
-                            </tr>
-                        </thead>
-                        <tbody id="merchant-product-list">
-                            <!-- Loaded dynamically -->
-                        </tbody>
-                    </table>
+                <div class="w-full">
+                    <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div class="col-span-full text-center p-8 text-slate-400">جاري تحميل المنتجات...</div>
+                    </div>
                 </div>
             </section>
 
@@ -1026,6 +1070,51 @@
     </div>
 
     <!-- State management script -->
+    <script>
+    window.ZALO_CATEGORIES = [
+        { name: "قطع غيار وإكسسوارات المركبات", subcategories: ["قطع غيار تويوتا", "قطع غيار هيونداي/كيا", "قطع غيار رونو/داسيا", "زيوت وصيانة سريعة", "عجلات وإطارات", "إكسسوارات السيارات"] },
+        { name: "ملابس، أزياء وموضة", subcategories: ["ملابس نسائية", "ملابس رجالية", "ملابس أطفال", "أحذية وحقائب", "ساعات ونظارات"] },
+        { name: "هواتف وإلكترونيات", subcategories: ["هواتف ذكية واكسسواراتها", "أجهزة كهرومنزلية", "حواسب ولابتوب", "تلفزيونات وصوتيات"] },
+        { name: "مواد غذائية وتموين", subcategories: ["مواد غذائية أساسية", "خضروات وفواكه", "لحوم وأسماك", "حلويات ومشروبات"] },
+        { name: "مستلزمات المنزل والأثاث", subcategories: ["أثاث صالون وغرف نوم", "أواني وديكورات المطبخ", "مفارش وسجاد", "إضاءة وثريات"] },
+        { name: "صحة، تجميل وعناية شخصية", subcategories: ["عطور وفواحات", "مكياج ومستحضرات تجميل", "العناية بالبشرة والشعر"] },
+        { name: "أدوات، عتاد وبناء", subcategories: ["أدوات كهربائية ويدوية", "مواد بناء ودهانات", "سباكة وكهرباء"] },
+        { name: "مستلزمات أطفال ومواليد", subcategories: ["عربات وأسرة أطفال", "حفاضات وتغذية رضع", "ألعاب أطفال وتعليمية"] },
+        { name: "خدمات وحرف مهنية", subcategories: ["صيانة وتصليح أجهزة", "نقل وشحن محلي", "خدمات مقاولات ودهان", "خدمات تسويق وتصميم"] }
+    ];
+
+    window.setupDynamicCategorySelects = function(mainSelectId, subSelectId, defaultMain = '', defaultSub = '') {
+        const mainSelect = document.getElementById(mainSelectId);
+        const subSelect = document.getElementById(subSelectId);
+        if (!mainSelect || !subSelect) return;
+
+        mainSelect.innerHTML = '<option value="">-- اختر التخصص العام --</option>' + 
+            window.ZALO_CATEGORIES.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
+
+        if (defaultMain) {
+            mainSelect.value = defaultMain;
+        }
+
+        const updateSubcategories = () => {
+            const selectedCat = window.ZALO_CATEGORIES.find(c => c.name === mainSelect.value);
+            if (selectedCat) {
+                subSelect.disabled = false;
+                subSelect.innerHTML = '<option value="">-- اختر الفرع الفرعي --</option>' + 
+                    selectedCat.subcategories.map(s => `<option value="${s}">${s}</option>`).join('');
+            } else {
+                subSelect.disabled = true;
+                subSelect.innerHTML = '<option value="">-- اختر التخصص العام أولاً --</option>';
+            }
+        };
+
+        mainSelect.addEventListener('change', updateSubcategories);
+        updateSubcategories();
+
+        if (defaultSub) {
+            setTimeout(() => { subSelect.value = defaultSub; }, 50);
+        }
+    };
+    </script>
     <script src="js/modules/store/store-legacy.js"></script>
 
 <!-- Branch/Chain Modal -->
@@ -1099,32 +1188,37 @@
 window.unifiedMediaData = { type: 'none', url: '', isVideo: false };
 
 window.previewUnifiedImg = function(input) {
-    if (!input.files || !input.files[0]) return;
-    const file = input.files[0];
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        window.unifiedMediaData = { type: 'image', url: e.target.result, isVideo: false };
-        const lbl = document.getElementById('unified-img-lbl');
-        const imgPrev = document.getElementById('unified-img-preview');
-        const vidPrev = document.getElementById('unified-vid-preview');
-        if (lbl) {
-            lbl.innerText = '✅ تم تحديد صورة';
-            lbl.className = 'text-xs text-emerald-600 font-black';
-        }
-        if (imgPrev) {
-            imgPrev.src = e.target.result;
-            imgPrev.classList.remove('hidden');
-        }
-        if (vidPrev) {
-            vidPrev.classList.add('hidden');
-        }
-        const vidLbl = document.getElementById('unified-vid-lbl');
-        if (vidLbl) {
-            vidLbl.innerText = 'فيديو (أقصاه 20ثا)';
-            vidLbl.className = 'text-xs text-rose-600 font-bold flex flex-col items-center gap-1';
-        }
-    };
-    reader.readAsDataURL(file);
+    if (!input.files || input.files.length === 0) return;
+    window.unifiedMediaData = { type: 'images', urls: [], isVideo: false };
+    
+    let loadedCount = 0;
+    const totalFiles = input.files.length;
+    
+    for (let i = 0; i < totalFiles; i++) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            window.unifiedMediaData.urls.push(e.target.result);
+            loadedCount++;
+            
+            if (loadedCount === totalFiles) {
+                const lbl = document.getElementById('unified-img-lbl');
+                const imgPrev = document.getElementById('unified-img-preview');
+                const vidPrev = document.getElementById('unified-vid-preview');
+                if (lbl) {
+                    lbl.innerText = `✅ تم تحديد ${totalFiles} صور`;
+                    lbl.className = 'text-xs text-emerald-600 font-black';
+                }
+                if (imgPrev) {
+                    imgPrev.src = window.unifiedMediaData.urls[0];
+                    imgPrev.classList.remove('hidden');
+                }
+                if (vidPrev) {
+                    vidPrev.classList.add('hidden');
+                }
+            }
+        };
+        reader.readAsDataURL(input.files[i]);
+    }
 };
 
 window.validateAndPreviewUnifiedVid = function(input) {
@@ -1255,11 +1349,24 @@ window.merchantUnifiedAddProduct = async function(e) {
     const realPhone = currentStoreSettings.phone || localStorage.getItem('zalo_merchant_phone') || '0658000000';
     const realLogo = currentStoreSettings.logoImg || localStorage.getItem('zalo_merchant_logo') || 'assets/icon-192.svg';
 
-    const mediaObj = window.unifiedMediaData || { url: '', isVideo: false };
-    const pMedia = mediaObj.url || 'assets/icon-192.svg';
+    const mediaObj = window.unifiedMediaData || { url: '', urls: [], isVideo: false };
+    let pMedia = mediaObj.url || 'assets/icon-192.svg';
+    if (mediaObj.type === 'images' && mediaObj.urls.length > 0) {
+        pMedia = mediaObj.urls.length === 1 ? mediaObj.urls[0] : JSON.stringify(mediaObj.urls);
+    }
     const isVideo = mediaObj.isVideo || false;
 
     const pId = 'p_' + Date.now();
+    
+    // Retain existing image if editing and no new media selected
+    if (window.editingProductId && (!mediaObj.type || mediaObj.type === 'none')) {
+        let dbProds = [];
+        try { dbProds = JSON.parse(localStorage.getItem('zalo_products') || '[]'); } catch(e){}
+        const oldP = dbProds.find(p => String(p.id) === String(window.editingProductId));
+        if (oldP) {
+            pMedia = oldP.image || oldP.image_url || oldP.imageUrl || pMedia;
+        }
+    }
 
     const newProduct = {
         productId: pId,
@@ -1299,7 +1406,18 @@ window.merchantUnifiedAddProduct = async function(e) {
         dbProducts = dbProducts.slice(0, 45);
     }
     
-    dbProducts.unshift(newProduct);
+    if (window.editingProductId) {
+        newProduct.id = window.editingProductId;
+        newProduct.productId = window.editingProductId;
+        const idx = dbProducts.findIndex(p => String(p.id) === String(window.editingProductId));
+        if (idx >= 0) {
+            dbProducts[idx] = { ...dbProducts[idx], ...newProduct };
+        } else {
+            dbProducts.unshift(newProduct);
+        }
+    } else {
+        dbProducts.unshift(newProduct);
+    }
     
     try {
         localStorage.setItem('zalo_products', JSON.stringify(dbProducts));
@@ -1308,7 +1426,12 @@ window.merchantUnifiedAddProduct = async function(e) {
             // If quota exceeded, try saving with a placeholder image instead of large DataURL
             newProduct.image = 'assets/icon-192.svg';
             newProduct.imageUrl = 'assets/icon-192.svg';
-            dbProducts[0] = newProduct;
+            if (window.editingProductId) {
+                const idx = dbProducts.findIndex(p => String(p.id) === String(window.editingProductId));
+                if(idx >= 0) dbProducts[idx] = newProduct;
+            } else {
+                dbProducts[0] = newProduct;
+            }
             localStorage.setItem('zalo_products', JSON.stringify(dbProducts));
             console.warn('Storage quota reached, product saved without large image.');
         } else {
@@ -1321,48 +1444,54 @@ window.merchantUnifiedAddProduct = async function(e) {
         if (typeof setDB === 'function') {
             let legacyProds = (typeof getDB === 'function') ? getDB('products', []) : [];
             if (legacyProds.length > 50) legacyProds = legacyProds.slice(0, 45);
-            legacyProds.unshift(newProduct);
+            if (window.editingProductId) {
+                const lIdx = legacyProds.findIndex(p => String(p.id) === String(window.editingProductId));
+                if(lIdx >= 0) legacyProds[lIdx] = { ...legacyProds[lIdx], ...newProduct };
+                else legacyProds.unshift(newProduct);
+            } else {
+                legacyProds.unshift(newProduct);
+            }
             setDB('products', legacyProds);
         }
     } catch(e) {}
 
-    // 2. Also publish to Live Stories / Facebook-Style Feed
-    const newStory = {
-        id: 'post_' + Date.now(),
-        productId: pId,
-        author: realStoreName,
-        store_name: realStoreName,
-        name: realStoreName,
-        logo: realLogo,
-        wilaya: realWilaya,
-        phone: realPhone,
-        image: pMedia,
-        video: isVideo ? pMedia : '',
-        isVideo: isVideo,
-        caption: prodName + (prodDesc ? ` - ${prodDesc}` : '') + ` | السعر: ${prodPrice.toLocaleString()} دج`,
-        title: prodName,
-        price: prodPrice,
-        likes: 1,
-        rating: '5.0',
-        reposts: 0,
-        time: 'الآن',
-        created_at: new Date().toISOString()
-    };
+    // 2. Also publish to Live Stories / Facebook-Style Feed (only if not editing)
+    if (!window.editingProductId) {
+        const newStory = {
+            id: 'post_' + Date.now(),
+            productId: pId,
+            author: realStoreName,
+            store_name: realStoreName,
+            name: realStoreName,
+            logo: realLogo,
+            wilaya: realWilaya,
+            phone: realPhone,
+            image: pMedia,
+            video: isVideo ? pMedia : '',
+            isVideo: isVideo,
+            caption: prodName + (prodDesc ? ` - ${prodDesc}` : '') + ` | السعر: ${prodPrice.toLocaleString()} دج`,
+            title: prodName,
+            price: prodPrice,
+            likes: 1,
+            rating: '5.0',
+            reposts: 0,
+            time: 'الآن',
+            created_at: new Date().toISOString()
+        };
 
-    try {
-        if (existingStories.length > 30) existingStories = existingStories.slice(0, 25);
-        existingStories.unshift(newStory);
-        localStorage.setItem('zalo_live_stories', JSON.stringify(existingStories));
-    } catch(e) {
-        console.warn('Could not save live story to local storage:', e);
+        try {
+            if (existingStories.length > 30) existingStories = existingStories.slice(0, 25);
+            existingStories.unshift(newStory);
+            localStorage.setItem('zalo_live_stories', JSON.stringify(existingStories));
+        } catch(e) {
+            console.warn('Could not save live story to local storage:', e);
+        }
     }
 
     // 3. Sync to Supabase if connected
     try {
         if (window.supabaseClient) {
-            await window.supabaseClient.from('products').insert({
-                id: pId,
-                productId: pId,
+            const prodData = {
                 name: prodName,
                 productName: prodName,
                 price: prodPrice,
@@ -1380,7 +1509,16 @@ window.merchantUnifiedAddProduct = async function(e) {
                 wilaya: realWilaya,
                 phone: realPhone,
                 status: 'active'
-            });
+            };
+            if (window.editingProductId) {
+                await window.supabaseClient.from('products').update(prodData).eq('id', window.editingProductId);
+            } else {
+                await window.supabaseClient.from('products').insert({
+                    id: pId,
+                    productId: pId,
+                    ...prodData
+                });
+            }
         }
     } catch (err) {
         console.warn('Supabase product sync notice:', err);
@@ -1405,14 +1543,16 @@ window.merchantUnifiedAddProduct = async function(e) {
     if (typeof Swal !== 'undefined') {
         Swal.fire({
             icon: 'success',
-            title: 'تم نشر السلعة والبث المباشر بنجاح! 🚀',
-            text: 'أصبحت السلعة متاحة للزبائن فوراً في المعرض الرقمي وسوق الجزائر الموحد وبطاقات فيسبوك.',
+            title: window.editingProductId ? 'تم تحديث السلعة بنجاح! 🚀' : 'تم نشر السلعة والبث المباشر بنجاح! 🚀',
+            text: window.editingProductId ? 'تم تطبيق التعديلات.' : 'أصبحت السلعة متاحة للزبائن فوراً في المعرض الرقمي وسوق الجزائر الموحد وبطاقات فيسبوك.',
             confirmButtonText: 'ممتاز'
         });
     } else {
-        alert('تم نشر وإضافة السلعة بنجاح في المعرض وسوق الجزائر! 🎉');
+        alert(window.editingProductId ? 'تم التحديث بنجاح!' : 'تم نشر وإضافة السلعة بنجاح في المعرض وسوق الجزائر! 🎉');
     }
 
+    window.editingProductId = null; // reset editing state
+    
     if (btn) {
         btn.disabled = false;
         btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> نشر العرض الآن (نشر فوري)';

@@ -138,8 +138,10 @@ class MainActivity : ComponentActivity() {
                         filePathCallback = callback
                         try {
                             val intent = params?.createIntent() ?: Intent(Intent.ACTION_GET_CONTENT).apply {
-                                type = "image/*"
+                                type = "*/*"
+                                putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("image/*", "video/*"))
                                 addCategory(Intent.CATEGORY_OPENABLE)
+                                putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
                             }
                             fileChooserLauncher.launch(intent)
                         } catch (e: Exception) {

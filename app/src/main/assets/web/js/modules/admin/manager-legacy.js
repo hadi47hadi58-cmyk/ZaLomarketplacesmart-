@@ -104,7 +104,9 @@
                     <td class="py-3 px-2 text-center">
                         <div class="flex justify-center gap-1">
                             <button onclick="deleteManagerStore('${s.id || s.storeId}')" class="bg-red-50 text-red-600 px-2 py-1 rounded-md hover:bg-red-600 hover:text-white transition font-bold">حذف</button>
-                            <button onclick="alert('تم تجميد المتجر مؤقتاً للمراجعة')" class="bg-amber-50 text-amber-600 px-2 py-1 rounded-md hover:bg-amber-600 hover:text-white transition font-bold">تجميد</button>
+                            <button onclick="toggleManagerStorePause('${s.id || s.storeId}')" class="${localStorage.getItem('zalo_publishing_paused_' + (s.id || s.storeId)) === 'true' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'} px-2 py-1 rounded-md hover:opacity-80 transition font-bold">
+                                ${localStorage.getItem('zalo_publishing_paused_' + (s.id || s.storeId)) === 'true' ? 'استئناف' : 'إيقاف'}
+                            </button>
                         </div>
                     </td>
                 </tr>
@@ -148,13 +150,19 @@
             let stores = getDB("stores_list_old", []);
             stores = stores.filter(s => (s.id !== id && s.storeId !== id));
             localStorage.setItem("stores_list_old", JSON.stringify(stores));
-            
+
             let stores2 = getDB("stores", []);
             stores2 = stores2.filter(s => (s.id !== id && s.storeId !== id));
             localStorage.setItem("stores", JSON.stringify(stores2));
-            
-            renderManagerStores();
-            renderManagerStats();
+            window.renderManagerStores();
+        };
+
+        window.toggleManagerStorePause = function(id) {
+            const isPaused = localStorage.getItem('zalo_publishing_paused_' + id) === 'true';
+            const nextState = !isPaused;
+            localStorage.setItem('zalo_publishing_paused_' + id, nextState);
+            alert(nextState ? 'تم إيقاف المتجر عن النشر مؤقتاً 🛑' : 'تم تفعيل المتجر واستئناف النشر بنجاح ✅');
+            window.renderManagerStores();
         };
 
         window.deleteManagerProduct = function(id) {
