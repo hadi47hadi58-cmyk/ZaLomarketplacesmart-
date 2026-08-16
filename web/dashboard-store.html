@@ -1228,6 +1228,12 @@ window.merchantUnifiedAddProduct = async function(e) {
         return;
     }
 
+    const btn = document.getElementById('btn-merchant-unified-add');
+    if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري النشر...';
+    }
+
     const prodName = document.getElementById('prod-name').value.trim();
     const prodPrice = parseFloat(document.getElementById('prod-price').value) || 0;
     const prodStock = parseInt(document.getElementById('prod-stock').value) || 1;
@@ -1405,6 +1411,11 @@ window.merchantUnifiedAddProduct = async function(e) {
         });
     } else {
         alert('تم نشر وإضافة السلعة بنجاح في المعرض وسوق الجزائر! 🎉');
+    }
+
+    if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> نشر العرض الآن (نشر فوري)';
     }
 
     if (typeof renderMerchantProducts === 'function') {

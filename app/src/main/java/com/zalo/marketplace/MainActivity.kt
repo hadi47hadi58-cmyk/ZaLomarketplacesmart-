@@ -423,16 +423,20 @@ fun PureWebContainerScreen(
                     settings.apply {
                         javaScriptEnabled = true
                         domStorageEnabled = true
+                        databaseEnabled = true
                         allowFileAccess = true
                         allowContentAccess = true
                         allowFileAccessFromFileURLs = false
                         allowUniversalAccessFromFileURLs = false
-                        databaseEnabled = true
                         loadWithOverviewMode = true
                         useWideViewPort = true
                         mixedContentMode = WebSettings.MIXED_CONTENT_NEVER_ALLOW
                         cacheMode = WebSettings.LOAD_DEFAULT
                         mediaPlaybackRequiresUserGesture = false
+                        
+                        // Performance and stability enhancements
+                        setGeolocationEnabled(true)
+                        javaScriptCanOpenWindowsAutomatically = true
                     }
                     addJavascriptInterface(WebAppInterface(activity, this), "AndroidInterface")
                     loadUrl("https://appassets.androidplatform.net/assets/web/splash.html")
