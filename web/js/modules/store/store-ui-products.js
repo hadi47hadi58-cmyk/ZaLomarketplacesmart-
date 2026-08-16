@@ -1,5 +1,45 @@
 import { fetchStoreProducts } from './store-products.js';
 
+// Video duration validator for instant posts/products (Max 20 seconds)
+window.validateInstantVideo = function(input) {
+    if (!input.files || !input.files[0]) return;
+    const file = input.files[0];
+    if (!file.type.includes('video')) return;
+
+    const video = document.createElement('video');
+    video.preload = 'metadata';
+    video.src = URL.createObjectURL(file);
+    video.onloadedmetadata = function() {
+        window.URL.revokeObjectURL(video.src);
+        const duration = video.duration;
+        if (duration > 20.5) {
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'الفيديو أطول من المسموح! ⏱️',
+                    text: `مدة الفيديو الحالي ${Math.round(duration)} ثانية. يرجى اختيار أو التقاط فيديو قصير لا يتعدى 20 ثانية كحد أقصى للعروض اللحظية.`,
+                    confirmButtonText: 'حسناً',
+                    confirmButtonColor: '#ef4444'
+                });
+            } else {
+                alert(`⚠️ مدة الفيديو ${Math.round(duration)} ثانية. الحد الأقصى المسموح به هو 20 ثانية للفيديو اللحظي!`);
+            }
+            input.value = '';
+            const lbl = document.getElementById('video-upload-lbl');
+            if (lbl) {
+                lbl.innerText = '❌ الفيديو أطول من 20 ثا';
+                lbl.className = 'text-red-500 font-bold';
+            }
+        } else {
+            const lbl = document.getElementById('video-upload-lbl');
+            if (lbl) {
+                lbl.innerText = `✅ فيديو ممتاز (${Math.round(duration)} ثا)`;
+                lbl.className = 'text-emerald-600 font-bold';
+            }
+        }
+    };
+};
+
 export async function renderMerchantProductsReal() {
     const grid = document.getElementById('products-grid');
     if (!grid) return;
@@ -8,6 +48,28 @@ export async function renderMerchantProductsReal() {
     
     const products = await fetchStoreProducts();
     
+    // Check merchant store status and publishing limit (max 3 products for trial/unverified)
+    try {
+        let storeId = localStorage.getItem('zalo_current_store_id') || 'default_store';
+        const isPaused = localStorage.getItem('zalo_publishing_paused_' + storeId) === 'true';
+        const isVerified = localStorage.getItem('zalo_merchant_verified_' + storeId) === 'true';
+        
+        const limitBanner = document.getElementById('merchant-publishing-limit-banner');
+        if (limitBanner) {
+            if (isPaused || (!isVerified && products.length >= 3)) {
+                limitBanner.classList.remove('hidden');
+                const textMsg = document.getElementById('publishing-limit-text');
+                if (textMsg) {
+                    textMsg.innerText = isPaused 
+                        ? `⚠️ تم إيقاف نشر المنتجات مؤقتاً لمتجركم بواسطة الإدارة. يرجى استكمال الوثائق ودفع الاشتراك.`
+                        : `⚠️ لقد وصلت للحد الأقصى للنشر التجريبي المباشر (${products.length}/3 منتجات). لاستكمال نشر بقية منتجاتك، يرجى تفعيل حساب المتجر المكتمل.`;
+                }
+            } else {
+                limitBanner.classList.add('hidden');
+            }
+        }
+    } catch(e) {}
+
     if (products.length === 0) {
         grid.innerHTML = `
             <div class="col-span-full bg-white p-8 rounded-xl shadow text-center flex flex-col items-center justify-center min-h-[300px]">
@@ -115,6 +177,41 @@ window.merchantAddProductReal = async function(e) {
             store = newStore || { id: session.user.id, name: storeName };
         }
         
+        // Enforce product publishing limit (3 products max for trial/unverified, or if paused by admin)
+        const existingProds = await fetchStoreProducts();
+        const isPaused = localStorage.getItem('zalo_publishing_paused_' + store.id) === 'true';
+        const isVerified = localStorage.getItem('zalo_merchant_verified_' + store.id) === 'true' || store.is_verified === true;
+
+        if (isPaused || (!isVerified && existingProds.length >= 3)) {
+            const msgTitle = isPaused ? 'النشر موقوف من قبل الإدارة! 🛑' : 'تم الوصول للحد الأقصى للنشر التجريبي (3 منتجات)! ⚠️';
+            const msgBody = isPaused 
+                ? 'تم إيقاف نشر المعروضات مؤقتاً لمتجركم. يرجى التواصل مع الإدارة عبر الواتساب لتأكيد الوثائق والاشتراك.'
+                : 'لقد استوفيت الحد الأقصى المسموح به للنشر التجريبي (3 منتجات). لاستكمال رفع بقية معروضات متجرك، يرجى تقديم وثائق المحل ودفع الاشتراك.';
+
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    icon: 'warning',
+                    title: msgTitle,
+                    html: `
+                        <div class="text-right space-y-3">
+                            <p class="text-xs text-slate-700 leading-relaxed font-bold">${msgBody}</p>
+                            <div class="pt-2 text-center">
+                                <a href="https://wa.me/213658000000?text=${encodeURIComponent('مرحباً إدارة ZaLo، أود استكمال وثائق متجر ' + (store.name || '') + ' ودفع الاشتراك لتفعيل النشر المباشر.')}" target="_blank" class="inline-flex items-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-black transition shadow-md">
+                                    <i class="fa-brands fa-whatsapp text-sm"></i>
+                                    <span>تواصل عبر الواتساب للتفعيل والوثائق 💬</span>
+                                </a>
+                            </div>
+                        </div>
+                    `,
+                    confirmButtonText: 'حسناً',
+                    confirmButtonColor: '#10b981'
+                });
+            } else {
+                alert(`${msgTitle}\n${msgBody}`);
+            }
+            return;
+        }
+
         const name = document.getElementById('prod-name')?.value || 'منتج جديد';
         const price = parseFloat(document.getElementById('prod-price')?.value || 0);
         const stock = parseInt(document.getElementById('prod-stock')?.value || 1);

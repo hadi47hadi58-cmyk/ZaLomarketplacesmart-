@@ -507,6 +507,27 @@
 
         <!-- Section 3: Store Products -->
         <div id="section-products" class="space-y-6 hidden animate-fadeIn">
+            
+            <!-- Publishing Limit / Verification Alert Banner -->
+            <div id="merchant-publishing-limit-banner" class="hidden bg-gradient-to-r from-amber-500/10 via-orange-500/10 to-red-500/10 border-2 border-amber-400 p-4 rounded-2xl text-right space-y-3 shadow-sm">
+                <div class="flex items-center justify-between">
+                    <span class="bg-amber-500 text-white text-[10px] font-black px-2.5 py-0.5 rounded-full"><i class="fa-solid fa-shield-halved mr-1"></i> حد النشر التجريبي</span>
+                    <h4 class="text-sm font-black text-slate-800 flex items-center gap-2">
+                        <i class="fa-solid fa-triangle-exclamation text-amber-500 text-base"></i>
+                        <span>تنبيه مهم للتاجر: النشر مقيد بـ 3 منتجات / موقوف مؤقتاً</span>
+                    </h4>
+                </div>
+                <p id="publishing-limit-text" class="text-xs text-slate-700 font-bold leading-relaxed">
+                    لقد استوفيت حد التجربة (3 منتجات). لاستكمال نشر بقية المنتجات وبث القصص اللاحدودية، يرجى تفعيل حسابك واستكمال رفع وثائق المحل ودفع اشتراك المتجر.
+                </p>
+                <div class="pt-1 flex items-center gap-3">
+                    <a href="https://wa.me/213658000000?text=%D9%85%D8%B1%D8%AD%D8%A8%D8%A7%D9%8B%20%D8%A5%D8%AF%D8%A7%D8%B1%D8%A9%20ZaLo%D9%80%20%D8%A3%D8%B1%D9%8A%D8%AF%20%D8%A7%D8%B3%D8%AA%D9%83%D9%85%D8%A7%D9%84%20%D9%88%D8%AB%D8%A7%D8%A6%D9%82%20%D8%A7%D9%84%D9%85%D8%AD%D9%84%20%D9%88%D8%AF%D9%81%D8%B9%20%D8%A7%D9%84%D8%A7%D8%B4%D8%AA%D8%B1%D8%A7%D9%83%20%D9%8D%D8%AA%D9%81%D8%B9%D9%8A%D9%84%20%D8%A7%D9%84%D9%86%D8%B4%D8%B1%20%D8%A7%D9%84%D9%84%D8%A7%D8%AD%D8%AF%D9%88%D8%AF%D9%8A" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black px-4 py-2 rounded-xl transition flex items-center gap-2 shadow-sm">
+                        <i class="fa-brands fa-whatsapp text-sm"></i>
+                        <span>تواصل مع الإدارة عبر الواتساب لتفعيل الاشتراك 💬</span>
+                    </a>
+                </div>
+            </div>
+
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
                 <!-- LEFT PANEL: ADD PRODUCT COMPACT SECTION (5 Cols) -->
@@ -607,7 +628,7 @@
                         <div>
                             <span class="block text-[10px] text-slate-500 font-bold mb-1"><i class="fa-solid fa-video"></i> فيديو تسويقي للمنتج</span>
                             <div class="relative bg-white border border-dashed border-slate-200 rounded-xl py-1 px-2 text-center text-[10px] cursor-pointer hover:border-sky-400 transition">
-                                <input type="file" id="prod-video" accept="video/*" class="absolute inset-0 opacity-0 cursor-pointer" onchange="previewProductVideo(this)">
+                                <input type="file" id="prod-video" accept="video/*" capture="environment" class="absolute inset-0 opacity-0 cursor-pointer" onchange="if(window.validateInstantVideo) window.validateInstantVideo(this); if(typeof previewProductVideo==='function') previewProductVideo(this);">
                                 <span id="video-upload-lbl" class="text-sky-500 font-bold">اضغط لرفع فيديو</span>
                             </div>
                         </div>
@@ -1061,6 +1082,36 @@
 <script>
 window.merchantPublishInstantPost = function(e) {
     if (e) e.preventDefault();
+    let storeId = localStorage.getItem('zalo_current_store_id') || 'default_store';
+    const isPaused = localStorage.getItem('zalo_publishing_paused_' + storeId) === 'true';
+    const isVerified = localStorage.getItem('zalo_merchant_verified_' + storeId) === 'true';
+    const existingStories = JSON.parse(localStorage.getItem('zalo_live_stories') || '[]');
+
+    if (isPaused || (!isVerified && existingStories.length >= 3)) {
+        const msgTitle = isPaused ? 'النشر موقوف من قبل الإدارة! 🛑' : 'تم الوصول للحد الأقصى للنشر اللحظي (3 عروض)! ⚠️';
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                icon: 'warning',
+                title: msgTitle,
+                html: `
+                    <div class="text-right space-y-3">
+                        <p class="text-xs text-slate-700 font-bold leading-relaxed">يرجى استكمال رفع وثائق المحل ودفع اشتراك التاجر لتفعيل النشر المباشر والقصص اللحظية اللاحدودية.</p>
+                        <div class="pt-2 text-center">
+                            <a href="https://wa.me/213658000000?text=${encodeURIComponent('مرحباً إدارة ZaLo، أود استكمال وثائق المتجر ودفع الاشتراك لتفعيل البث والقصص اللحظية.')}" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-xl text-xs font-black">
+                                <i class="fa-brands fa-whatsapp text-sm"></i>
+                                <span>تواصل عبر الواتساب لتفعيل الاشتراك 💬</span>
+                            </a>
+                        </div>
+                    </div>
+                `,
+                confirmButtonText: 'حسناً'
+            });
+        } else {
+            alert(msgTitle + '\nيرجى التواصل مع الإدارة عبر الواتساب لتفعيل الاشتراك.');
+        }
+        return;
+    }
+
     const title = document.getElementById('merchant-post-title').value.trim();
     const media = document.getElementById('merchant-post-media').value.trim();
     if (!title || !media) {
@@ -1079,7 +1130,16 @@ window.merchantPublishInstantPost = function(e) {
     let current = JSON.parse(localStorage.getItem('zalo_live_stories') || '[]');
     current = [newStory, ...current];
     localStorage.setItem('zalo_live_stories', JSON.stringify(current));
-    alert('تم نشر العرض أو الفيديو اللحظي بنجاح في سوق الجزائر! 🎉');
+    if (typeof Swal !== 'undefined') {
+        Swal.fire({
+            icon: 'success',
+            title: 'تم نشر البث والقصة بنجاح! ⚡',
+            text: 'أصبح العرض اللحظي متاحاً للمشترين والزبائن الآن في الصفحة الرئيسية.',
+            confirmButtonText: 'ممتاز'
+        });
+    } else {
+        alert('تم نشر العرض أو الفيديو اللحظي بنجاح في سوق الجزائر! 🎉');
+    }
     document.getElementById('merchant-post-title').value = '';
     document.getElementById('merchant-post-media').value = '';
 };
