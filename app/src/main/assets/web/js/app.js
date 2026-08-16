@@ -891,6 +891,9 @@ function renderManagerUsers() {
             <td class="p-3 text-center">
                 <div class="flex gap-1.5 justify-center flex-wrap">
                     <button class="bg-amber-500 hover:bg-amber-600 text-slate-950 text-[10px] px-2.5 py-1 rounded-xl font-bold transition" onclick="changeUserRole('${userId}')">ترقية</button>
+                    ${u.role === 'merchant' ? `
+                        <button class="bg-orange-100 text-orange-800 hover:bg-orange-200 text-[10px] px-2.5 py-1 rounded-xl font-bold transition" onclick="managerToggleStorePause('${userId}')">إيقاف النشر ⏸️</button>
+                    ` : ''}
                     <button class="bg-amber-100 text-amber-800 hover:bg-amber-200 text-[10px] px-2.5 py-1 rounded-xl font-bold transition" onclick="banUser('${userId}')">تعطيل</button>
                     <button class="bg-red-600 hover:bg-red-700 text-white text-[10px] px-2.5 py-1 rounded-xl font-bold transition shadow-sm" onclick="deleteUserPermanentGlobal('${userId}')" title="حذف الحساب نهائياً من كل التطبيق">
                         <i class="fa-solid fa-trash-can"></i> حذف نهائي 🗑️
@@ -937,6 +940,24 @@ window.deleteUserPermanentGlobal = async function(uid) {
     if (typeof renderManagerUsers === 'function') renderManagerUsers();
     if (typeof renderUsersTable === 'function') renderUsersTable();
     if (typeof renderStats === 'function') renderStats();
+};
+
+window.managerToggleStorePause = function(uid) {
+    const isPaused = localStorage.getItem('zalo_publishing_paused_' + uid) === 'true';
+    const nextState = !isPaused;
+    localStorage.setItem('zalo_publishing_paused_' + uid, nextState.toString());
+    
+    if (typeof Swal !== 'undefined') {
+        Swal.fire({
+            icon: nextState ? 'warning' : 'success',
+            title: nextState ? 'تم إيقاف المتجر إدارياً 🛑' : 'تم تفعيل المتجر مجدداً ✅',
+            text: nextState ? 'تم تجميد صلاحية النشر لهذا المتجر بنجاح.' : 'يمكن لهذا المتجر الآن مواصلة البيع والنشر بشكل طبيعي.',
+            confirmButtonText: 'مفهوم'
+        });
+    } else {
+        alert(nextState ? 'تم إيقاف المتجر إدارياً' : 'تم تفعيل المتجر مجدداً');
+    }
+    if (typeof renderManagerUsers === 'function') renderManagerUsers();
 };
 
 window.changeUserRole = function(uid) {

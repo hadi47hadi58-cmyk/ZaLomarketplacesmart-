@@ -204,7 +204,7 @@
             <div class="p-3 bg-gradient-to-b from-slate-50 to-sky-50/50 border border-sky-200/70 rounded-2xl space-y-2.5 my-2 text-right">
                 <div class="flex items-center justify-between">
                     <span class="text-[11px] font-black text-slate-800 flex items-center gap-1.5">
-                        <i class="fa-solid fa-shield-halved text-[#d4af37]"></i> حالة النشر والتوثيق
+                        <i class="fa-solid fa-shield-halved text-[#d4af37]"></i> تفعيل منتجات
                     </span>
                     <span id="sidebar-publish-status-badge" class="text-[9px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-black">نشط (5 معروضات)</span>
                 </div>
@@ -212,23 +212,17 @@
                     حد النشر التجريبي: 5 منتجات. ارفع وثائق المحل لتفعيل النشر اللاحدودي.
                 </p>
                 
-                <!-- Symmetrical Button Row: Toggle Pause + WhatsApp Support -->
-                <div class="grid grid-cols-2 gap-2">
-                    <button id="sidebar-toggle-pause-btn" onclick="toggleStorePublishingPause()" class="h-9 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-300 rounded-xl text-[10.5px] font-black flex items-center justify-center gap-1.5 transition">
-                        <i class="fa-solid fa-circle-pause text-amber-600"></i>
-                        <span id="sidebar-pause-btn-text">إيقاف النشر</span>
-                    </button>
-                    <a href="https://wa.me/213698694010?text=%D9%85%D8%B1%D8%AD%D8%A8%D8%A7%D9%8B%20%D8%A5%D8%AF%D8%A7%D8%B1%D8%A9%20ZaLo%D8%8C%20%D8%A3%D9%88%D8%AF%20%D8%A7%D9%84%D8%A7%D8%B3%D8%AA%D9%81%D8%B3%D8%A7%D8%B1%20%D8%B9%D9%86%20%D8%AA%D9%88%D8%AB%D9%8A%D9%82%20%D8%A7%D9%84%D9%85%D8%AA%D8%AC%D8%B1%20%D9%88%D8%A7%D9%84%D8%A7%D8%B4%D8%AA%D8%B1%D8%A7%D9%83" target="_blank" class="h-9 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl text-[10.5px] font-black flex items-center justify-center gap-1.5 transition shadow-sm">
+                <!-- Action Buttons: WhatsApp Support & Complete Documents -->
+                <div class="flex flex-col gap-2">
+                    <a href="https://wa.me/213698694010?text=%D9%85%D8%B1%D8%AD%D8%A8%D8%A7%D9%8B%20%D8%A5%D8%AF%D8%A7%D8%B1%D8%A9%20ZaLo%D8%8C%20%D8%A3%D9%88%D8%AF%20%D8%A7%D9%84%D8%A7%D8%B3%D8%AA%D9%81%D8%B3%D8%A7%D8%B1%20%D8%B9%D9%86%20%D8%AA%D9%88%D8%AB%D9%8A%D9%82%20%D8%A7%D9%84%D9%85%D8%AA%D8%AC%D8%B1%20%D9%88%D8%A7%D9%84%D8%A7%D8%Bza%D8%AA%D8%B1%D8%A7%D9%83" target="_blank" class="w-full h-9 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl text-[10.5px] font-black flex items-center justify-center gap-1.5 transition shadow-sm">
                         <i class="fa-brands fa-whatsapp text-sm"></i>
                         <span>واتساب الإدارة</span>
                     </a>
+                    <button onclick="openVerificationModal()" class="w-full h-9 bg-gradient-to-r from-sky-500 to-sky-600 hover:from-sky-600 hover:to-sky-700 text-white rounded-xl text-[10.5px] font-black flex items-center justify-center gap-1.5 transition shadow-sm">
+                        <i class="fa-solid fa-file-circle-check"></i>
+                        <span>إكمال وثائق المحل والاشتراك 📄</span>
+                    </button>
                 </div>
-
-                <!-- Complete Documents & Subscription Button -->
-                <button onclick="openVerificationModal()" class="w-full h-9 bg-gradient-to-r from-sky-500 to-sky-600 hover:from-sky-600 hover:to-sky-700 text-white rounded-xl text-[10.5px] font-black flex items-center justify-center gap-1.5 transition shadow-sm">
-                    <i class="fa-solid fa-file-circle-check"></i>
-                    <span>إكمال وثائق المحل والاشتراك 📄</span>
-                </button>
             </div>
         </nav>
 
