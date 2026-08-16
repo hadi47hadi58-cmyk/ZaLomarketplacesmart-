@@ -1287,15 +1287,38 @@ window.merchantUnifiedAddProduct = async function(e) {
     try {
         dbProducts = JSON.parse(localStorage.getItem('zalo_products') || '[]');
     } catch(e) {}
+    
+    // Safety check: Limit local products cache to 50 items to avoid QuotaExceededError
+    if (dbProducts.length > 50) {
+        dbProducts = dbProducts.slice(0, 45);
+    }
+    
     dbProducts.unshift(newProduct);
-    localStorage.setItem('zalo_products', JSON.stringify(dbProducts));
+    
+    try {
+        localStorage.setItem('zalo_products', JSON.stringify(dbProducts));
+    } catch (quotaErr) {
+        if (quotaErr.name === 'QuotaExceededError' || quotaErr.name === 'NS_ERROR_DOM_QUOTA_REACHED') {
+            // If quota exceeded, try saving with a placeholder image instead of large DataURL
+            newProduct.image = 'assets/icon-192.svg';
+            newProduct.imageUrl = 'assets/icon-192.svg';
+            dbProducts[0] = newProduct;
+            localStorage.setItem('zalo_products', JSON.stringify(dbProducts));
+            console.warn('Storage quota reached, product saved without large image.');
+        } else {
+            throw quotaErr;
+        }
+    }
 
     // Also sync with legacy DB key
-    if (typeof setDB === 'function') {
-        let legacyProds = (typeof getDB === 'function') ? getDB('products', []) : [];
-        legacyProds.unshift(newProduct);
-        setDB('products', legacyProds);
-    }
+    try {
+        if (typeof setDB === 'function') {
+            let legacyProds = (typeof getDB === 'function') ? getDB('products', []) : [];
+            if (legacyProds.length > 50) legacyProds = legacyProds.slice(0, 45);
+            legacyProds.unshift(newProduct);
+            setDB('products', legacyProds);
+        }
+    } catch(e) {}
 
     // 2. Also publish to Live Stories / Facebook-Style Feed
     const newStory = {
@@ -1320,8 +1343,13 @@ window.merchantUnifiedAddProduct = async function(e) {
         created_at: new Date().toISOString()
     };
 
-    existingStories.unshift(newStory);
-    localStorage.setItem('zalo_live_stories', JSON.stringify(existingStories));
+    try {
+        if (existingStories.length > 30) existingStories = existingStories.slice(0, 25);
+        existingStories.unshift(newStory);
+        localStorage.setItem('zalo_live_stories', JSON.stringify(existingStories));
+    } catch(e) {
+        console.warn('Could not save live story to local storage:', e);
+    }
 
     // 3. Sync to Supabase if connected
     try {

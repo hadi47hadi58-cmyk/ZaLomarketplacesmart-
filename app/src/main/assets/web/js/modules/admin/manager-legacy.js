@@ -42,6 +42,134 @@
             }
         }
 
+        window.toggleManagerStoresList = function() {
+            const container = document.getElementById("manager-stores-container");
+            const btn = document.getElementById("btn-toggle-mgr-stores");
+            if (!container) return;
+            if (container.classList.contains("hidden")) {
+                container.classList.remove("hidden");
+                if (btn) btn.innerHTML = `<i class="fa-solid fa-chevron-up"></i> <span>إخفاء القائمة</span>`;
+                renderManagerStores();
+            } else {
+                container.classList.add("hidden");
+                if (btn) btn.innerHTML = `<i class="fa-solid fa-eye"></i> <span>عرض قائمة المتاجر 🏪</span>`;
+            }
+        };
+
+        window.toggleManagerProductsList = function() {
+            const container = document.getElementById("manager-products-container");
+            const btn = document.getElementById("btn-toggle-mgr-products");
+            if (!container) return;
+            if (container.classList.contains("hidden")) {
+                container.classList.remove("hidden");
+                if (btn) btn.innerHTML = `<i class="fa-solid fa-chevron-up"></i> <span>إخفاء القائمة</span>`;
+                renderManagerProducts();
+            } else {
+                container.classList.add("hidden");
+                if (btn) btn.innerHTML = `<i class="fa-solid fa-boxes-stacked"></i> <span>عرض قائمة المنتجات 📦</span>`;
+            }
+        };
+
+        window.renderManagerStores = function() {
+            const tbody = document.getElementById('manager-stores-tbody');
+            if (!tbody) return;
+            
+            let stores = getDB("stores_list_old", []);
+            // Also check 'stores' key which might be used
+            const stores2 = getDB("stores", []);
+            stores = [...stores, ...stores2];
+            
+            // Deduplicate by name or ID if needed, but for now just show
+            if (stores.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="text-center py-8 text-slate-400">لا توجد متاجر مسجلة حالياً</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = stores.map(s => `
+                <tr class="border-b border-slate-50 hover:bg-slate-50 transition">
+                    <td class="py-3 px-2">
+                        <div class="flex items-center gap-2">
+                            <img src="${s.image || s.logo_url || s.logo || 'assets/icon-192.svg'}" class="w-8 h-8 rounded-lg object-cover border border-slate-200">
+                            <span class="font-bold text-slate-800">${s.name || s.storeName || 'متجر'}</span>
+                        </div>
+                    </td>
+                    <td class="py-3 px-2">
+                        <p class="font-bold text-sky-600">${s.location || s.wilaya || 'غير محدد'}</p>
+                        <p class="text-[10px] text-slate-400">${s.category || 'عام'}</p>
+                    </td>
+                    <td class="py-3 px-2">
+                        <p class="font-bold text-slate-700">${s.owner || s.owner_name || 'تاجر'}</p>
+                        <p class="text-[10px] text-slate-400">${s.phone || '-'}</p>
+                    </td>
+                    <td class="py-3 px-2 text-center">
+                        <div class="flex justify-center gap-1">
+                            <button onclick="deleteManagerStore('${s.id || s.storeId}')" class="bg-red-50 text-red-600 px-2 py-1 rounded-md hover:bg-red-600 hover:text-white transition font-bold">حذف</button>
+                            <button onclick="alert('تم تجميد المتجر مؤقتاً للمراجعة')" class="bg-amber-50 text-amber-600 px-2 py-1 rounded-md hover:bg-amber-600 hover:text-white transition font-bold">تجميد</button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        };
+
+        window.renderManagerProducts = function() {
+            const tbody = document.getElementById('manager-products-tbody');
+            if (!tbody) return;
+            
+            let products = getDB("products", []);
+            const products2 = getDB("zalo_products", []);
+            products = [...products, ...products2];
+
+            if (products.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="3" class="text-center py-8 text-slate-400">لا توجد منتجات منشورة حالياً</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = products.map(p => `
+                <tr class="border-b border-slate-50 hover:bg-slate-50 transition">
+                    <td class="py-3 px-2">
+                        <div class="flex items-center gap-2">
+                            <img src="${p.image || p.imageUrl || p.img || 'assets/icon-192.svg'}" class="w-8 h-8 rounded-lg object-cover border border-slate-200">
+                            <span class="font-bold text-slate-800">${p.productName || p.name || 'منتج'}</span>
+                        </div>
+                    </td>
+                    <td class="py-3 px-2">
+                        <p class="font-bold text-emerald-600">${p.price || 0} دج</p>
+                        <p class="text-[10px] text-slate-400">بواسطة: ${p.storeName || p.store_name || 'تاجر'}</p>
+                    </td>
+                    <td class="py-3 px-2 text-center">
+                        <button onclick="deleteManagerProduct('${p.id || p.productId}')" class="bg-red-50 text-red-600 px-3 py-1 rounded-md hover:bg-red-600 hover:text-white transition font-bold">حذف المنتج</button>
+                    </td>
+                </tr>
+            `).join('');
+        };
+
+        window.deleteManagerStore = function(id) {
+            if (!confirm('هل أنت متأكد من حذف هذا المتجر نهائياً؟')) return;
+            let stores = getDB("stores_list_old", []);
+            stores = stores.filter(s => (s.id !== id && s.storeId !== id));
+            localStorage.setItem("stores_list_old", JSON.stringify(stores));
+            
+            let stores2 = getDB("stores", []);
+            stores2 = stores2.filter(s => (s.id !== id && s.storeId !== id));
+            localStorage.setItem("stores", JSON.stringify(stores2));
+            
+            renderManagerStores();
+            renderManagerStats();
+        };
+
+        window.deleteManagerProduct = function(id) {
+            if (!confirm('هل أنت متأكد من حذف هذا المنتج نهائياً؟')) return;
+            let products = getDB("products", []);
+            products = products.filter(p => (p.id !== id && p.productId !== id));
+            localStorage.setItem("products", JSON.stringify(products));
+            
+            let products2 = getDB("zalo_products", []);
+            products2 = products2.filter(p => (p.id !== id && p.productId !== id));
+            localStorage.setItem("zalo_products", JSON.stringify(products2));
+            
+            renderManagerProducts();
+        };
+
         function openStatDetailModal(type) {
             let modal = document.getElementById("stat-detail-modal");
             if (!modal) {
@@ -205,6 +333,8 @@
         function initManagerDashboardPage() {
             console.log("[ManagerDashboard] Running dynamic role-based workspace personalization...");
             renderManagerStats();
+            renderManagerStores();
+            renderManagerProducts();
             
             const email = localStorage.getItem('zalo_user_email') || 'manager@zalo.dz';
             const activeStaff = getDB("zalo_active_staff", []);

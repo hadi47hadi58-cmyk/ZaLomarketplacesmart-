@@ -4806,7 +4806,7 @@ function renderProductsList(list) {
     const safeImage = imgUrl.replace(/'/g, "\\'");
 
     grid.innerHTML += `
-      <div class="fb-post-card" style="background: white; border-radius: 0; border-top: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; padding: 16px; text-align: right; margin-bottom: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+      <div class="fb-post-card" style="background: white; border-radius: 20px; border: 1px solid #e2e8f0; padding: 16px; text-align: right; margin-bottom: 16px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); overflow: hidden;">
         <!-- Post Header: Store Info -->
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
           <div style="display: flex; align-items: center; gap: 10px;">
@@ -4818,10 +4818,10 @@ function renderProductsList(list) {
                 <span>${storeName}</span>
                 <i class="fa-solid fa-circle-check" style="color: #0ea5e9; font-size: 11px;"></i>
               </div>
-              <div style="font-size: 11px; font-weight: 700; color: #64748b; display: flex; align-items: center; gap: 4px;">
-                <span>${pWilaya}</span>
+              <div style="font-size: 10px; font-weight: 700; color: #64748b; display: flex; align-items: center; gap: 4px;">
+                <span style="color: #0284c7;"><i class="fa-solid fa-location-dot"></i> ${pWilaya}</span>
                 <span>•</span>
-                <span>متجر معتمد وموثق 🇩🇿</span>
+                <span style="color: #d4af37;"><i class="fa-solid fa-tag"></i> ${pCategory}</span>
               </div>
             </div>
           </div>

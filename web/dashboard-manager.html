@@ -151,6 +151,73 @@
                 <div id="manager-tracking-result" class="space-y-3"></div>
             </div>
 
+            <!-- Managed Stores List -->
+            <div class="bg-white border border-slate-200 rounded-3xl p-5 space-y-4 shadow-sm text-right">
+                <div class="flex flex-wrap items-center justify-between gap-3">
+                    <div class="flex items-center gap-2">
+                        <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 border border-amber-200 flex items-center justify-center text-lg">
+                            <i class="fa-solid fa-store"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-black text-slate-800"><i class="fa-solid fa-shop text-amber-500 ml-1"></i> إدارة المتاجر والمحلات المعتمدة</h3>
+                            <p class="text-[11px] text-slate-400 font-bold">مراقبة، تفعيل، أو إيقاف المتاجر التجارية عبر الولايات</p>
+                        </div>
+                    </div>
+                    <button onclick="toggleManagerStoresList()" id="btn-toggle-mgr-stores" class="bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition flex items-center gap-2 shadow-sm cursor-pointer">
+                        <i class="fa-solid fa-eye"></i>
+                        <span>عرض قائمة المتاجر 🏪</span>
+                    </button>
+                </div>
+                <div id="manager-stores-container" class="hidden overflow-x-auto w-full pt-4 border-t border-slate-100 transition-all">
+                    <table class="w-full text-right text-xs" style="min-width: 600px;">
+                        <thead>
+                            <tr class="text-slate-500 border-b border-slate-100">
+                                <th class="pb-3 text-right font-extrabold">المتجر / الشعار</th>
+                                <th class="pb-3 text-right font-extrabold">الولاية / التخصص</th>
+                                <th class="pb-3 text-right font-extrabold">المالك / الهاتف</th>
+                                <th class="pb-3 text-center font-extrabold">التحكم</th>
+                            </tr>
+                        </thead>
+                        <tbody id="manager-stores-tbody">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Managed Products List -->
+            <div class="bg-white border border-slate-200 rounded-3xl p-5 space-y-4 shadow-sm text-right">
+                <div class="flex flex-wrap items-center justify-between gap-3">
+                    <div class="flex items-center gap-2">
+                        <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-200 flex items-center justify-center text-lg">
+                            <i class="fa-solid fa-box"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-black text-slate-800"><i class="fa-solid fa-tags text-emerald-500 ml-1"></i> إدارة المنتجات والمعروضات</h3>
+                            <p class="text-[11px] text-slate-400 font-bold">مراجعة المنتجات المنشورة وحذف المخالف منها</p>
+                        </div>
+                    </div>
+                    <button onclick="toggleManagerProductsList()" id="btn-toggle-mgr-products" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition flex items-center gap-2 shadow-sm cursor-pointer">
+                        <i class="fa-solid fa-boxes-stacked"></i>
+                        <span>عرض قائمة المنتجات 📦</span>
+                    </button>
+                </div>
+                <div id="manager-products-container" class="hidden overflow-x-auto w-full pt-4 border-t border-slate-100 transition-all">
+                    <table class="w-full text-right text-xs" style="min-width: 600px;">
+                        <thead>
+                            <tr class="text-slate-500 border-b border-slate-100">
+                                <th class="pb-3 text-right font-extrabold">المنتج / الصورة</th>
+                                <th class="pb-3 text-right font-extrabold">المتجر / السعر</th>
+                                <th class="pb-3 text-center font-extrabold">التحكم</th>
+                            </tr>
+                        </thead>
+                        <tbody id="manager-products-tbody">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
             <!-- Users list (Collapsible button to save UI space) -->
             <div class="bg-white border border-slate-200 rounded-3xl p-5 space-y-4 shadow-sm text-right">
                 <div class="flex flex-wrap items-center justify-between gap-3">
