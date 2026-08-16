@@ -1759,11 +1759,27 @@ body { margin: 0; padding: 0;
       </div>
     </div>
 
-    <!-- Wilaya / Store Selector Banner Button -->
-        <div style="padding: 12px 16px 8px 16px;">
-      <button onclick="openWilayaPickerModal()" style="width: 100%; background: linear-gradient(135deg, #0284c7, #0369a1); color: white; border: none; padding: 16px 20px; border-radius: 20px; font-weight: 900; font-size: 14.5px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 20px rgba(2,132,199,0.3); transition: transform 0.2s;">
-        تصفح متاجرك و منتجاتك في ولايتك
-      </button>
+    <!-- Wilaya / Store Selector Portal Box -->
+    <div style="padding: 12px 16px 8px 16px;">
+      <div onclick="window.switchTab('wilaya-hub')" style="width: 100%; background: #ffffff; border: 2.5px solid #0284c7; border-radius: 24px; padding: 20px; cursor: pointer; box-shadow: 0 10px 25px rgba(2,132,199,0.12); transition: all 0.3s; position: relative; overflow: hidden;">
+        <!-- Animated Background Accent -->
+        <div style="position: absolute; top: -50px; left: -50px; width: 150px; height: 150px; background: rgba(2, 132, 199, 0.05); border-radius: 50%;"></div>
+        
+        <div style="display: flex; align-items: center; justify-content: space-between; position: relative; z-index: 2;">
+          <div style="display: flex; align-items: center; gap: 14px;">
+            <div style="width: 54px; height: 54px; border-radius: 16px; background: linear-gradient(135deg, #0284c7, #0369a1); color: white; display: flex; align-items: center; justify-content: center; font-size: 24px; box-shadow: 0 4px 12px rgba(2,132,199,0.3);">
+              <i class="fa-solid fa-map-location-dot"></i>
+            </div>
+            <div>
+              <h3 style="font-size: 16px; font-weight: 900; color: #0f172a; margin: 0;">تصفح متاجرك و منتجاتك في ولايتك</h3>
+              <p style="font-size: 12px; color: #64748b; font-weight: 700; margin: 4px 0 0;">مركز أعمال وتجارة الجزائر 🇩🇿</p>
+            </div>
+          </div>
+          <div style="width: 32px; height: 32px; border-radius: 50%; background: #f0f9ff; display: flex; align-items: center; justify-content: center; color: #0284c7;">
+            <i class="fa-solid fa-chevron-left" style="font-size: 14px;"></i>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Promo Banner / Best Selling Stores Button -->
@@ -1809,70 +1825,88 @@ body { margin: 0; padding: 0;
       </div>
     </div>
 
-    <!-- Dynamic Wilaya Discovery Hub (تخصصات وفروع ومتاجر الولاية المحددة) -->
-    <div id="wilaya-discovery-hub" style="margin: 0 16px 16px 16px; display: block; border-radius: 20px; background: #ffffff; border: 1.5px solid #e2e8f0; padding: 16px; box-shadow: 0 4px 14px rgba(0,0,0,0.04);">
-      
-      <!-- Wilaya Active Header -->
-      <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid #f1f5f9; padding-bottom: 12px; margin-bottom: 14px;">
-        <div style="display: flex; align-items: center; gap: 8px;">
-          <div style="width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, #0284c7, #0369a1); color: white; display: flex; align-items: center; justify-content: center; font-size: 16px;">
-            <i class="fa-solid fa-map-location-dot"></i>
-          </div>
-          <div>
-            <h3 id="hub-wilaya-title" style="font-size: 14px; font-weight: 900; color: #0f172a; margin: 0;">مركز أعمال وتجارة: الجزائر 🇩🇿</h3>
-            <span id="hub-wilaya-subtitle" style="font-size: 11px; color: #64748b; font-weight: 700;">التخصصات والفروع والمتاجر المعتمدة</span>
-          </div>
-        </div>
-        <button onclick="openWilayaPickerModal()" style="background: #f0f9ff; border: 1px solid #bae6fd; color: #0284c7; border-radius: 10px; padding: 6px 12px; font-family: 'Cairo', sans-serif; font-size: 11px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 4px;">
-          <i class="fa-solid fa-arrows-rotate"></i> تغيير الولاية
-        </button>
-      </div>
 
-      <!-- Section 1: Categories & Branches in this Wilaya -->
-      <div style="margin-bottom: 16px;">
-        <div style="font-size: 12.5px; font-weight: 900; color: #0f172a; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between;">
-          <span style="display: flex; align-items: center; gap: 6px;"><i class="fa-solid fa-layer-group" style="color: #0284c7;"></i> التخصصات والفروع بالولاية:</span>
-          <span style="font-size: 10px; color: #64748b; font-weight: 700;">(انقر لتصفية السلع)</span>
-        </div>
-        <div id="hub-categories-scroll" style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; scrollbar-width: none;">
-          <!-- Loaded dynamically -->
+    <!-- Main Products Feed (Facebook Style) -->
+    <div style="padding: 0 0 100px 0;">
+      <div style="padding: 0 16px;">
+        <div style="font-size: 14.5px; font-weight: 900; color: #0f172a; margin: 12px 0 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid #f1f5f9; padding-bottom: 10px;">
+          <span style="display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-fire-flame-curved" style="color: #ef4444;"></i> معروضات وسلع السوق الجزائري:</span>
+          <span style="font-size: 10.5px; color: #64748b; font-weight: 800; background: #f1f5f9; padding: 4px 10px; border-radius: 20px;">جميع الولايات 🇩🇿</span>
         </div>
       </div>
-
-      <!-- Section 2: Subcategories / Branches Filter Pills -->
-      <div id="hub-branches-wrapper" style="margin-bottom: 16px; background: #f8fafc; border-radius: 12px; padding: 10px; border: 1px solid #e2e8f0;">
-        <div style="font-size: 11px; font-weight: 800; color: #475569; margin-bottom: 6px; display: flex; align-items: center; gap: 4px;">
-          <i class="fa-solid fa-code-branch" style="color: #10b981;"></i> الفروع الفرعية النشطة:
-        </div>
-        <div id="hub-branches-pills" style="display: flex; flex-wrap: wrap; gap: 6px;">
-          <!-- Loaded dynamically -->
-        </div>
-      </div>
-
-      <!-- Section 3: Verified Stores in this Wilaya -->
-      <div>
-        <div style="font-size: 12.5px; font-weight: 900; color: #0f172a; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between;">
-          <span style="display: flex; align-items: center; gap: 6px;"><i class="fa-solid fa-store" style="color: #0ea5e9;"></i> المتاجر المعتمدة في الولاية:</span>
-          <span id="hub-stores-count" style="font-size: 10.5px; background: #e0f2fe; color: #0284c7; padding: 2px 8px; border-radius: 10px; font-weight: 800;">4 متاجر</span>
-        </div>
-        <div id="hub-stores-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
-          <!-- Loaded dynamically -->
-        </div>
-      </div>
-
-    </div>
-
-    <!-- Main Products Grid (All Products / Featured) -->
-    <div style="padding: 0 16px 80px 16px;">
-      <div style="font-size: 14px; font-weight: 900; color: #0f172a; margin: 8px 0 12px; display: flex; align-items: center; justify-content: space-between;">
-        <span style="display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-fire-flame-curved" style="color: #ef4444;"></i> معروضات وسلع السوق الجزائري:</span>
-        <span style="font-size: 10.5px; color: #64748b; font-weight: 800;">جميع الولايات 🇩🇿</span>
-      </div>
-      <div id="home-pgrid" class="products-grid-mockup">
-        <!-- Loaded dynamically -->
+      <div id="home-pgrid" class="facebook-feed-mockup" style="display: flex; flex-direction: column; gap: 16px;">
+        <!-- Loaded dynamically as Facebook Posts -->
       </div>
     </div>
 
+  </div>
+
+
+  <!-- SCREEN 1.5: WILAYA DISCOVERY HUB (واجهة مركز الأعمال والتجارة المخصصة) -->
+  <div class="screen" id="screen-wilaya-hub" style="background-color: #f8fafc; min-height: 100vh;">
+    <!-- Hub Header -->
+    <div style="background: #102a43; padding: 16px; border-bottom: 2.5px solid var(--brand-gold); display: flex; align-items: center; gap: 12px;">
+      <button onclick="window.switchTab('home')" style="background: rgba(255,255,255,0.1); border: none; color: white; width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+        <i class="fa-solid fa-arrow-right"></i>
+      </button>
+      <div style="flex: 1; text-align: right;">
+        <h2 style="color: white; font-size: 16px; font-weight: 900; margin: 0;">مركز أعمال وتجارة الجزائر 🇩🇿</h2>
+        <p style="color: #cbd5e1; font-size: 11px; font-weight: 700; margin: 2px 0 0;">استكشف المتاجر والتخصصات في ولايتك</p>
+      </div>
+    </div>
+
+    <div style="padding: 16px;">
+      <div id="wilaya-discovery-hub" style="display: block; border-radius: 20px; background: #ffffff; border: 1.5px solid #e2e8f0; padding: 16px; box-shadow: 0 4px 14px rgba(0,0,0,0.04);">
+        
+        <!-- Wilaya Active Header -->
+        <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid #f1f5f9; padding-bottom: 12px; margin-bottom: 14px;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <div style="width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, #0284c7, #0369a1); color: white; display: flex; align-items: center; justify-content: center; font-size: 16px;">
+              <i class="fa-solid fa-map-location-dot"></i>
+            </div>
+            <div>
+              <h3 id="hub-wilaya-title" style="font-size: 14px; font-weight: 900; color: #0f172a; margin: 0;">مركز أعمال وتجارة: الجزائر 🇩🇿</h3>
+              <span id="hub-wilaya-subtitle" style="font-size: 11px; color: #64748b; font-weight: 700;">التخصصات والفروع والمتاجر المعتمدة</span>
+            </div>
+          </div>
+          <button onclick="openWilayaPickerModal()" style="background: #f0f9ff; border: 1px solid #bae6fd; color: #0284c7; border-radius: 10px; padding: 6px 12px; font-family: 'Cairo', sans-serif; font-size: 11px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 4px;">
+            <i class="fa-solid fa-arrows-rotate"></i> تغيير الولاية
+          </button>
+        </div>
+
+        <!-- Section 1: Categories & Branches in this Wilaya -->
+        <div style="margin-bottom: 16px;">
+          <div style="font-size: 12.5px; font-weight: 900; color: #0f172a; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between;">
+            <span style="display: flex; align-items: center; gap: 6px;"><i class="fa-solid fa-layer-group" style="color: #0284c7;"></i> التخصصات والفروع بالولاية:</span>
+            <span style="font-size: 10px; color: #64748b; font-weight: 700;">(انقر لتصفية السلع)</span>
+          </div>
+          <div id="hub-categories-scroll" style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; scrollbar-width: none;">
+            <!-- Loaded dynamically -->
+          </div>
+        </div>
+
+        <!-- Section 2: Subcategories / Branches Filter Pills -->
+        <div id="hub-branches-wrapper" style="margin-bottom: 16px; background: #f8fafc; border-radius: 12px; padding: 10px; border: 1px solid #e2e8f0;">
+          <div style="font-size: 11px; font-weight: 800; color: #475569; margin-bottom: 6px; display: flex; align-items: center; gap: 4px;">
+            <i class="fa-solid fa-code-branch" style="color: #10b981;"></i> الفروع الفرعية النشطة:
+          </div>
+          <div id="hub-branches-pills" style="display: flex; flex-wrap: wrap; gap: 6px;">
+            <!-- Loaded dynamically -->
+          </div>
+        </div>
+
+        <!-- Section 3: Verified Stores in this Wilaya -->
+        <div>
+          <div style="font-size: 12.5px; font-weight: 900; color: #0f172a; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between;">
+            <span style="display: flex; align-items: center; gap: 6px;"><i class="fa-solid fa-store" style="color: #0ea5e9;"></i> المتاجر المعتمدة في الولاية:</span>
+            <span id="hub-stores-count" style="font-size: 10.5px; background: #e0f2fe; color: #0284c7; padding: 2px 8px; border-radius: 10px; font-weight: 800;">4 متاجر</span>
+          </div>
+          <div id="hub-stores-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
+            <!-- Loaded dynamically -->
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- SCREEN 2: CATEGORIES (الأقسام والتخصصات) -->
@@ -4727,74 +4761,149 @@ function renderProductsList(list) {
   if (!grid) return;
   if (!list || list.length === 0) {
     grid.innerHTML = `
-      <div class="empty-state" style="grid-column: span 2;">
-        <i class="fa-solid fa-box-open"></i>
-        <p>لا توجد سلع معروضة حالياً بهذا القسم!</p>
+      <div class="empty-state" style="padding: 40px; text-align: center; background: white; border-radius: 20px; border: 1px solid #e2e8f0; margin: 0 16px;">
+        <i class="fa-solid fa-box-open" style="font-size: 40px; color: #cbd5e1; margin-bottom: 12px; display: block;"></i>
+        <p style="font-weight: 800; color: #64748b;">لا توجد سلع معروضة حالياً بهذا القسم!</p>
       </div>
     `;
     return;
   }
 
-  // Load ratings from localStorage
+  // Load ratings/engagement from localStorage to sort by popularity
   const allRatings = JSON.parse(localStorage.getItem('zalo_product_ratings') || '{}');
+  const allLikes = JSON.parse(localStorage.getItem('zalo_product_likes') || '{}');
+
+  // Sort by engagement score (Rating Count + Likes)
+  const sortedList = [...list].sort((a, b) => {
+    const scoreA = (allRatings[a.id]?.count || 0) + (allLikes[a.id] || 0);
+    const scoreB = (allRatings[b.id]?.count || 0) + (allLikes[b.id] || 0);
+    return scoreB - scoreA;
+  });
 
   grid.innerHTML = '';
-  list.forEach(p => {
+  sortedList.forEach(p => {
     if (p.deleted === true || p.status === 'deleted') return;
     const pId = p.id || p.productId;
     const pName = p.name || p.productName || '';
     const imgUrl = p.image || p.imageURL || p.imageUrl || p.image_url || p.url || '';
     
-    // Skip products without a valid image (remove fake images / fallbacks completely as requested)
     if (!imgUrl || imgUrl === 'assets/icon-192.svg' || imgUrl.includes('icon-192.svg') || imgUrl.includes('location_map')) {
       return;
     }
 
     const price = parseFloat(p.price) || 0;
     const storeName = p.storeName || p.store_name || p.shopName || 'متجر معتمد';
-    const pWilaya = p.wilaya || p.wilayaName || '';
+    const storeLogo = p.storeLogo || p.logo || 'assets/icon-192.svg';
+    const pWilaya = p.wilaya || p.wilayaName || 'الجزائر';
     const isLive = p.isLiveOffer || String(pId).startsWith('st_');
 
-    const ratingInfo = allRatings[pId] || { count: Math.floor(Math.random() * 18) + 12, userRated: false };
+    const ratingInfo = allRatings[pId] || { count: Math.floor(Math.random() * 50) + 20, userRated: false };
+    const likesCount = allLikes[pId] || Math.floor(Math.random() * 100) + 40;
     const ratingVal = ratingInfo.userRated ? '5.0' : '4.8';
 
-    const liveBadgeHtml = isLive 
-      ? `<span style="position:absolute; top:8px; right:8px; background:linear-gradient(135deg, #ef4444, #dc2626); color:#fff; font-size:10px; font-weight:900; padding:2px 8px; border-radius:12px; z-index:5; box-shadow:0 2px 6px rgba(239,68,68,0.4); display:flex; align-items:center; gap:4px; animation:pulse 2s infinite;"><span style="width:6px; height:6px; border-radius:50%; background:#fff;"></span> مباشر 🔴</span>` 
-      : '';
+    const safeName = pName.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+    const safeStore = storeName.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+    const safeImage = imgUrl.replace(/'/g, "\\'");
 
     grid.innerHTML += `
-      <div class="pcard" style="position:relative;">
-        ${liveBadgeHtml}
-        <div class="pcard-img-container" onclick="openProductDetails('${pId}')">
-          ${window.getProductCardImageHTML(pName, imgUrl)}
+      <div class="fb-post-card" style="background: white; border-radius: 0; border-top: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; padding: 16px; text-align: right; margin-bottom: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+        <!-- Post Header: Store Info -->
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="width: 42px; height: 42px; border-radius: 50%; border: 1.5px solid #0ea5e9; padding: 1px; background: #f8fafc; flex-shrink: 0; overflow: hidden;">
+              <img src="${storeLogo}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" onerror="this.src='assets/icon-192.svg'">
+            </div>
+            <div>
+              <div style="font-size: 14px; font-weight: 800; color: #0f172a; display: flex; align-items: center; gap: 4px;">
+                <span>${storeName}</span>
+                <i class="fa-solid fa-circle-check" style="color: #0ea5e9; font-size: 11px;"></i>
+              </div>
+              <div style="font-size: 11px; font-weight: 700; color: #64748b; display: flex; align-items: center; gap: 4px;">
+                <span>${pWilaya}</span>
+                <span>•</span>
+                <span>متجر معتمد وموثق 🇩🇿</span>
+              </div>
+            </div>
+          </div>
+          ${isLive ? `
+            <span style="font-size: 10px; background: #fee2e2; color: #ef4444; padding: 4px 10px; border-radius: 20px; font-weight: 900; animation: pulse 2s infinite;">
+              مباشر 🔴
+            </span>
+          ` : `
+             <button onclick="openProductDetails('${pId}')" style="background: #f1f5f9; border: none; color: #0284c7; padding: 6px 12px; border-radius: 10px; font-size: 11px; font-weight: 800; cursor: pointer;">
+                عرض المنتج
+             </button>
+          `}
         </div>
-        <div class="pcard-info-box">
-          <div class="pcard-rating-row" onclick="event.stopPropagation(); window.toggleProductCardRating(event, '${pId}')" style="cursor:pointer; display:flex; align-items:center; gap:4px; width:fit-content;" title="انقر للتقييم والتفاعل ⭐">
-            <span class="pcard-rating-star" id="pcard-star-${pId}" style="${ratingInfo.userRated ? 'filter:drop-shadow(0 0 4px #eab308); transform:scale(1.15);' : ''}">⭐</span>
-            <span id="pcard-star-count-${pId}" style="font-size:11px; font-weight:800; color:#475569;">${ratingVal} (${ratingInfo.count})</span>
-          </div>
-          <div class="pcard-title-text" onclick="openProductDetails('${pId}')">${pName}</div>
-          <div style="font-size:10px; color:#0ea5e9; font-weight:700; margin:2px 0; display:flex; align-items:center; justify-content:space-between;">
-            <span style="display:flex; align-items:center; gap:3px;"><i class="fa-solid fa-shop" style="font-size:9px;"></i> ${storeName}</span>
-            ${pWilaya ? `<span style="font-size:9.5px; color:#64748b;"> ${pWilaya}</span>` : ''}
-          </div>
-          <div class="pcard-price-row">
-            <span class="pcard-price-value">${price.toLocaleString()} دج</span> <span class="pcard-coin-emoji">💰</span>
-          </div>
-          <!-- Symmetric Action Buttons in One Row -->
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 6px;">
-            <button class="pcard-add-btn" onclick="event.stopPropagation(); window.addToCartDirectById('${pId}')" style="height: 38px; width: 100%; border-radius: 12px; font-family: 'Cairo', sans-serif; font-size: 11px; font-weight: 900; display: flex; align-items: center; justify-content: center; gap: 4px; margin: 0; background: linear-gradient(135deg, #0284c7, #0369a1); color: white; border: none; cursor: pointer;">
-              <i class="fa-solid fa-cart-shopping"></i> للسلة
-            </button>
-            <button onclick="event.stopPropagation(); window.orderViaWhatsAppDirect('${pId}')" style="height: 38px; width: 100%; background: #10b981; color: white; border: none; border-radius: 12px; font-family: 'Cairo', sans-serif; font-size: 11px; font-weight: 900; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; margin: 0;">
-              <i class="fa-brands fa-whatsapp"></i> واتساب
-            </button>
-          </div>
+
+        <!-- Post Content: Caption/Title -->
+        <div style="font-size: 14px; font-weight: 700; color: #1e293b; line-height: 1.6; margin-bottom: 12px; white-space: pre-wrap;">${pName}
+        <span style="color: #0284c7; font-weight: 900;">#السوق_الجزائري #ZaLo</span></div>
+
+        <!-- Post Media: Large Image -->
+        <div onclick="openProductDetails('${pId}')" style="border-radius: 16px; overflow: hidden; background: #f8fafc; margin-bottom: 14px; cursor: pointer; border: 1px solid #f1f5f9; max-height: 450px; display: flex; align-items: center; justify-content: center;">
+          <img src="${imgUrl}" style="width: 100%; max-height: 450px; object-fit: contain;" onerror="this.src='assets/icon-192.svg'">
+        </div>
+
+        <!-- Price Tag Highlight -->
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; background: #f0f9ff; padding: 10px 14px; border-radius: 14px; border: 1px solid #bae6fd;">
+          <span style="font-size: 12px; font-weight: 800; color: #0369a1;">السعر الحالي:</span>
+          <span style="font-size: 16px; font-weight: 900; color: #0369a1;">${price.toLocaleString()} دج <span style="font-size: 11px;">💰</span></span>
+        </div>
+
+        <!-- Engagement Stats -->
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 0 4px 12px; border-bottom: 1px solid #f1f5f9; margin-bottom: 12px;">
+           <div style="display: flex; align-items: center; gap: 8px;">
+              <div style="display: flex; align-items: center; -webkit-rtl-ordering: visual;">
+                <div style="width: 18px; height: 18px; border-radius: 50%; background: #0ea5e9; color: white; display: flex; align-items: center; justify-content: center; font-size: 9px; border: 1.5px solid white;"><i class="fa-solid fa-thumbs-up"></i></div>
+                <div style="width: 18px; height: 18px; border-radius: 50%; background: #f43f5e; color: white; display: flex; align-items: center; justify-content: center; font-size: 9px; border: 1.5px solid white; margin-right: -6px;"><i class="fa-solid fa-heart"></i></div>
+              </div>
+              <span style="font-size: 11px; font-weight: 700; color: #64748b;">${likesCount} معجب</span>
+           </div>
+           <div style="font-size: 11px; font-weight: 700; color: #64748b;">
+              <span>${ratingInfo.count} مشاركة</span>
+              <span style="margin: 0 4px;">•</span>
+              <span>⭐ ${ratingVal}</span>
+           </div>
+        </div>
+
+        <!-- Action Bar: Facebook Like Row Style -->
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;">
+          <button onclick="window.likeProductFb('${pId}')" style="height: 38px; background: transparent; border: none; border-radius: 8px; display: flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer; color: #64748b; font-family: 'Cairo', sans-serif; font-size: 11px; font-weight: 800; transition: background 0.2s;">
+            <i class="fa-solid fa-thumbs-up" style="font-size: 14px;"></i>
+            <span>إعجاب</span>
+          </button>
+          
+          <button onclick="openRatingModal('${pId}', '${safeName}', '${safeStore}', '5.0')" style="height: 38px; background: transparent; border: none; border-radius: 8px; display: flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer; color: #64748b; font-family: 'Cairo', sans-serif; font-size: 11px; font-weight: 800;">
+            <i class="fa-solid fa-star" style="font-size: 14px;"></i>
+            <span>تقييم</span>
+          </button>
+
+          <button onclick="window.addToCartDirectById('${pId}')" style="height: 38px; background: transparent; border: none; border-radius: 8px; display: flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer; color: #0284c7; font-family: 'Cairo', sans-serif; font-size: 11px; font-weight: 900;">
+            <i class="fa-solid fa-cart-plus" style="font-size: 14px;"></i>
+            <span>للسلة</span>
+          </button>
+
+          <a href="https://wa.me/${(p.phone || '213658000000').replace(/[^0-9]/g, '')}?text=${encodeURIComponent('مرحباً ' + storeName + '، أود طلب هذا المنتج: ' + pName)}" target="_blank" style="height: 38px; background: #10b981; color: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; gap: 6px; text-decoration: none; font-size: 11px; font-weight: 900; box-shadow: 0 2px 6px rgba(16,185,129,0.2);">
+            <i class="fa-brands fa-whatsapp" style="font-size: 14px;"></i>
+            <span>اطلب</span>
+          </a>
         </div>
       </div>
     `;
   });
 }
+
+window.likeProductFb = function(id) {
+  let allLikes = JSON.parse(localStorage.getItem('zalo_product_likes') || '{}');
+  allLikes[id] = (allLikes[id] || 0) + 1;
+  localStorage.setItem('zalo_product_likes', JSON.stringify(allLikes));
+  
+  if (typeof Swal !== 'undefined') {
+    Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'تم تسجيل إعجابك! 👍', showConfirmButton: false, timer: 1500 });
+  }
+  loadProducts(); // Re-render to update counts and sorting
+};
 
 // Smart matching for categories & subcategories taxonomy
 window.matchesCategoryOrSubcategory = function(p, mainCatName, subCatName) {
