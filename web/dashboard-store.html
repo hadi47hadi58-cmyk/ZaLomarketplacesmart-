@@ -192,9 +192,12 @@
                 <i class="fa-solid fa-money-bill-trend-up text-[#d4af37]"></i>
                 <span>التقرير المالي للمبيعات 📈</span>
             </button>
-            <button onclick="openAddBranchModal()" class="sidebar-tab-btn">
-                <i class="fa-solid fa-sitemap text-[#d4af37]"></i>
-                <span class="font-bold">تسجيل تاجر (فروع وسلاسل) 🏢</span>
+            <button id="btn-tab-partnership" onclick="openAddBranchModal()" class="sidebar-tab-btn border border-amber-200/80 bg-gradient-to-r from-amber-50 to-orange-50 hover:from-amber-100 hover:to-orange-100 transition-all duration-200 my-1">
+                <i class="fa-solid fa-handshake text-[#d4af37] text-base"></i>
+                <div class="flex flex-col text-right">
+                    <span class="font-extrabold text-slate-800 text-xs">طلب شراكة تجارية / فتح متجر 🤝</span>
+                    <span class="text-[9.5px] text-slate-500 font-bold">تسجيل متجر شريك أو فرع جديد</span>
+                </div>
             </button>
         </nav>
 
@@ -994,7 +997,7 @@
         <div class="flex justify-between items-center border-b pb-3">
             <h3 class="text-base font-black text-slate-800 flex items-center gap-2">
                 <i class="fa-solid fa-sitemap text-[#d4af37]"></i>
-                <span>تسجيل تاجر (إضافة فرع / سلسلة جديدة)</span>
+                <span>طلب شراكة تجارية (تسجيل متجر أو فرع جديد) 🤝</span>
             </h3>
             <button onclick="closeAddBranchModal()" class="text-slate-400 hover:text-red-500 font-bold text-lg">✕</button>
         </div>
