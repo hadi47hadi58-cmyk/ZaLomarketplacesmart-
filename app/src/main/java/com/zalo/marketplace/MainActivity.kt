@@ -267,6 +267,28 @@ fun PureWebContainerScreen(
             factory = { context ->
                 WebView(context).apply {
                     webViewClient = object : WebViewClient() {
+                        override fun onRenderProcessGone(view: WebView?, detail: android.webkit.RenderProcessGoneDetail?): Boolean {
+                            android.util.Log.e("WebView", "Render process gone: ${detail?.didCrash()}")
+                            // Reload or handle crash to prevent black screen
+                            view?.loadUrl("https://appassets.androidplatform.net/assets/web/splash.html")
+                            return true
+                        }
+
+                        override fun onReceivedError(
+                            view: WebView?,
+                            request: android.webkit.WebResourceRequest?,
+                            error: android.webkit.WebResourceError?
+                        ) {
+                            val urlStr = request?.url?.toString() ?: ""
+                            if (urlStr.endsWith("favicon.ico") || urlStr.contains("google-analytics")) {
+                                return
+                            }
+                            super.onReceivedError(view, request, error)
+                            val description = error?.description ?: "Unknown error"
+                            val errorCode = error?.errorCode ?: 0
+                            android.util.Log.e("WebViewError", "Error loading URL $urlStr: $description ($errorCode)")
+                        }
+
                         override fun shouldOverrideUrlLoading(view: WebView?, request: android.webkit.WebResourceRequest?): Boolean {
                             val url = request?.url?.toString() ?: return false
                             
@@ -367,21 +389,6 @@ fun PureWebContainerScreen(
                                 }
                             }
                         }
-
-                        override fun onReceivedError(
-                            view: WebView?,
-                            request: android.webkit.WebResourceRequest?,
-                            error: android.webkit.WebResourceError?
-                        ) {
-                            val urlStr = request?.url?.toString() ?: ""
-                            if (urlStr.endsWith("favicon.ico")) {
-                                return
-                            }
-                            super.onReceivedError(view, request, error)
-                            val description = error?.description ?: "Unknown error"
-                            val errorCode = error?.errorCode ?: 0
-                            android.util.Log.e("WebViewError", "Error loading URL $urlStr: $description ($errorCode)")
-                        }
                     }
                     webChromeClient = object : WebChromeClient() {
                         override fun onShowFileChooser(
@@ -420,6 +427,10 @@ fun PureWebContainerScreen(
                         e.printStackTrace()
                     }
                     setLayerType(android.view.View.LAYER_TYPE_HARDWARE, null)
+                    
+                    // Chromium/MESA mitigation: Try to disable hardware acceleration for some specific rendering if it fails
+                    // but generally we want it for performance. If rendernode fails, it usually falls back.
+                    
                     settings.apply {
                         javaScriptEnabled = true
                         domStorageEnabled = true
@@ -437,6 +448,11 @@ fun PureWebContainerScreen(
                         // Performance and stability enhancements
                         setGeolocationEnabled(true)
                         javaScriptCanOpenWindowsAutomatically = true
+                        
+                        // Additional settings to mitigate common Chromium logs in emulators
+                        setSupportMultipleWindows(false)
+                        displayZoomControls = false
+                        builtInZoomControls = false
                     }
                     addJavascriptInterface(WebAppInterface(activity, this), "AndroidInterface")
                     loadUrl("https://appassets.androidplatform.net/assets/web/splash.html")
