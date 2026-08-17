@@ -1589,39 +1589,6 @@ window.merchantUnifiedAddProduct = async function(e) {
         }
     } catch(e) {}
 
-    // 2. Also publish to Live Stories / Facebook-Style Feed (only if not editing)
-    if (!window.editingProductId) {
-        const newStory = {
-            id: 'post_' + Date.now(),
-            productId: pId,
-            author: realStoreName,
-            store_name: realStoreName,
-            name: realStoreName,
-            logo: realLogo,
-            wilaya: realWilaya,
-            phone: realPhone,
-            image: pMedia,
-            video: isVideo ? pMedia : '',
-            isVideo: isVideo,
-            caption: prodName + (prodDesc ? ` - ${prodDesc}` : '') + ` | السعر: ${prodPrice.toLocaleString()} دج`,
-            title: prodName,
-            price: prodPrice,
-            likes: 1,
-            rating: '5.0',
-            reposts: 0,
-            time: 'الآن',
-            created_at: new Date().toISOString()
-        };
-
-        try {
-            if (existingStories.length > 30) existingStories = existingStories.slice(0, 25);
-            existingStories.unshift(newStory);
-            localStorage.setItem('zalo_live_stories', JSON.stringify(existingStories));
-        } catch(e) {
-            console.warn('Could not save live story to local storage:', e);
-        }
-    }
-
     // 3. Sync to Supabase if connected
     try {
         if (window.supabaseClient) {

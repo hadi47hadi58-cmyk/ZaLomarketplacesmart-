@@ -1164,19 +1164,32 @@
             const prodList = document.getElementById('prev-modal-products-list');
             prodList.innerHTML = '';
             
-            let products = getDB("products", []);
+            let products = [];
+            try {
+                products = JSON.parse(localStorage.getItem('zalo_products') || '[]');
+            } catch(e) {}
+            
+            if (products.length === 0) products = getDB("products", []);
+            
             let currentStoreSettings = {};
             try {
                 currentStoreSettings = JSON.parse(localStorage.getItem('zalo_merchant_store_settings') || '{}');
             } catch(e) {}
-            const realStoreName = (currentStoreSettings.storeName || currentStoreSettings.name || '').trim().toLowerCase();
-            const realStoreId = (currentStoreSettings.id || '').toString().toLowerCase();
+            const realStoreName = (currentStoreSettings.storeName || currentStoreSettings.name || localStorage.getItem('zalo_active_store') || '').trim().toLowerCase();
+            const realStoreId = (currentStoreSettings.id || localStorage.getItem('zalo_uid') || '').toString().toLowerCase();
 
             let merchantProds = products.filter(p => {
                 const pStoreId = (p.storeId || p.store_id || "").toString().toLowerCase();
                 const pStoreName = (p.storeName || p.store_name || "").trim().toLowerCase();
-                if (!realStoreName && !realStoreId) return true;
-                return (realStoreId && pStoreId === realStoreId) || (realStoreName && pStoreName === realStoreName) || (!p.storeId && !p.store_id);
+                
+                if (p.deleted) return false;
+                if (!realStoreName && !realStoreId) return true; // Show all if no store configured
+                
+                // Flexible match
+                return (realStoreId && pStoreId === realStoreId) || 
+                       (realStoreName && pStoreName === realStoreName) ||
+                       (realStoreName && pStoreName.includes(realStoreName)) ||
+                       (!p.storeId && !p.store_id); // Fallback for products without explicit store
             });
 
             if (merchantProds.length === 0) {

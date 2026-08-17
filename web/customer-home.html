@@ -4668,40 +4668,6 @@ async function loadProducts() {
     }
   }
 
-  // Preserve user-published live stories products
-  try {
-    const rawStories = localStorage.getItem('zalo_live_stories');
-    if (rawStories) {
-      const parsedStories = JSON.parse(rawStories);
-      if (Array.isArray(parsedStories) && parsedStories.length > 0) {
-        const liveProds = parsedStories.map(st => ({
-          id: st.id,
-          name: st.caption.length > 50 ? st.caption.substring(0, 50) + '...' : st.caption,
-          productName: st.caption,
-          description: st.caption,
-          category: st.category || 'عام',
-          subcategory: st.subcategory || 'عام',
-          price: parseFloat(st.price) || 0,
-          image: st.image,
-          imageUrl: st.image,
-          image_url: st.image,
-          storeId: 'store_' + (st.author || '').replace(/\s+/g, '_'),
-          storeName: st.author,
-          store_name: st.author,
-          wilaya: st.wilaya,
-          phone: st.phone,
-          isLiveOffer: true,
-          rating: 5.0,
-          ratingCount: st.likes || 1,
-          emoji: '🔥'
-        }));
-        const existingIds = new Set(merged.map(p => p.id));
-        const storiesToAdd = liveProds.filter(lp => !existingIds.has(lp.id));
-        merged = [...storiesToAdd, ...merged];
-      }
-    }
-  } catch(e) {}
-
   state.loadedProducts = merged;
   if (typeof initStoriesSystem === 'function') initStoriesSystem();
   applyActiveWilayaFilter();
@@ -4855,8 +4821,9 @@ function renderProductsList(list) {
 
     const price = parseFloat(p.price) || 0;
     const storeName = p.storeName || p.store_name || p.shopName || 'متجر معتمد';
-    const storeLogo = p.storeLogo || p.logo || 'assets/icon-192.svg';
-    const pWilaya = p.wilaya || p.wilayaName || 'الجزائر';
+    const storeInfo = getStoreDetails(p.storeId || p.store_id, storeName);
+    const storeLogo = storeInfo.logo || 'assets/icon-192.svg';
+    const pWilaya = p.wilaya || p.wilayaName || storeInfo.wilaya || 'الجزائر';
     const isLive = p.isLiveOffer || String(pId).startsWith('st_');
 
     const ratingInfo = allRatings[pId] || { count: Math.floor(Math.random() * 50) + 20, userRated: false };
@@ -5724,38 +5691,6 @@ window.initStoriesSystem = function() {
     }
   });
   localStorage.setItem('zalo_product_ratings', JSON.stringify(allRatings));
-
-  // Merge into state.loadedProducts so live offers appear at the top of the products grid
-  if (window.state && state.loadedProducts && window.liveStoriesList) {
-    const liveProds = window.liveStoriesList.map(st => ({
-      id: st.id,
-      name: st.caption.length > 50 ? st.caption.substring(0, 50) + '...' : st.caption,
-      productName: st.caption,
-      description: st.caption,
-      price: parseFloat(st.price) || 0,
-      image: st.image,
-      imageUrl: st.image,
-      image_url: st.image,
-      storeId: 'store_' + (st.author || '').replace(/\s+/g, '_'),
-      storeName: st.author,
-      store_name: st.author,
-      wilaya: st.wilaya,
-      phone: st.phone,
-      isLiveOffer: true,
-      rating: 5.0,
-      ratingCount: st.likes || 1,
-      emoji: '🔥'
-    }));
-
-    const existingIds = new Set(state.loadedProducts.map(p => p.id));
-    const toAdd = liveProds.filter(lp => !existingIds.has(lp.id));
-    if (toAdd.length > 0) {
-      state.loadedProducts = [...toAdd, ...state.loadedProducts];
-      if (typeof applyActiveWilayaFilter === 'function') {
-        applyActiveWilayaFilter();
-      }
-    }
-  }
 
   renderHomeStories();
 };
@@ -7208,7 +7143,9 @@ window.openStoreView = async function(storeId, storeName) {
       } else if (storeName) {
         query = query.ilike('name', storeName);
       }
-      const { data: sbStore } = await query.maybeSingle();
+      const fetchPromise = query.maybeSingle();
+      const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 3000));
+      const { data: sbStore } = await Promise.race([fetchPromise, timeoutPromise]);
       if (sbStore) {
         storeLogo = sbStore.logo_url || sbStore.logo || storeLogo;
         storeCover = sbStore.cover_url || sbStore.cover || storeCover;
@@ -7272,7 +7209,9 @@ window.openStoreView = async function(storeId, storeName) {
       } else if (storeName) {
         q = q.eq('store_name', storeName);
       }
-      const { data: sbProds } = await q;
+      const fetchPromise = q;
+      const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 3000));
+      const { data: sbProds } = await Promise.race([fetchPromise, timeoutPromise]);
       if (sbProds && Array.isArray(sbProds)) {
         sbProds.forEach(sp => {
           if (!storeProducts.some(p => p.id === sp.id || (p.name === sp.name && p.price === sp.price))) {
