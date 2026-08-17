@@ -882,15 +882,70 @@
 
         // Delete Product
         function deleteMerchantProduct(productId) {
-            if (confirm("هل أنت متأكد من حذف هذه السلعة من المتجر؟")) {
+            const doDelete = () => {
+                // 1. Delete from getDB / setDB legacy store
                 let products = getDB("products", []);
-                let filtered = products.filter(p => p.productId !== productId && p.id !== productId);
+                let filtered = products.filter(p => String(p.productId || p.id) !== String(productId));
                 setDB("products", filtered);
+
+                // 2. Delete from zalo_products direct storage
+                try {
+                    let zp = JSON.parse(localStorage.getItem("zalo_products") || "[]");
+                    zp = zp.filter(p => String(p.id || p.productId) !== String(productId));
+                    localStorage.setItem("zalo_products", JSON.stringify(zp));
+                } catch(e) {}
+
+                // 3. Delete from zalo_live_stories if it was posted as a story
+                try {
+                    let stories = JSON.parse(localStorage.getItem("zalo_live_stories") || "[]");
+                    stories = stories.filter(s => String(s.productId) !== String(productId) && String(s.id) !== String(productId));
+                    localStorage.setItem("zalo_live_stories", JSON.stringify(stories));
+                } catch(e) {}
+
+                // 4. Delete from Supabase if connected
                 if (window.supabaseClient) {
                     window.supabaseClient.from('products').delete().eq('id', productId).then(() => {}).catch(() => {});
+                    window.supabaseClient.from('market_posts').delete().eq('id', productId).then(() => {}).catch(() => {});
                 }
+
                 renderMerchantProducts();
+                if (typeof renderMerchantStories === 'function') {
+                    renderMerchantStories();
+                }
                 updateCounters();
+
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'تم حذف السلعة بنجاح! 🗑️',
+                        text: 'تمت إزالة السلعة من المتجر والمعرض الرقمي وقصص السوق.',
+                        confirmButtonText: 'حسناً',
+                        timer: 2000
+                    });
+                } else {
+                    alert("تم حذف السلعة بنجاح من متجرك والمعرض الرقمي! 🗑️");
+                }
+            };
+
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    title: 'هل أنت متأكد من حذف هذه السلعة؟',
+                    text: 'سيتم حذف السلعة نهائياً من متجرك ولن تظهر للزبائن بعد الآن.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#ef4444',
+                    cancelButtonColor: '#64748b',
+                    confirmButtonText: 'نعم، احذف السلعة 🗑️',
+                    cancelButtonText: 'إلغاء'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        doDelete();
+                    }
+                });
+            } else {
+                if (confirm("هل أنت متأكد من حذف هذه السلعة من المتجر نهائياً؟")) {
+                    doDelete();
+                }
             }
         }
 

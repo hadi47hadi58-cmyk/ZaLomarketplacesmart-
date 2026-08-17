@@ -5686,69 +5686,8 @@ window.initStoriesSystem = function() {
   });
 
   if (storedStories.length === 0) {
-    // High-quality initial live stories from Algerian stores
-    const defaultStories = [
-      {
-        id: 'st_1',
-        author: 'متجر الأنوار للملابس',
-        store_name: 'متجر الأنوار للملابس',
-        logo: 'assets/icon-192.svg',
-        wilaya: 'الجزائر (16)',
-        category: 'ملابس، أزياء وموضة',
-        subcategory: 'ملابس رجالية',
-        image: 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=500',
-        caption: '🔥 تخفيضات كبرى على قمصان الصيف الرجالية القطنية الأصلية 100%',
-        price: 2400,
-        likes: 38,
-        time: 'منذ 10 دقائق',
-        phone: '0550123456'
-      },
-      {
-        id: 'st_2',
-        author: 'سوق إلكترونيات الجزائر',
-        store_name: 'سوق إلكترونيات الجزائر',
-        logo: 'assets/icon-192.svg',
-        wilaya: 'وهران (31)',
-        category: 'هواتف، أجهزة لوحية وإلكترونيات',
-        subcategory: 'إكسسوارات الهواتف',
-        image: 'https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=500',
-        caption: '⌚ ساعات ذكية مقاومة للماء مع شاشة AMOLED وبطارية تدوم أسبوعاً كاملاً',
-        price: 4900,
-        likes: 54,
-        time: 'منذ نصف ساعة',
-        phone: '0660987654'
-      },
-      {
-        id: 'st_3',
-        author: 'متجر الأناقة للمنزل',
-        store_name: 'متجر الأناقة للمنزل',
-        logo: 'assets/icon-192.svg',
-        wilaya: 'قسنطينة (25)',
-        category: 'أجهزة كهرومنزلية وأثاث',
-        subcategory: 'أدوات المطبخ',
-        image: 'https://images.unsplash.com/photo-1584269600464-37b1b58a9fe7?w=500',
-        caption: '☕ ماكينة قهوة إيطالية احترافية مع خافق الحليب وسرعة تحضير فائقة',
-        price: 8500,
-        likes: 62,
-        time: 'منذ ساعة',
-        phone: '0770554433'
-      },
-      {
-        id: 'st_4',
-        author: 'متجر الجنوب للتمور والمواد الغذائية',
-        store_name: 'متجر الجنوب للتمور والمواد الغذائية',
-        logo: 'assets/icon-192.svg',
-        wilaya: 'المنيعة (58)',
-        category: 'مواد غذائية وتموينية',
-        subcategory: 'تمور وفواكه جافة',
-        image: 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=500',
-        caption: '🌴 دقلة نور فاخرة أصلية من مزارع المنيعة بجودة تصدير وسعر خاص بالجملة والتجزئة',
-        price: 1200,
-        likes: 89,
-        time: 'منذ ساعتين',
-        phone: '0658000000'
-      }
-    ];
+    // No mock stories by default; stories will be populated directly from verified merchant posts & live offers
+    const defaultStories = [];
     localStorage.setItem('zalo_live_stories', JSON.stringify(defaultStories));
     window.liveStoriesList = defaultStories;
   } else {
@@ -5852,7 +5791,7 @@ window.renderFacebookFeed = function(stories, container) {
       <div class="fb-post-card" style="background: white; border-radius: 20px; border: 1px solid #e2e8f0; padding: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); text-align: right; margin-bottom: 16px;">
         <!-- Header Bar: Avatar, Name, Time, Badge -->
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
-          <div style="display: flex; align-items: center; gap: 10px;">
+          <div onclick="openStoreView('${st.storeId || st.store_id || 'store_' + encodeURIComponent(st.author || '')}', '${safeAuthor}')" style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
             <div style="width: 44px; height: 44px; border-radius: 50%; overflow: hidden; border: 2px solid #0ea5e9; padding: 1px; background: #f8fafc; flex-shrink: 0;">
               <img src="${st.logo || st.image || 'images/wilaya-thumb.jpg'}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" onerror="this.src='images/wilaya-thumb.jpg'">
             </div>
@@ -5864,7 +5803,7 @@ window.renderFacebookFeed = function(stories, container) {
               <div style="font-size: 11px; font-weight: 600; color: #64748b; display: flex; align-items: center; gap: 4px;">
                 <span>${st.wilaya || 'الجزائر'}</span>
                 <span>•</span>
-                <span>بث مباشر وسوق موحد 🇩🇿</span>
+                <span style="color:#0284c7; font-weight:700;">زيارة المتجر 🏬</span>
               </div>
             </div>
           </div>
@@ -7223,65 +7162,164 @@ window.applyActiveWilayaFilter = function() {
 
 window.openStoreView = async function(storeId, storeName) {
   switchTab('store-view');
-  document.getElementById('store-view-name').textContent = storeName;
+  document.getElementById('store-view-name').textContent = storeName || 'المتجر';
   const grid = document.getElementById('store-products-grid');
-  grid.innerHTML = '<div style="text-align:center; padding:20px; color:var(--gray);">جاري تحميل منتجات المتجر...</div>';
+  grid.innerHTML = '<div style="text-align:center; padding:20px; color:var(--gray);"><i class="fa-solid fa-spinner fa-spin"></i> جاري تحميل متجر وسلع ' + (storeName || '') + '...</div>';
 
+  let foundStore = null;
+  let storeLogo = 'assets/icon-192.svg';
+  let storeCover = 'assets/icon-192.svg';
+  let storeWilaya = 'الجزائر';
+
+  // 1. Check local merchant settings if viewing own store or cached store
   try {
-    const { data: store, error: storeErr } = await window.supabase
-      .from('stores')
-      .select('*')
-      .eq('id', storeId)
-      .single();
-    
-    if (store) {
-      if (store.logo_url) document.getElementById('store-view-logo').src = store.logo_url;
-      if (store.cover_url) document.getElementById('store-view-header').style.backgroundImage = `url('${store.cover_url}')`;
-      document.getElementById('store-view-location').innerHTML = `<i class="fa-solid fa-location-dot"></i> ${store.wilaya || 'غير محدد'}`;
+    const localMerchant = JSON.parse(localStorage.getItem('zalo_merchant_store_settings') || localStorage.getItem('merchant_store_settings') || '{}');
+    if (localMerchant && (localMerchant.storeName === storeName || localMerchant.name === storeName || localMerchant.id === storeId)) {
+      foundStore = localMerchant;
+      storeLogo = localMerchant.logoImg || localMerchant.logo || storeLogo;
+      storeCover = localMerchant.coverImg || localMerchant.cover || storeCover;
+      storeWilaya = localMerchant.wilaya || storeWilaya;
     }
+  } catch(e) {}
 
-    const { data: products, error } = await window.supabase
-      .from('products')
-      .select('*')
-      .eq('store_id', storeId)
-      .eq('status', 'active');
-
-    if (error) throw error;
-
-    if (!products || products.length === 0) {
-      grid.innerHTML = '<div style="text-align:center; padding:20px; color:var(--gray);">لا توجد منتجات معروضة حالياً لهذا المتجر.</div>';
-      return;
+  // 2. Try looking up in loaded stores/products list
+  if (!foundStore && state && state.loadedProducts) {
+    const prodWithStore = state.loadedProducts.find(p => (p.storeName === storeName || p.store_name === storeName || p.storeId === storeId || p.store_id === storeId));
+    if (prodWithStore) {
+      storeLogo = prodWithStore.storeLogo || prodWithStore.logo || storeLogo;
+      storeCover = prodWithStore.storeCover || prodWithStore.cover || storeCover;
+      storeWilaya = prodWithStore.wilaya || storeWilaya;
     }
-
-    grid.innerHTML = '';
-    products.forEach(p => {
-      let imgUrl = p.image_url || 'assets/icon-192.svg';
-      if (imgUrl.startsWith('[')) {
-        try {
-          const imgs = JSON.parse(imgUrl);
-          if (imgs.length > 0) imgUrl = imgs[0];
-        } catch(e) {}
-      }
-
-      grid.innerHTML += `
-        <div class="fb-post-card" style="background: white; border-radius: 16px; border: 1px solid #e2e8f0; padding: 12px; text-align: right;">
-          <div style="font-weight: 800; font-size: 14px; margin-bottom: 8px;">${p.name}</div>
-          <div onclick="openProductDetails('${p.id}')" style="border-radius: 12px; overflow: hidden; background: #f8fafc; margin-bottom: 8px; cursor: pointer;">
-            <img src="${imgUrl}" style="width: 100%; height: 200px; object-fit: contain;">
-          </div>
-          <div style="display: flex; justify-content: space-between; align-items: center;">
-            <div style="color: var(--sky); font-weight: 900; font-size: 15px;">${p.price} د.ج</div>
-            <button onclick="openProductDetails('${p.id}')" style="background: #f1f5f9; border: none; color: #0284c7; padding: 5px 10px; border-radius: 8px; font-size: 11px; font-weight: 800; cursor: pointer;">
-                عرض التفاصيل
-            </button>
-          </div>
-        </div>
-      `;
-    });
-  } catch (err) {
-    console.error("Error opening store view:", err);
-    grid.innerHTML = '<div style="text-align:center; padding:20px; color:var(--gray);">عذراً، حدث خطأ أثناء تحميل البيانات.</div>';
   }
+
+  // 3. Try Supabase stores table if connected
+  try {
+    if (window.supabase && typeof window.supabase.from === 'function') {
+      let query = window.supabase.from('stores').select('*');
+      if (storeId && !storeId.startsWith('store_')) {
+        query = query.eq('id', storeId);
+      } else if (storeName) {
+        query = query.ilike('name', storeName);
+      }
+      const { data: sbStore } = await query.maybeSingle();
+      if (sbStore) {
+        foundStore = sbStore;
+        storeLogo = sbStore.logo_url || sbStore.logo || storeLogo;
+        storeCover = sbStore.cover_url || sbStore.cover || storeCover;
+        storeWilaya = sbStore.wilaya || storeWilaya;
+      }
+    }
+  } catch (err) {
+    console.warn("Supabase store fetch notice:", err);
+  }
+
+  // Update Store Header DOM
+  const logoEl = document.getElementById('store-view-logo');
+  if (logoEl) logoEl.src = storeLogo;
+  const headerEl = document.getElementById('store-view-header');
+  if (headerEl) {
+    if (storeCover && storeCover !== 'assets/icon-192.svg') {
+      headerEl.style.backgroundImage = `url('${storeCover}')`;
+    } else {
+      headerEl.style.backgroundImage = `linear-gradient(135deg, #0ea5e9, #0284c7)`;
+    }
+  }
+  const locEl = document.getElementById('store-view-location');
+  if (locEl) locEl.innerHTML = `<i class="fa-solid fa-location-dot"></i> ${storeWilaya}`;
+
+  // Fetch Products for this store (both local + Supabase)
+  let storeProducts = [];
+
+  // Local products check
+  try {
+    let localProds = JSON.parse(localStorage.getItem('zalo_products') || '[]');
+    let matchingLocal = localProds.filter(p => {
+      const matchName = storeName && (p.storeName === storeName || p.store_name === storeName || p.author === storeName);
+      const matchId = storeId && (p.storeId === storeId || p.store_id === storeId);
+      return matchName || matchId;
+    });
+    storeProducts.push(...matchingLocal);
+  } catch(e) {}
+
+  // Feed/Stories products check
+  try {
+    let stories = JSON.parse(localStorage.getItem('zalo_live_stories') || '[]');
+    let matchingStories = stories.filter(s => (s.author === storeName || s.store_name === storeName || s.storeId === storeId));
+    matchingStories.forEach(s => {
+      if (!storeProducts.some(p => p.id === s.id || p.productId === s.productId)) {
+        storeProducts.push({
+          id: s.id,
+          name: s.caption || s.title || 'عرض خاص',
+          price: s.price || 0,
+          image: s.image,
+          image_url: s.image,
+          wilaya: s.wilaya || storeWilaya
+        });
+      }
+    });
+  } catch(e) {}
+
+  // Supabase products check
+  try {
+    if (window.supabase && typeof window.supabase.from === 'function') {
+      let q = window.supabase.from('products').select('*');
+      if (storeId && !storeId.startsWith('store_')) {
+        q = q.eq('store_id', storeId);
+      } else if (storeName) {
+        q = q.eq('store_name', storeName);
+      }
+      const { data: sbProds } = await q;
+      if (sbProds && Array.isArray(sbProds)) {
+        sbProds.forEach(sp => {
+          if (!storeProducts.some(p => p.id === sp.id || (p.name === sp.name && p.price === sp.price))) {
+            storeProducts.push(sp);
+          }
+        });
+      }
+    }
+  } catch (err) {
+    console.warn("Supabase store products error:", err);
+  }
+
+  if (storeProducts.length === 0) {
+    grid.innerHTML = `
+      <div style="text-align:center; padding:35px 20px; background:white; border-radius:16px; border:1px solid #e2e8f0; color:#64748b;">
+        <i class="fa-solid fa-box-open" style="font-size:32px; color:#cbd5e1; margin-bottom:10px; display:block;"></i>
+        <div style="font-weight:800; font-size:14px; color:#334155;">لا توجد سلع معروضة حالياً لهذا المتجر</div>
+        <p style="font-size:11px; margin-top:4px;">سيتم عرض منتجات المتجر هنا فور قيام التاجر بنشرها في المعرض الرقمي.</p>
+      </div>
+    `;
+    return;
+  }
+
+  grid.innerHTML = '';
+  storeProducts.forEach(p => {
+    let imgUrl = p.image || p.image_url || p.imageUrl || 'assets/icon-192.svg';
+    if (typeof imgUrl === 'string' && imgUrl.startsWith('[')) {
+      try {
+        const imgs = JSON.parse(imgUrl);
+        if (imgs.length > 0) imgUrl = imgs[0];
+      } catch(e) {}
+    }
+    const pId = p.id || p.productId;
+    const pName = p.name || p.productName || 'منتج';
+    const pPrice = parseFloat(p.price) || 0;
+
+    grid.innerHTML += `
+      <div class="fb-post-card" style="background: white; border-radius: 16px; border: 1px solid #e2e8f0; padding: 12px; text-align: right;">
+        <div style="font-weight: 800; font-size: 14px; margin-bottom: 8px;">${pName}</div>
+        <div onclick="openProductDetails('${pId}')" style="border-radius: 12px; overflow: hidden; background: #f8fafc; margin-bottom: 8px; cursor: pointer;">
+          <img src="${imgUrl}" style="width: 100%; height: 200px; object-fit: contain;" onerror="this.src='assets/icon-192.svg'">
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div style="color: var(--sky); font-weight: 900; font-size: 15px;">${pPrice.toLocaleString()} د.ج</div>
+          <button onclick="openProductDetails('${pId}')" style="background: #f1f5f9; border: none; color: #0284c7; padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: 800; cursor: pointer;">
+              عرض التفاصيل
+          </button>
+        </div>
+      </div>
+    `;
+  });
 };
 </script>
 
