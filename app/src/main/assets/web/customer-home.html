@@ -4583,6 +4583,34 @@ async function loadProducts() {
         });
         localStorage.setItem('zalo_official_stores', JSON.stringify(officialStores));
       }
+
+      // Fetch remote market posts (stories)
+      const { data: remotePosts, error: postErr } = await sb.from('market_posts').select('*');
+      if (!postErr && remotePosts && remotePosts.length > 0) {
+        let currentStories = JSON.parse(localStorage.getItem('zalo_live_stories') || '[]');
+        remotePosts.forEach(rp => {
+          const formattedStory = {
+            id: rp.id,
+            author: rp.author || rp.store_name || 'ZaLo all service',
+            wilaya: rp.wilaya || 'الجزائر',
+            category: rp.category || 'عام',
+            subcategory: rp.subcategory || 'تخصص عام',
+            price: rp.price || '0',
+            quantity: rp.quantity || '1',
+            caption: rp.caption || rp.description || '',
+            phone: rp.phone || '',
+            image: rp.image_url || rp.image || 'assets/icon-192.svg',
+            logo: rp.logo_url || rp.logo || 'assets/icon-192.svg',
+            likes: rp.likes || 1,
+            time: 'منذ لحظات'
+          };
+          const exists = currentStories.some(s => s.id === rp.id || s.caption === formattedStory.caption);
+          if (!exists) {
+            currentStories.unshift(formattedStory);
+          }
+        });
+        localStorage.setItem('zalo_live_stories', JSON.stringify(currentStories));
+      }
     }
   } catch (e) {
     console.warn("Failed to fetch remote products or stores:", e);
