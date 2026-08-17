@@ -2420,7 +2420,7 @@ body { margin: 0; padding: 0;
       </div>
 
       <!-- Main Story Image -->
-      <div style="flex:1; display:flex; align-items:center; justify-content:center; background:#000000; overflow:hidden; cursor:pointer;" onclick="window.openStoryProduct()">
+      <div style="flex:1; display:flex; align-items:center; justify-content:center; background:#000000; overflow:hidden;">
         <img id="sv-image" src="" style="width:100%; height:100%; object-fit:contain;" alt="منشور لحظي">
       </div>
 
@@ -4826,9 +4826,14 @@ function renderProductsList(list) {
     const pWilaya = p.wilaya || p.wilayaName || storeInfo.wilaya || 'الجزائر';
     const isLive = p.isLiveOffer || String(pId).startsWith('st_');
 
-    const ratingInfo = allRatings[pId] || { count: Math.floor(Math.random() * 50) + 20, userRated: false };
-    const likesCount = allLikes[pId] || Math.floor(Math.random() * 100) + 40;
+    const ratingInfo = allRatings[pId] || { count: 0, userRated: false };
+    const likesCount = allLikes[pId] || 0;
     const ratingVal = ratingInfo.userRated ? '5.0' : '4.8';
+    
+    let userLikesList = [];
+    try { userLikesList = JSON.parse(localStorage.getItem('zalo_user_likes_list') || '[]'); } catch(e) {}
+    const isLiked = userLikesList.includes(pId);
+    const likeBtnColor = isLiked ? '#0ea5e9' : '#64748b';
 
     const safeName = pName.replace(/'/g, "\\'").replace(/"/g, '&quot;');
     const safeStore = storeName.replace(/'/g, "\\'").replace(/"/g, '&quot;');
@@ -4869,8 +4874,8 @@ function renderProductsList(list) {
               مباشر 🔴
             </span>
           ` : `
-             <button onclick="openProductDetails('${pId}')" style="background: #f1f5f9; border: none; color: #0284c7; padding: 6px 12px; border-radius: 10px; font-size: 11px; font-weight: 800; cursor: pointer;">
-                عرض المنتج
+             <button onclick="window.openStoreView('${p.storeId || p.store_id || ''}', '${safeStore}')" style="background: #f1f5f9; border: none; color: #0284c7; padding: 6px 12px; border-radius: 10px; font-size: 11px; font-weight: 800; cursor: pointer;">
+                عرض المتجر
              </button>
           `}
         </div>
@@ -4908,7 +4913,7 @@ function renderProductsList(list) {
 
         <!-- Action Bar: Facebook Like Row Style -->
         <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px;">
-          <button onclick="window.likeProductFb('${pId}')" style="height: 38px; background: transparent; border: none; border-radius: 8px; display: flex; align-items: center; justify-content: center; gap: 4px; cursor: pointer; color: #64748b; font-family: 'Cairo', sans-serif; font-size: 10.5px; font-weight: 800; transition: background 0.2s;">
+          <button onclick="window.likeProductFb('${pId}')" style="height: 38px; background: transparent; border: none; border-radius: 8px; display: flex; align-items: center; justify-content: center; gap: 4px; cursor: pointer; color: ${likeBtnColor}; font-family: 'Cairo', sans-serif; font-size: 10.5px; font-weight: 800; transition: background 0.2s;">
             <i class="fa-solid fa-thumbs-up" style="font-size: 14px;"></i>
             <span>إعجاب</span>
           </button>
@@ -4940,12 +4945,22 @@ function renderProductsList(list) {
 
 window.likeProductFb = function(id) {
   let allLikes = JSON.parse(localStorage.getItem('zalo_product_likes') || '{}');
-  allLikes[id] = (allLikes[id] || 0) + 1;
-  localStorage.setItem('zalo_product_likes', JSON.stringify(allLikes));
-  
-  if (typeof Swal !== 'undefined') {
-    Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'تم تسجيل إعجابك! 👍', showConfirmButton: false, timer: 1500 });
+  let userLikes = JSON.parse(localStorage.getItem('zalo_user_likes_list') || '[]');
+  let isLiked = userLikes.includes(id);
+
+  if (isLiked) {
+    allLikes[id] = Math.max(0, (allLikes[id] || 1) - 1);
+    userLikes = userLikes.filter(uid => uid !== id);
+  } else {
+    allLikes[id] = (allLikes[id] || 0) + 1;
+    userLikes.push(id);
+    if (typeof Swal !== 'undefined') {
+      Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'تم تسجيل إعجابك! 👍', showConfirmButton: false, timer: 1500 });
+    }
   }
+
+  localStorage.setItem('zalo_product_likes', JSON.stringify(allLikes));
+  localStorage.setItem('zalo_user_likes_list', JSON.stringify(userLikes));
   loadProducts(); // Re-render to update counts and sorting
 };
 
@@ -5454,7 +5469,7 @@ window.openProd = function(id, name, price, img, emoji, storeId, storeName, wila
 
   // Setup Star Rating / Facebook Like Button
   const allRatings = JSON.parse(localStorage.getItem('zalo_product_ratings') || '{}');
-  const prodRating = allRatings[id] || { count: Math.floor(Math.random() * 15) + 12, userRated: false };
+  const prodRating = allRatings[id] || { count: 0, userRated: false };
   const starBtn = document.getElementById('pd-star-like-btn');
   const starCount = document.getElementById('pd-star-count');
   if (starBtn && starCount) {
@@ -5554,7 +5569,7 @@ window.toggleProductRatingStar = function() {
   if (!state.selectedProduct) return;
   const id = state.selectedProduct.id;
   const allRatings = JSON.parse(localStorage.getItem('zalo_product_ratings') || '{}');
-  const current = allRatings[id] || { count: Math.floor(Math.random() * 15) + 12, userRated: false };
+  const current = allRatings[id] || { count: 0, userRated: false };
 
   const starBtn = document.getElementById('pd-star-like-btn');
   const starCount = document.getElementById('pd-star-count');
@@ -5572,7 +5587,7 @@ window.toggleProductRatingStar = function() {
     if (starCount) starCount.textContent = `⭐ 5.0 (${current.count})`;
     window.showToast("🌟 شكراً لتقييمك! تم تسجيل إعجابك وتأييدك للمنتج بنجاح ✨");
   } else {
-    current.count = Math.max(1, current.count - 1);
+    current.count = Math.max(0, current.count - 1);
     current.userRated = false;
     allRatings[id] = current;
     localStorage.setItem('zalo_product_ratings', JSON.stringify(allRatings));
@@ -5708,7 +5723,18 @@ window.renderHomeStories = function() {
   }
 
   if (container) {
-    let html = stories.map(st => `
+    let groupedStories = [];
+    let seenStores = new Set();
+    
+    for (let st of stories) {
+      let storeKey = (st.storeId || st.store_id || st.author || st.id || '').trim().toLowerCase();
+      if (!seenStores.has(storeKey)) {
+        seenStores.add(storeKey);
+        groupedStories.push(st);
+      }
+    }
+
+    let html = groupedStories.map(st => `
       <div class="story-card-item" onclick="openStoryViewer('${st.id}')">
         <div class="story-avatar-wrap">
           <img src="${st.logo || st.image || st.avatar || 'images/wilaya-thumb.jpg'}" alt="${st.author || 'تاجر'}" onerror="this.src='images/wilaya-thumb.jpg'">
@@ -6178,32 +6204,6 @@ window.publishLiveStoryPost = async function() {
   localStorage.setItem('zalo_live_stories', JSON.stringify(window.liveStoriesList));
   renderHomeStories();
 
-  // Dual-Publish: Add as Live Product in Products Grid immediately
-  const liveProduct = {
-    id: newStory.id,
-    name: newStory.caption.length > 50 ? newStory.caption.substring(0, 50) + '...' : newStory.caption,
-    productName: newStory.caption,
-    description: newStory.caption,
-    category: newStory.category,
-    subcategory: newStory.subcategory,
-    price: parseFloat(newStory.price) || 0,
-    image: newStory.image,
-    imageUrl: newStory.image,
-    image_url: newStory.image,
-    storeId: 'store_' + (newStory.author || '').replace(/\s+/g, '_'),
-    storeName: newStory.author,
-    store_name: newStory.author,
-    wilaya: newStory.wilaya,
-    phone: newStory.phone,
-    isLiveOffer: true,
-    rating: 5.0,
-    ratingCount: 1,
-    emoji: '🔥'
-  };
-
-  if (!state.loadedProducts) state.loadedProducts = [];
-  state.loadedProducts = [liveProduct, ...state.loadedProducts.filter(p => p.id !== liveProduct.id)];
-  
   // Set initial star rating
   const allRatings = JSON.parse(localStorage.getItem('zalo_product_ratings') || '{}');
   allRatings[newStory.id] = { count: 1, userRated: true };
@@ -6311,8 +6311,18 @@ window.openStoryViewer = function(storyId) {
 window.toggleStoryLike = function() {
   if (!window.currentActiveStory) return;
   
-  // Increment likes
-  window.currentActiveStory.likes = (parseInt(window.currentActiveStory.likes) || 0) + 1;
+  const id = window.currentActiveStory.id;
+  let userLikes = JSON.parse(localStorage.getItem('zalo_user_likes_list') || '[]');
+  let isLiked = userLikes.includes(id);
+
+  if (isLiked) {
+    window.currentActiveStory.likes = Math.max(0, (parseInt(window.currentActiveStory.likes) || 1) - 1);
+    userLikes = userLikes.filter(uid => uid !== id);
+  } else {
+    window.currentActiveStory.likes = (parseInt(window.currentActiveStory.likes) || 0) + 1;
+    userLikes.push(id);
+  }
+  localStorage.setItem('zalo_user_likes_list', JSON.stringify(userLikes));
   
   const likesCountEl = document.getElementById('sv-likes-count');
   if (likesCountEl) {
@@ -6328,11 +6338,16 @@ window.toggleStoryLike = function() {
 
   const btn = document.getElementById('sv-like-btn');
   if (btn) {
-    btn.style.transform = 'scale(1.25)';
-    setTimeout(() => btn.style.transform = 'scale(1)', 200);
+    if (!isLiked) {
+      btn.style.transform = 'scale(1.25)';
+      btn.style.background = 'rgba(251,191,36,0.3)';
+      setTimeout(() => btn.style.transform = 'scale(1)', 200);
+      window.showToast(`⭐ تم تسجيل إعجابك! إجمالي التفاعلات: ${window.currentActiveStory.likes}`);
+    } else {
+      btn.style.background = 'rgba(255,255,255,0.18)';
+      window.showToast("تم إلغاء الإعجاب");
+    }
   }
-
-  window.showToast(`⭐ تم تسجيل إعجابك! إجمالي التفاعلات: ${window.currentActiveStory.likes}`);
 };
 
 window.toggleQuickOrderForm = function(forceShow) {
