@@ -6663,6 +6663,13 @@ window.loadCartItems = function() {
   container.innerHTML = '';
   form.style.display = 'flex';
 
+  const wilSelect = document.getElementById('cart-wil');
+  if (wilSelect && (!wilSelect.options || wilSelect.options.length <= 1)) {
+    if (typeof ALGERIAN_WILAYAS !== 'undefined') {
+      wilSelect.innerHTML = ALGERIAN_WILAYAS.map(w => `<option value="${w.name}">${w.code} - ${w.name}</option>`).join('');
+    }
+  }
+
   let total = 0;
   cart.forEach(item => {
     total += (item.price * item.qty);
