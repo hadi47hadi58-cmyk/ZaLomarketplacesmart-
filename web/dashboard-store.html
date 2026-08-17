@@ -175,6 +175,10 @@
                 <i class="fa-solid fa-box text-[#d4af37]"></i>
                 <span>إدارة المعرض والسلع</span>
             </button>
+            <button id="btn-tab-stories-sidebar" onclick="switchTab('products'); setTimeout(() => switchProductSubTab('stories'), 100);" class="sidebar-tab-btn" style="background: rgba(212, 175, 55, 0.05); border: 1px dashed rgba(212, 175, 55, 0.3);">
+                <i class="fa-solid fa-camera-retro text-amber-500"></i>
+                <span class="text-amber-700 font-extrabold">نشر قصص المنتجات (Stories)</span>
+            </button>
             <button id="btn-tab-orders" onclick="switchTab('orders')" class="sidebar-tab-btn">
                 <div class="flex justify-between items-center w-full">
                     <div class="flex items-center gap-3">
@@ -1453,6 +1457,20 @@ window.merchantUnifiedAddProduct = async function(e) {
     const prodDesc = document.getElementById('prod-desc').value.trim();
     const mainCat = document.getElementById('prod-main-category')?.value || 'عام';
     const subCat = document.getElementById('prod-sub-category')?.value || '';
+
+    // Prevent duplicate submission based on name and price
+    if (!window.editingProductId && existingProducts.some(p => p.name === prodName && p.price == prodPrice)) {
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({ icon: 'warning', title: 'المنتج مكرر!', text: 'لقد قمت بإضافة هذا المنتج مسبقاً.' });
+        } else {
+            alert('المنتج موجود مسبقاً!');
+        }
+        if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> حفظ ونشر السلعة بالمتجر 🚀';
+        }
+        return;
+    }
 
     // Retrieve active store profile details
     let currentStoreSettings = {};

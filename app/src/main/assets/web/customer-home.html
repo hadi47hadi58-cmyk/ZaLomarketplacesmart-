@@ -2420,7 +2420,7 @@ body { margin: 0; padding: 0;
       </div>
 
       <!-- Main Story Image -->
-      <div style="flex:1; display:flex; align-items:center; justify-content:center; background:#000000; overflow:hidden;">
+      <div style="flex:1; display:flex; align-items:center; justify-content:center; background:#000000; overflow:hidden; cursor:pointer;" onclick="window.openStoryProduct()">
         <img id="sv-image" src="" style="width:100%; height:100%; object-fit:contain;" alt="منشور لحظي">
       </div>
 
@@ -4351,7 +4351,7 @@ window.applyForMerchant = function() {
   const status = (localStorage.getItem('zalo_merchant_status') || '').toLowerCase();
   const activeStore = localStorage.getItem('zalo_active_store') || sessionStorage.getItem('merchant_store_name');
 
-  let isApproved = (status === 'approved' || status === 'active' || role === 'merchant' || role === 'admin' || role === 'super_admin');
+  let isApproved = (status === 'approved' || status === 'active' || role === 'admin' || role === 'super_admin');
 
   try {
     const localStores = JSON.parse(localStorage.getItem('stores_list_old') || '[]');
@@ -5669,6 +5669,27 @@ window.shareStoreLink = function() {
   }
 };
 
+window.clearOldMockData = function() {
+  const fakeNames = ["ساعة ذكية رياضية", "ساعة ذكية M1", "طقم أواني", "أحذية", "حذاء رياضي", "هاتف ذكي"];
+  const removeFakes = (key) => {
+    try {
+      let items = JSON.parse(localStorage.getItem(key) || '[]');
+      let initialCount = items.length;
+      items = items.filter(item => {
+        let name = item.name || item.productName || item.caption || item.title || item.storeName || '';
+        return !fakeNames.some(fake => name.includes(fake));
+      });
+      if (items.length !== initialCount) {
+        localStorage.setItem(key, JSON.stringify(items));
+      }
+    } catch(e) {}
+  };
+  removeFakes('zalo_products');
+  removeFakes('products');
+  removeFakes('zalo_live_stories');
+};
+window.clearOldMockData();
+
 // Facebook Stories & Live Marketplace Feed System
 window.liveStoriesList = [];
 
@@ -6288,6 +6309,13 @@ window.publishLiveStoryPost = async function() {
 };
 
 window.currentActiveStory = null;
+
+window.openStoryProduct = function() {
+  if (!window.currentActiveStory) return;
+  const s = window.currentActiveStory;
+  openProd(s.id, s.caption || s.title || 'عرض لحظي', s.price || 0, s.image, s.emoji || '📦', s.storeId || s.userId || s.author, s.author || 'متجر معتمد', s.wilaya, s.category, s.subcategory);
+  document.getElementById('storyViewerModal').style.display = 'none';
+};
 
 window.addStoryToCart = function() {
   if (!window.currentActiveStory) return;
@@ -7166,33 +7194,12 @@ window.openStoreView = async function(storeId, storeName) {
   const grid = document.getElementById('store-products-grid');
   grid.innerHTML = '<div style="text-align:center; padding:20px; color:var(--gray);"><i class="fa-solid fa-spinner fa-spin"></i> جاري تحميل متجر وسلع ' + (storeName || '') + '...</div>';
 
-  let foundStore = null;
-  let storeLogo = 'assets/icon-192.svg';
-  let storeCover = 'assets/icon-192.svg';
-  let storeWilaya = 'الجزائر';
+  const storeInfo = getStoreDetails(storeId, storeName);
+  let storeLogo = storeInfo.logo;
+  let storeCover = storeInfo.coverImage;
+  let storeWilaya = storeInfo.wilaya;
 
-  // 1. Check local merchant settings if viewing own store or cached store
-  try {
-    const localMerchant = JSON.parse(localStorage.getItem('zalo_merchant_store_settings') || localStorage.getItem('merchant_store_settings') || '{}');
-    if (localMerchant && (localMerchant.storeName === storeName || localMerchant.name === storeName || localMerchant.id === storeId)) {
-      foundStore = localMerchant;
-      storeLogo = localMerchant.logoImg || localMerchant.logo || storeLogo;
-      storeCover = localMerchant.coverImg || localMerchant.cover || storeCover;
-      storeWilaya = localMerchant.wilaya || storeWilaya;
-    }
-  } catch(e) {}
-
-  // 2. Try looking up in loaded stores/products list
-  if (!foundStore && state && state.loadedProducts) {
-    const prodWithStore = state.loadedProducts.find(p => (p.storeName === storeName || p.store_name === storeName || p.storeId === storeId || p.store_id === storeId));
-    if (prodWithStore) {
-      storeLogo = prodWithStore.storeLogo || prodWithStore.logo || storeLogo;
-      storeCover = prodWithStore.storeCover || prodWithStore.cover || storeCover;
-      storeWilaya = prodWithStore.wilaya || storeWilaya;
-    }
-  }
-
-  // 3. Try Supabase stores table if connected
+  // Try Supabase stores table if connected to get fresh data
   try {
     if (window.supabase && typeof window.supabase.from === 'function') {
       let query = window.supabase.from('stores').select('*');
@@ -7203,15 +7210,12 @@ window.openStoreView = async function(storeId, storeName) {
       }
       const { data: sbStore } = await query.maybeSingle();
       if (sbStore) {
-        foundStore = sbStore;
         storeLogo = sbStore.logo_url || sbStore.logo || storeLogo;
         storeCover = sbStore.cover_url || sbStore.cover || storeCover;
         storeWilaya = sbStore.wilaya || storeWilaya;
       }
     }
-  } catch (err) {
-    console.warn("Supabase store fetch notice:", err);
-  }
+  } catch (err) {}
 
   // Update Store Header DOM
   const logoEl = document.getElementById('store-view-logo');

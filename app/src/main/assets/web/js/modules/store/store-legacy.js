@@ -881,7 +881,7 @@
         }
 
         // Delete Product
-        function deleteMerchantProduct(productId) {
+        window.deleteMerchantProduct = function(productId) {
             const doDelete = () => {
                 // 1. Delete from getDB / setDB legacy store
                 let products = getDB("products", []);
