@@ -45,4 +45,5 @@ export async function getSessionUser() {
 
 // Expose globally for backward compatibility
 window.supabase = supabase;
+window.supabaseClient = supabase;
 window.supabaseGetSessionUser = getSessionUser;
