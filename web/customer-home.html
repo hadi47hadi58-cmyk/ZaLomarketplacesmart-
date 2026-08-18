@@ -6276,13 +6276,18 @@ window.publishLiveStoryPost = async function() {
       supabase.from('market_posts').insert([{
         id: newStory.id,
         author: newStory.author,
+        author_name: newStory.author,
+        store_name: newStory.author,
         wilaya: newStory.wilaya,
         category: newStory.category,
         subcategory: newStory.subcategory,
         price: newStory.price,
         caption: newStory.caption,
+        title: newStory.caption,
+        description: newStory.caption,
         phone: newStory.phone,
         image_url: newStory.image,
+        image: newStory.image,
         created_at: new Date().toISOString()
       }]).catch(() => {});
     }
