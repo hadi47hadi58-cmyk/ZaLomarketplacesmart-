@@ -4616,23 +4616,13 @@ async function loadProducts() {
     status: p.status || 'active'
   }));
 
-  // Store or retrieve products via IndexedDB & localStorage offline cache
+  // Store products via IndexedDB & localStorage offline cache only when available from Supabase
   if (merged.length > 0) {
     try {
       localStorage.setItem('zalo_products', JSON.stringify(merged));
     } catch (e) {}
     if (window.ZaLoDB) {
       window.ZaLoDB.saveProducts(merged);
-    }
-  } else if (window.ZaLoDB) {
-    try {
-      const cachedIDBProds = await window.ZaLoDB.getProducts();
-      if (Array.isArray(cachedIDBProds) && cachedIDBProds.length > 0) {
-        merged = cachedIDBProds;
-        console.log("📦 Products & attributes loaded from IndexedDB offline cache:", merged.length);
-      }
-    } catch (err) {
-      console.warn("Could not retrieve products from IndexedDB:", err);
     }
   }
 
@@ -5620,7 +5610,10 @@ window.shareStoreLink = function() {
 };
 
 window.clearOldMockData = function() {
-  const fakeNames = ["ساعة ذكية رياضية", "ساعة ذكية M1", "طقم أواني", "أحذية", "حذاء رياضي", "هاتف ذكي"];
+  try {
+    localStorage.removeItem('zalo_idb_products_backup');
+  } catch(e) {}
+  const fakeNames = ["ساعة ذكية رياضية", "ساعة ذكية M1", "طقم أواني", "أحذية", "حذاء رياضي", "هاتف ذكي", "حامل الهواتف المحمولة"];
   const removeFakes = (key) => {
     try {
       let items = JSON.parse(localStorage.getItem(key) || '[]');
