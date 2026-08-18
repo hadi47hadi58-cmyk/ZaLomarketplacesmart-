@@ -4529,33 +4529,6 @@ window.toggleBottomSearch = function() {
   }
 };
 
-window.wipeRemoteSupabaseData = async function() {
-  try {
-    const sb = window.supabaseClient;
-    if (!sb) return;
-    await sb.from('products').delete().not('id', 'is', null);
-    await sb.from('stores').delete().not('id', 'is', null);
-    await sb.from('market_posts').delete().not('id', 'is', null);
-    localStorage.clear();
-    console.log("Supabase tables wiped clean successfully!");
-  } catch (e) {
-    console.warn("Wipe remote error:", e);
-  }
-};
-
-if (!localStorage.getItem('zalo_wiped_v2')) {
-  localStorage.setItem('zalo_wiped_v2', 'true');
-  window.addEventListener('load', () => {
-    setTimeout(() => {
-      if (window.wipeRemoteSupabaseData) {
-        window.wipeRemoteSupabaseData().then(() => {
-          window.location.reload();
-        });
-      }
-    }, 1000);
-  });
-}
-
 // Fetch and render products on screen-home
 async function loadProducts() {
   const grid = document.getElementById('home-pgrid');
@@ -4600,23 +4573,28 @@ async function loadProducts() {
       const { data: remotePosts, error: postErr } = await sb.from('market_posts').select('*');
       if (!postErr && remotePosts && remotePosts.length > 0) {
         let currentStories = [];
-        remotePosts.forEach(rp => {
-          currentStories.push({
-            id: rp.id,
-            author: rp.author || rp.store_name || 'ZaLo merchant',
-            wilaya: rp.wilaya || 'الجزائر',
-            category: rp.category || 'عام',
-            subcategory: rp.subcategory || 'تخصص عام',
-            price: rp.price || '0',
-            quantity: rp.quantity || '1',
-            caption: rp.caption || rp.description || '',
-            phone: rp.phone || '',
-            image: rp.image_url || rp.image || 'assets/icon-192.svg',
-            logo: rp.logo_url || rp.logo || 'assets/icon-192.svg',
-            likes: rp.likes || 1,
-            time: 'منذ لحظات'
+        remotePosts
+          .filter(rp => {
+            const cap = rp.caption || rp.description || '';
+            return !fakeNames.some(fn => cap.includes(fn));
+          })
+          .forEach(rp => {
+            currentStories.push({
+              id: rp.id,
+              author: rp.author || rp.store_name || 'ZaLo merchant',
+              wilaya: rp.wilaya || 'الجزائر',
+              category: rp.category || 'عام',
+              subcategory: rp.subcategory || 'تخصص عام',
+              price: rp.price || '0',
+              quantity: rp.quantity || '1',
+              caption: rp.caption || rp.description || '',
+              phone: rp.phone || '',
+              image: rp.image_url || rp.image || 'assets/icon-192.svg',
+              logo: rp.logo_url || rp.logo || 'assets/icon-192.svg',
+              likes: rp.likes || 1,
+              time: 'منذ لحظات'
+            });
           });
-        });
         localStorage.setItem('zalo_live_stories', JSON.stringify(currentStories));
       } else {
         localStorage.setItem('zalo_live_stories', JSON.stringify([]));
@@ -4626,7 +4604,14 @@ async function loadProducts() {
     console.warn("Failed to fetch remote products or stores from Supabase:", e);
   }
 
-  let merged = remoteProds.map(p => ({
+  const fakeNames = ["حامل الهواتف المحمولة", "ساعة ذكية رياضية", "ساعة ذكية", "طقم أواني", "أحذية", "حذاء رياضي", "هاتف ذكي"];
+
+  let merged = remoteProds
+    .filter(p => {
+      const pName = p.name || p.productName || '';
+      return !fakeNames.some(fn => pName.includes(fn));
+    })
+    .map(p => ({
     id: p.id || p.productId,
     productId: p.productId || p.id,
     name: p.name || p.productName || 'سلعة ZaLo',
