@@ -41,10 +41,16 @@ window.validateInstantVideo = function(input) {
 };
 
 export async function renderMerchantProductsReal() {
+    const list = document.getElementById('merchant-product-list');
     const grid = document.getElementById('products-grid');
-    if (!grid) return;
+    if (!list && !grid) return;
     
-    grid.innerHTML = '<div class="col-span-full text-center p-8 text-slate-500"><i class="fas fa-spinner fa-spin mr-2"></i> جاري تحميل المنتجات...</div>';
+    if (list) {
+        list.innerHTML = '<tr><td colspan="4" class="p-8 text-center text-slate-400 font-bold text-xs"><i class="fas fa-spinner fa-spin mr-2"></i> جاري تحميل المنتجات...</td></tr>';
+    }
+    if (grid) {
+        grid.innerHTML = '<div class="col-span-full text-center p-8 text-slate-500"><i class="fas fa-spinner fa-spin mr-2"></i> جاري تحميل المنتجات...</div>';
+    }
     
     const products = await fetchStoreProducts();
     
@@ -70,64 +76,123 @@ export async function renderMerchantProductsReal() {
         }
     } catch(e) {}
 
-    if (products.length === 0) {
-        grid.innerHTML = `
-            <div class="col-span-full bg-white p-8 rounded-xl shadow text-center flex flex-col items-center justify-center min-h-[300px]">
-                <div class="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mb-4">
-                    <i class="fa-solid fa-box-open text-3xl text-slate-300"></i>
-                </div>
-                <h3 class="text-xl font-bold text-slate-700 mb-2">لا توجد منتجات بعد</h3>
-                <p class="text-slate-500 max-w-md mx-auto mb-6">قم بإضافة أول منتج لمتجرك وابدأ في البيع مباشرة. يمكنك إضافة الصور، السعر، والوصف بكل سهولة.</p>
-                <button onclick="window.openAddProductModal()" class="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold transition shadow-lg shadow-indigo-200">
-                    <i class="fa-solid fa-plus ml-2"></i> أضف منتجك الأول
-                </button>
-            </div>
-        `;
-        return;
-    }
-    
-    grid.innerHTML = '';
-    
-    products.forEach(p => {
-        const div = document.createElement('div');
-        div.className = "bg-white p-4 rounded-xl shadow-sm border border-slate-100 hover:shadow-md transition group flex flex-col relative";
-        
-        let displayImg = p.image_url || 'https://via.placeholder.com/400';
-        if (displayImg.startsWith('[')) {
-            try {
-                const imgs = JSON.parse(displayImg);
-                if (Array.isArray(imgs) && imgs.length > 0) displayImg = imgs[0];
-            } catch(e) {}
-        }
+    // Update table list
+    if (list) {
+        if (products.length === 0) {
+            list.innerHTML = `
+                <tr>
+                    <td colspan="4" class="p-8 text-center text-slate-500">
+                        <div class="flex flex-col items-center justify-center gap-2">
+                            <i class="fa-solid fa-box-open text-3xl text-slate-300"></i>
+                            <p class="font-black text-slate-700 text-xs">لا توجد سلع معروضة في متجرك حالياً</p>
+                            <p class="text-[10px] text-slate-400">انشر أول سلعة من النموذج الجانبي لتظهر فوراً في المعرض وسوق الجزائر.</p>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        } else {
+            list.innerHTML = '';
+            products.forEach(p => {
+                let skuLabel = p.sku ? `<span class="text-[9px] text-slate-400 font-mono">الباركود: ${p.sku}</span>` : '';
+                let catLabel = p.category ? `<span class="text-[9px] bg-sky-50 text-sky-600 border border-sky-100 px-2 py-0.5 rounded font-bold">${p.category}${p.subcategory ? ' - ' + p.subcategory : ''}</span>` : '';
+                let pImg = p.image_url || p.image || 'assets/icon-192.svg';
+                if (pImg.startsWith('[')) {
+                    try {
+                        const imgs = JSON.parse(pImg);
+                        if (Array.isArray(imgs) && imgs.length > 0) pImg = imgs[0];
+                    } catch(e) {}
+                }
 
-        div.innerHTML = `
-            <div class="relative w-full h-48 bg-slate-50 rounded-lg mb-4 overflow-hidden">
-                <img src="${displayImg}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
-                <div class="absolute top-2 right-2 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-md text-xs font-bold text-slate-700 shadow-sm flex items-center gap-1">
-                    <i class="fa-solid fa-tag text-indigo-500"></i> ${p.category || 'غير محدد'}
+                const item = document.createElement('tr');
+                item.className = "border-b border-slate-100 hover:bg-slate-50 transition";
+                item.innerHTML = `
+                    <td class="p-3 text-right">
+                        <div class="flex items-center gap-3">
+                            <img src="${pImg}" class="w-11 h-11 rounded-xl object-cover border border-slate-200 shadow-sm" onerror="this.src='assets/icon-192.svg'">
+                            <div>
+                                <p class="font-black text-slate-800 text-xs">${p.productName || p.name}</p>
+                                <div class="flex flex-wrap gap-1.5 mt-1 items-center">
+                                    ${catLabel}
+                                    ${skuLabel}
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="p-3 text-right font-black text-slate-800 text-xs">${parseFloat(p.price || 0).toLocaleString()} دج</td>
+                    <td class="p-3 text-right text-slate-600 font-bold text-xs">${p.stock || 0} قطعة</td>
+                    <td class="p-3 text-center">
+                        <div class="flex gap-1.5 justify-center">
+                            <button class="bg-indigo-50 hover:bg-indigo-600 hover:text-white text-indigo-700 text-[10px] px-2.5 py-1.5 rounded-lg font-bold transition flex items-center gap-1" onclick="window.editProductReal ? window.editProductReal('${p.id || p.productId}') : null">
+                                <i class="fa-solid fa-pen-to-square"></i> تعديل
+                            </button>
+                            <button class="bg-red-50 hover:bg-red-600 hover:text-white text-red-600 text-[10px] px-2.5 py-1.5 rounded-lg font-bold transition flex items-center gap-1" onclick="window.deleteProductReal ? window.deleteProductReal('${p.id || p.productId}') : (window.deleteMerchantProduct ? window.deleteMerchantProduct('${p.id || p.productId}') : null)">
+                                <i class="fa-solid fa-trash-can"></i> حذف
+                            </button>
+                        </div>
+                    </td>
+                `;
+                list.appendChild(item);
+            });
+        }
+    }
+
+    // Update cards grid if present
+    if (grid) {
+        if (products.length === 0) {
+            grid.innerHTML = `
+                <div class="col-span-full bg-white p-8 rounded-xl shadow text-center flex flex-col items-center justify-center min-h-[250px]">
+                    <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-3">
+                        <i class="fa-solid fa-box-open text-2xl text-slate-300"></i>
+                    </div>
+                    <h3 class="text-base font-bold text-slate-700 mb-1">لا توجد منتجات بعد</h3>
+                    <p class="text-xs text-slate-500 max-w-md mx-auto">قم بإضافة أول منتج لمتجرك وابدأ في البيع مباشرة.</p>
                 </div>
-                <div class="absolute top-2 left-2 px-2 py-1 bg-green-100/90 text-green-700 rounded-md text-xs font-bold shadow-sm backdrop-blur-sm">
-                    ${(p.stock !== undefined ? p.stock : (p.stock_quantity || 0)) > 0 ? 'متوفر' : 'غير متوفر'}
+            `;
+            return;
+        }
+        
+        grid.innerHTML = '';
+        products.forEach(p => {
+            const div = document.createElement('div');
+            div.className = "bg-white p-4 rounded-xl shadow-sm border border-slate-100 hover:shadow-md transition group flex flex-col relative";
+            
+            let displayImg = p.image_url || p.image || 'assets/icon-192.svg';
+            if (displayImg.startsWith('[')) {
+                try {
+                    const imgs = JSON.parse(displayImg);
+                    if (Array.isArray(imgs) && imgs.length > 0) displayImg = imgs[0];
+                } catch(e) {}
+            }
+
+            div.innerHTML = `
+                <div class="relative w-full h-44 bg-slate-50 rounded-lg mb-3 overflow-hidden">
+                    <img src="${displayImg}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" onerror="this.src='assets/icon-192.svg'">
+                    <div class="absolute top-2 right-2 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-md text-[10px] font-bold text-slate-700 shadow-sm flex items-center gap-1">
+                        <i class="fa-solid fa-tag text-indigo-500"></i> ${p.category || 'عام'}
+                    </div>
+                    <div class="absolute top-2 left-2 px-2 py-1 bg-green-100/90 text-green-700 rounded-md text-[10px] font-bold shadow-sm backdrop-blur-sm">
+                        ${(p.stock !== undefined ? p.stock : 0) > 0 ? 'متوفر' : 'غير متوفر'}
+                    </div>
                 </div>
-            </div>
-            <div class="flex justify-between items-start mb-2">
-                <div>
-                    <h3 class="font-bold text-slate-800 text-lg mb-1 line-clamp-1">${p.name}</h3>
-                    <p class="text-emerald-600 font-bold text-lg">${p.price} د.ج</p>
+                <div class="flex justify-between items-start mb-1">
+                    <div>
+                        <h3 class="font-bold text-slate-800 text-sm line-clamp-1">${p.name || p.productName}</h3>
+                        <p class="text-emerald-600 font-black text-sm">${parseFloat(p.price || 0).toLocaleString()} د.ج</p>
+                    </div>
                 </div>
-            </div>
-            <p class="text-sm text-slate-500 line-clamp-2 mb-4 flex-grow">${p.description || 'لا يوجد وصف'}</p>
-            <div class="flex gap-2 mt-auto pt-4 border-t border-slate-50">
-                <button onclick="window.editProductReal('${p.id}')" class="flex-1 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-lg font-bold transition text-sm">
-                    <i class="fa-solid fa-pen-to-square mr-1"></i> تعديل
-                </button>
-                <button onclick="window.deleteProductReal('${p.id}')" class="flex-1 py-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg font-bold transition text-sm">
-                    <i class="fa-solid fa-trash-can mr-1"></i> حذف
-                </button>
-            </div>
-        `;
-        grid.appendChild(div);
-    });
+                <p class="text-xs text-slate-500 line-clamp-2 mb-3 flex-grow">${p.description || 'لا يوجد وصف'}</p>
+                <div class="flex gap-2 mt-auto pt-3 border-t border-slate-50">
+                    <button onclick="window.editProductReal('${p.id || p.productId}')" class="flex-1 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-lg font-bold transition text-xs">
+                        <i class="fa-solid fa-pen-to-square mr-1"></i> تعديل
+                    </button>
+                    <button onclick="window.deleteProductReal('${p.id || p.productId}')" class="flex-1 py-1.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg font-bold transition text-xs">
+                        <i class="fa-solid fa-trash-can mr-1"></i> حذف
+                    </button>
+                </div>
+            `;
+            grid.appendChild(div);
+        });
+    }
 }
 
 window.renderMerchantProducts = renderMerchantProductsReal;

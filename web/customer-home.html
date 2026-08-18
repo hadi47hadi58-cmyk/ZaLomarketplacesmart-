@@ -4534,101 +4534,185 @@ async function loadProducts() {
   const grid = document.getElementById('home-pgrid');
   if (!grid) return;
 
+  const fakeNames = ["حامل الهواتف المحمولة", "ساعة ذكية رياضية", "ساعة ذكية", "طقم أواني", "أحذية", "حذاء رياضي", "هاتف ذكي"];
+
   let remoteProds = [];
+  let officialStores = [];
+  let currentStories = [];
+
+  // Load existing local data first
+  try {
+    officialStores = JSON.parse(localStorage.getItem('zalo_official_stores') || '[]');
+  } catch(e) {}
+  try {
+    currentStories = JSON.parse(localStorage.getItem('zalo_live_stories') || '[]');
+  } catch(e) {}
+
   try {
     const sb = (typeof supabase !== 'undefined') ? supabase : window.supabaseClient;
     if (sb && sb.from) {
-      // Fetch remote products exclusively from Supabase
-      const fetchPromise = sb.from('products').select('*');
-      const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 5000));
-      const { data, error } = await Promise.race([fetchPromise, timeoutPromise]);
-      if (!error && data) {
-        remoteProds = data;
-      }
+      // 1. Fetch remote products from Supabase
+      try {
+        const fetchPromise = sb.from('products').select('*');
+        const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 5000));
+        const { data, error } = await Promise.race([fetchPromise, timeoutPromise]);
+        if (!error && Array.isArray(data)) {
+          remoteProds = data;
+        }
+      } catch(e) {}
 
-      // Fetch remote stores exclusively from Supabase
-      const { data: remoteStores, error: storeErr } = await sb.from('stores').select('*');
-      if (!storeErr && remoteStores && remoteStores.length > 0) {
-        let officialStores = [];
-        remoteStores.forEach(rs => {
-          officialStores.push({
-            id: rs.id,
-            name: rs.name || rs.store_name,
-            wilaya: rs.wilaya,
-            commune: rs.baladiya || rs.commune,
-            category: rs.category || 'عام',
-            phone: rs.phone || '',
-            logo: rs.logo_url || 'assets/icon-192.svg',
-            coverImage: rs.banner_url || 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=500',
-            isOfficial: true,
-            status: rs.status || 'active'
+      // 2. Fetch remote stores from Supabase
+      try {
+        const { data: remoteStores, error: storeErr } = await sb.from('stores').select('*');
+        if (!storeErr && Array.isArray(remoteStores)) {
+          remoteStores.forEach(rs => {
+            const sName = rs.name || rs.store_name;
+            if (!sName) return;
+            const exists = officialStores.some(s => s.id === rs.id || s.name === sName);
+            if (!exists) {
+              officialStores.push({
+                id: rs.id,
+                name: sName,
+                wilaya: rs.wilaya || 'الجزائر',
+                commune: rs.baladiya || rs.commune || '',
+                category: rs.category || 'عام',
+                phone: rs.phone || '',
+                logo: rs.logo_url || 'assets/icon-192.svg',
+                coverImage: rs.banner_url || 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=500',
+                isOfficial: true,
+                status: rs.status || 'active'
+              });
+            }
           });
-        });
-        localStorage.setItem('zalo_official_stores', JSON.stringify(officialStores));
-      } else {
-        localStorage.setItem('zalo_official_stores', JSON.stringify([]));
-      }
+          localStorage.setItem('zalo_official_stores', JSON.stringify(officialStores));
+        }
+      } catch(e) {}
 
-      // Fetch remote market posts (stories) exclusively from Supabase
-      const { data: remotePosts, error: postErr } = await sb.from('market_posts').select('*');
-      if (!postErr && remotePosts && remotePosts.length > 0) {
-        let currentStories = [];
-        remotePosts
-          .filter(rp => {
-            const cap = rp.caption || rp.description || '';
-            return !fakeNames.some(fn => cap.includes(fn));
-          })
-          .forEach(rp => {
-            currentStories.push({
-              id: rp.id,
-              author: rp.author || rp.store_name || 'ZaLo merchant',
-              wilaya: rp.wilaya || 'الجزائر',
-              category: rp.category || 'عام',
-              subcategory: rp.subcategory || 'تخصص عام',
-              price: rp.price || '0',
-              quantity: rp.quantity || '1',
-              caption: rp.caption || rp.description || '',
-              phone: rp.phone || '',
-              image: rp.image_url || rp.image || 'assets/icon-192.svg',
-              logo: rp.logo_url || rp.logo || 'assets/icon-192.svg',
-              likes: rp.likes || 1,
-              time: 'منذ لحظات'
-            });
+      // 3. Fetch remote market posts (stories) from Supabase
+      try {
+        const { data: remotePosts, error: postErr } = await sb.from('market_posts').select('*');
+        if (!postErr && Array.isArray(remotePosts)) {
+          remotePosts.forEach(rp => {
+            const cap = rp.caption || rp.description || rp.title || rp.content || '';
+            const author = rp.author || rp.store_name || rp.author_name || 'ZaLo merchant';
+            const exists = currentStories.some(s => String(s.id) === String(rp.id));
+            if (!exists) {
+              currentStories.unshift({
+                id: rp.id,
+                author: author,
+                store_name: author,
+                name: author,
+                wilaya: rp.wilaya || 'الجزائر',
+                category: rp.category || 'عام',
+                subcategory: rp.subcategory || 'تخصص عام',
+                price: rp.price || '0',
+                quantity: rp.quantity || '1',
+                caption: cap,
+                title: rp.title || cap,
+                phone: rp.phone || '',
+                image: rp.image_url || rp.image || 'assets/icon-192.svg',
+                logo: rp.logo_url || rp.logo || 'assets/icon-192.svg',
+                likes: rp.likes || 1,
+                time: 'منذ لحظات'
+              });
+            }
           });
-        localStorage.setItem('zalo_live_stories', JSON.stringify(currentStories));
-      } else {
-        localStorage.setItem('zalo_live_stories', JSON.stringify([]));
-      }
+          localStorage.setItem('zalo_live_stories', JSON.stringify(currentStories));
+        }
+      } catch(e) {}
     }
   } catch (e) {
     console.warn("Failed to fetch remote products or stores from Supabase:", e);
   }
 
-  const fakeNames = ["حامل الهواتف المحمولة", "ساعة ذكية رياضية", "ساعة ذكية", "طقم أواني", "أحذية", "حذاء رياضي", "هاتف ذكي"];
+  // Also include current merchant store if exists in settings
+  try {
+    const mSettings = JSON.parse(localStorage.getItem('zalo_merchant_store_settings') || '{}');
+    if (mSettings.storeName || mSettings.name) {
+      const msName = mSettings.storeName || mSettings.name;
+      if (!officialStores.some(s => s.name === msName)) {
+        officialStores.push({
+          id: mSettings.id || 'merchant_self',
+          name: msName,
+          wilaya: mSettings.wilaya || 'الجزائر',
+          commune: mSettings.commune || '',
+          category: mSettings.category || 'عام',
+          phone: mSettings.phone || '',
+          logo: mSettings.logoImg || mSettings.logo || 'assets/icon-192.svg',
+          coverImage: mSettings.bannerImg || 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=500',
+          isOfficial: true,
+          status: 'active'
+        });
+        localStorage.setItem('zalo_official_stores', JSON.stringify(officialStores));
+      }
+    }
+  } catch(e) {}
 
-  let merged = remoteProds
+  // Merge remote products with local products
+  let localProducts = [];
+  try {
+    localProducts = JSON.parse(localStorage.getItem('zalo_products') || '[]');
+  } catch(e) {}
+
+  let mergedMap = new Map();
+
+  remoteProds
     .filter(p => {
       const pName = p.name || p.productName || '';
       return !fakeNames.some(fn => pName.includes(fn));
     })
-    .map(p => ({
-    id: p.id || p.productId,
-    productId: p.productId || p.id,
-    name: p.name || p.productName || 'سلعة ZaLo',
-    productName: p.productName || p.name || 'سلعة ZaLo',
-    price: parseFloat(p.price) || 0,
-    stock: parseInt(p.stock) || 0,
-    category: p.category || 'عام',
-    description: p.description || p.desc || '',
-    image: p.image || p.imageUrl || p.image_url || p.imageURL || 'assets/icon-192.svg',
-    storeId: p.store_id || p.storeId || 'direct',
-    storeName: p.store_name || p.storeName || 'متجر معتمد',
-    wilaya: p.wilaya || 'الجزائر',
-    phone: p.phone || '',
-    status: p.status || 'active'
-  }));
+    .forEach(p => {
+      const id = String(p.id || p.productId || ('p_' + Date.now()));
+      mergedMap.set(id, {
+        id: id,
+        productId: id,
+        name: p.name || p.productName || 'سلعة ZaLo',
+        productName: p.productName || p.name || 'سلعة ZaLo',
+        price: parseFloat(p.price) || 0,
+        stock: parseInt(p.stock !== undefined ? p.stock : (p.stock_quantity || 0)) || 0,
+        category: p.category || 'عام',
+        subcategory: p.subcategory || '',
+        description: p.description || p.desc || '',
+        image: p.image || p.imageUrl || p.image_url || p.imageURL || 'assets/icon-192.svg',
+        storeId: p.store_id || p.storeId || 'direct',
+        storeName: p.store_name || p.storeName || 'متجر معتمد',
+        wilaya: p.wilaya || 'الجزائر',
+        phone: p.phone || '',
+        status: p.status || 'active'
+      });
+    });
 
-  // Store products via IndexedDB & localStorage offline cache only when available from Supabase
+  localProducts
+    .filter(p => {
+      const pName = p.name || p.productName || '';
+      return !fakeNames.some(fn => pName.includes(fn));
+    })
+    .forEach(p => {
+      const id = String(p.id || p.productId || '');
+      if (id && !mergedMap.has(id)) {
+        mergedMap.set(id, {
+          id: id,
+          productId: id,
+          name: p.name || p.productName || 'سلعة ZaLo',
+          productName: p.productName || p.name || 'سلعة ZaLo',
+          price: parseFloat(p.price) || 0,
+          stock: parseInt(p.stock !== undefined ? p.stock : (p.stock_quantity || 0)) || 0,
+          category: p.category || 'عام',
+          subcategory: p.subcategory || '',
+          description: p.description || p.desc || '',
+          image: p.image || p.imageUrl || p.image_url || p.imageURL || 'assets/icon-192.svg',
+          storeId: p.store_id || p.storeId || 'direct',
+          storeName: p.store_name || p.storeName || 'متجر معتمد',
+          wilaya: p.wilaya || 'الجزائر',
+          phone: p.phone || '',
+          status: p.status || 'active'
+        });
+      }
+    });
+
+  let merged = Array.from(mergedMap.values());
+
+  // Store products cache
   if (merged.length > 0) {
     try {
       localStorage.setItem('zalo_products', JSON.stringify(merged));
