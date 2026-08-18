@@ -336,6 +336,8 @@ window.merchantAddProductReal = async function(e) {
                     .insert({
                         id: pId,
                         store_id: store.id,
+                        store_name: store.name || 'متجر معتمد',
+                        wilaya: store.wilaya || 'الجزائر',
                         ...productData
                     });
                 if (error) throw error;

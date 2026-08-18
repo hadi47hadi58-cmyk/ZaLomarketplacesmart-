@@ -4844,6 +4844,7 @@ window.shareToApp = function(app) {
 function renderProductsList(list) {
   const grid = document.getElementById('home-pgrid');
   if (!grid) return;
+  
   if (!list || list.length === 0) {
     grid.innerHTML = `
       <div class="empty-state" style="padding: 40px; text-align: center; background: white; border-radius: 20px; border: 1px solid #e2e8f0; margin: 0 16px;">
@@ -4865,48 +4866,62 @@ function renderProductsList(list) {
     return scoreB - scoreA;
   });
 
+  window.currentProductsList = sortedList;
+  window.productsRenderedCount = 0;
   grid.innerHTML = '';
-  sortedList.forEach(p => {
-    if (p.deleted === true || p.status === 'deleted') return;
-    const pId = p.id || p.productId;
-    const pName = p.name || p.productName || 'سلعة معروضة للبيع';
-    let imgUrl = p.image || p.imageURL || p.imageUrl || p.image_url || p.url || '';
-    if (!imgUrl || imgUrl.includes('location_map')) {
-      imgUrl = 'images/wilaya-thumb.jpg';
-    }
-
-    const price = parseFloat(p.price) || 0;
-    const storeName = p.storeName || p.store_name || p.shopName || 'متجر معتمد';
-    const storeInfo = getStoreDetails(p.storeId || p.store_id, storeName);
-    const storeLogo = storeInfo.logo || 'assets/icon-192.svg';
-    const pWilaya = p.wilaya || p.wilayaName || storeInfo.wilaya || 'الجزائر';
-    const isLive = p.isLiveOffer || String(pId).startsWith('st_');
-
-    const ratingInfo = allRatings[pId] || { count: 0, userRated: false };
-    const likesCount = allLikes[pId] || 0;
-    const ratingVal = ratingInfo.userRated ? '5.0' : '4.8';
+  
+  // Expose function to load more
+  window.loadMoreProductsBatch = function() {
+    const batchSize = 10;
+    const toRender = window.currentProductsList.slice(window.productsRenderedCount, window.productsRenderedCount + batchSize);
     
-    let userLikesList = [];
-    try { userLikesList = JSON.parse(localStorage.getItem('zalo_user_likes_list') || '[]'); } catch(e) {}
-    const isLiked = userLikesList.includes(pId);
-    const likeBtnColor = isLiked ? '#0ea5e9' : '#64748b';
+    // Remove old load more button if exists
+    const oldBtn = document.getElementById('load-more-products-btn');
+    if (oldBtn) oldBtn.remove();
 
-    const safeName = pName.replace(/'/g, "\\'").replace(/"/g, '&quot;');
-    const safeStore = storeName.replace(/'/g, "\\'").replace(/"/g, '&quot;');
-    const safeImage = imgUrl.replace(/'/g, "\\'");
+    toRender.forEach(p => {
+      if (p.deleted === true || p.status === 'deleted') return;
+      const pId = p.id || p.productId;
+      const pName = p.name || p.productName || 'سلعة معروضة للبيع';
+      let imgUrl = p.image || p.imageURL || p.imageUrl || p.image_url || p.url || '';
+      if (!imgUrl || imgUrl.includes('location_map')) {
+        imgUrl = 'images/wilaya-thumb.jpg';
+      }
 
-    let imagesHtml = `<img src="${imgUrl}" style="width: 100%; max-height: 450px; object-fit: contain;" onerror="this.src='assets/icon-192.svg'">`;
-    if (imgUrl.startsWith('[')) {
-      try {
-        const imgs = JSON.parse(imgUrl);
-        if (Array.isArray(imgs)) {
-          imagesHtml = imgs.map(src => `<img src="${src}" style="width: 100%; max-height: 450px; object-fit: contain; margin-bottom: 8px;" onerror="this.style.display='none'">`).join('');
-        }
-      } catch(e) {}
-    }
+      const price = parseFloat(p.price) || 0;
+      const storeName = p.storeName || p.store_name || p.shopName || 'متجر معتمد';
+      const storeInfo = getStoreDetails(p.storeId || p.store_id, storeName);
+      const storeLogo = storeInfo.logo || 'assets/icon-192.svg';
+      const pWilaya = p.wilaya || p.wilayaName || storeInfo.wilaya || 'الجزائر';
+      const isLive = p.isLiveOffer || String(pId).startsWith('st_');
 
-    grid.innerHTML += `
-      <div class="fb-post-card" style="background: white; border-radius: 20px; border: 1px solid #e2e8f0; padding: 16px; text-align: right; margin-bottom: 16px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); overflow: hidden;">
+      const ratingInfo = allRatings[pId] || { count: 0, userRated: false };
+      const likesCount = allLikes[pId] || 0;
+      const ratingVal = ratingInfo.userRated ? '5.0' : '4.8';
+      
+      let userLikesList = [];
+      try { userLikesList = JSON.parse(localStorage.getItem('zalo_user_likes_list') || '[]'); } catch(e) {}
+      const isLiked = userLikesList.includes(pId);
+      const likeBtnColor = isLiked ? '#0ea5e9' : '#64748b';
+
+      const safeName = pName.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+      const safeStore = storeName.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+      const safeImage = imgUrl.replace(/'/g, "\\'");
+
+      let imagesHtml = `<img src="${imgUrl}" style="width: 100%; max-height: 450px; object-fit: contain;" onerror="this.src='assets/icon-192.svg'">`;
+      if (imgUrl.startsWith('[')) {
+        try {
+          const imgs = JSON.parse(imgUrl);
+          if (Array.isArray(imgs)) {
+            imagesHtml = imgs.map(src => `<img src="${src}" style="width: 100%; max-height: 450px; object-fit: contain; margin-bottom: 8px;" onerror="this.style.display='none'">`).join('');
+          }
+        } catch(e) {}
+      }
+
+      const div = document.createElement('div');
+      div.className = "fb-post-card";
+      div.style.cssText = "background: white; border-radius: 20px; border: 1px solid #e2e8f0; padding: 16px; text-align: right; margin-bottom: 16px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); overflow: hidden;";
+      div.innerHTML = `
         <!-- Post Header: Store Info -->
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
           <div style="display: flex; align-items: center; gap: 10px; cursor: pointer;" onclick="window.openStoreView('${p.storeId || p.store_id}', '${safeStore}')">
@@ -4994,9 +5009,28 @@ function renderProductsList(list) {
             <span>اطلب</span>
           </a>
         </div>
-      </div>
-    `;
-  });
+      `;
+      grid.appendChild(div);
+    });
+
+    window.productsRenderedCount += toRender.length;
+
+    // Add Load More button if there are more products to show
+    if (window.productsRenderedCount < window.currentProductsList.length) {
+      const btnDiv = document.createElement('div');
+      btnDiv.id = 'load-more-products-btn';
+      btnDiv.style.cssText = "text-align: center; margin: 20px 0 40px;";
+      btnDiv.innerHTML = `
+        <button onclick="window.loadMoreProductsBatch()" style="background: white; border: 2px solid #e2e8f0; color: #475569; padding: 12px 24px; border-radius: 12px; font-size: 13px; font-weight: 800; cursor: pointer; transition: all 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+          <i class="fa-solid fa-rotate-right" style="margin-left: 6px;"></i> تحميل المزيد من المعروضات
+        </button>
+      `;
+      grid.appendChild(btnDiv);
+    }
+  };
+
+  // Initial load
+  window.loadMoreProductsBatch();
 }
 
 window.likeProductFb = function(id) {
