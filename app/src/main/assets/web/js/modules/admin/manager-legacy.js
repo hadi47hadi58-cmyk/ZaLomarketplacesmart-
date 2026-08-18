@@ -7,10 +7,49 @@
             }
         }
 
+        const FAKE_STORE_NAMES = ["ABDELALI.PHONE", "ZaLo kids", "Nadjemi Abdelhadi", "متجري الشريك المعتمد", "متجر الشريك"];
+        const FAKE_PROD_NAMES = ["حامل الهواتف المحمولة", "ساعة ذكية", "طقم أواني", "حامل الدفتر الصحي", "حامل دفاتر الصحي", "فراش تغيير ملابس"];
+
+        function purgeAllManagerFakeData() {
+            try {
+                let stores = JSON.parse(localStorage.getItem("stores_list_old") || "[]");
+                stores = stores.filter(s => !FAKE_STORE_NAMES.some(fn => (s.name || s.store_name || s.storeName || '').includes(fn)));
+                localStorage.setItem("stores_list_old", JSON.stringify(stores));
+            } catch(e) {}
+
+            try {
+                let stores = JSON.parse(localStorage.getItem("stores") || "[]");
+                stores = stores.filter(s => !FAKE_STORE_NAMES.some(fn => (s.name || s.store_name || s.storeName || '').includes(fn)));
+                localStorage.setItem("stores", JSON.stringify(stores));
+            } catch(e) {}
+
+            try {
+                let stores = JSON.parse(localStorage.getItem("zalo_stores") || "[]");
+                stores = stores.filter(s => !FAKE_STORE_NAMES.some(fn => (s.name || s.store_name || s.storeName || '').includes(fn)));
+                localStorage.setItem("zalo_stores", JSON.stringify(stores));
+            } catch(e) {}
+
+            try {
+                let prods = JSON.parse(localStorage.getItem("products") || "[]");
+                prods = prods.filter(p => !FAKE_PROD_NAMES.some(fn => (p.name || p.productName || '').includes(fn)));
+                localStorage.setItem("products", JSON.stringify(prods));
+            } catch(e) {}
+
+            try {
+                let prods = JSON.parse(localStorage.getItem("zalo_products") || "[]");
+                prods = prods.filter(p => !FAKE_PROD_NAMES.some(fn => (p.name || p.productName || '').includes(fn)));
+                localStorage.setItem("zalo_products", JSON.stringify(prods));
+            } catch(e) {}
+        }
+
+        // Run immediately
+        purgeAllManagerFakeData();
+
         function renderManagerStats() {
+            purgeAllManagerFakeData();
+
             let users = getDB("users", []);
             let verifiedUsers = users.filter(u => (u.phone && u.phone.trim().length > 0) || (u.email && u.email.trim().length > 0)).length;
-            if (verifiedUsers === 0 && users.length > 0) verifiedUsers = users.length;
             const elUsers = document.getElementById("mgr-stat-users");
             if (elUsers) elUsers.innerText = verifiedUsers;
 
@@ -21,7 +60,8 @@
             if (elSales) elSales.innerText = totalVal.toLocaleString() + " دج";
 
             let stores = getDB("stores_list_old", []);
-            let activeStores = stores.filter(s => s.status === "APPROVED").length;
+            stores = stores.filter(s => !FAKE_STORE_NAMES.some(fn => (s.name || s.store_name || s.storeName || '').includes(fn)));
+            let activeStores = stores.filter(s => s.status === "APPROVED" || s.status === "approved" || s.status === "ACTIVE").length;
             const elStores = document.getElementById("mgr-stat-stores");
             if (elStores) elStores.innerText = activeStores + " متجر";
 
@@ -70,22 +110,69 @@
             }
         };
 
-        window.renderManagerStores = function() {
+        window.renderManagerStores = async function() {
+            purgeAllManagerFakeData();
             const tbody = document.getElementById('manager-stores-tbody');
             if (!tbody) return;
             
-            let stores = getDB("stores_list_old", []);
-            // Also check 'stores' key which might be used
-            const stores2 = getDB("stores", []);
-            stores = [...stores, ...stores2];
-            
-            // Deduplicate by name or ID if needed, but for now just show
+            let stores = [];
+
+            // 1. Fetch live from Supabase
+            if (window.supabaseClient) {
+                try {
+                    const { data, error } = await window.supabaseClient.from('stores').select('*');
+                    if (!error && Array.isArray(data)) {
+                        stores = data.map(s => ({
+                            id: s.id,
+                            storeId: s.id,
+                            name: s.name || s.store_name || 'متجر',
+                            storeName: s.name || s.store_name || 'متجر',
+                            location: s.wilaya || s.location || 'الجزائر',
+                            wilaya: s.wilaya || 'الجزائر',
+                            category: s.category || 'عام',
+                            owner: s.owner_name || s.merchant_name || 'تاجر',
+                            phone: s.phone || '-',
+                            status: s.status || (s.is_verified ? 'APPROVED' : 'PENDING'),
+                            image: s.logo_url || s.image || 'assets/icon-192.svg'
+                        }));
+                    }
+                } catch (e) {
+                    console.warn("[ManagerStores] Supabase fetch error:", e);
+                }
+            }
+
+            // 2. Fallback to LocalStorage (Filtered)
+            let localStores = getDB("stores_list_old", []);
+            const localStores2 = getDB("stores", []);
+            localStores = [...localStores, ...localStores2];
+
+            localStores.forEach(ls => {
+                const sId = ls.id || ls.storeId;
+                const sName = ls.name || ls.storeName;
+                const exists = stores.some(s => s.id == sId || (s.name && s.name === sName));
+                if (!exists && !FAKE_STORE_NAMES.some(fn => (sName || '').includes(fn))) {
+                    stores.push(ls);
+                }
+            });
+
+            // Filter out any fake names strictly
+            stores = stores.filter(s => !FAKE_STORE_NAMES.some(fn => (s.name || s.storeName || s.store_name || '').includes(fn)));
+
+            // Update stats
+            const elStores = document.getElementById("mgr-stat-stores");
+            if (elStores) elStores.innerText = stores.length + " متجر";
+
             if (stores.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="4" class="text-center py-8 text-slate-400">لا توجد متاجر مسجلة حالياً</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="4" class="text-center py-8 text-slate-400 font-bold">لا توجد متاجر مسجلة حالياً</td></tr>';
                 return;
             }
 
-            tbody.innerHTML = stores.map(s => `
+            tbody.innerHTML = stores.map(s => {
+                const safeId = String(s.id || s.storeId || '');
+                const safeName = (s.name || s.storeName || 'متجر').replace(/'/g, "\\'");
+                const isPaused = localStorage.getItem('zalo_publishing_paused_' + safeId) === 'true';
+
+                return `
                 <tr class="border-b border-slate-50 hover:bg-slate-50 transition">
                     <td class="py-3 px-2">
                         <div class="flex items-center gap-2">
@@ -103,30 +190,71 @@
                     </td>
                     <td class="py-3 px-2 text-center">
                         <div class="flex justify-center gap-1">
-                            <button onclick="deleteManagerStore('${s.id || s.storeId}')" class="bg-red-50 text-red-600 px-2 py-1 rounded-md hover:bg-red-600 hover:text-white transition font-bold">حذف</button>
-                            <button onclick="toggleManagerStorePause('${s.id || s.storeId}')" class="${localStorage.getItem('zalo_publishing_paused_' + (s.id || s.storeId)) === 'true' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'} px-2 py-1 rounded-md hover:opacity-80 transition font-bold">
-                                ${localStorage.getItem('zalo_publishing_paused_' + (s.id || s.storeId)) === 'true' ? 'استئناف' : 'إيقاف'}
+                            <button onclick="deleteManagerStore('${safeId}', '${safeName}')" class="bg-red-50 text-red-600 px-3 py-1.5 rounded-lg hover:bg-red-600 hover:text-white transition font-bold shadow-sm">حذف</button>
+                            <button onclick="toggleManagerStorePause('${safeId}')" class="${isPaused ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'} px-2 py-1 rounded-md hover:opacity-80 transition font-bold">
+                                ${isPaused ? 'استئناف' : 'إيقاف'}
                             </button>
                         </div>
                     </td>
                 </tr>
-            `).join('');
+            `;
+            }).join('');
         };
 
-        window.renderManagerProducts = function() {
+        window.renderManagerProducts = async function() {
+            purgeAllManagerFakeData();
             const tbody = document.getElementById('manager-products-tbody');
             if (!tbody) return;
             
-            let products = getDB("products", []);
-            const products2 = getDB("zalo_products", []);
-            products = [...products, ...products2];
+            let products = [];
+
+            // 1. Fetch live from Supabase
+            if (window.supabaseClient) {
+                try {
+                    const { data, error } = await window.supabaseClient.from('products').select('*, stores(name)').order('created_at', { ascending: false });
+                    if (!error && Array.isArray(data)) {
+                        products = data.map(p => ({
+                            id: p.id,
+                            productId: p.id,
+                            name: p.name,
+                            productName: p.name,
+                            price: p.price || 0,
+                            storeName: p.stores?.name || p.store_name || 'متجر',
+                            image: p.image_url || 'assets/icon-192.svg'
+                        }));
+                    }
+                } catch(e) {
+                    console.warn("[ManagerProducts] Supabase fetch error:", e);
+                }
+            }
+
+            // 2. Fallback to LocalStorage (Filtered)
+            let localProds = getDB("products", []);
+            const localProds2 = getDB("zalo_products", []);
+            localProds = [...localProds, ...localProds2];
+
+            localProds.forEach(lp => {
+                const pId = lp.id || lp.productId;
+                const pName = lp.name || lp.productName;
+                const exists = products.some(p => p.id == pId || (p.name && p.name === pName));
+                if (!exists && !FAKE_PROD_NAMES.some(fn => (pName || '').includes(fn))) {
+                    products.push(lp);
+                }
+            });
+
+            // Filter out fake products strictly
+            products = products.filter(p => !FAKE_PROD_NAMES.some(fn => (p.name || p.productName || '').includes(fn)));
 
             if (products.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="3" class="text-center py-8 text-slate-400">لا توجد منتجات منشورة حالياً</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="3" class="text-center py-8 text-slate-400 font-bold">لا توجد منتجات منشورة حالياً</td></tr>';
                 return;
             }
 
-            tbody.innerHTML = products.map(p => `
+            tbody.innerHTML = products.map(p => {
+                const safeId = String(p.id || p.productId || '');
+                const safeName = (p.productName || p.name || 'منتج').replace(/'/g, "\\'");
+
+                return `
                 <tr class="border-b border-slate-50 hover:bg-slate-50 transition">
                     <td class="py-3 px-2">
                         <div class="flex items-center gap-2">
@@ -139,34 +267,55 @@
                         <p class="text-[10px] text-slate-400">بواسطة: ${p.storeName || p.store_name || 'تاجر'}</p>
                     </td>
                     <td class="py-3 px-2 text-center">
-                        <button onclick="deleteManagerProduct('${p.id || p.productId}')" class="bg-red-50 text-red-600 px-3 py-1 rounded-md hover:bg-red-600 hover:text-white transition font-bold">حذف المنتج</button>
+                        <button onclick="deleteManagerProduct('${safeId}', '${safeName}')" class="bg-red-50 text-red-600 px-3 py-1.5 rounded-lg hover:bg-red-600 hover:text-white transition font-bold shadow-sm">حذف المنتج</button>
                     </td>
                 </tr>
-            `).join('');
+            `;
+            }).join('');
         };
 
-        window.deleteManagerStore = async function(id) {
-            if (!confirm('هل أنت متأكد من حذف هذا المتجر وجميع منتجاته نهائياً؟')) return;
+        window.deleteManagerStore = async function(id, storeName) {
+            if (!confirm('🚨 هل أنت متأكد من حذف هذا المتجر وجميع معروضاته نهائياً من قاعدة البيانات والتطبيق؟')) return;
+            
+            // 1. Remove from all local arrays
             let stores = getDB("stores_list_old", []);
-            stores = stores.filter(s => (s.id !== id && s.storeId !== id));
+            stores = stores.filter(s => s.id != id && s.storeId != id && (!storeName || (s.name !== storeName && s.storeName !== storeName)));
             localStorage.setItem("stores_list_old", JSON.stringify(stores));
 
             let stores2 = getDB("stores", []);
-            stores2 = stores2.filter(s => (s.id !== id && s.storeId !== id));
+            stores2 = stores2.filter(s => s.id != id && s.storeId != id && (!storeName || (s.name !== storeName && s.storeName !== storeName)));
             localStorage.setItem("stores", JSON.stringify(stores2));
 
+            let stores3 = getDB("zalo_stores", []);
+            stores3 = stores3.filter(s => s.id != id && s.storeId != id && (!storeName || (s.name !== storeName && s.storeName !== storeName)));
+            localStorage.setItem("zalo_stores", JSON.stringify(stores3));
+
+            // Also remove products of this store locally
+            let prods = getDB("products", []);
+            prods = prods.filter(p => p.store_id != id && p.storeId != id && (!storeName || (p.storeName !== storeName && p.store_name !== storeName)));
+            localStorage.setItem("products", JSON.stringify(prods));
+
+            // 2. Supabase deletion
             if (window.supabaseClient) {
                 try {
-                    await window.supabaseClient.from('products').delete().eq('store_id', id);
-                    await window.supabaseClient.from('market_posts').delete().eq('store_id', id);
-                    await window.supabaseClient.from('stores').delete().eq('id', id);
-                    await window.supabaseClient.from('merchant_requests').delete().eq('user_id', id);
+                    if (id && id !== 'undefined' && id !== 'null') {
+                        await window.supabaseClient.from('products').delete().eq('store_id', id);
+                        await window.supabaseClient.from('market_posts').delete().eq('store_id', id);
+                        await window.supabaseClient.from('stores').delete().eq('id', id);
+                        await window.supabaseClient.from('merchant_requests').delete().eq('user_id', id);
+                    }
+                    if (storeName) {
+                        await window.supabaseClient.from('stores').delete().eq('name', storeName);
+                        await window.supabaseClient.from('merchant_requests').delete().eq('store_name', storeName);
+                    }
                 } catch(e) {
-                    console.warn("Supabase manager delete store note:", e);
+                    console.warn("[Manager] Supabase delete store note:", e);
                 }
             }
 
-            window.renderManagerStores();
+            alert("✅ تم حذف المتجر ومسح كافة بياناته بنجاح!");
+            await window.renderManagerStores();
+            await window.renderManagerProducts();
             if (typeof renderManagerStats === 'function') renderManagerStats();
             if (typeof renderWilayaTable === 'function') renderWilayaTable();
         };
@@ -179,26 +328,36 @@
             window.renderManagerStores();
         };
 
-        window.deleteManagerProduct = async function(id) {
-            if (!confirm('هل أنت متأكد من حذف هذا المنتج نهائياً؟')) return;
+        window.deleteManagerProduct = async function(id, prodName) {
+            if (!confirm('🚨 هل أنت متأكد من حذف هذا المنتج نهائياً من قاعدة البيانات والتطبيق؟')) return;
+            
+            // 1. LocalStorage filter
             let products = getDB("products", []);
-            products = products.filter(p => (p.id !== id && p.productId !== id));
+            products = products.filter(p => p.id != id && p.productId != id && (!prodName || (p.name !== prodName && p.productName !== prodName)));
             localStorage.setItem("products", JSON.stringify(products));
             
             let products2 = getDB("zalo_products", []);
-            products2 = products2.filter(p => (p.id !== id && p.productId !== id));
+            products2 = products2.filter(p => p.id != id && p.productId != id && (!prodName || (p.name !== prodName && p.productName !== prodName)));
             localStorage.setItem("zalo_products", JSON.stringify(products2));
 
+            // 2. Supabase deletion
             if (window.supabaseClient) {
                 try {
-                    await window.supabaseClient.from('products').delete().eq('id', id);
-                    await window.supabaseClient.from('market_posts').delete().eq('id', id);
+                    if (id && id !== 'undefined' && id !== 'null') {
+                        await window.supabaseClient.from('products').delete().eq('id', id);
+                        await window.supabaseClient.from('market_posts').delete().eq('id', id);
+                    }
+                    if (prodName) {
+                        await window.supabaseClient.from('products').delete().eq('name', prodName);
+                        await window.supabaseClient.from('market_posts').delete().eq('name', prodName);
+                    }
                 } catch(e) {
-                    console.warn("Supabase manager delete product note:", e);
+                    console.warn("[Manager] Supabase delete product note:", e);
                 }
             }
             
-            renderManagerProducts();
+            alert("✅ تم حذف المنتج نهائياً بنجاح!");
+            await renderManagerProducts();
             if (typeof renderManagerStats === 'function') renderManagerStats();
         };
 

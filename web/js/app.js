@@ -34,19 +34,37 @@ class DB {
     static init() {
         // Force-clear old mock/fake data from previous builds if they contain mock IDs to ensure clean state
         try {
-            let p = localStorage.getItem("zalo_products");
-            if (p && (p.includes("prod_phone") || p.includes("prod_lap") || p.includes("prod_shoe") || p.includes("prod_galaxy"))) {
-                console.log("[ZaLo DB] Wiping old fake products seed from localStorage...");
-                localStorage.removeItem("zalo_products");
-            }
-            let s = localStorage.getItem("zalo_stores");
-            if (s && s.includes("store_salam")) {
-                console.log("[ZaLo DB] Wiping old fake stores seed from localStorage...");
-                localStorage.removeItem("zalo_stores");
-            }
+            const fakeStoreNames = ["ABDELALI.PHONE", "ZaLo kids", "Nadjemi Abdelhadi", "متجري الشريك المعتمد", "متجر الشريك", "store_salam"];
+            const fakeProdNames = ["حامل الهواتف المحمولة", "ساعة ذكية", "طقم أواني", "حامل الدفتر الصحي", "حامل دفاتر الصحي", "فراش تغيير ملابس", "prod_phone", "prod_lap", "prod_shoe", "prod_galaxy"];
+
+            ['stores_list_old', 'stores', 'zalo_stores'].forEach(k => {
+                let val = localStorage.getItem(k);
+                if (val && fakeStoreNames.some(fn => val.includes(fn))) {
+                    try {
+                        let parsed = JSON.parse(val);
+                        if (Array.isArray(parsed)) {
+                            let clean = parsed.filter(s => !fakeStoreNames.some(fn => (s.name || s.store_name || s.storeName || '').includes(fn)));
+                            localStorage.setItem(k, JSON.stringify(clean));
+                        }
+                    } catch(e) { localStorage.removeItem(k); }
+                }
+            });
+
+            ['products', 'zalo_products'].forEach(k => {
+                let val = localStorage.getItem(k);
+                if (val && fakeProdNames.some(fn => val.includes(fn))) {
+                    try {
+                        let parsed = JSON.parse(val);
+                        if (Array.isArray(parsed)) {
+                            let clean = parsed.filter(p => !fakeProdNames.some(fn => (p.name || p.productName || '').includes(fn)));
+                            localStorage.setItem(k, JSON.stringify(clean));
+                        }
+                    } catch(e) { localStorage.removeItem(k); }
+                }
+            });
+
             let o = localStorage.getItem("zalo_orders");
             if (o && (o.includes("ord_1") || o.includes("order_"))) {
-                console.log("[ZaLo DB] Wiping old fake orders seed from localStorage...");
                 localStorage.removeItem("zalo_orders");
             }
         } catch (e) {
