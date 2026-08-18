@@ -4529,6 +4529,33 @@ window.toggleBottomSearch = function() {
   }
 };
 
+window.wipeRemoteSupabaseData = async function() {
+  try {
+    const sb = window.supabaseClient;
+    if (!sb) return;
+    await sb.from('products').delete().not('id', 'is', null);
+    await sb.from('stores').delete().not('id', 'is', null);
+    await sb.from('market_posts').delete().not('id', 'is', null);
+    localStorage.clear();
+    console.log("Supabase tables wiped clean successfully!");
+  } catch (e) {
+    console.warn("Wipe remote error:", e);
+  }
+};
+
+if (!localStorage.getItem('zalo_wiped_v2')) {
+  localStorage.setItem('zalo_wiped_v2', 'true');
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      if (window.wipeRemoteSupabaseData) {
+        window.wipeRemoteSupabaseData().then(() => {
+          window.location.reload();
+        });
+      }
+    }, 1000);
+  });
+}
+
 // Fetch and render products on screen-home
 async function loadProducts() {
   const grid = document.getElementById('home-pgrid');
