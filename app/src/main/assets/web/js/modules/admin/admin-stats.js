@@ -2,10 +2,10 @@ import { supabase } from '../../supabase-config.js';
 
 export async function fetchAdminDashboardStats() {
     let stats = {
-        activeStores: 2,
-        pendingRequests: 2,
-        totalProducts: 4,
-        verifiedUsers: 4,
+        activeStores: 0,
+        pendingRequests: 0,
+        totalProducts: 0,
+        verifiedUsers: 0,
         totalSales: 0,
         netProfits: 0,
         activeOrders: 0,
@@ -47,10 +47,10 @@ export async function fetchAdminDashboardStats() {
             const { data: users, error: userErr } = await supabase
                 .from('users')
                 .select('*');
-            if (!userErr && users && Array.isArray(users) && users.length > 0) {
-                stats.verifiedUsers = Math.max(users.length, stats.activeStores + stats.pendingRequests);
+            if (!userErr && users && Array.isArray(users)) {
+                stats.verifiedUsers = users.length;
             } else {
-                stats.verifiedUsers = Math.max(4, stats.activeStores + stats.pendingRequests);
+                stats.verifiedUsers = 0;
             }
 
             // 5. Fetch orders

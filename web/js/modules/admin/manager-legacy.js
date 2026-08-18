@@ -145,8 +145,8 @@
             `).join('');
         };
 
-        window.deleteManagerStore = function(id) {
-            if (!confirm('هل أنت متأكد من حذف هذا المتجر نهائياً؟')) return;
+        window.deleteManagerStore = async function(id) {
+            if (!confirm('هل أنت متأكد من حذف هذا المتجر وجميع منتجاته نهائياً؟')) return;
             let stores = getDB("stores_list_old", []);
             stores = stores.filter(s => (s.id !== id && s.storeId !== id));
             localStorage.setItem("stores_list_old", JSON.stringify(stores));
@@ -154,7 +154,21 @@
             let stores2 = getDB("stores", []);
             stores2 = stores2.filter(s => (s.id !== id && s.storeId !== id));
             localStorage.setItem("stores", JSON.stringify(stores2));
+
+            if (window.supabaseClient) {
+                try {
+                    await window.supabaseClient.from('products').delete().eq('store_id', id);
+                    await window.supabaseClient.from('market_posts').delete().eq('store_id', id);
+                    await window.supabaseClient.from('stores').delete().eq('id', id);
+                    await window.supabaseClient.from('merchant_requests').delete().eq('user_id', id);
+                } catch(e) {
+                    console.warn("Supabase manager delete store note:", e);
+                }
+            }
+
             window.renderManagerStores();
+            if (typeof renderManagerStats === 'function') renderManagerStats();
+            if (typeof renderWilayaTable === 'function') renderWilayaTable();
         };
 
         window.toggleManagerStorePause = function(id) {
@@ -165,7 +179,7 @@
             window.renderManagerStores();
         };
 
-        window.deleteManagerProduct = function(id) {
+        window.deleteManagerProduct = async function(id) {
             if (!confirm('هل أنت متأكد من حذف هذا المنتج نهائياً؟')) return;
             let products = getDB("products", []);
             products = products.filter(p => (p.id !== id && p.productId !== id));
@@ -174,8 +188,18 @@
             let products2 = getDB("zalo_products", []);
             products2 = products2.filter(p => (p.id !== id && p.productId !== id));
             localStorage.setItem("zalo_products", JSON.stringify(products2));
+
+            if (window.supabaseClient) {
+                try {
+                    await window.supabaseClient.from('products').delete().eq('id', id);
+                    await window.supabaseClient.from('market_posts').delete().eq('id', id);
+                } catch(e) {
+                    console.warn("Supabase manager delete product note:", e);
+                }
+            }
             
             renderManagerProducts();
+            if (typeof renderManagerStats === 'function') renderManagerStats();
         };
 
         function openStatDetailModal(type) {

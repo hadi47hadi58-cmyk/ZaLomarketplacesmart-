@@ -1,71 +1,6 @@
 import { supabase } from '../../supabase-config.js';
 
-let MOCK_FALLBACK_STORES = [
-    {
-        id: 4,
-        merchant_id: 13,
-        store_name: "ABDELALI.PHONE",
-        owner_name: "عبد العالي للهواتف",
-        email: "abdelali.phone@zalo.dz",
-        phone: "0696795160",
-        whatsapp: "0696795160",
-        wilaya: "58 المنيعة",
-        commune: "المنيعة",
-        category: "هواتف وإلكترونيات",
-        store_type: "سجل تجاري إلكتروني",
-        rc_number: "47/00-192837B58",
-        status: "APPROVED",
-        created_at: "2026-06-25T23:53:56.303Z"
-    },
-    {
-        id: 3,
-        merchant_id: 12,
-        store_name: "Nadjemi Abdelhadi",
-        owner_name: "نجمي عبد الهادي",
-        email: "nadjemi.abdelhadi@zalo.dz",
-        phone: "0698694010",
-        whatsapp: "0698694010",
-        wilaya: "16 الجزائر",
-        commune: "الجزائر",
-        category: "هواتف وإلكترونيات",
-        store_type: "نشاط حر / خدمات",
-        rc_number: "16/00-984726A16",
-        status: "SUSPENDED",
-        created_at: "2026-06-25T23:53:56.183Z"
-    },
-    {
-        id: 2,
-        merchant_id: 11,
-        store_name: "ZaLo kids",
-        owner_name: "أزياء الأطفال زالو",
-        email: "zalo.kids@zalo.dz",
-        phone: "0673544540",
-        whatsapp: "0673544540",
-        wilaya: "58 المنيعة",
-        commune: "المنيعة",
-        category: "ملابس وأزياء",
-        store_type: "سجل تجاري نظامي",
-        rc_number: "58/00-482910C58",
-        status: "APPROVED",
-        created_at: "2026-06-25T23:53:56.059Z"
-    },
-    {
-        id: 1,
-        merchant_id: 10,
-        store_name: "متجري الشريك المعتمد",
-        owner_name: "التاجر الشريك الأول",
-        email: "partner1@zalo.dz",
-        phone: "0698694010",
-        whatsapp: "0698694010",
-        wilaya: "58 المنيعة",
-        commune: "بلدية المنيعة",
-        category: "عام",
-        store_type: "نشاط معتمد",
-        rc_number: "58/00-001928A58",
-        status: "SUSPENDED",
-        created_at: "2026-06-25T23:53:55.613Z"
-    }
-];
+let MOCK_FALLBACK_STORES = [];
 
 function getStatusOverrides() {
     try {
@@ -237,23 +172,14 @@ export async function fetchMerchantRequests() {
         console.warn("[admin-requests] Local storage merge warning:", e);
     }
 
-    // 4. Ensure foundational stores exist and have overrides applied
-    MOCK_FALLBACK_STORES.forEach(mock => {
-        let mockStatus = mock.status;
-        if (statusOverrides[String(mock.id)] || statusOverrides[mock.store_name]) {
-            mockStatus = statusOverrides[String(mock.id)] || statusOverrides[mock.store_name];
-        }
-        mock.status = mockStatus;
-
-        const existsIdx = allRequests.findIndex(r => r.id == mock.id || (r.store_name && r.store_name.trim() === mock.store_name.trim()));
-        if (existsIdx === -1) {
-            allRequests.push({ ...mock });
-        } else {
-            allRequests[existsIdx].status = mockStatus;
-        }
+    // Filter out fake test stores
+    const fakeStoreNames = ["ABDELALI.PHONE", "ZaLo kids", "Nadjemi Abdelhadi", "متجري الشريك المعتمد"];
+    allRequests = allRequests.filter(r => {
+        const sName = r.store_name || r.name || '';
+        return !fakeStoreNames.some(fn => sName.includes(fn));
     });
 
-    // 5. Keep stores_list_old in sync so stats and wilayas update
+    // Keep stores_list_old in sync so stats and wilayas update
     try {
         const storesSync = allRequests.map(r => ({
             id: r.id,
@@ -408,5 +334,56 @@ export async function rejectMerchantRequest(requestId) {
         return false;
     }
 }
+
+export async function deleteMerchantRequest(requestId) {
+    try {
+        let targetStoreName = '';
+        const curReqs = await fetchMerchantRequests();
+        const found = curReqs.find(r => r.id == requestId || r.id === requestId);
+        if (found) targetStoreName = found.store_name;
+
+        // 1. Delete from Supabase
+        if (supabase) {
+            try {
+                await supabase.from('merchant_requests').delete().eq('id', requestId);
+            } catch(e){}
+            try {
+                await supabase.from('stores').delete().eq('id', requestId);
+            } catch(e){}
+            try {
+                await supabase.from('products').delete().eq('store_id', requestId);
+            } catch(e){}
+            try {
+                await supabase.from('market_posts').delete().eq('store_id', requestId);
+            } catch(e){}
+        }
+
+        // 2. Remove from LocalStorage
+        const removeFromList = (key) => {
+            try {
+                let list = JSON.parse(localStorage.getItem(key) || '[]');
+                list = list.filter(item => item.id != requestId && item.id !== requestId && (!targetStoreName || (item.name !== targetStoreName && item.store_name !== targetStoreName && item.storeName !== targetStoreName)));
+                localStorage.setItem(key, JSON.stringify(list));
+            } catch (e) {}
+        };
+        removeFromList('zalo_local_merchant_requests');
+        removeFromList('zalo_merchant_requests');
+        removeFromList('zalo_fallback_shops');
+        removeFromList('stores_list_old');
+        removeFromList('zalo_stores_list_old');
+        removeFromList('zalo_official_stores');
+
+        if (typeof window.renderStats === 'function') window.renderStats();
+        if (typeof window.renderWilayaTable === 'function') window.renderWilayaTable();
+        if (typeof window.renderGlobalStoresTable === 'function') window.renderGlobalStoresTable();
+        if (typeof window.renderRegistrations === 'function') window.renderRegistrations();
+
+        return true;
+    } catch (e) {
+        console.error("[admin-requests] delete error:", e);
+        return false;
+    }
+}
+
 
 

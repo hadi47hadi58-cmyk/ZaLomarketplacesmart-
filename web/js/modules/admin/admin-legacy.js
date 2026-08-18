@@ -162,76 +162,9 @@
             { code: "69", name: "أفلو (ولاية منتدبة)", activeStores: 0, activeMerchants: 0, cancelledOrders: 0, avgDeliveryTime: "--" }
         ];
 
-        // Default mock active stores list (Seeded with real live stores)
-        const MOCK_STORES = [
-            {
-                id: 4,
-                name: "ABDELALI.PHONE",
-                store_name: "ABDELALI.PHONE",
-                owner: "عبد العالي",
-                owner_name: "عبد العالي",
-                phone: "0696795160",
-                location: "58 المنيعة",
-                wilaya: "58 المنيعة",
-                commune: "المنيعة",
-                category: "هواتف وإلكترونيات",
-                status: "APPROVED",
-                rating: 5,
-                isLive: true
-            },
-            {
-                id: 2,
-                name: "ZaLo kids",
-                store_name: "ZaLo kids",
-                owner: "زالو كيدز",
-                owner_name: "زالو كيدز",
-                phone: "0673544540",
-                location: "58 المنيعة",
-                wilaya: "58 المنيعة",
-                commune: "المنيعة",
-                category: "ملابس وأزياء",
-                status: "APPROVED",
-                rating: 5,
-                isLive: true
-            },
-            {
-                id: 3,
-                name: "Nadjemi Abdelhadi",
-                store_name: "Nadjemi Abdelhadi",
-                owner: "نجمي عبد الهادي",
-                owner_name: "نجمي عبد الهادي",
-                phone: "0698694010",
-                location: "16 الجزائر",
-                wilaya: "16 الجزائر",
-                commune: "الجزائر",
-                category: "هواتف وإلكترونيات",
-                status: "SUSPENDED",
-                rating: 5,
-                isLive: true
-            },
-            {
-                id: 1,
-                name: "متجري الشريك المعتمد",
-                store_name: "متجري الشريك المعتمد",
-                owner: "التاجر الشريك",
-                owner_name: "التاجر الشريك",
-                phone: "0698694010",
-                location: "المنيعة",
-                wilaya: "المنيعة",
-                commune: "بلدية المنيعة",
-                category: "عام",
-                status: "SUSPENDED",
-                rating: 5,
-                isLive: true
-            }
-        ];
-
-        const MOCK_PRODUCTS = [
-            { id: 1, name: "حامل الهواتف المحمولة", productName: "حامل الهواتف المحمولة", price: 1300, stock: 13, category: "هواتف وإلكترونيات", store_id: 4, store_name: "ABDELALI.PHONE" },
-            { id: 2, name: "ساعة ذكية رياضية", productName: "ساعة ذكية رياضية", price: 2500, stock: 10, category: "هواتف وإلكترونيات", store_id: 4, store_name: "ABDELALI.PHONE" },
-            { id: 3, name: "حامل دفتر الصحي الاطفال", productName: "حامل دفتر الصحي الاطفال", price: 3000, stock: 5, category: "ملابس وأزياء", store_id: 2, store_name: "ZaLo kids" },
-            { id: 4, name: "فراش تغيير ملابس اطفال", productName: "فراش تغيير ملابس اطفال", price: 4500, stock: 8, category: "ملابس وأزياء", store_id: 2, store_name: "ZaLo kids" }
-        ];
+        // Default mock lists (Empty - strictly relies on real data)
+        const MOCK_STORES = [];
+        const MOCK_PRODUCTS = [];
 
         // Seed data structures
         function initOldAdminDashboard() {
@@ -243,19 +176,26 @@
             if (sName) sName.innerText = userName;
             if (sEmail) sEmail.innerText = userEmail;
 
-            // Seed stores if not exists or empty
-            let stores = getDB("stores_list_old", []);
-            if (!stores || stores.length === 0) {
-                stores = MOCK_STORES;
-                setDB("stores_list_old", stores);
-            }
+            // Seed announcements
+            let announcements = getDB("global_announcements", [
+                { id: "a1", text: "مرحبا بكم في منصة زالو ديزاد، تم تفعيل بوابات الرقابة الأمنية بالكامل.", type: "إداري", date: "2026-07-14 10:15", popup: false }
+            ]);
+            setDB("global_announcements", announcements);
 
-            // Seed products if not exists or empty
-            let products = getDB("products", []);
-            if (!products || products.length === 0) {
-                products = MOCK_PRODUCTS;
-                setDB("products", products);
-            }
+            // Populate ui
+            renderStats();
+            renderWilayaTable();
+            renderAnnouncements();
+            renderRegistrations();
+            
+            // New Modules Initialization
+            loadGlobalSettings();
+            regenerateGlobalQR();
+            renderFinancialReports();
+            renderUsersTable();
+            renderGlobalProductsTable();
+            initTeamManagement();
+        }
 
             // Seed announcements
             let announcements = getDB("global_announcements", [
@@ -280,8 +220,10 @@
 
         // Render counters
         function renderStats() {
-            let stores = getDB("stores_list_old", MOCK_STORES);
-            if (!stores || stores.length === 0) stores = MOCK_STORES;
+            let stores = getDB("stores_list_old", []);
+            // Filter out fake store names
+            const fakeStoreNames = ["ABDELALI.PHONE", "ZaLo kids", "Nadjemi Abdelhadi", "متجري الشريك المعتمد"];
+            stores = stores.filter(s => !fakeStoreNames.some(fn => (s.name || s.store_name || '').includes(fn)));
 
             let activeCount = stores.filter(s => {
                 const st = String(s.status || '').toUpperCase();
@@ -302,8 +244,9 @@
             if (pendingRegBadge) pendingRegBadge.innerText = pendingCount;
 
             // Total products count from local database
-            let products = getDB("products", MOCK_PRODUCTS);
-            if (!products || products.length === 0) products = MOCK_PRODUCTS;
+            let products = getDB("products", []);
+            const fakeProdNames = ["حامل الهواتف المحمولة", "ساعة ذكية", "طقم أواني", "حامل الدفتر الصحي", "فراش تغيير ملابس"];
+            products = products.filter(p => !fakeProdNames.some(fn => (p.name || p.productName || '').includes(fn)));
             let count = products.length; 
             const prodEl = document.getElementById('stat-total-products');
             if (prodEl) prodEl.innerText = count;
@@ -320,14 +263,13 @@
             const ordEl = document.getElementById('stat-active-orders');
             if (ordEl) ordEl.innerText = activeOrders.length + " طلبات";
 
-            // Platform rating (dynamic or static 5.0 default if no reviews)
+            // Platform rating
             const ratEl = document.getElementById('stat-platform-rating');
             if (ratEl) ratEl.innerText = "5.0 / 5.0 ★";
 
             // Real registered/verified users count
             let users = getDB("users", []);
             let verifiedUsers = users.filter(u => (u.phone && u.phone.trim().length > 0) || (u.email && u.email.trim().length > 0)).length;
-            if (verifiedUsers === 0) verifiedUsers = Math.max(4, stores.length);
             const userEl = document.getElementById('stat-verified-users');
             if (userEl) userEl.innerText = verifiedUsers + " عميل";
 
@@ -366,21 +308,14 @@
             let contentHtml = "";
 
             const users = getDB("users", []);
-            let stores = getDB("stores_list_old", MOCK_STORES);
-            if (!stores || stores.length === 0) stores = MOCK_STORES;
-            let products = getDB("products", MOCK_PRODUCTS);
-            if (!products || products.length === 0) products = MOCK_PRODUCTS;
+            let stores = getDB("stores_list_old", []);
+            let products = getDB("products", []);
             const orders = getDB("orders", []);
 
             if (type === "users" || type === "verified-users") {
                 title = "بيانات وإحصائيات المستخدمين المسجلين";
                 icon = "fa-users";
-                const displayUsers = users.length > 0 ? users : [
-                    { name: "عبد العالي", phone: "0696795160", role: "تاجر معتمد", wilaya: "58 المنيعة" },
-                    { name: "زالو كيدز", phone: "0673544540", role: "تاجر معتمد", wilaya: "58 المنيعة" },
-                    { name: "نجمي عبد الهادي", phone: "0698694010", role: "تاجر مسجل", wilaya: "16 الجزائر" },
-                    { name: "التاجر الشريك", phone: "0698694010", role: "تاجر مسجل", wilaya: "المنيعة" }
-                ];
+                const displayUsers = users;
                 contentHtml = `
                     <div class="space-y-4">
                         <div class="flex justify-between items-center bg-sky-50 p-3 rounded-xl border border-sky-200 text-xs">
@@ -388,7 +323,7 @@
                             <span class="text-[10px] bg-sky-200 text-sky-900 px-2 py-0.5 rounded-full font-black">محدث آلياً</span>
                         </div>
                         <div class="max-h-80 overflow-y-auto space-y-2">
-                            ${displayUsers.map(u => `
+                            ${displayUsers.length === 0 ? '<p class="text-center text-slate-400 py-6 font-bold">لا يوجد مستخدمون مسجلون بعد</p>' : displayUsers.map(u => `
                                 <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 flex justify-between items-center text-xs">
                                     <div>
                                         <p class="font-black text-slate-800">${u.name || 'مستخدم'}</p>
@@ -622,8 +557,9 @@
 
         // Helper to update Wilayas stats dynamically from real store list
         function updateWilayasFromStores() {
-            let stores = getDB("stores_list_old", MOCK_STORES);
-            if (!stores || stores.length === 0) stores = MOCK_STORES;
+            let stores = getDB("stores_list_old", []);
+            const fakeStoreNames = ["ABDELALI.PHONE", "ZaLo kids", "Nadjemi Abdelhadi", "متجري الشريك المعتمد"];
+            stores = stores.filter(s => !fakeStoreNames.some(fn => (s.name || s.store_name || '').includes(fn)));
 
             if (typeof ALGERIAN_WILAYAS !== 'undefined' && Array.isArray(ALGERIAN_WILAYAS)) {
                 ALGERIAN_WILAYAS.forEach(w => {
@@ -863,7 +799,7 @@
             if (!tbody) return;
             tbody.innerHTML = '';
 
-            let localStores = getDB("stores_list_old", MOCK_STORES);
+            let localStores = getDB("stores_list_old", []);
             let liveRequests = [];
             try {
                 if (window.supabaseClient) {
@@ -983,6 +919,9 @@
                 }
             });
 
+            const fakeStoreNames = ["ABDELALI.PHONE", "ZaLo kids", "Nadjemi Abdelhadi", "متجري الشريك المعتمد"];
+            mergedStores = mergedStores.filter(s => !fakeStoreNames.some(fn => (s.name || s.store_name || '').includes(fn)));
+
             setDB("stores_list_old", mergedStores);
             renderStats();
 
@@ -993,11 +932,15 @@
             // Dynamically update ALGERIAN_WILAYAS active store counts
             if (typeof ALGERIAN_WILAYAS !== 'undefined' && Array.isArray(ALGERIAN_WILAYAS)) {
                 ALGERIAN_WILAYAS.forEach(w => {
-                    const count = mergedStores.filter(st => st.location && (st.location.includes(w.name) || st.location.startsWith(w.code))).length;
-                    if (count > 0) {
-                        w.activeStores = count;
-                        w.activeMerchants = count;
-                    }
+                    const approvedCount = mergedStores.filter(st => {
+                        const s = String(st.status || '').toUpperCase();
+                        const isApproved = s === 'APPROVED' || s === 'ACTIVE';
+                        return isApproved && st.location && (st.location.includes(w.name) || st.location.startsWith(w.code));
+                    }).length;
+                    const merchantCount = mergedStores.filter(st => st.location && (st.location.includes(w.name) || st.location.startsWith(w.code))).length;
+                    w.activeStores = approvedCount;
+                    w.activeMerchants = merchantCount;
+                    w.avgDeliveryTime = approvedCount > 0 ? "24 ساعة" : "--";
                 });
                 renderWilayaTable();
             }
