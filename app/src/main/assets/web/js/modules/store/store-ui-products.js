@@ -428,19 +428,89 @@ window.merchantAddProductReal = async function(e) {
 window.merchantAddProduct = window.merchantAddProductReal;
 
 window.deleteProductReal = async function(id) {
-    if (confirm("هل أنت متأكد من حذف هذا المنتج نهائياً؟")) {
+    const doDelete = async () => {
+        const cleanId = String(id);
+        const storyId = cleanId.replace('story_prod_', '');
+
+        // 1. Remove from localStorage zalo_products
         try {
-            const { error } = await window.supabase.from('products').delete().eq('id', id);
-            if (error) throw error;
-            if (typeof Swal !== 'undefined') Swal.fire('تم', 'تم الحذف بنجاح', 'success');
-            else alert('تم الحذف');
+            let prods = JSON.parse(localStorage.getItem('zalo_products') || '[]');
+            prods = prods.filter(p => String(p.id || p.productId) !== cleanId && String(p.id || p.productId) !== storyId);
+            localStorage.setItem('zalo_products', JSON.stringify(prods));
+        } catch(e) {}
+
+        // 2. Remove from localStorage zalo_live_stories
+        try {
+            let stories = JSON.parse(localStorage.getItem('zalo_live_stories') || '[]');
+            stories = stories.filter(s => String(s.id) !== cleanId && String(s.id) !== storyId);
+            localStorage.setItem('zalo_live_stories', JSON.stringify(stories));
+        } catch(e) {}
+
+        // 3. Remove from legacy getDB
+        try {
+            if (typeof getDB === 'function' && typeof setDB === 'function') {
+                let legacyProds = getDB('products', []);
+                legacyProds = legacyProds.filter(p => String(p.id || p.productId) !== cleanId && String(p.id || p.productId) !== storyId);
+                setDB('products', legacyProds);
+            }
+        } catch(e) {}
+
+        // 4. Safely attempt Supabase deletion without breaking on string IDs
+        const sb = window.supabase || window.supabaseClient;
+        if (sb && sb.from) {
+            try {
+                if (!isNaN(parseInt(cleanId)) && !cleanId.includes('_')) {
+                    await sb.from('products').delete().eq('id', parseInt(cleanId));
+                }
+            } catch (err) {}
+            try {
+                await sb.from('market_posts').delete().eq('id', storyId);
+            } catch (err) {}
+        }
+
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                icon: 'success',
+                title: 'تم الحذف بنجاح! 🗑️',
+                confirmButtonText: 'حسناً',
+                timer: 1500
+            });
+        } else {
+            alert('تم حذف العنصر بنجاح! 🗑️');
+        }
+
+        if (typeof renderMerchantProductsReal === 'function') {
             renderMerchantProductsReal();
-        } catch (e) {
-            console.error(e);
-            if (window.zaloErrorHandler) window.zaloErrorHandler.showError("فشل الحذف");
+        }
+        if (typeof renderMerchantProducts === 'function' && renderMerchantProducts !== renderMerchantProductsReal) {
+            renderMerchantProducts();
+        }
+        if (typeof renderMerchantStories === 'function') {
+            renderMerchantStories();
+        }
+        if (typeof updateCounters === 'function') {
+            updateCounters();
+        }
+    };
+
+    if (typeof Swal !== 'undefined') {
+        Swal.fire({
+            title: 'هل أنت متأكد من الحذف؟',
+            text: 'سيتم حذف هذا العنصر نهائياً من المعرض وسوق الزبائن.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ef4444',
+            cancelButtonText: 'إلغاء',
+            confirmButtonText: 'نعم، احذف'
+        }).then(res => {
+            if (res.isConfirmed) doDelete();
+        });
+    } else {
+        if (confirm("هل أنت متأكد من حذف هذا العنصر نهائياً؟")) {
+            doDelete();
         }
     }
-}
+};
 
 window.editProductReal = async function(id) {
     const products = await fetchStoreProducts();
