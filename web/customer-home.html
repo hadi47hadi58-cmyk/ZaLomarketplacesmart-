@@ -2409,20 +2409,20 @@ body { margin: 0; padding: 0;
           <div id="story-progress-fill" style="width:100%; height:100%; background:#38bdf8;"></div>
         </div>
 
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-          <div style="display:flex; align-items:center; gap:10px;">
-            <img id="sv-avatar" src="assets/icon-192.svg" style="width:38px; height:38px; border-radius:50%; border:2px solid #38bdf8; object-fit:cover;">
-            <div>
-              <div id="sv-author" style="font-size:13px; font-weight:900; color:#ffffff;">متجر ZaLo</div>
-              <div style="font-size:10px; color:#94a3b8; display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin-top:2px;">
-                <span id="sv-wilaya"><i class="fa-solid fa-location-dot"></i> الجزائر</span> • 
-                <span id="sv-category" style="background:rgba(255,255,255,0.18); padding:1px 6px; border-radius:6px; color:#bae6fd; font-size:9.5px; font-weight:800;">عام</span> •
-                <span id="sv-time">الآن</span>
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div style="display:flex; align-items:center; gap:10px; cursor:pointer;" onclick="window.openStoreFromCurrentStory()">
+              <img id="sv-avatar" src="assets/icon-192.svg" style="width:38px; height:38px; border-radius:50%; border:2px solid #38bdf8; object-fit:cover;">
+              <div>
+                <div id="sv-author" style="font-size:13px; font-weight:900; color:#ffffff; display:flex; align-items:center; gap:5px;">متجر ZaLo <i class="fa-solid fa-arrow-left" style="font-size:10px; color:#38bdf8;"></i></div>
+                <div style="font-size:10px; color:#94a3b8; display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin-top:2px;">
+                  <span id="sv-wilaya"><i class="fa-solid fa-location-dot"></i> الجزائر</span> • 
+                  <span id="sv-category" style="background:rgba(255,255,255,0.18); padding:1px 6px; border-radius:6px; color:#bae6fd; font-size:9.5px; font-weight:800;">عام</span> •
+                  <span id="sv-time">الآن</span>
+                </div>
               </div>
             </div>
+            <button onclick="document.getElementById('storyViewerModal').style.display='none'" style="background:rgba(0,0,0,0.5); color:white; border:none; border-radius:50%; width:30px; height:30px; cursor:pointer; font-size:14px;">✕</button>
           </div>
-          <button onclick="document.getElementById('storyViewerModal').style.display='none'" style="background:rgba(0,0,0,0.5); color:white; border:none; border-radius:50%; width:30px; height:30px; cursor:pointer; font-size:14px;">✕</button>
-        </div>
       </div>
 
       <!-- Main Story Image -->
@@ -6391,6 +6391,20 @@ window.addStoryToCart = function() {
 
   window.addToCartDirect(item.id, item.name, item.price, item.img, s.emoji || '📦', item.storeId, item.storeName, 1);
   document.getElementById('storyViewerModal').style.display = 'none';
+};
+
+window.openStoreFromCurrentStory = function() {
+  if (!window.currentActiveStory) return;
+  const s = window.currentActiveStory;
+  document.getElementById('storyViewerModal').style.display = 'none';
+  const liveModal = document.getElementById('liveOffersFeedModal');
+  if (liveModal) liveModal.style.display = 'none';
+  
+  const sId = s.storeId || s.store_id || s.userId || ('store_' + encodeURIComponent(s.author || ''));
+  const sName = s.author || s.store_name || 'متجر معتمد';
+  if (typeof window.openStoreView === 'function') {
+    window.openStoreView(sId, sName);
+  }
 };
 
 window.openStoryViewer = function(storyId) {

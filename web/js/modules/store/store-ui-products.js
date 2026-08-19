@@ -308,42 +308,33 @@ window.merchantAddProductReal = async function(e) {
 
         const pId = 'p_' + Date.now();
         
-        // Try inserting/updating to Supabase products table
-        try {
-            const productData = {
-                name: name,
-                price: price,
-                category: category,
-                subcategory: subcategory,
-                description: desc,
-                stock: stock,
-                sku: sku,
-                weight: weight,
-                min_order: minOrder,
-                image_url: imgUrl,
-                status: 'active'
-            };
+        const sb = window.supabase || window.supabaseClient;
+        if (sb && sb.from) {
+            try {
+                const insertPayload = {
+                    name: name,
+                    price: price,
+                    category: category,
+                    description: desc,
+                    stock: stock,
+                    image_url: imgUrl,
+                    is_active: true
+                };
+                if (store && store.id && !isNaN(parseInt(store.id))) {
+                    insertPayload.store_id = parseInt(store.id);
+                }
 
-            if (window.editingProductId) {
-                const { error } = await window.supabase
-                    .from('products')
-                    .update(productData)
-                    .eq('id', window.editingProductId);
-                if (error) throw error;
-            } else {
-                const { error } = await window.supabase
-                    .from('products')
-                    .insert({
-                        id: pId,
-                        store_id: store.id,
-                        store_name: store.name || 'متجر معتمد',
-                        wilaya: store.wilaya || 'الجزائر',
-                        ...productData
-                    });
-                if (error) throw error;
+                if (window.editingProductId) {
+                    await sb.from('products').update(insertPayload).eq('id', window.editingProductId);
+                } else {
+                    const { data: insertedData, error: insErr } = await sb.from('products').insert([insertPayload]).select();
+                    if (!insErr && insertedData && insertedData[0]) {
+                        pId = String(insertedData[0].id);
+                    }
+                }
+            } catch(sbErr) {
+                console.warn("Supabase product insert error:", sbErr);
             }
-        } catch(sbErr) {
-            console.warn("Supabase sync error (offline/local fallback used):", sbErr);
         }
 
         // Also save to LocalStorage for instant UI refresh

@@ -1802,10 +1802,10 @@ window.merchantPublishStory = async function(e) {
     }
 
     // Publish to Supabase if connected
-    try {
-        if (window.supabaseClient) {
-            await window.supabaseClient.from('market_posts').insert({
-                id: newStory.id,
+    const sb = window.supabaseClient || window.supabase;
+    if (sb && sb.from) {
+        try {
+            await sb.from('market_posts').insert([{
                 store_name: storeName,
                 author_name: storeName,
                 author: storeName,
@@ -1821,10 +1821,10 @@ window.merchantPublishStory = async function(e) {
                 status: 'active',
                 post_type: 'story',
                 created_at: new Date().toISOString()
-            });
+            }]);
+        } catch(err) {
+            console.warn('Supabase story post:', err);
         }
-    } catch(err) {
-        console.warn('Supabase story post:', err);
     }
 
     // Reset Form
