@@ -1781,6 +1781,19 @@ window.openStoreFromCurrentStory = function() {
     window.openStoreView(sId, sName);
   }
 };
+
+window.switchTab = function(tabId) {
+  if (window.state) window.state.activeTab = tabId;
+  document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.bnav-btn-mockup').forEach(el => el.classList.remove('active'));
+  
+  const targetScreen = document.getElementById(`screen-${tabId}`);
+  if (targetScreen) targetScreen.classList.add('active');
+  
+  const targetBtn = document.querySelector(`.bnav-btn-mockup[data-tab="${tabId}"]`);
+  if (targetBtn) targetBtn.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+};
 </script>
 </head>
 <body>
@@ -1990,7 +2003,7 @@ window.openStoreFromCurrentStory = function() {
         <span style="font-size: 13px; font-weight: 900; color: #0284c7; display: flex; align-items: center; gap: 6px;">
           <i class="fa-solid fa-circle-play" style="color: #ef4444; font-size: 14px;"></i> قصص وبث مباشر المتاجر 🌟
         </span>
-        <button onclick="window.openLiveOffersFeedModal()" style="font-size: 11px; font-weight: 800; color: #0284c7; background: #f0f9ff; padding: 4px 10px; border-radius: 12px; border: 1.5px solid #38bdf8; cursor: pointer; display: flex; align-items: center; gap: 5px; box-shadow: 0 2px 6px rgba(2,132,199,0.15); transition: all 0.2s;">
+        <button id="btn-open-live-offers" onclick="window.openLiveOffersFeedModal()" style="font-size: 11px; font-weight: 800; color: #0284c7; background: #f0f9ff; padding: 5px 12px; border-radius: 12px; border: 1.5px solid #38bdf8; cursor: pointer; display: flex; align-items: center; gap: 5px; box-shadow: 0 2px 6px rgba(2,132,199,0.15); transition: all 0.2s; position: relative; z-index: 10; pointer-events: auto;">
           <i class="fa-solid fa-layer-group" style="color: #0284c7; font-size: 12px;"></i>
           <span>عروض حية</span>
         </button>
