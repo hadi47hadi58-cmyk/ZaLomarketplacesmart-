@@ -1659,6 +1659,10 @@ window.switchHomeFeedView = function(view) {
     }
     if (secMarket) secMarket.style.display = 'block';
     if (secStories) secStories.style.display = 'none';
+
+    if (window.applyActiveWilayaFilter) {
+      window.applyActiveWilayaFilter();
+    }
   }
 };
 
@@ -5018,13 +5022,41 @@ async function loadProducts() {
         status: 'active'
       },
       {
-        id: 'init_prod_zalo_service',
+        id: 'init_prod_zalo_service_1',
         name: 'بوشات أطفال وحقائب حصرية',
         price: 3000,
         stock: 25,
         category: 'أطفال ورضع',
         description: 'طقم بوشات أطفال وحقائب ممتازة بجودة عالية ومطرزة بحرفية.',
         image: 'https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?w=600&auto=format&fit=crop&q=80',
+        storeId: 'store_zalo_all',
+        storeName: 'Zalo all service',
+        wilaya: '58 - المنيعة',
+        phone: '0658000000',
+        status: 'active'
+      },
+      {
+        id: 'init_prod_zalo_service_2',
+        name: 'سيرفات رياضي محترف',
+        price: 5000,
+        stock: 20,
+        category: 'ملابس وأزياء',
+        description: 'أطقم سيرفات رياضي ممتازة بخامات مريحة وعالية الجودة.',
+        image: 'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=600&auto=format&fit=crop&q=80',
+        storeId: 'store_zalo_all',
+        storeName: 'Zalo all service',
+        wilaya: '58 - المنيعة',
+        phone: '0658000000',
+        status: 'active'
+      },
+      {
+        id: 'init_prod_zalo_service_3',
+        name: 'Zalo فون حامل هاتف ذكي للسيارات',
+        price: 1000,
+        stock: 40,
+        category: 'إلكترونيات وهواتف',
+        description: 'حامل الهاتف المغناطيسي الذكي للسيارات ثبات مطلق وأمان أثناء القيادة.',
+        image: 'https://images.unsplash.com/photo-1586105251261-72a756497a11?w=600&auto=format&fit=crop&q=80',
         storeId: 'store_zalo_all',
         storeName: 'Zalo all service',
         wilaya: '58 - المنيعة',
