@@ -228,15 +228,20 @@
 }
 .story-avatar-wrap .live-badge-dot {
   position: absolute;
-  bottom: 0;
-  right: 0;
-  background: #ef4444;
-  color: white;
-  font-size: 8px;
-  font-weight: 900;
-  padding: 1px 5px;
-  border-radius: 8px;
-  border: 1.5px solid white;
+  bottom: 2px;
+  right: 2px;
+  width: 14px;
+  height: 14px;
+  background: #22c55e;
+  border-radius: 50%;
+  border: 2.5px solid #ffffff;
+  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.4), 0 2px 4px rgba(0,0,0,0.25);
+  animation: liveDotPulse 2s infinite ease-in-out;
+}
+@keyframes liveDotPulse {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
+  70% { transform: scale(1.1); box-shadow: 0 0 0 6px rgba(34, 197, 94, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
 }
 .story-label {
   font-size: 10.5px;
@@ -1779,9 +1784,10 @@ body { margin: 0; padding: 0;
         <span style="font-size: 13px; font-weight: 900; color: #0284c7; display: flex; align-items: center; gap: 6px;">
           <i class="fa-solid fa-circle-play" style="color: #ef4444; font-size: 14px;"></i> قصص وبث مباشر المتاجر 🌟
         </span>
-        <span style="font-size: 10.5px; font-weight: 800; color: #64748b; background: #f0f9ff; padding: 2px 8px; border-radius: 10px; border: 1px solid #bae6fd;">
-          عروض حية
-        </span>
+        <button onclick="window.openLiveOffersFeedModal()" style="font-size: 11px; font-weight: 800; color: #0284c7; background: #f0f9ff; padding: 4px 10px; border-radius: 12px; border: 1.5px solid #38bdf8; cursor: pointer; display: flex; align-items: center; gap: 5px; box-shadow: 0 2px 6px rgba(2,132,199,0.15); transition: all 0.2s;">
+          <i class="fa-solid fa-layer-group" style="color: #0284c7; font-size: 12px;"></i>
+          <span>عروض حية</span>
+        </button>
       </div>
       <div class="stories-scroll" id="home-stories-container" style="display: flex; gap: 12px; overflow-x: auto; padding-bottom: 4px;">
         <!-- Dynamically rendered stories -->
@@ -2431,20 +2437,44 @@ body { margin: 0; padding: 0;
           <span id="sv-price" style="font-size:15px; font-weight:900; color:#facc15; white-space:nowrap; text-shadow:0 2px 4px rgba(0,0,0,0.8);"></span>
         </div>
 
-        <div style="display:flex; gap:6px;">
-          <a id="sv-whatsapp-btn" href="#" target="_blank" style="flex:2; height:44px; background:linear-gradient(135deg, #25D366, #128C7E); color:white; border-radius:12px; font-weight:900; font-size:12.5px; text-decoration:none; display:flex; align-items:center; justify-content:center; gap:6px; box-shadow:0 4px 12px rgba(37,211,102,0.35);">
-            <i class="fa-brands fa-whatsapp" style="font-size:16px;"></i> ⚡ واتساب
+        <div style="display:grid; grid-template-columns: 1.1fr 1.05fr 0.95fr 0.7fr; gap:6px; align-items:center;">
+          <a id="sv-whatsapp-btn" href="#" target="_blank" style="height:44px; background:linear-gradient(135deg, #25D366, #128C7E); color:white; border-radius:12px; font-weight:900; font-size:11.5px; text-decoration:none; display:flex; align-items:center; justify-content:center; gap:4px; box-shadow:0 4px 12px rgba(37,211,102,0.35);">
+            <i class="fa-brands fa-whatsapp" style="font-size:15px;"></i> واتساب
           </a>
-          <button onclick="window.addStoryToCart()" style="flex:2; height:44px; background:var(--brand-gold, #D4AF37); color:var(--navy); border:none; border-radius:12px; font-weight:900; font-size:12.5px; display:flex; align-items:center; justify-content:center; gap:6px; box-shadow:0 4px 12px rgba(212,175,55,0.25); cursor:pointer;">
+          <button onclick="window.quickOrderCurrentStory()" style="height:44px; background:linear-gradient(135deg, #0284c7, #0369a1); color:white; border:none; border-radius:12px; font-weight:900; font-size:11.5px; display:flex; align-items:center; justify-content:center; gap:4px; box-shadow:0 4px 12px rgba(2,132,199,0.35); cursor:pointer;">
+            <i class="fa-solid fa-bolt-lightning" style="color:#fef08a;"></i> طلب مباشر
+          </button>
+          <button onclick="window.addStoryToCart()" style="height:44px; background:var(--brand-gold, #D4AF37); color:var(--navy); border:none; border-radius:12px; font-weight:900; font-size:11.5px; display:flex; align-items:center; justify-content:center; gap:4px; box-shadow:0 4px 12px rgba(212,175,55,0.25); cursor:pointer;">
             <i class="fa-solid fa-cart-plus"></i> سلة
           </button>
-          <button onclick="toggleStoryLike()" id="sv-like-btn" style="flex:1; min-width:50px; height:44px; background:rgba(255,255,255,0.18); backdrop-filter:blur(8px); border:1.5px solid rgba(251,191,36,0.5); border-radius:12px; color:#fbbf24; cursor:pointer; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1px; padding:2px 6px;">
-            <span style="font-size:16px; line-height:1;">⭐</span>
-            <span id="sv-likes-count" style="font-size:9.5px; font-weight:900; color:#fbbf24;">42</span>
+          <button onclick="toggleStoryLike()" id="sv-like-btn" style="height:44px; background:rgba(255,255,255,0.18); backdrop-filter:blur(8px); border:1.5px solid rgba(251,191,36,0.5); border-radius:12px; color:#fbbf24; cursor:pointer; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1px; padding:2px 4px;">
+            <span style="font-size:15px; line-height:1;">⭐</span>
+            <span id="sv-likes-count" style="font-size:9px; font-weight:900; color:#fbbf24;">42</span>
           </button>
         </div>
       </div>
 
+    </div>
+  </div>
+
+  <!-- MODAL: ALL LIVE OFFERS / STORIES FEED (Full Vertical List) -->
+  <div class="modal-overlay" id="liveOffersFeedModal" onclick="if(event.target===this) this.style.display='none'">
+    <div class="modal-content" style="max-width:520px; width:95%; max-height:88vh; border-radius:24px; overflow:hidden; background:#f8fafc; display:flex; flex-direction:column; box-shadow:0 25px 60px rgba(0,0,0,0.35);">
+      
+      <!-- Feed Modal Header -->
+      <div class="modal-header" style="background:linear-gradient(135deg, #0284c7, #0369a1); color:white; padding:15px 18px; display:flex; justify-content:space-between; align-items:center; flex-shrink:0;">
+        <span style="font-size:14px; font-weight:900; display:flex; align-items:center; gap:8px;">
+          <span style="display:inline-block; width:10px; height:10px; background:#22c55e; border-radius:50%; box-shadow:0 0 0 3px rgba(34,197,94,0.4);"></span>
+          العروض والقصص اللحظية المباشرة 🇩🇿
+        </span>
+        <button class="modal-close" style="color:white; opacity:0.85; font-size:18px; background:transparent; border:none; cursor:pointer;" onclick="document.getElementById('liveOffersFeedModal').style.display='none'">✕</button>
+      </div>
+
+      <!-- Feed List Container -->
+      <div class="modal-body" style="padding:14px; overflow-y:auto; flex:1; display:flex; flex-direction:column; gap:14px;" id="live-offers-feed-list">
+        <!-- Dynamically populated vertical stories feed -->
+      </div>
+      
     </div>
   </div>
 
@@ -4536,9 +4566,9 @@ async function loadProducts() {
   const grid = document.getElementById('home-pgrid');
   if (!grid) return;
 
-  const fakeNames = ["حامل الهواتف المحمولة", "ساعة ذكية رياضية", "ساعة ذكية", "طقم أواني", "أحذية", "حذاء رياضي", "هاتف ذكي"];
+  const fakeNames = ["حامل الهواتف المحمولة", "ساعة ذكية رياضية", "ساعة ذكية", "طقم أواني", "أحذية", "حذاء رياضي", "هاتف ذكي", "حامل دفتر", "فراش تغيير", "حامل دفتر الصحي"];
 
-  let remoteProds = [];
+  let remoteProds = null;
   let officialStores = [];
   let currentStories = [];
 
@@ -4567,24 +4597,20 @@ async function loadProducts() {
       try {
         const { data: remoteStores, error: storeErr } = await sb.from('stores').select('*');
         if (!storeErr && Array.isArray(remoteStores)) {
-          remoteStores.forEach(rs => {
-            const sName = rs.name || rs.store_name;
-            if (!sName) return;
-            const exists = officialStores.some(s => s.id === rs.id || s.name === sName);
-            if (!exists) {
-              officialStores.push({
-                id: rs.id,
-                name: sName,
-                wilaya: rs.wilaya || 'الجزائر',
-                commune: rs.baladiya || rs.commune || '',
-                category: rs.category || 'عام',
-                phone: rs.phone || '',
-                logo: rs.logo_url || 'assets/icon-192.svg',
-                coverImage: rs.banner_url || 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=500',
-                isOfficial: true,
-                status: rs.status || 'active'
-              });
-            }
+          officialStores = remoteStores.map(rs => {
+            const sName = rs.name || rs.store_name || 'متجر معتمد';
+            return {
+              id: rs.id,
+              name: sName,
+              wilaya: rs.wilaya || 'الجزائر',
+              commune: rs.baladiya || rs.commune || '',
+              category: rs.category || 'عام',
+              phone: rs.phone || '',
+              logo: rs.logo_url || 'assets/icon-192.svg',
+              coverImage: rs.banner_url || 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=500',
+              isOfficial: true,
+              status: rs.status || 'active'
+            };
           });
           localStorage.setItem('zalo_official_stores', JSON.stringify(officialStores));
         }
@@ -4594,32 +4620,33 @@ async function loadProducts() {
       try {
         const { data: remotePosts, error: postErr } = await sb.from('market_posts').select('*');
         if (!postErr && Array.isArray(remotePosts)) {
-          remotePosts.forEach(rp => {
+          currentStories = remotePosts.map(rp => {
             const cap = rp.caption || rp.description || rp.title || rp.content || '';
             const author = rp.author || rp.store_name || rp.author_name || 'ZaLo merchant';
-            const exists = currentStories.some(s => String(s.id) === String(rp.id));
-            if (!exists) {
-              currentStories.unshift({
-                id: rp.id,
-                author: author,
-                store_name: author,
-                name: author,
-                wilaya: rp.wilaya || 'الجزائر',
-                category: rp.category || 'عام',
-                subcategory: rp.subcategory || 'تخصص عام',
-                price: rp.price || '0',
-                quantity: rp.quantity || '1',
-                caption: cap,
-                title: rp.title || cap,
-                phone: rp.phone || '',
-                image: rp.image_url || rp.image || 'assets/icon-192.svg',
-                logo: rp.logo_url || rp.logo || 'assets/icon-192.svg',
-                likes: rp.likes || 1,
-                time: 'منذ لحظات'
-              });
-            }
+            return {
+              id: String(rp.id),
+              author: author,
+              store_name: author,
+              name: author,
+              storeId: rp.store_id || rp.user_id || ('store_' + encodeURIComponent(author)),
+              userId: rp.user_id || 'merchant',
+              wilaya: rp.wilaya || 'الجزائر',
+              category: rp.category || 'عام',
+              subcategory: rp.subcategory || 'تخصص عام',
+              price: rp.price || '0',
+              quantity: rp.quantity || '1',
+              caption: cap,
+              title: rp.title || cap,
+              phone: rp.phone || '',
+              image: rp.image_url || rp.image || 'images/wilaya-thumb.jpg',
+              logo: rp.logo_url || rp.logo || rp.store_logo || 'assets/icon-192.svg',
+              likes: rp.likes || 1,
+              time: 'منذ قليل',
+              created_at: rp.created_at || new Date().toISOString()
+            };
           });
           localStorage.setItem('zalo_live_stories', JSON.stringify(currentStories));
+          window.liveStoriesList = currentStories;
         }
       } catch(e) {}
     }
@@ -4650,49 +4677,18 @@ async function loadProducts() {
     }
   } catch(e) {}
 
-  // Merge remote products with local products
-  let localProducts = [];
-  try {
-    localProducts = JSON.parse(localStorage.getItem('zalo_products') || '[]');
-  } catch(e) {}
+  let merged = [];
 
-  let mergedMap = new Map();
-
-  remoteProds
-    .filter(p => {
-      const pName = p.name || p.productName || '';
-      return !fakeNames.some(fn => pName.includes(fn));
-    })
-    .forEach(p => {
-      const id = String(p.id || p.productId || ('p_' + Date.now()));
-      mergedMap.set(id, {
-        id: id,
-        productId: id,
-        name: p.name || p.productName || 'سلعة ZaLo',
-        productName: p.productName || p.name || 'سلعة ZaLo',
-        price: parseFloat(p.price) || 0,
-        stock: parseInt(p.stock !== undefined ? p.stock : (p.stock_quantity || 0)) || 0,
-        category: p.category || 'عام',
-        subcategory: p.subcategory || '',
-        description: p.description || p.desc || '',
-        image: p.image || p.imageUrl || p.image_url || p.imageURL || 'assets/icon-192.svg',
-        storeId: p.store_id || p.storeId || 'direct',
-        storeName: p.store_name || p.storeName || 'متجر معتمد',
-        wilaya: p.wilaya || 'الجزائر',
-        phone: p.phone || '',
-        status: p.status || 'active'
-      });
-    });
-
-  localProducts
-    .filter(p => {
-      const pName = p.name || p.productName || '';
-      return !fakeNames.some(fn => pName.includes(fn));
-    })
-    .forEach(p => {
-      const id = String(p.id || p.productId || '');
-      if (id && !mergedMap.has(id)) {
-        mergedMap.set(id, {
+  if (remoteProds !== null) {
+    // Authoritative Supabase data
+    merged = remoteProds
+      .filter(p => {
+        const pName = p.name || p.productName || '';
+        return !fakeNames.some(fn => pName.includes(fn));
+      })
+      .map(p => {
+        const id = String(p.id || p.productId || ('p_' + Date.now()));
+        return {
           id: id,
           productId: id,
           name: p.name || p.productName || 'سلعة ZaLo',
@@ -4708,20 +4704,44 @@ async function loadProducts() {
           wilaya: p.wilaya || 'الجزائر',
           phone: p.phone || '',
           status: p.status || 'active'
-        });
-      }
-    });
+        };
+      });
 
-  let merged = Array.from(mergedMap.values());
-
-  // Store products cache
-  if (merged.length > 0) {
     try {
       localStorage.setItem('zalo_products', JSON.stringify(merged));
-    } catch (e) {}
-    if (window.ZaLoDB) {
-      window.ZaLoDB.saveProducts(merged);
-    }
+    } catch(e) {}
+  } else {
+    // Offline local fallback
+    let localProducts = [];
+    try {
+      localProducts = JSON.parse(localStorage.getItem('zalo_products') || '[]');
+    } catch(e) {}
+
+    merged = localProducts
+      .filter(p => {
+        const pName = p.name || p.productName || '';
+        return !fakeNames.some(fn => pName.includes(fn));
+      })
+      .map(p => {
+        const id = String(p.id || p.productId || ('p_' + Date.now()));
+        return {
+          id: id,
+          productId: id,
+          name: p.name || p.productName || 'سلعة ZaLo',
+          productName: p.productName || p.name || 'سلعة ZaLo',
+          price: parseFloat(p.price) || 0,
+          stock: parseInt(p.stock !== undefined ? p.stock : (p.stock_quantity || 0)) || 0,
+          category: p.category || 'عام',
+          subcategory: p.subcategory || '',
+          description: p.description || p.desc || '',
+          image: p.image || p.imageUrl || p.image_url || p.imageURL || 'assets/icon-192.svg',
+          storeId: p.store_id || p.storeId || 'direct',
+          storeName: p.store_name || p.storeName || 'متجر معتمد',
+          wilaya: p.wilaya || 'الجزائر',
+          phone: p.phone || '',
+          status: p.status || 'active'
+        };
+      });
   }
 
   state.loadedProducts = merged;
@@ -5831,7 +5851,7 @@ window.renderHomeStories = function() {
       <div class="story-card-item" onclick="openStoryViewer('${st.id}')">
         <div class="story-avatar-wrap">
           <img src="${st.logo || st.image || st.avatar || 'images/wilaya-thumb.jpg'}" alt="${st.author || 'تاجر'}" onerror="this.src='images/wilaya-thumb.jpg'">
-          <span class="live-badge-dot">مباشر</span>
+          <span class="live-badge-dot" title="عرض مباشر"></span>
         </div>
         <div class="story-label" title="${st.author || 'تاجر'}">${st.author || 'تاجر'}</div>
       </div>
@@ -6374,22 +6394,33 @@ window.addStoryToCart = function() {
 };
 
 window.openStoryViewer = function(storyId) {
-  const story = (window.liveStoriesList || []).find(s => s.id === storyId);
+  let stories = [];
+  try {
+    stories = JSON.parse(localStorage.getItem('zalo_live_stories') || '[]');
+  } catch(e) {}
+  if (!stories.length) stories = window.liveStoriesList || [];
+  const story = stories.find(s => String(s.id) === String(storyId));
   if (!story) return;
 
   window.currentActiveStory = story;
 
-  document.getElementById('sv-author').textContent = story.author;
-  document.getElementById('sv-wilaya').innerHTML = `<i class="fa-solid fa-location-dot"></i> ${story.wilaya}`;
+  document.getElementById('sv-author').textContent = story.author || story.store_name || 'متجر ZaLo';
+  document.getElementById('sv-wilaya').innerHTML = `<i class="fa-solid fa-location-dot"></i> ${story.wilaya || 'الجزائر'}`;
   const catEl = document.getElementById('sv-category');
   if (catEl) {
-    catEl.textContent = (story.subcategory && story.subcategory !== 'عام') ? `${story.category || ''} • ${story.subcategory}` : (story.category || 'عرض لحظي');
+    catEl.textContent = (story.subcategory && story.subcategory !== 'عام' && story.subcategory !== 'تخصص عام') ? `${story.category || ''} • ${story.subcategory}` : (story.category || 'عرض لحظي');
   }
   document.getElementById('sv-time').textContent = story.time || 'الآن';
   document.getElementById('sv-image').src = story.image || 'images/wilaya-thumb.jpg';
-  document.getElementById('sv-caption').textContent = story.caption;
+  document.getElementById('sv-caption').textContent = story.caption || story.title || '';
   document.getElementById('sv-price').textContent = (story.price && parseFloat(story.price) > 0) ? `${parseFloat(story.price).toLocaleString()} دج` : '';
   
+  const avatarEl = document.getElementById('sv-avatar');
+  if (avatarEl) {
+    avatarEl.src = story.logo || story.image || 'assets/icon-192.svg';
+    avatarEl.onerror = () => { avatarEl.src = 'assets/icon-192.svg'; };
+  }
+
   const likesCountEl = document.getElementById('sv-likes-count');
   if (likesCountEl) {
     likesCountEl.textContent = story.likes || 1;
@@ -6400,10 +6431,147 @@ window.openStoryViewer = function(storyId) {
   
   const waBtn = document.getElementById('sv-whatsapp-btn');
   if (waBtn) {
-    waBtn.href = `https://wa.me/${finalWa}?text=${encodeURIComponent('مرحباً، أود الاستفسار والطلب بخصوص منشوركم اللحظي في ZaLo: ' + story.caption)}`;
+    waBtn.href = `https://wa.me/${finalWa}?text=${encodeURIComponent('مرحباً، أود الاستفسار والطلب بخصوص منشوركم اللحظي في ZaLo: ' + (story.caption || story.title || ''))}`;
   }
 
   document.getElementById('storyViewerModal').style.display = 'flex';
+};
+
+window.quickOrderCurrentStory = function() {
+  if (!window.currentActiveStory) return;
+  const s = window.currentActiveStory;
+  
+  if (!s.price || parseFloat(s.price) <= 0) {
+    window.showToast("⚠️ يرجى التواصل مع المتجر مباشرة لتحديد السعر وتأكيد الطلب.");
+    return;
+  }
+
+  // Set selectedProduct in state so the quick direct order form works seamlessly
+  state.selectedProduct = {
+    id: s.id,
+    productId: s.id,
+    name: s.caption || s.title || 'عرض لحظي',
+    productName: s.caption || s.title || 'عرض لحظي',
+    price: parseFloat(s.price),
+    image: s.image || 'images/wilaya-thumb.jpg',
+    emoji: s.emoji || '📦',
+    storeId: s.userId || s.storeId || s.author || 'direct',
+    storeName: s.author || s.store_name || 'متجر معتمد',
+    wilaya: s.wilaya || 'الجزائر',
+    phone: s.phone || ''
+  };
+  state.qty = 1;
+
+  document.getElementById('storyViewerModal').style.display = 'none';
+  const liveModal = document.getElementById('liveOffersFeedModal');
+  if (liveModal) liveModal.style.display = 'none';
+
+  // Open product modal with quick order form expanded
+  openProd(
+    state.selectedProduct.id,
+    state.selectedProduct.name,
+    state.selectedProduct.price,
+    state.selectedProduct.image,
+    state.selectedProduct.emoji,
+    state.selectedProduct.storeId,
+    state.selectedProduct.storeName,
+    state.selectedProduct.wilaya,
+    s.category || 'عام',
+    s.subcategory || ''
+  );
+  setTimeout(() => {
+    window.toggleQuickOrderForm(true);
+    const form = document.getElementById('pd-quick-order-form');
+    if (form) form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, 250);
+};
+
+window.openLiveOffersFeedModal = function() {
+  const modal = document.getElementById('liveOffersFeedModal');
+  const feedList = document.getElementById('live-offers-feed-list');
+  if (!modal || !feedList) return;
+
+  let stories = [];
+  try {
+    stories = JSON.parse(localStorage.getItem('zalo_live_stories') || '[]');
+  } catch(e) {}
+  if (!stories.length) stories = window.liveStoriesList || [];
+
+  if (stories.length === 0) {
+    feedList.innerHTML = `
+      <div style="text-align:center; padding:35px 20px; background:#fff; border-radius:18px; border:1px solid #e2e8f0; font-size:12.5px; color:#64748b; font-weight:700;">
+        <i class="fa-solid fa-store-slash" style="font-size:32px; color:#38bdf8; margin-bottom:10px; display:block;"></i>
+        لا توجد عروض لحظية منشورة حالياً في الجزائر. كن أول تاجر ينشر عرضاً لحظياً وسيقوم كل الزبائن بالطلب مباشرة! 🚀
+      </div>
+    `;
+  } else {
+    feedList.innerHTML = stories.map(st => {
+      const cleanPhone = (st.phone || '0550000000').replace(/[^0-9]/g, '');
+      const finalWa = cleanPhone.startsWith('0') ? '213' + cleanPhone.substring(1) : (cleanPhone.startsWith('213') ? cleanPhone : '213' + cleanPhone);
+      const isLiked = (JSON.parse(localStorage.getItem('zalo_user_likes_list') || '[]')).includes(st.id);
+      const priceTxt = (st.price && parseFloat(st.price) > 0) ? `${parseFloat(st.price).toLocaleString()} دج` : 'سعر تنافسي';
+      const encodedData = encodeURIComponent(JSON.stringify(st));
+
+      return `
+        <div style="background:#ffffff; border-radius:20px; border:1.5px solid #e2e8f0; overflow:hidden; box-shadow:0 4px 15px rgba(0,0,0,0.05); display:flex; flex-direction:column; text-align:right;">
+          <!-- Store Header -->
+          <div style="padding:12px 14px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #f1f5f9; background:#f8fafc;">
+            <div style="display:flex; align-items:center; gap:10px; cursor:pointer;" onclick="openStoreView('${st.storeId || 'store_' + encodeURIComponent(st.author || '')}', '${(st.author || 'متجر معتمد').replace(/'/g, "\\'")}')">
+              <div style="position:relative; width:40px; height:40px; flex-shrink:0;">
+                <img src="${st.logo || st.image || 'assets/icon-192.svg'}" style="width:100%; height:100%; border-radius:50%; object-fit:cover; border:2px solid #38bdf8;" onerror="this.src='assets/icon-192.svg'">
+                <span class="live-badge-dot" style="bottom:0; right:0; width:12px; height:12px;"></span>
+              </div>
+              <div>
+                <div style="font-size:13px; font-weight:900; color:#0f172a; display:flex; align-items:center; gap:5px;">
+                  <span>${st.author || 'متجر معتمد'}</span>
+                  <i class="fa-solid fa-circle-check" style="color:#0284c7; font-size:11px;"></i>
+                </div>
+                <div style="font-size:10px; color:#64748b; font-weight:700; display:flex; align-items:center; gap:4px; margin-top:2px;">
+                  <span><i class="fa-solid fa-location-dot" style="color:#0284c7;"></i> ${st.wilaya || 'الجزائر'}</span>
+                  <span>•</span>
+                  <span>${st.time || 'الآن'}</span>
+                </div>
+              </div>
+            </div>
+            <span style="font-size:10px; font-weight:800; color:#0369a1; background:#e0f2fe; padding:3px 8px; border-radius:8px;">
+              ${st.category || 'عرض لحظي'}
+            </span>
+          </div>
+
+          <!-- Media Image -->
+          <div style="position:relative; width:100%; height:260px; background:#0f172a; cursor:pointer;" onclick="openStoryViewer('${st.id}')">
+            <img src="${st.image || 'images/wilaya-thumb.jpg'}" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='images/wilaya-thumb.jpg'">
+            <div style="position:absolute; bottom:10px; right:10px; background:rgba(0,0,0,0.75); backdrop-filter:blur(4px); color:#facc15; font-size:13px; font-weight:900; padding:4px 10px; border-radius:10px; border:1px solid rgba(250,204,21,0.4);">
+              ${priceTxt}
+            </div>
+          </div>
+
+          <!-- Caption & Action Toolbar -->
+          <div style="padding:12px 14px;">
+            <p style="font-size:12.5px; font-weight:700; color:#1e293b; margin:0 0 10px; line-height:1.5;">${st.caption || st.title || ''}</p>
+            
+            <div style="display:grid; grid-template-columns: 1.1fr 1.05fr 0.95fr 0.7fr; gap:6px; margin-top:8px;">
+              <a href="https://wa.me/${finalWa}?text=${encodeURIComponent('مرحباً، أود الطلب بخصوص عرضكم اللحظي: ' + (st.caption || st.title || ''))}" target="_blank" style="height:38px; background:linear-gradient(135deg, #25D366, #128C7E); color:white; border-radius:10px; font-weight:900; font-size:11px; text-decoration:none; display:flex; align-items:center; justify-content:center; gap:4px; box-shadow:0 2px 8px rgba(37,211,102,0.25);">
+                <i class="fa-brands fa-whatsapp"></i> واتساب
+              </a>
+              <button onclick="window.currentActiveStory=JSON.parse(decodeURIComponent('${encodedData}')); window.quickOrderCurrentStory();" style="height:38px; background:linear-gradient(135deg, #0284c7, #0369a1); color:white; border:none; border-radius:10px; font-weight:900; font-size:11px; display:flex; align-items:center; justify-content:center; gap:4px; box-shadow:0 2px 8px rgba(2,132,199,0.25); cursor:pointer;">
+                <i class="fa-solid fa-bolt-lightning" style="color:#fef08a;"></i> طلب مباشر
+              </button>
+              <button onclick="window.currentActiveStory=JSON.parse(decodeURIComponent('${encodedData}')); window.addStoryToCart();" style="height:38px; background:var(--brand-gold, #D4AF37); color:var(--navy); border:none; border-radius:10px; font-weight:900; font-size:11px; display:flex; align-items:center; justify-content:center; gap:4px; box-shadow:0 2px 8px rgba(212,175,55,0.2); cursor:pointer;">
+                <i class="fa-solid fa-cart-plus"></i> سلة
+              </button>
+              <button onclick="window.currentActiveStory=JSON.parse(decodeURIComponent('${encodedData}')); window.toggleStoryLike();" style="height:38px; background:${isLiked ? '#fef3c7' : '#f8fafc'}; border:1.5px solid ${isLiked ? '#f59e0b' : '#e2e8f0'}; border-radius:10px; color:#f59e0b; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:4px; font-size:11px; font-weight:800;">
+                <span>⭐</span>
+                <span>${st.likes || 1}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  modal.style.display = 'flex';
 };
 
 window.toggleStoryLike = function() {
