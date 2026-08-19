@@ -6503,13 +6503,39 @@ window.quickOrderCurrentStory = function() {
 window.openLiveOffersFeedModal = function() {
   const modal = document.getElementById('liveOffersFeedModal');
   const feedList = document.getElementById('live-offers-feed-list');
-  if (!modal || !feedList) return;
+  if (!modal) return;
+
+  modal.style.display = 'flex';
 
   let stories = [];
   try {
     stories = JSON.parse(localStorage.getItem('zalo_live_stories') || '[]');
   } catch(e) {}
   if (!stories.length) stories = window.liveStoriesList || [];
+
+  // If still empty, build live offers from loaded products / active stores
+  if (!stories.length && window.state && window.state.loadedProducts && window.state.loadedProducts.length > 0) {
+    stories = window.state.loadedProducts.slice(0, 10).map((p, idx) => ({
+      id: p.id || ('st_' + idx),
+      author: p.storeName || p.store_name || 'متجر معتمد',
+      storeId: p.storeId || p.store_id || 'store_1',
+      wilaya: p.wilaya || 'الجزائر',
+      category: p.category || 'عرض حصري',
+      subcategory: p.subcategory || '',
+      price: p.price || 0,
+      caption: (p.name || p.productName || 'عرض خاص') + (p.description ? ' - ' + p.description : ''),
+      title: p.name || p.productName || 'عرض خاص',
+      image: p.image || p.image_url || 'images/wilaya-thumb.jpg',
+      logo: 'assets/icon-192.svg',
+      phone: p.phone || '0550000000',
+      time: 'الآن',
+      likes: 12 + idx
+    }));
+  }
+
+  window.liveFeedStoriesCache = stories;
+
+  if (!feedList) return;
 
   if (stories.length === 0) {
     feedList.innerHTML = `
@@ -6518,74 +6544,99 @@ window.openLiveOffersFeedModal = function() {
         لا توجد عروض لحظية منشورة حالياً في الجزائر. كن أول تاجر ينشر عرضاً لحظياً وسيقوم كل الزبائن بالطلب مباشرة! 🚀
       </div>
     `;
-  } else {
-    feedList.innerHTML = stories.map(st => {
-      const cleanPhone = (st.phone || '0550000000').replace(/[^0-9]/g, '');
-      const finalWa = cleanPhone.startsWith('0') ? '213' + cleanPhone.substring(1) : (cleanPhone.startsWith('213') ? cleanPhone : '213' + cleanPhone);
-      const isLiked = (JSON.parse(localStorage.getItem('zalo_user_likes_list') || '[]')).includes(st.id);
-      const priceTxt = (st.price && parseFloat(st.price) > 0) ? `${parseFloat(st.price).toLocaleString()} دج` : 'سعر تنافسي';
-      const encodedData = encodeURIComponent(JSON.stringify(st));
-
-      return `
-        <div style="background:#ffffff; border-radius:20px; border:1.5px solid #e2e8f0; overflow:hidden; box-shadow:0 4px 15px rgba(0,0,0,0.05); display:flex; flex-direction:column; text-align:right;">
-          <!-- Store Header -->
-          <div style="padding:12px 14px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #f1f5f9; background:#f8fafc;">
-            <div style="display:flex; align-items:center; gap:10px; cursor:pointer;" onclick="openStoreView('${st.storeId || 'store_' + encodeURIComponent(st.author || '')}', '${(st.author || 'متجر معتمد').replace(/'/g, "\\'")}')">
-              <div style="position:relative; width:40px; height:40px; flex-shrink:0;">
-                <img src="${st.logo || st.image || 'assets/icon-192.svg'}" style="width:100%; height:100%; border-radius:50%; object-fit:cover; border:2px solid #38bdf8;" onerror="this.src='assets/icon-192.svg'">
-                <span class="live-badge-dot" style="bottom:0; right:0; width:12px; height:12px;"></span>
-              </div>
-              <div>
-                <div style="font-size:13px; font-weight:900; color:#0f172a; display:flex; align-items:center; gap:5px;">
-                  <span>${st.author || 'متجر معتمد'}</span>
-                  <i class="fa-solid fa-circle-check" style="color:#0284c7; font-size:11px;"></i>
-                </div>
-                <div style="font-size:10px; color:#64748b; font-weight:700; display:flex; align-items:center; gap:4px; margin-top:2px;">
-                  <span><i class="fa-solid fa-location-dot" style="color:#0284c7;"></i> ${st.wilaya || 'الجزائر'}</span>
-                  <span>•</span>
-                  <span>${st.time || 'الآن'}</span>
-                </div>
-              </div>
-            </div>
-            <span style="font-size:10px; font-weight:800; color:#0369a1; background:#e0f2fe; padding:3px 8px; border-radius:8px;">
-              ${st.category || 'عرض لحظي'}
-            </span>
-          </div>
-
-          <!-- Media Image -->
-          <div style="position:relative; width:100%; height:260px; background:#0f172a; cursor:pointer;" onclick="openStoryViewer('${st.id}')">
-            <img src="${st.image || 'images/wilaya-thumb.jpg'}" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='images/wilaya-thumb.jpg'">
-            <div style="position:absolute; bottom:10px; right:10px; background:rgba(0,0,0,0.75); backdrop-filter:blur(4px); color:#facc15; font-size:13px; font-weight:900; padding:4px 10px; border-radius:10px; border:1px solid rgba(250,204,21,0.4);">
-              ${priceTxt}
-            </div>
-          </div>
-
-          <!-- Caption & Action Toolbar -->
-          <div style="padding:12px 14px;">
-            <p style="font-size:12.5px; font-weight:700; color:#1e293b; margin:0 0 10px; line-height:1.5;">${st.caption || st.title || ''}</p>
-            
-            <div style="display:grid; grid-template-columns: 1.1fr 1.05fr 0.95fr 0.7fr; gap:6px; margin-top:8px;">
-              <a href="https://wa.me/${finalWa}?text=${encodeURIComponent('مرحباً، أود الطلب بخصوص عرضكم اللحظي: ' + (st.caption || st.title || ''))}" target="_blank" style="height:38px; background:linear-gradient(135deg, #25D366, #128C7E); color:white; border-radius:10px; font-weight:900; font-size:11px; text-decoration:none; display:flex; align-items:center; justify-content:center; gap:4px; box-shadow:0 2px 8px rgba(37,211,102,0.25);">
-                <i class="fa-brands fa-whatsapp"></i> واتساب
-              </a>
-              <button onclick="window.currentActiveStory=JSON.parse(decodeURIComponent('${encodedData}')); window.quickOrderCurrentStory();" style="height:38px; background:linear-gradient(135deg, #0284c7, #0369a1); color:white; border:none; border-radius:10px; font-weight:900; font-size:11px; display:flex; align-items:center; justify-content:center; gap:4px; box-shadow:0 2px 8px rgba(2,132,199,0.25); cursor:pointer;">
-                <i class="fa-solid fa-bolt-lightning" style="color:#fef08a;"></i> طلب مباشر
-              </button>
-              <button onclick="window.currentActiveStory=JSON.parse(decodeURIComponent('${encodedData}')); window.addStoryToCart();" style="height:38px; background:var(--brand-gold, #D4AF37); color:var(--navy); border:none; border-radius:10px; font-weight:900; font-size:11px; display:flex; align-items:center; justify-content:center; gap:4px; box-shadow:0 2px 8px rgba(212,175,55,0.2); cursor:pointer;">
-                <i class="fa-solid fa-cart-plus"></i> سلة
-              </button>
-              <button onclick="window.currentActiveStory=JSON.parse(decodeURIComponent('${encodedData}')); window.toggleStoryLike();" style="height:38px; background:${isLiked ? '#fef3c7' : '#f8fafc'}; border:1.5px solid ${isLiked ? '#f59e0b' : '#e2e8f0'}; border-radius:10px; color:#f59e0b; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:4px; font-size:11px; font-weight:800;">
-                <span>⭐</span>
-                <span>${st.likes || 1}</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      `;
-    }).join('');
+    return;
   }
 
-  modal.style.display = 'flex';
+  let userLikes = [];
+  try {
+    userLikes = JSON.parse(localStorage.getItem('zalo_user_likes_list') || '[]');
+  } catch(e) {}
+
+  feedList.innerHTML = stories.map((st, idx) => {
+    const cleanPhone = (st.phone || '0550000000').replace(/[^0-9]/g, '');
+    const finalWa = cleanPhone.startsWith('0') ? '213' + cleanPhone.substring(1) : (cleanPhone.startsWith('213') ? cleanPhone : '213' + cleanPhone);
+    const isLiked = userLikes.includes(st.id);
+    const priceTxt = (st.price && parseFloat(st.price) > 0) ? `${parseFloat(st.price).toLocaleString()} دج` : 'سعر تنافسي';
+
+    return `
+      <div style="background:#ffffff; border-radius:20px; border:1.5px solid #e2e8f0; overflow:hidden; box-shadow:0 4px 15px rgba(0,0,0,0.05); display:flex; flex-direction:column; text-align:right;">
+        <!-- Store Header -->
+        <div style="padding:12px 14px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #f1f5f9; background:#f8fafc;">
+          <div style="display:flex; align-items:center; gap:10px; cursor:pointer;" onclick="window.openStoreView('${st.storeId || 'store_' + encodeURIComponent(st.author || '')}', '${(st.author || 'متجر معتمد').replace(/'/g, "\\'")}')">
+            <div style="position:relative; width:40px; height:40px; flex-shrink:0;">
+              <img src="${st.logo || st.image || 'assets/icon-192.svg'}" style="width:100%; height:100%; border-radius:50%; object-fit:cover; border:2px solid #38bdf8;" onerror="this.src='assets/icon-192.svg'">
+              <span class="live-badge-dot" style="bottom:0; right:0; width:12px; height:12px;"></span>
+            </div>
+            <div>
+              <div style="font-size:13px; font-weight:900; color:#0f172a; display:flex; align-items:center; gap:5px;">
+                <span>${st.author || 'متجر معتمد'}</span>
+                <i class="fa-solid fa-circle-check" style="color:#0284c7; font-size:11px;"></i>
+              </div>
+              <div style="font-size:10px; color:#64748b; font-weight:700; display:flex; align-items:center; gap:4px; margin-top:2px;">
+                <span><i class="fa-solid fa-location-dot" style="color:#0284c7;"></i> ${st.wilaya || 'الجزائر'}</span>
+                <span>•</span>
+                <span>${st.time || 'الآن'}</span>
+              </div>
+            </div>
+          </div>
+          <span style="font-size:10px; font-weight:800; color:#0369a1; background:#e0f2fe; padding:3px 8px; border-radius:8px;">
+            ${st.category || 'عرض لحظي'}
+          </span>
+        </div>
+
+        <!-- Media Image -->
+        <div style="position:relative; width:100%; height:260px; background:#0f172a; cursor:pointer;" onclick="window.openStoryViewer('${st.id}', '${(st.author || '').replace(/'/g, "\\'")}')">
+          <img src="${st.image || 'images/wilaya-thumb.jpg'}" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='images/wilaya-thumb.jpg'">
+          <div style="position:absolute; bottom:10px; right:10px; background:rgba(0,0,0,0.75); backdrop-filter:blur(4px); color:#facc15; font-size:13px; font-weight:900; padding:4px 10px; border-radius:10px; border:1px solid rgba(250,204,21,0.4);">
+            ${priceTxt}
+          </div>
+        </div>
+
+        <!-- Caption & Action Toolbar -->
+        <div style="padding:12px 14px;">
+          <p style="font-size:12.5px; font-weight:700; color:#1e293b; margin:0 0 10px; line-height:1.5;">${st.caption || st.title || ''}</p>
+          
+          <div style="display:grid; grid-template-columns: 1.1fr 1.05fr 0.95fr 0.7fr; gap:6px; margin-top:8px;">
+            <a href="https://wa.me/${finalWa}?text=${encodeURIComponent('مرحباً، أود الطلب بخصوص عرضكم اللحظي: ' + (st.caption || st.title || ''))}" target="_blank" style="height:38px; background:linear-gradient(135deg, #25D366, #128C7E); color:white; border-radius:10px; font-weight:900; font-size:11px; text-decoration:none; display:flex; align-items:center; justify-content:center; gap:4px; box-shadow:0 2px 8px rgba(37,211,102,0.25);">
+              <i class="fa-brands fa-whatsapp"></i> واتساب
+            </a>
+            <button onclick="window.quickOrderFromFeedIndex(${idx})" style="height:38px; background:linear-gradient(135deg, #0284c7, #0369a1); color:white; border:none; border-radius:10px; font-weight:900; font-size:11px; display:flex; align-items:center; justify-content:center; gap:4px; box-shadow:0 2px 8px rgba(2,132,199,0.25); cursor:pointer;">
+              <i class="fa-solid fa-bolt-lightning" style="color:#fef08a;"></i> طلب مباشر
+            </button>
+            <button onclick="window.addStoryToCartFromFeedIndex(${idx})" style="height:38px; background:var(--brand-gold, #D4AF37); color:var(--navy); border:none; border-radius:10px; font-weight:900; font-size:11px; display:flex; align-items:center; justify-content:center; gap:4px; box-shadow:0 2px 8px rgba(212,175,55,0.2); cursor:pointer;">
+              <i class="fa-solid fa-cart-plus"></i> سلة
+            </button>
+            <button onclick="window.toggleLikeFromFeedIndex(${idx})" style="height:38px; background:${isLiked ? '#fef3c7' : '#f8fafc'}; border:1.5px solid ${isLiked ? '#f59e0b' : '#e2e8f0'}; border-radius:10px; color:#f59e0b; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:4px; font-size:11px; font-weight:800;">
+              <span>⭐</span>
+              <span>${st.likes || 1}</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+};
+
+window.quickOrderFromFeedIndex = function(idx) {
+  const st = window.liveFeedStoriesCache && window.liveFeedStoriesCache[idx];
+  if (!st) return;
+  window.currentActiveStory = st;
+  window.quickOrderCurrentStory();
+};
+
+window.addStoryToCartFromFeedIndex = function(idx) {
+  const st = window.liveFeedStoriesCache && window.liveFeedStoriesCache[idx];
+  if (!st) return;
+  window.currentActiveStory = st;
+  window.addStoryToCart();
+};
+
+window.toggleLikeFromFeedIndex = function(idx) {
+  const st = window.liveFeedStoriesCache && window.liveFeedStoriesCache[idx];
+  if (!st) return;
+  window.currentActiveStory = st;
+  window.toggleStoryLike();
+  window.openLiveOffersFeedModal();
 };
 
 window.toggleStoryLike = function() {
