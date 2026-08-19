@@ -417,8 +417,8 @@ fun PureWebContainerScreen(
                             return super.onConsoleMessage(consoleMessage)
                         }
                     }
-                    // Enable standard WebView caching to make image and asset loading fast
-                    // clearCache(true) // Removed to prevent wiping the cache on every single app launch
+                    // Ensure fresh loading of web assets in developer/preview environment
+                    clearCache(true)
                     try {
                         val cacheBase = java.io.File(activity.cacheDir, "WebView/Default/HTTP Cache")
                         if (!cacheBase.exists()) cacheBase.mkdirs()
@@ -429,9 +429,6 @@ fun PureWebContainerScreen(
                         e.printStackTrace()
                     }
                     setLayerType(android.view.View.LAYER_TYPE_HARDWARE, null)
-                    
-                    // Chromium/MESA mitigation: Try to disable hardware acceleration for some specific rendering if it fails
-                    // but generally we want it for performance. If rendernode fails, it usually falls back.
                     
                     settings.apply {
                         javaScriptEnabled = true
@@ -444,7 +441,7 @@ fun PureWebContainerScreen(
                         loadWithOverviewMode = true
                         useWideViewPort = true
                         mixedContentMode = WebSettings.MIXED_CONTENT_NEVER_ALLOW
-                        cacheMode = WebSettings.LOAD_DEFAULT
+                        cacheMode = WebSettings.LOAD_NO_CACHE
                         mediaPlaybackRequiresUserGesture = false
                         
                         // Performance and stability enhancements

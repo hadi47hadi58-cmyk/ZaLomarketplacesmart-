@@ -2054,22 +2054,6 @@ window.switchTab = function(tabId) {
 
     <!-- VIEW 1: MARKET & PRODUCTS SECTION -->
     <div id="home-market-section" style="display: block;">
-      <!-- Stories Section (Above Products Posts) -->
-      <div class="stories-section-wrap" style="margin: 0 16px 12px 16px; border-radius: 20px; box-shadow: 0 4px 15px rgba(2,132,199,0.12); border: 2px solid #38bdf8; background: #ffffff; padding: 12px 14px;">
-        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; padding: 0 4px;">
-          <span style="font-size: 13px; font-weight: 900; color: #0284c7; display: flex; align-items: center; gap: 6px;">
-            <i class="fa-solid fa-circle-play" style="color: #ef4444; font-size: 14px;"></i> قصص وبث مباشر المتاجر 🌟
-          </span>
-          <button id="btn-open-live-offers" onclick="switchHomeFeedView('stories')" style="font-size: 11px; font-weight: 800; color: #0284c7; background: #f0f9ff; padding: 5px 12px; border-radius: 12px; border: 1.5px solid #38bdf8; cursor: pointer; display: flex; align-items: center; gap: 5px; box-shadow: 0 2px 6px rgba(2,132,199,0.15); transition: all 0.2s; position: relative; z-index: 10; pointer-events: auto;">
-            <i class="fa-solid fa-layer-group" style="color: #0284c7; font-size: 12px;"></i>
-            <span>عروض حية</span>
-          </button>
-        </div>
-        <div class="stories-scroll" id="home-stories-container" style="display: flex; gap: 12px; overflow-x: auto; padding-bottom: 4px;">
-          <!-- Dynamically rendered stories -->
-        </div>
-      </div>
-
       <!-- Hidden / Collapsible Wilaya Grid for picker modal -->
       <div id="wilaya-picker-modal-container" style="display: none; padding: 0 16px 16px 16px;">
         <div style="font-size: 13px; font-weight: 800; color: #0f172a; margin: 8px 0 4px; text-align: right;">اختر الإقليم:</div>
@@ -2107,14 +2091,26 @@ window.switchTab = function(tabId) {
 
     <!-- VIEW 2: INLINE LIVE STORIES & OFFERS FEED (Zero Modals, Direct Scrolling) -->
     <div id="home-live-stories-section" style="display: none; padding: 0 16px 100px 16px;">
+      <!-- Stories Circles Section moved here -->
+      <div class="stories-section-wrap" style="margin: 0 0 14px 0; border-radius: 20px; box-shadow: 0 4px 15px rgba(2,132,199,0.12); border: 2px solid #38bdf8; background: #ffffff; padding: 12px 14px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; padding: 0 4px;">
+          <span style="font-size: 13px; font-weight: 900; color: #0284c7; display: flex; align-items: center; gap: 6px;">
+            <i class="fa-solid fa-circle-play" style="color: #ef4444; font-size: 14px;"></i> قصص وبث مباشر المتاجر 🌟
+          </span>
+          <button onclick="window.renderInlineLiveStoriesFeed(); window.renderHomeStories();" style="font-size: 11px; font-weight: 800; color: #0284c7; background: #e0f2fe; border: none; padding: 4px 10px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; gap: 4px;">
+            <i class="fa-solid fa-arrows-rotate"></i> تحديث
+          </button>
+        </div>
+        <div class="stories-scroll" id="home-stories-container" style="display: flex; gap: 12px; overflow-x: auto; padding-bottom: 4px;">
+          <!-- Dynamically rendered stories -->
+        </div>
+      </div>
+
       <div style="font-size: 14.5px; font-weight: 900; color: #0f172a; margin: 8px 0 14px; display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid #f1f5f9; padding-bottom: 10px;">
         <span style="display: flex; align-items: center; gap: 8px;">
           <span class="live-badge-dot" style="position: relative; width: 10px; height: 10px; display: inline-block;"></span>
-          <span style="color: #0284c7;">عروض وقصص المتاجر الحية والمباشرة 🇩🇿:</span>
+          <span style="color: #0284c7;">عروض ومنشورات المتاجر الحية 🇩🇿:</span>
         </span>
-        <button onclick="window.renderInlineLiveStoriesFeed()" style="font-size: 11px; font-weight: 800; color: #0284c7; background: #e0f2fe; border: none; padding: 4px 10px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; gap: 4px;">
-          <i class="fa-solid fa-arrows-rotate"></i> تحديث
-        </button>
       </div>
 
       <div id="inline-live-stories-container" style="display: flex; flex-direction: column; gap: 16px;">
@@ -4971,77 +4967,84 @@ async function loadProducts() {
   } catch(e) {}
 
   let merged = [];
+  let localProducts = [];
+  try {
+    localProducts = JSON.parse(localStorage.getItem('zalo_products') || '[]');
+  } catch(e) {}
 
-  if (remoteProds !== null) {
-    // Authoritative Supabase data
-    merged = remoteProds
-      .filter(p => {
-        const pName = p.name || p.productName || '';
-        return !fakeNames.some(fn => pName.includes(fn));
-      })
-      .map(p => {
-        const id = String(p.id || p.productId || ('p_' + Date.now()));
-        return {
-          id: id,
-          productId: id,
-          name: p.name || p.productName || 'سلعة ZaLo',
-          productName: p.productName || p.name || 'سلعة ZaLo',
-          price: parseFloat(p.price) || 0,
-          stock: parseInt(p.stock !== undefined ? p.stock : (p.stock_quantity || 0)) || 0,
-          category: p.category || 'عام',
-          subcategory: p.subcategory || '',
-          description: p.description || p.desc || '',
-          image: p.image || p.imageUrl || p.image_url || p.imageURL || 'assets/icon-192.svg',
-          storeId: p.store_id || p.storeId || 'direct',
-          storeName: p.store_name || p.storeName || 'متجر معتمد',
-          wilaya: p.wilaya || 'الجزائر',
-          phone: p.phone || '',
-          status: p.status || 'active'
-        };
-      });
-
-    try {
-      localStorage.setItem('zalo_products', JSON.stringify(merged));
-    } catch(e) {}
-  } else {
-    // Offline local fallback
-    let localProducts = [];
-    try {
-      localProducts = JSON.parse(localStorage.getItem('zalo_products') || '[]');
-    } catch(e) {}
-
-    merged = localProducts
-      .filter(p => {
-        const pName = p.name || p.productName || '';
-        return !fakeNames.some(fn => pName.includes(fn));
-      })
-      .map(p => {
-        const id = String(p.id || p.productId || ('p_' + Date.now()));
-        return {
-          id: id,
-          productId: id,
-          name: p.name || p.productName || 'سلعة ZaLo',
-          productName: p.productName || p.name || 'سلعة ZaLo',
-          price: parseFloat(p.price) || 0,
-          stock: parseInt(p.stock !== undefined ? p.stock : (p.stock_quantity || 0)) || 0,
-          category: p.category || 'عام',
-          subcategory: p.subcategory || '',
-          description: p.description || p.desc || '',
-          image: p.image || p.imageUrl || p.image_url || p.imageURL || 'assets/icon-192.svg',
-          storeId: p.store_id || p.storeId || 'direct',
-          storeName: p.store_name || p.storeName || 'متجر معتمد',
-          wilaya: p.wilaya || 'الجزائر',
-          phone: p.phone || '',
-          status: p.status || 'active'
-        };
-      });
+  // Collect all potential product sources
+  let allSources = [];
+  if (remoteProds && Array.isArray(remoteProds) && remoteProds.length > 0) {
+    allSources.push(...remoteProds);
   }
+  if (localProducts && Array.isArray(localProducts)) {
+    allSources.push(...localProducts);
+  }
+
+  // Also include products from stories if any
+  if (currentStories && Array.isArray(currentStories)) {
+    currentStories.forEach(st => {
+      if (st.price && parseFloat(st.price) > 0) {
+        allSources.push({
+          id: 'story_prod_' + st.id,
+          name: st.caption || st.title || 'عرض لحظي',
+          price: parseFloat(st.price),
+          image: st.image || 'images/wilaya-thumb.jpg',
+          storeId: st.storeId || 'store_' + encodeURIComponent(st.author || ''),
+          storeName: st.author || 'متجر معتمد',
+          wilaya: st.wilaya || 'الجزائر',
+          phone: st.phone || '',
+          category: st.category || 'عام'
+        });
+      }
+    });
+  }
+
+  // Deduplicate products by id and name
+  const seenIds = new Set();
+  const seenNames = new Set();
+  
+  merged = allSources
+    .filter(p => {
+      const pName = (p.name || p.productName || '').trim();
+      const pId = String(p.id || p.productId || '');
+      if (!pName || fakeNames.some(fn => pName.includes(fn))) return false;
+      if (seenIds.has(pId) || seenNames.has(pName.toLowerCase())) return false;
+      seenIds.add(pId);
+      seenNames.add(pName.toLowerCase());
+      return true;
+    })
+    .map(p => {
+      const id = String(p.id || p.productId || ('p_' + Date.now()));
+      return {
+        id: id,
+        productId: id,
+        name: p.name || p.productName || 'سلعة ZaLo',
+        productName: p.productName || p.name || 'سلعة ZaLo',
+        price: parseFloat(p.price) || 0,
+        stock: parseInt(p.stock !== undefined ? p.stock : (p.stock_quantity || 0)) || 0,
+        category: p.category || 'عام',
+        subcategory: p.subcategory || '',
+        description: p.description || p.desc || '',
+        image: p.image || p.imageUrl || p.image_url || p.imageURL || 'assets/icon-192.svg',
+        storeId: p.store_id || p.storeId || 'direct',
+        storeName: p.store_name || p.storeName || 'متجر معتمد',
+        wilaya: p.wilaya || 'الجزائر',
+        phone: p.phone || '',
+        status: p.status || 'active'
+      };
+    });
+
+  try {
+    localStorage.setItem('zalo_products', JSON.stringify(merged));
+  } catch(e) {}
 
   state.loadedProducts = merged;
   if (typeof initStoriesSystem === 'function') initStoriesSystem();
   applyActiveWilayaFilter();
   if (typeof renderCategoriesSlider === 'function') renderCategoriesSlider();
   if (typeof renderCategoriesTab === 'function') renderCategoriesTab();
+  if (typeof window.renderInlineLiveStoriesFeed === 'function') window.renderInlineLiveStoriesFeed();
 }
 
 window.getProductCardImageHTML = function(pName, imgUrl) {
