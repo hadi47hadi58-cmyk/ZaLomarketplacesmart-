@@ -588,23 +588,25 @@
             </section>
         </div> <!-- End of Section 2: Store Settings -->
 
-        <!-- Section 3: Store Products -->
+        <!-- Section 3: Store Products & Unified Publisher -->
         <div id="section-products" class="space-y-6 hidden animate-fadeIn">
             
-            <!-- Sub Navigation Tabs inside Management Section -->
-            <div class="flex items-center justify-between bg-white border-2 border-slate-200 p-2 rounded-2xl shadow-sm">
-                <div class="flex items-center gap-2">
-                    <button type="button" id="subtab-btn-products" onclick="switchProductSubTab('products')" class="px-4 py-2 rounded-xl text-xs font-black bg-gradient-to-r from-sky-500 to-[#0284c7] text-white shadow-sm transition flex items-center gap-2">
-                        <i class="fa-solid fa-boxes-stacked"></i>
-                        <span>إدارة السلع والمعرض الرقمي</span>
-                    </button>
-                    <button type="button" id="subtab-btn-stories" onclick="switchProductSubTab('stories')" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition flex items-center gap-2">
-                        <i class="fa-solid fa-camera-retro text-[#d4af37]"></i>
-                        <span>قصص وعروض المتجر اللحظية (Stories)</span>
-                    </button>
+            <!-- Unified Publishing Header Banner -->
+            <div class="flex items-center justify-between bg-gradient-to-r from-sky-50 via-blue-50 to-amber-50 border-2 border-sky-200 p-3 rounded-2xl shadow-sm">
+                <div class="flex items-center gap-2.5">
+                    <span class="w-9 h-9 rounded-xl bg-gradient-to-tr from-sky-500 to-[#0284c7] text-white flex items-center justify-center font-black shadow-sm">
+                        <i class="fa-solid fa-rocket text-sm"></i>
+                    </span>
+                    <div>
+                        <h3 class="text-sm font-black text-slate-800 flex items-center gap-2">
+                            <span>🚀 نظام النشر الموحد للمتجر</span>
+                            <span class="text-[10px] bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-bold">بث مباشر + معرض رقمي</span>
+                        </h3>
+                        <p class="text-[11px] text-slate-600 font-bold">انشر سلعتك مرة واحدة لتظهر فوراً في قصص السوق الحية ومعرض متجرك الدائم!</p>
+                    </div>
                 </div>
-                <span class="text-[11px] font-bold text-slate-500 hidden sm:inline-block px-3">
-                    <i class="fa-solid fa-circle-info text-sky-500"></i> نشر السلع والقصص فوري لجميع الزبائن بالجزائر
+                <span class="text-[11px] font-extrabold text-sky-700 hidden sm:flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-xl border border-sky-100 shadow-sm">
+                    <i class="fa-solid fa-bolt text-amber-500"></i> نشر لحظي لجميع زبائن الجزائر
                 </span>
             </div>
 
@@ -772,88 +774,9 @@
                 <div id="products-grid" class="hidden"></div>
             </section>
 
-            </div> <!-- End of subview-products -->
+            </div> <!-- End of subview-products (Unified view) -->
 
-            <!-- SUB-VIEW 2: STORIES MANAGEMENT (SPECIAL STORY PUBLISHER + STORY FEED) -->
-            <div id="subview-stories" class="grid grid-cols-1 lg:grid-cols-12 gap-6 hidden">
-                
-                <!-- STORY PUBLISHING FORM (5 Cols) -->
-                <section class="lg:col-span-5 bg-white border-2 border-slate-200 rounded-3xl p-6 space-y-4 shadow-sm text-right">
-                    <div class="border-b border-slate-100 pb-3 flex justify-between items-center">
-                        <span class="text-xs bg-amber-50 text-amber-700 px-3 py-1.5 rounded-full border border-amber-200 font-extrabold flex items-center gap-1">
-                            <i class="fa-solid fa-bolt text-amber-500"></i> بث لحظي 24 ساعة
-                        </span>
-                        <h3 class="text-sm font-black text-slate-800 flex items-center gap-2">
-                            <i class="fa-solid fa-camera-retro text-[#d4af37]"></i>
-                            <span>نشر قصة أو عرض لحظي للمتجر</span>
-                        </h3>
-                    </div>
-
-                    <form id="merchant-story-form" class="space-y-3.5" onsubmit="merchantPublishStory(event)">
-                        <!-- Story Image / Video Upload -->
-                        <div>
-                            <label class="block text-[11px] text-slate-700 font-extrabold mb-1">صورة أو فيديو القصة *</label>
-                            <div class="relative bg-slate-50 border-2 border-dashed border-amber-300 hover:border-amber-500 rounded-2xl p-4 text-center cursor-pointer transition flex flex-col items-center justify-center min-h-[140px]" onclick="document.getElementById('merchant-story-file').click()">
-                                <input type="file" id="merchant-story-file" accept="image/*,video/*" class="hidden" onchange="previewStoryMedia(this)">
-                                <div id="story-upload-placeholder" class="flex flex-col items-center gap-1.5">
-                                    <i class="fa-solid fa-cloud-arrow-up text-2xl text-amber-500"></i>
-                                    <span class="text-xs font-black text-slate-700">اضغط لاختيار صورة أو فيديو العرض</span>
-                                    <span class="text-[10px] text-slate-400 font-bold">(تظهر في شريط القصص العلوي لجميع الزبائن)</span>
-                                </div>
-                                <img id="story-file-preview-img" class="hidden max-h-36 rounded-xl object-contain shadow-sm">
-                                <video id="story-file-preview-vid" controls class="hidden max-h-36 rounded-xl shadow-sm"></video>
-                            </div>
-                        </div>
-
-                        <!-- Story Title / Caption -->
-                        <div>
-                            <label class="block text-[11px] text-slate-700 font-extrabold mb-1">عنوان العرض أو المنتج المعروض بالقصة *</label>
-                            <input id="story-caption-input" type="text" class="w-full bg-slate-50 border border-slate-200 text-xs text-slate-800 rounded-xl py-2.5 px-3 focus:outline-none focus:border-amber-400 font-extrabold" placeholder="مثال: وصول تشكيلة جديدة أصلية بأسعار حصرية!" required>
-                        </div>
-
-                        <!-- Story Price & Duration -->
-                        <div class="grid grid-cols-2 gap-3">
-                            <div>
-                                <label class="block text-[11px] text-slate-700 font-extrabold mb-1">السعر المعروض (دج):</label>
-                                <input id="story-price-input" type="number" class="w-full bg-slate-50 border border-slate-200 text-xs text-slate-800 rounded-xl py-2 px-3 focus:outline-none focus:border-amber-400 font-black" placeholder="مثال: 3200">
-                            </div>
-                            <div>
-                                <label class="block text-[11px] text-slate-700 font-extrabold mb-1">المدة والصلاحية:</label>
-                                <div class="h-10 bg-slate-100 text-slate-700 rounded-xl px-3 flex items-center justify-center font-black text-xs">
-                                    <i class="fa-solid fa-clock text-amber-500 mr-1.5"></i> نشطة 24 ساعة
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Submit Button -->
-                        <button type="submit" id="btn-submit-story" class="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-black text-xs py-3.5 rounded-2xl shadow-md transition flex items-center justify-center gap-2 text-center cursor-pointer">
-                            <i class="fa-solid fa-paper-plane text-sm"></i>
-                            <span>📸 نشر القصة فوراً في واجهة الزبائن</span>
-                        </button>
-                    </form>
-                </section>
-
-                <!-- ACTIVE STORIES LIST (7 Cols) -->
-                <section class="lg:col-span-7 bg-white border-2 border-slate-200 rounded-3xl p-6 space-y-4 shadow-sm text-right">
-                    <div class="border-b border-slate-100 pb-3 flex justify-between items-center">
-                        <span class="text-xs bg-amber-50 text-amber-700 px-3 py-1 rounded-full border border-amber-200 font-bold">بث مباشر للزبائن</span>
-                        <h3 class="text-base font-black text-slate-800 flex items-center gap-2">
-                            <i class="fa-solid fa-circle-play text-amber-500"></i>
-                            <span>قصص وعروض متجرك النشطة حالياً</span>
-                        </h3>
-                    </div>
-
-                    <div id="merchant-stories-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <!-- Loaded dynamically via renderMerchantStories -->
-                        <div class="col-span-full text-center p-8 text-slate-400 font-bold text-xs">
-                            جاري تحميل قصص المتجر...
-                        </div>
-                    </div>
-                </section>
-
-            </div> <!-- End of subview-stories -->
-
-        </div> <!-- End of Section 3: Store Products -->
+        </div> <!-- End of Section 3: Store Products & Unified Publisher -->
 
         <!-- Section 4: Store Orders -->
         <div id="section-orders" class="space-y-6 hidden animate-fadeIn">
@@ -1589,7 +1512,7 @@ window.merchantUnifiedAddProduct = async function(e) {
         }
     } catch(e) {}
 
-    // 3. Sync to Supabase if connected
+    // 3. Sync to Supabase products table if connected
     try {
         if (window.supabaseClient) {
             const prodData = {
@@ -1623,6 +1546,56 @@ window.merchantUnifiedAddProduct = async function(e) {
         }
     } catch (err) {
         console.warn('Supabase product sync notice:', err);
+    }
+
+    // 4. UNIFIED LIVE BROADCAST: Automatically sync as an active Live Story as well
+    try {
+        let stories = JSON.parse(localStorage.getItem('zalo_live_stories') || '[]');
+        const storyObj = {
+            id: pId,
+            author: realStoreName,
+            name: realStoreName,
+            store_name: realStoreName,
+            storeId: storeId,
+            wilaya: realWilaya,
+            category: mainCat,
+            subcategory: subCat,
+            price: prodPrice,
+            caption: prodName + (prodDesc ? ' - ' + prodDesc : ''),
+            title: prodName,
+            image: pMedia,
+            video: isVideo ? pMedia : '',
+            isVideo: isVideo,
+            logo: 'assets/icon-192.svg',
+            phone: realPhone,
+            time: 'الآن',
+            likes: 1,
+            created_at: new Date().toISOString()
+        };
+
+        stories = stories.filter(s => String(s.id) !== String(pId));
+        stories.unshift(storyObj);
+        localStorage.setItem('zalo_live_stories', JSON.stringify(stories));
+
+        if (window.supabaseClient) {
+            window.supabaseClient.from('market_posts').upsert({
+                id: pId,
+                author: realStoreName,
+                author_name: realStoreName,
+                store_name: realStoreName,
+                wilaya: realWilaya,
+                category: mainCat,
+                price: prodPrice,
+                caption: prodName + (prodDesc ? ' - ' + prodDesc : ''),
+                image_url: pMedia,
+                video_url: isVideo ? pMedia : null,
+                is_video: isVideo,
+                phone: realPhone,
+                is_active: true
+            }).then().catch(e => console.warn('Supabase story sync note:', e));
+        }
+    } catch(storyErr) {
+        console.warn('Auto story sync notice:', storyErr);
     }
 
     // Clear form and reset media preview
