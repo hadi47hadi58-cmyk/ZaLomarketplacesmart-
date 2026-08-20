@@ -1508,10 +1508,23 @@ document.addEventListener('DOMContentLoaded', () => {
   // Ensure sidebar button click & touch events trigger reliably
   const tbMenu = document.querySelector('.tb-menu');
   if (tbMenu) {
-    tbMenu.addEventListener('click', (e) => {
+    const handleMenuClick = (e) => {
       e.preventDefault();
       e.stopPropagation();
-      openSide();
+      if (typeof openSide === 'function') openSide();
+    };
+    tbMenu.addEventListener('click', handleMenuClick);
+    tbMenu.addEventListener('touchstart', handleMenuClick, { passive: false });
+  }
+
+  // Ensure logo button triggers home switch reliably
+  const logoBtn = document.querySelector('.logo-mockup');
+  if (logoBtn) {
+    logoBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (typeof switchTab === 'function') switchTab('home');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     });
   }
 });
