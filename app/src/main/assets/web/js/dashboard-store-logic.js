@@ -1,7 +1,7 @@
-import { addProductToSupabase, addStoryToSupabase } from './dashboard-store-supabase.js';
+import { addProductToSupabase, addStoryToSupabase, uploadFileToSupabase } from './dashboard-store-supabase.js';
 import { deleteProductFromSupabase, deleteStoryFromSupabase } from './dashboard-store-supabase-del.js';
 
-window.unifiedMediaData = { type: 'none', url: '', urls: [], isVideo: false };
+window.unifiedMediaData = { type: 'none', url: '', urls: [], files: [], isVideo: false };
 
 // Ultra-fast instant image compressor using in-memory HTML5 Canvas
 function compressImageInstant(file, maxWidth = 1000, quality = 0.82) {
@@ -59,9 +59,13 @@ window.previewUnifiedImg = async function(input) {
     }
 
     const compressedUrls = [];
+    const fileObjects = [];
     for (let i = 0; i < totalFiles; i++) {
         const compressed = await compressImageInstant(input.files[i]);
-        if (compressed) compressedUrls.push(compressed);
+        if (compressed) {
+            compressedUrls.push(compressed);
+            fileObjects.push(input.files[i]);
+        }
     }
 
     if (compressedUrls.length === 0) {
@@ -77,7 +81,13 @@ window.previewUnifiedImg = async function(input) {
         return;
     }
 
-    window.unifiedMediaData = { type: 'images', url: compressedUrls[0], urls: compressedUrls, isVideo: false };
+    window.unifiedMediaData = { 
+        type: 'images', 
+        url: compressedUrls[0], 
+        urls: compressedUrls, 
+        files: fileObjects,
+        isVideo: false 
+    };
 
     if (lbl) {
         lbl.innerHTML = `
@@ -137,7 +147,7 @@ window.validateAndPreviewUnifiedVid = function(input) {
         // Read video DataURL
         const reader = new FileReader();
         reader.onload = function(e) {
-            window.unifiedMediaData = { type: 'video', url: e.target.result, isVideo: true };
+            window.unifiedMediaData = { type: 'video', url: e.target.result, file: file, isVideo: true };
             const vidLbl = document.getElementById('unified-vid-lbl');
             const vidPrev = document.getElementById('unified-vid-preview');
             const vidContainer = document.getElementById('unified-vid-preview-container');
@@ -217,6 +227,7 @@ window.resetUnifiedMedia = function() {
 window.merchantUnifiedAddProduct = async function(e) {
   window.addProductToSupabase = addProductToSupabase;
   window.addStoryToSupabase = addStoryToSupabase;
+  window.uploadFileToSupabase = uploadFileToSupabase;
     if (e) e.preventDefault();
     
     let storeId = localStorage.getItem('zalo_current_store_id') || localStorage.getItem('zalo_uid') || 'default_store';
@@ -233,12 +244,9 @@ window.merchantUnifiedAddProduct = async function(e) {
         existingStories = JSON.parse(localStorage.getItem('zalo_live_stories') || '[]');
     } catch(e) {}
 
-    // Check 3 to 5 products limit for unverified merchants or if paused
+    // Check limits
     if (isPaused || (!isVerified && (existingProducts.length >= 5 || existingStories.length >= 5))) {
         const msgTitle = isPaused ? 'النشر موقوف من قبل الإدارة! 🛑' : 'تم الوصول لحد النشر التجريبي (5 معروضات)! ⚠️';
-        const limitBanner = document.getElementById('merchant-publishing-limit-banner');
-        if (limitBanner) limitBanner.classList.remove('hidden');
-
         if (typeof Swal !== 'undefined') {
             Swal.fire({
                 icon: 'warning',
@@ -248,18 +256,11 @@ window.merchantUnifiedAddProduct = async function(e) {
                         <p class="text-xs text-slate-700 font-bold leading-relaxed">
                             لقد استوفيت باقة التجربة المجانية (5 معروضات). لاستكمال نشر باقي السلع وتفعيل القصص والبث المباشر اللاحدودي، يرجى استكمال وثائق محلك ودفع اشتراك التاجر.
                         </p>
-                        <div class="pt-2 text-center">
-                            <a href="https://wa.me/213658000000?text=${encodeURIComponent('مرحباً إدارة ZaLo، أود استكمال وثائق المتجر ودفع الاشتراك لفتح النشر المباشر اللاحدودي.')}" target="_blank" class="inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-black shadow-md transition">
-                                <i class="fa-brands fa-whatsapp text-sm"></i>
-                                <span>تواصل عبر الواتساب لتفعيل الاشتراك الآن 💬</span>
-                            </a>
-                        </div>
                     </div>
-                `,
-                confirmButtonText: 'حسناً'
+                `
             });
         } else {
-            alert(msgTitle + '\nيرجى التواصل مع الإدارة عبر الواتساب لتفعيل الاشتراك الكامل.');
+            alert(msgTitle);
         }
         return;
     }
@@ -267,7 +268,7 @@ window.merchantUnifiedAddProduct = async function(e) {
     const btn = document.getElementById('btn-merchant-unified-add');
     if (btn) {
         btn.disabled = true;
-        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري النشر...';
+        btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> جاري النشر والرفع...';
     }
 
     const prodName = document.getElementById('prod-name').value.trim();
@@ -279,6 +280,15 @@ window.merchantUnifiedAddProduct = async function(e) {
     const prodDesc = document.getElementById('prod-desc').value.trim();
     const mainCat = document.getElementById('prod-main-category')?.value || 'عام';
     const subCat = document.getElementById('prod-sub-category')?.value || '';
+
+    if (!prodName || prodPrice <= 0) {
+        if (typeof Swal !== 'undefined') Swal.fire('خطأ!', 'يرجى إدخال اسم وسعر السلعة.', 'error');
+        if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> حفظ ونشر السلعة بالمتجر 🚀';
+        }
+        return;
+    }
 
     // Prevent duplicate submission based on name and price
     if (!window.editingProductId && existingProducts.some(p => p.name === prodName && p.price == prodPrice)) {
@@ -307,23 +317,33 @@ window.merchantUnifiedAddProduct = async function(e) {
 
     const mediaObj = window.unifiedMediaData || { url: '', urls: [], isVideo: false };
     let pMedia = mediaObj.url || 'assets/icon-192.svg';
-    if (mediaObj.type === 'images' && mediaObj.urls.length > 0) {
-        pMedia = mediaObj.urls.length === 1 ? mediaObj.urls[0] : JSON.stringify(mediaObj.urls);
-    }
-    const isVideo = mediaObj.isVideo || false;
+    let pVideo = mediaObj.isVideo ? mediaObj.url : '';
 
-    const pId = 'p_' + Date.now();
-    
-    // Retain existing image if editing and no new media selected
-    if (window.editingProductId && (!mediaObj.type || mediaObj.type === 'none')) {
-        let dbProds = [];
-        try { dbProds = JSON.parse(localStorage.getItem('zalo_products') || '[]'); } catch(e){}
-        const oldP = dbProds.find(p => String(p.id) === String(window.editingProductId));
-        if (oldP) {
-            pMedia = oldP.image || oldP.image_url || oldP.imageUrl || pMedia;
+    // Handle storage upload if available
+    if (typeof uploadFileToSupabase === 'function') {
+        if (mediaObj.isVideo && mediaObj.file) {
+            const vidUrl = await uploadFileToSupabase(mediaObj.file, 'videos');
+            if (vidUrl) {
+                pMedia = vidUrl;
+                pVideo = vidUrl;
+            }
+        } else if (mediaObj.type === 'images' && mediaObj.files && mediaObj.files.length > 0) {
+            const uploadPromises = mediaObj.files.map(f => uploadFileToSupabase(f, 'products'));
+            const urls = await Promise.all(uploadPromises);
+            const validUrls = urls.filter(u => u !== null);
+            if (validUrls.length > 0) {
+                pMedia = validUrls.length === 1 ? validUrls[0] : JSON.stringify(validUrls);
+            }
+        }
+    } else {
+        if (mediaObj.type === 'images' && mediaObj.urls.length > 0) {
+            pMedia = mediaObj.urls.length === 1 ? mediaObj.urls[0] : JSON.stringify(mediaObj.urls);
         }
     }
 
+    const isVideo = mediaObj.isVideo || false;
+    const pId = 'p_' + Date.now();
+    
     const newProduct = {
         productId: pId,
         id: pId,
@@ -340,7 +360,7 @@ window.merchantUnifiedAddProduct = async function(e) {
         image: pMedia,
         imageUrl: pMedia,
         image_url: pMedia,
-        video: isVideo ? pMedia : '',
+        video: pVideo,
         isVideo: isVideo,
         storeId: storeId,
         store_id: storeId,
@@ -351,143 +371,57 @@ window.merchantUnifiedAddProduct = async function(e) {
         created_at: new Date().toISOString()
     };
 
-    // 1. Save to local products DB
+    // 1. Sync to Supabase products table
+    let supabaseSuccess = true;
+    try {
+        if (typeof addProductToSupabase === 'function') {
+             supabaseSuccess = await addProductToSupabase(newProduct);
+        }
+    } catch (err) {
+        console.error('Supabase product sync error:', err);
+        supabaseSuccess = false;
+    }
+
+    if (!supabaseSuccess) {
+        if (typeof Swal !== 'undefined') Swal.fire('فشل المزامنة!', 'حدث خطأ أثناء الرفع إلى الخادم. يرجى التحقق من جودة الاتصال وحجم الملفات.', 'error');
+        if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> حفظ ونشر السلعة بالمتجر 🚀';
+        }
+        return;
+    }
+
+    // 2. Save to local products DB (Cache)
     let dbProducts = [];
     try {
         dbProducts = JSON.parse(localStorage.getItem('zalo_products') || '[]');
-    } catch(e) {}
-    
-    // Safety check: Limit local products cache to 50 items to avoid QuotaExceededError
-    if (dbProducts.length > 50) {
-        dbProducts = dbProducts.slice(0, 45);
-    }
-    
-    if (window.editingProductId) {
-        newProduct.id = window.editingProductId;
-        newProduct.productId = window.editingProductId;
-        const idx = dbProducts.findIndex(p => String(p.id) === String(window.editingProductId));
-        if (idx >= 0) {
-            dbProducts[idx] = { ...dbProducts[idx], ...newProduct };
-        } else {
-            dbProducts.unshift(newProduct);
-        }
-    } else {
         dbProducts.unshift(newProduct);
-    }
-    
-    try {
-        localStorage.setItem('zalo_products', JSON.stringify(dbProducts));
-    } catch (quotaErr) {
-        if (quotaErr.name === 'QuotaExceededError' || quotaErr.name === 'NS_ERROR_DOM_QUOTA_REACHED') {
-            // If quota exceeded, try saving with a placeholder image instead of large DataURL
-            newProduct.image = 'assets/icon-192.svg';
-            newProduct.imageUrl = 'assets/icon-192.svg';
-            if (window.editingProductId) {
-                const idx = dbProducts.findIndex(p => String(p.id) === String(window.editingProductId));
-                if(idx >= 0) dbProducts[idx] = newProduct;
-            } else {
-                dbProducts[0] = newProduct;
-            }
-            localStorage.setItem('zalo_products', JSON.stringify(dbProducts));
-            console.warn('Storage quota reached, product saved without large image.');
-        } else {
-            throw quotaErr;
-        }
-    }
-
-    // Also sync with legacy DB key
-    try {
-        if (typeof setDB === 'function') {
-            let legacyProds = (typeof getDB === 'function') ? getDB('products', []) : [];
-            if (legacyProds.length > 50) legacyProds = legacyProds.slice(0, 45);
-            if (window.editingProductId) {
-                const lIdx = legacyProds.findIndex(p => String(p.id) === String(window.editingProductId));
-                if(lIdx >= 0) legacyProds[lIdx] = { ...legacyProds[lIdx], ...newProduct };
-                else legacyProds.unshift(newProduct);
-            } else {
-                legacyProds.unshift(newProduct);
-            }
-            setDB('products', legacyProds);
-        }
+        localStorage.setItem('zalo_products', JSON.stringify(dbProducts.slice(0, 50)));
     } catch(e) {}
 
-    // 3. Sync to Supabase products table if connected
+    // 3. UNIFIED LIVE BROADCAST: Automatically sync as an active Live Story
     try {
-        if (window.addProductToSupabase && !window.editingProductId) {
-             const prodData = {
-                name: prodName,
-                productName: prodName,
-                price: prodPrice,
-                stock: prodStock,
-                sku: prodSku,
-                weight: prodWeight,
-                minOrder: prodMinOrder,
-                category: mainCat,
-                subcategory: subCat,
-                description: prodDesc,
-                image: pMedia,
-                image_url: pMedia,
-                store_id: storeId,
-                store_name: realStoreName,
-                wilaya: realWilaya,
-                phone: realPhone,
-                status: 'active',
-                id: pId,
-                productId: pId
-            };
-            window.addProductToSupabase(prodData);
-        }
-    } catch (err) {
-        console.warn('Supabase product sync notice:', err);
-    }
-    // 4. UNIFIED LIVE BROADCAST: Automatically sync as an active Live Story as well
-    try {
-        let stories = JSON.parse(localStorage.getItem('zalo_live_stories') || '[]');
-        const storyObj = {
-            id: pId,
-            author: realStoreName,
-            name: realStoreName,
-            store_name: realStoreName,
-            storeId: storeId,
-            wilaya: realWilaya,
-            category: mainCat,
-            subcategory: subCat,
-            price: prodPrice,
-            caption: prodName + (prodDesc ? ' - ' + prodDesc : ''),
-            title: prodName,
-            image: pMedia,
-            video: isVideo ? pMedia : '',
-            isVideo: isVideo,
-            logo: 'assets/icon-192.svg',
-            phone: realPhone,
-            time: 'الآن',
-            likes: 1,
-            created_at: new Date().toISOString()
-        };
-
-        stories = stories.filter(s => String(s.id) !== String(pId));
-        stories.unshift(storyObj);
-        localStorage.setItem('zalo_live_stories', JSON.stringify(stories));
-
-        if (window.supabaseClient) {
-            window.supabaseClient.from('market_posts').upsert({
+        if (typeof addStoryToSupabase === 'function') {
+            const storyObj = {
                 id: pId,
                 author: realStoreName,
-                author_name: realStoreName,
                 store_name: realStoreName,
+                storeId: storeId,
                 wilaya: realWilaya,
                 category: mainCat,
                 price: prodPrice,
-                caption: prodName + (prodDesc ? ' - ' + prodDesc : ''),
+                caption: prodName,
                 image_url: pMedia,
                 video_url: isVideo ? pMedia : null,
                 is_video: isVideo,
                 phone: realPhone,
-                is_active: true
-            }).then().catch(e => console.warn('Supabase story sync note:', e));
+                is_active: true,
+                created_at: new Date().toISOString()
+            };
+            await addStoryToSupabase(storyObj);
         }
     } catch(storyErr) {
-        console.warn('Auto story sync notice:', storyErr);
+        console.warn('Auto story sync error:', storyErr);
     }
 
     // Clear form and reset media preview
@@ -515,15 +449,12 @@ window.merchantUnifiedAddProduct = async function(e) {
     
     if (btn) {
         btn.disabled = false;
-        btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> نشر العرض الآن (نشر فوري)';
+        btn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> حفظ ونشر السلعة بالمتجر 🚀';
     }
 
-    if (typeof renderMerchantProducts === 'function') {
-        renderMerchantProducts();
-    }
-    if (typeof updateCounters === 'function') {
-        updateCounters();
-    }
+    if (typeof renderMerchantProducts === 'function') renderMerchantProducts();
+    if (typeof loadMerchantProducts === 'function') loadMerchantProducts();
+    if (typeof loadMerchantStats === 'function') loadMerchantStats();
 };
 
 window.switchProductSubTab = function(tab) {

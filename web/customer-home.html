@@ -120,16 +120,55 @@
       <div style="font-size: 10px; color: rgba(255,255,255,0.7);">معرف الحساب: #<span id="drawer-user-id">ZALO-69</span></div>
     </div>
     <script>
-      (function() {
+      async function syncSidebarAuth() {
         try {
-          const savedEmail = localStorage.getItem('zalo_user_email') || localStorage.getItem('user_email') || sessionStorage.getItem('user_email') || 'مستخدم ZaLo معتمد';
-          const savedUid = localStorage.getItem('zalo_uid') || localStorage.getItem('user_uid') || 'ZALO-69';
           const elEmail = document.getElementById('drawer-user-email');
           const elId = document.getElementById('drawer-user-id');
-          if (elEmail) elEmail.innerText = savedEmail;
-          if (elId) elId.innerText = String(savedUid).slice(0, 8);
-        } catch(e) {}
-      })();
+          const loginItem = document.getElementById('drawer-login-item');
+          const logoutBtn = document.getElementById('drawer-logout-btn');
+
+          let email = 'مستخدم ZaLo معتمد';
+          let uid = 'ZALO-69';
+          let isLoggedIn = false;
+
+          // 1. Try Supabase session
+          if (window.supabaseClient) {
+            const { data: { session } } = await window.supabaseClient.auth.getSession();
+            if (session && session.user) {
+              email = session.user.email;
+              uid = session.user.id;
+              isLoggedIn = true;
+            }
+          }
+
+          // 2. Fallback to LocalStorage (Mock Auth)
+          if (!isLoggedIn) {
+            const savedEmail = localStorage.getItem('zalo_user_email') || localStorage.getItem('user_email') || sessionStorage.getItem('user_email');
+            const savedUid = localStorage.getItem('zalo_uid') || localStorage.getItem('user_uid');
+            if (savedEmail) {
+                email = savedEmail;
+                uid = savedUid || 'ZALO-User';
+                isLoggedIn = true;
+            }
+          }
+
+          if (elEmail) elEmail.innerText = email;
+          if (elId) elId.innerText = String(uid).slice(0, 8);
+
+          // Toggle visibility
+          if (loginItem) loginItem.style.display = isLoggedIn ? 'none' : 'flex';
+          if (logoutBtn) logoutBtn.style.display = isLoggedIn ? 'block' : 'none';
+        } catch(e) {
+          console.error("Sidebar sync error:", e);
+        }
+      }
+      
+      // Run immediately and also on a delay to catch Supabase init
+      syncSidebarAuth();
+      setTimeout(syncSidebarAuth, 2000);
+      
+      // Expose to window for global access
+      window.refreshSidebar = syncSidebarAuth;
     </script>
 
     <div class="sm-sec" id="sm-sec-ops">العمليات والطلبات</div>

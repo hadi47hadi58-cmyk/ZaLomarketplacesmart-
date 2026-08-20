@@ -197,7 +197,8 @@
             const customInput = document.getElementById('settings-custom-commune');
             if (!communeSelect) return;
 
-            let cleanName = wilayaVal.replace(/^[0-9]+\s*-\s*/, '').trim();
+            // Improved regex to handle "31 وهران" or "31 - وهران" or "31. وهران"
+            let cleanName = wilayaVal.replace(/^[0-9]+[\s.-]*/, '').trim();
             cleanName = cleanName.replace(/\s*\(.*\)/, '').trim();
 
             const baladiyas = STORE_BALADIYAS[cleanName] || STORE_BALADIYAS[wilayaVal] || STORE_BALADIYAS["default"];
@@ -212,7 +213,7 @@
 
             // Add other option
             const otherOpt = document.createElement('option');
-            otherOpt.value = "بلدية أخرى (اكتبها في العنوان)";
+            otherOpt.value = "بلدية أخرى (كتابة يدوية)";
             otherOpt.textContent = "✍️ بلدية أخرى (كتابة يدوية)";
             communeSelect.appendChild(otherOpt);
 
@@ -226,11 +227,13 @@
             const customInput = document.getElementById('settings-custom-commune');
             if (!customInput) return;
 
-            if (communeVal && (communeVal.includes('أخرى') || communeVal.includes('اكتبها') || communeVal.includes('يدوية'))) {
+            // Fix matching for "other" option
+            if (communeVal && (communeVal.includes('أخرى') || communeVal.includes('كتابة') || communeVal.includes('يدوية'))) {
                 customInput.classList.remove('hidden');
                 customInput.focus();
             } else {
                 customInput.classList.add('hidden');
+                customInput.value = '';
             }
         };
 
