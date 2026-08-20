@@ -411,19 +411,23 @@ window.merchantUnifiedAddProduct = async function(e) {
     // 2.5 Ensure store is added to zalo_official_stores
     try {
         let offStores = JSON.parse(localStorage.getItem('zalo_official_stores') || '[]');
-        if (!offStores.some(s => s.name === realStoreName || s.id === storeId)) {
-            offStores.unshift({
-                id: storeId,
-                name: realStoreName,
-                wilaya: realWilaya,
-                phone: realPhone,
-                logo: 'assets/icon-192.svg',
-                coverImage: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=500',
-                isOfficial: true,
-                status: 'active'
-            });
-            localStorage.setItem('zalo_official_stores', JSON.stringify(offStores));
+        const existingIdx = offStores.findIndex(s => s.name === realStoreName || s.id === storeId);
+        const storeEntry = {
+            id: storeId,
+            name: realStoreName,
+            wilaya: realWilaya,
+            phone: realPhone,
+            logo: realLogo || 'assets/icon-192.svg',
+            coverImage: currentStoreSettings.coverImg || 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=500',
+            isOfficial: true,
+            status: 'active'
+        };
+        if (existingIdx >= 0) {
+            offStores[existingIdx] = storeEntry;
+        } else {
+            offStores.unshift(storeEntry);
         }
+        localStorage.setItem('zalo_official_stores', JSON.stringify(offStores));
     } catch(e) {}
 
     // 3. BACKGROUND ASYNC SYNC TO SUPABASE
@@ -521,40 +525,47 @@ window.switchProductSubTab = function(tab) {
     }
 };
 
-window.storyMediaData = { url: '', isVideo: false };
+window.storyMediaData = { url: '', isVideo: false, file: null };
 
-window.previewStoryMedia = function(input) {
+window.previewStoryMedia = async function(input) {
     if (!input.files || !input.files[0]) return;
     const file = input.files[0];
     const isVideo = file.type.startsWith('video');
-    const reader = new FileReader();
+    
+    const placeholder = document.getElementById('story-upload-placeholder');
+    const imgPrev = document.getElementById('story-file-preview-img');
+    const vidPrev = document.getElementById('story-file-preview-vid');
 
-    reader.onload = function(e) {
-        window.storyMediaData = {
-            url: e.target.result,
-            isVideo: isVideo
-        };
-        const placeholder = document.getElementById('story-upload-placeholder');
-        const imgPrev = document.getElementById('story-file-preview-img');
-        const vidPrev = document.getElementById('story-file-preview-vid');
-
-        if (placeholder) placeholder.classList.add('hidden');
-
-        if (isVideo) {
+    if (isVideo) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            window.storyMediaData = {
+                url: e.target.result,
+                isVideo: true,
+                file: file
+            };
+            if (placeholder) placeholder.classList.add('hidden');
             if (imgPrev) imgPrev.classList.add('hidden');
             if (vidPrev) {
                 vidPrev.src = e.target.result;
                 vidPrev.classList.remove('hidden');
             }
-        } else {
-            if (vidPrev) vidPrev.classList.add('hidden');
-            if (imgPrev) {
-                imgPrev.src = e.target.result;
-                imgPrev.classList.remove('hidden');
-            }
+        };
+        reader.readAsDataURL(file);
+    } else {
+        const compressed = await compressImageInstant(file, 800, 0.78);
+        window.storyMediaData = {
+            url: compressed || '',
+            isVideo: false,
+            file: file
+        };
+        if (placeholder) placeholder.classList.add('hidden');
+        if (vidPrev) vidPrev.classList.add('hidden');
+        if (imgPrev) {
+            imgPrev.src = compressed;
+            imgPrev.classList.remove('hidden');
         }
-    };
-    reader.readAsDataURL(file);
+    }
 };
 
 window.merchantPublishStory = async function(e) {
@@ -570,6 +581,7 @@ window.merchantPublishStory = async function(e) {
 
     let mediaUrl = window.storyMediaData?.url;
     let isVideo = window.storyMediaData?.isVideo || false;
+    let fileObj = window.storyMediaData?.file || null;
 
     if (!mediaUrl) {
         alert('يرجى اختيار صورة أو فيديو لنشر القصة');
@@ -589,8 +601,20 @@ window.merchantPublishStory = async function(e) {
 
     const storeName = settings.storeName || settings.name || localStorage.getItem('zalo_active_store') || 'متجر معتمد';
     const storeLogo = settings.logoImg || settings.logo || 'assets/icon-192.svg';
-    const storeWilaya = settings.wilaya || 'الجزائر';
-    const storePhone = settings.phone || '0555000000';
+    const storeWilaya = settings.wilaya || '58 - المنيعة';
+    const storePhone = settings.phone || '0698694010';
+
+    // Try cloud storage upload if file available
+    try {
+        if (fileObj && typeof uploadFileToSupabase === 'function') {
+            const uploadedCdn = await uploadFileToSupabase(fileObj, isVideo ? 'videos' : 'stories');
+            if (uploadedCdn) {
+                mediaUrl = uploadedCdn;
+            }
+        }
+    } catch(uErr) {
+        console.warn('Story cloud upload fallback:', uErr);
+    }
 
     const newStory = {
         id: 'story_' + Date.now(),
@@ -602,6 +626,7 @@ window.merchantPublishStory = async function(e) {
         wilaya: storeWilaya,
         phone: storePhone,
         image: mediaUrl,
+        image_url: mediaUrl,
         video: isVideo ? mediaUrl : '',
         isVideo: isVideo,
         caption: caption + (price > 0 ? ` | السعر: ${price.toLocaleString()} دج` : ''),
@@ -620,34 +645,33 @@ window.merchantPublishStory = async function(e) {
         stories.unshift(newStory);
         if (stories.length > 30) stories = stories.slice(0, 30);
         localStorage.setItem('zalo_live_stories', JSON.stringify(stories));
+        window.liveStoriesList = stories;
     } catch(err) {
         console.warn('Local stories save:', err);
     }
 
-    // Publish to Supabase if connected
-    const sb = window.supabaseClient || window.supabase;
-    if (sb && sb.from) {
-        try {
-            await sb.from('market_posts').insert([{
-                store_name: storeName,
-                author_name: storeName,
-                author: storeName,
-                wilaya: storeWilaya,
-                phone: storePhone,
-                title: caption,
-                description: caption,
-                caption: caption,
-                image_url: mediaUrl,
-                image: mediaUrl,
-                video: isVideo ? mediaUrl : '',
-                price: String(price),
-                status: 'active',
-                post_type: 'story',
-                created_at: new Date().toISOString()
-            }]);
-        } catch(err) {
-            console.warn('Supabase story post:', err);
-        }
+    // Save store to official stores list
+    try {
+        let offStores = JSON.parse(localStorage.getItem('zalo_official_stores') || '[]');
+        const existingIdx = offStores.findIndex(s => s.name === storeName);
+        const sEntry = {
+            id: 'store_' + encodeURIComponent(storeName),
+            name: storeName,
+            wilaya: storeWilaya,
+            phone: storePhone,
+            logo: storeLogo,
+            coverImage: settings.coverImg || 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=500',
+            isOfficial: true,
+            status: 'active'
+        };
+        if (existingIdx >= 0) offStores[existingIdx] = sEntry;
+        else offStores.unshift(sEntry);
+        localStorage.setItem('zalo_official_stores', JSON.stringify(offStores));
+    } catch(e) {}
+
+    // Publish to Supabase
+    if (typeof addStoryToSupabase === 'function') {
+        addStoryToSupabase(newStory).catch(err => console.warn('Supabase story post:', err));
     }
 
     // Reset Form

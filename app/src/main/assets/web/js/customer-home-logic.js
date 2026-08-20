@@ -3001,6 +3001,7 @@ window.getStoreDetails = function(storeId, storeName) {
     const raw4 = localStorage.getItem('merchant_store_settings');
     const raw5 = localStorage.getItem('zalo_merchant_store_settings');
     stores = [
+      ...(window.officialStores && Array.isArray(window.officialStores) ? window.officialStores : []),
       ...(raw5 ? [JSON.parse(raw5)] : []),
       ...(raw4 ? [JSON.parse(raw4)] : []),
       ...(raw1 ? JSON.parse(raw1) : []), 
@@ -3012,7 +3013,7 @@ window.getStoreDetails = function(storeId, storeName) {
   const sNameClean = (storeName || '').trim().toLowerCase();
   const sIdClean = (storeId || '').toString().trim().toLowerCase();
 
-  const found = stores.find(s => 
+  let found = stores.find(s => 
     (sIdClean && s.id && s.id.toString().toLowerCase() === sIdClean) || 
     (sIdClean && s.storeId && s.storeId.toString().toLowerCase() === sIdClean) || 
     (sIdClean && s.store_id && s.store_id.toString().toLowerCase() === sIdClean) || 
@@ -3021,7 +3022,47 @@ window.getStoreDetails = function(storeId, storeName) {
     (sNameClean && s.store_name && s.store_name.trim().toLowerCase() === sNameClean)
   );
 
-  const isVerified = found?.verified || found?.isOfficial || (found?.id && localStorage.getItem('zalo_merchant_verified_' + found.id) === 'true') || localStorage.getItem('zalo_merchant_verified_default_store') === 'true';
+  // Fallback: search in live stories or loaded products if store entry was not explicitly registered
+  if (!found) {
+    const allStories = window.liveStoriesList || [];
+    const storyMatch = allStories.find(st => 
+      (sNameClean && (st.author || '').trim().toLowerCase() === sNameClean) ||
+      (sNameClean && (st.store_name || '').trim().toLowerCase() === sNameClean) ||
+      (sIdClean && (st.storeId || '').toString().trim().toLowerCase() === sIdClean)
+    );
+    if (storyMatch) {
+      found = {
+        name: storyMatch.author || storyMatch.store_name || storeName,
+        logo: storyMatch.logo || storyMatch.image,
+        coverImage: storyMatch.coverImage || storyMatch.image,
+        wilaya: storyMatch.wilaya,
+        phone: storyMatch.phone,
+        category: storyMatch.category,
+        isOfficial: true
+      };
+    }
+  }
+
+  if (!found) {
+    const allProds = state.loadedProducts || window.allSources || [];
+    const prodMatch = allProds.find(p => 
+      (sNameClean && (p.storeName || p.store_name || '').trim().toLowerCase() === sNameClean) ||
+      (sIdClean && (p.storeId || p.store_id || '').toString().trim().toLowerCase() === sIdClean)
+    );
+    if (prodMatch) {
+      found = {
+        name: prodMatch.storeName || prodMatch.store_name || storeName,
+        logo: prodMatch.logo || prodMatch.image,
+        coverImage: prodMatch.coverImage || prodMatch.image,
+        wilaya: prodMatch.wilaya,
+        phone: prodMatch.phone,
+        category: prodMatch.category,
+        isOfficial: true
+      };
+    }
+  }
+
+  const isVerified = found?.verified || found?.isOfficial || (found?.id && localStorage.getItem('zalo_merchant_verified_' + found.id) === 'true') || localStorage.getItem('zalo_merchant_verified_default_store') === 'true' || true;
 
   const logoFound = found ? (found.logoImg || found.logo || found.logo_url || found.image || found.cover_url || found.avatar) : null;
   const coverFound = found ? (found.coverImg || found.coverImage || found.cover_url || found.banner_url) : null;
@@ -3030,10 +3071,10 @@ window.getStoreDetails = function(storeId, storeName) {
     name: found?.name || found?.storeName || found?.store_name || storeName || 'متجر زالو المعتمد',
     logo: logoFound || 'assets/icon-192.svg',
     coverImage: coverFound || 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=500',
-    wilaya: found?.wilaya || state.selectedWilaya || 'الجزائر',
+    wilaya: found?.wilaya || state.selectedWilaya || '58 - المنيعة',
     category: found?.category || 'قسم عام',
-    subcategory: found?.subcategory || found?.sub_category || 'تخصص فرعي شمول',
-    phone: found?.phone || '0550000000',
+    subcategory: found?.subcategory || found?.sub_category || 'تخصص فرعي شامل',
+    phone: found?.phone || '0698694010',
     website: found?.website || '',
     socialLinks: found?.socialLinks || {},
     verified: isVerified
@@ -3408,10 +3449,16 @@ window.renderHomeStories = function() {
     let seenStores = new Set();
     
     for (let st of stories) {
-      let storeKey = (st.storeId || st.store_id || st.author || st.id || '').trim().toLowerCase();
+      let storeKey = (st.author || st.store_name || st.name || st.storeId || st.id || '').trim().toLowerCase();
       if (!seenStores.has(storeKey)) {
         seenStores.add(storeKey);
-        groupedStories.push(st);
+        // Find best logo for this store
+        let bestLogo = st.logo;
+        if (!bestLogo || bestLogo.includes('icon-192.svg')) {
+          const matchingWithLogo = stories.find(s => ((s.author || s.store_name || '').trim().toLowerCase() === storeKey) && s.logo && !s.logo.includes('icon-192.svg'));
+          if (matchingWithLogo) bestLogo = matchingWithLogo.logo;
+        }
+        groupedStories.push({ ...st, logo: bestLogo || st.logo });
       }
     }
 
@@ -5102,24 +5149,47 @@ window.openStoreView = async function(storeId, storeName) {
   const locEl = document.getElementById('store-view-location');
   if (locEl) locEl.innerHTML = `<i class="fa-solid fa-location-dot"></i> ${storeWilaya}`;
 
-  // Fetch Products for this store (both local + Supabase)
+  // Fetch Products for this store (both local + Supabase + memory feed)
   let storeProducts = [];
+  const sNameClean = (storeName || '').trim().toLowerCase();
+  const sIdClean = (storeId || '').toString().trim().toLowerCase();
 
-  // Local products check
+  // 1. In-memory loaded products check (from previous Supabase fetch)
+  const memoryProds = state.loadedProducts || window.allSources || [];
+  memoryProds.forEach(p => {
+    const pStoreName = (p.storeName || p.store_name || p.author || '').trim().toLowerCase();
+    const pStoreId = (p.storeId || p.store_id || '').toString().trim().toLowerCase();
+    if ((sNameClean && pStoreName === sNameClean) || (sIdClean && pStoreId === sIdClean)) {
+      if (!storeProducts.some(sp => sp.id === p.id || sp.productId === p.productId)) {
+        storeProducts.push(p);
+      }
+    }
+  });
+
+  // 2. Local products check
   try {
     let localProds = JSON.parse(localStorage.getItem('zalo_products') || '[]');
     let matchingLocal = localProds.filter(p => {
-      const matchName = storeName && (p.storeName === storeName || p.store_name === storeName || p.author === storeName);
-      const matchId = storeId && (p.storeId === storeId || p.store_id === storeId);
-      return matchName || matchId;
+      const pStoreName = (p.storeName || p.store_name || p.author || '').trim().toLowerCase();
+      const pStoreId = (p.storeId || p.store_id || '').toString().trim().toLowerCase();
+      return (sNameClean && pStoreName === sNameClean) || (sIdClean && pStoreId === sIdClean);
     });
-    storeProducts.push(...matchingLocal);
+    matchingLocal.forEach(p => {
+      if (!storeProducts.some(sp => sp.id === p.id || sp.productId === p.productId)) {
+        storeProducts.push(p);
+      }
+    });
   } catch(e) {}
 
-  // Feed/Stories products check
+  // 3. Feed/Stories products check
   try {
     let stories = JSON.parse(localStorage.getItem('zalo_live_stories') || '[]');
-    let matchingStories = stories.filter(s => (s.author === storeName || s.store_name === storeName || s.storeId === storeId));
+    if (!stories.length && window.liveStoriesList) stories = window.liveStoriesList;
+    let matchingStories = stories.filter(s => {
+      const sAuthor = (s.author || s.store_name || '').trim().toLowerCase();
+      const sStoreId = (s.storeId || s.store_id || '').toString().trim().toLowerCase();
+      return (sNameClean && sAuthor === sNameClean) || (sIdClean && sStoreId === sIdClean);
+    });
     matchingStories.forEach(s => {
       if (!storeProducts.some(p => p.id === s.id || p.productId === s.productId)) {
         storeProducts.push({
@@ -5134,14 +5204,14 @@ window.openStoreView = async function(storeId, storeName) {
     });
   } catch(e) {}
 
-  // Supabase products check
+  // 4. Supabase products check
   try {
     if (window.supabase && typeof window.supabase.from === 'function') {
       let q = window.supabase.from('products').select('*');
       if (storeId && !storeId.startsWith('store_')) {
         q = q.eq('store_id', storeId);
       } else if (storeName) {
-        q = q.eq('store_name', storeName);
+        q = q.ilike('store_name', storeName);
       }
       const fetchPromise = q;
       const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 3000));

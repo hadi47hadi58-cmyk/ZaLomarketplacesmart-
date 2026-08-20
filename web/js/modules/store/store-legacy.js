@@ -587,24 +587,52 @@
                 setDB("stores", stores);
             }
 
+            // Sync to zalo_official_stores for instant directory sync
+            try {
+                let offStores = JSON.parse(localStorage.getItem('zalo_official_stores') || '[]');
+                const sIdx = offStores.findIndex(s => s.name === settings.storeName);
+                const sEntry = {
+                    id: 'store_' + encodeURIComponent(settings.storeName),
+                    name: settings.storeName,
+                    wilaya: settings.wilaya || '58 - المنيعة',
+                    commune: settings.commune || '',
+                    phone: settings.phone || '0698694010',
+                    category: settings.category || 'عام',
+                    logo: settings.logoImg || 'assets/icon-192.svg',
+                    coverImage: settings.coverImg || 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=500',
+                    isOfficial: true,
+                    status: 'active'
+                };
+                if (sIdx >= 0) offStores[sIdx] = sEntry;
+                else offStores.unshift(sEntry);
+                localStorage.setItem('zalo_official_stores', JSON.stringify(offStores));
+            } catch(e) {}
+
             // Sync to Supabase stores table if available
             try {
-                if (window.supabaseClient) {
+                const sb = window.supabaseClient || window.supabase;
+                if (sb && sb.from) {
+                    const payload = {
+                        name: settings.storeName,
+                        store_name: settings.storeName,
+                        phone: settings.phone,
+                        wilaya: settings.wilaya,
+                        baladiya: settings.commune,
+                        commune: settings.commune,
+                        category: settings.category,
+                        logo_url: settings.logoImg,
+                        banner_url: settings.coverImg,
+                        cover_url: settings.coverImg,
+                        status: 'active',
+                        is_official: true,
+                        updated_at: new Date().toISOString()
+                    };
                     const userUid = localStorage.getItem('zalo_uid') || localStorage.getItem('user_uid');
-                    if (userUid) {
-                        await window.supabaseClient.from('stores').upsert({
-                            owner_id: userUid,
-                            name: settings.storeName,
-                            phone: settings.phone,
-                            wilaya: settings.wilaya,
-                            commune: settings.commune,
-                            category: settings.category,
-                            logo_url: settings.logoImg,
-                            cover_url: settings.coverImg,
-                            status: 'approved',
-                            updated_at: new Date().toISOString()
-                        }, { onConflict: 'owner_id' });
-                    }
+                    if (userUid) payload.owner_id = userUid;
+
+                    sb.from('stores').upsert(payload, { onConflict: 'name' }).then().catch(() => {
+                        sb.from('stores').insert([payload]).then().catch(() => {});
+                    });
                 }
             } catch(err) {
                 console.warn('Supabase store update:', err);

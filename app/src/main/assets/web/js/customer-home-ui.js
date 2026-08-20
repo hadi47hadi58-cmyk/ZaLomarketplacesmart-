@@ -161,8 +161,8 @@ window.renderStoresDirectory = function() {
     }
   } catch(e) {}
 
-  // 4. Collect from all products (window.allSources & localStorage)
-  let allProds = window.allSources || [];
+  // 4. Collect from all products (state.loadedProducts, window.allSources & localStorage)
+  let allProds = state?.loadedProducts || window.allSources || [];
   if (!allProds.length) {
     try { allProds = JSON.parse(localStorage.getItem('zalo_products') || '[]'); } catch(e) {}
   }
@@ -172,17 +172,42 @@ window.renderStoresDirectory = function() {
     const sName = (p.storeName || p.store_name || '').trim();
     if (sName) {
       const sId = p.storeId || p.store_id || ('store_' + encodeURIComponent(sName));
+      const pLogo = p.logo || p.storeLogo || p.image || 'assets/icon-192.svg';
       if (!storesMap.has(sId)) {
         storesMap.set(sId, {
           id: sId,
           name: sName,
           wilaya: p.wilaya || '58 - المنيعة',
           phone: p.phone || '0698694010',
-          logo: 'assets/icon-192.svg',
+          logo: pLogo,
           productCount: 0
         });
+      } else if (pLogo && !pLogo.includes('icon-192.svg') && storesMap.get(sId).logo.includes('icon-192.svg')) {
+        storesMap.get(sId).logo = pLogo;
       }
       storesMap.get(sId).productCount++;
+    }
+  });
+
+  // 5. Collect from live stories feed
+  const feedStories = window.liveStoriesList || [];
+  feedStories.forEach(st => {
+    const sName = (st.author || st.store_name || '').trim();
+    if (sName) {
+      const sId = st.storeId || ('store_' + encodeURIComponent(sName));
+      const sLogo = st.logo || st.image || 'assets/icon-192.svg';
+      if (!storesMap.has(sId)) {
+        storesMap.set(sId, {
+          id: sId,
+          name: sName,
+          wilaya: st.wilaya || '58 - المنيعة',
+          phone: st.phone || '0698694010',
+          logo: sLogo,
+          productCount: 1
+        });
+      } else if (sLogo && !sLogo.includes('icon-192.svg')) {
+        storesMap.get(sId).logo = sLogo;
+      }
     }
   });
 
