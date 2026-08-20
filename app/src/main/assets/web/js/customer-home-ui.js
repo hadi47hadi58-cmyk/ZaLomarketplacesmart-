@@ -326,15 +326,5 @@ window.openStoreFromCurrentStory = function() {
   }
 };
 
-window.switchTab = function(tabId) {
-  if (window.state) window.state.activeTab = tabId;
-  document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
-  document.querySelectorAll('.bnav-btn-mockup').forEach(el => el.classList.remove('active'));
-  
-  const targetScreen = document.getElementById(`screen-${tabId}`);
-  if (targetScreen) targetScreen.classList.add('active');
-  
-  const targetBtn = document.querySelector(`.bnav-btn-mockup[data-tab="${tabId}"]`);
-  if (targetBtn) targetBtn.classList.add('active');
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-};
+// switchTab is defined in customer-home-logic.js with full functionality
+
