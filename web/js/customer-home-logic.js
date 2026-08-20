@@ -4355,25 +4355,36 @@ window.submitQuickDirectOrder = async function() {
   const totalAmount = (parseFloat(p.price) || 0) * qty;
   const orderId = 'ord_' + Date.now();
 
+  const wilayaNum = parseInt(wilaya.toString().replace(/[^0-9]/g, ''), 10) || 16;
   const newOrder = {
     id: orderId,
+    product_name: p.name,
+    quantity: qty,
+    shipping_wilaya: wilayaNum,
     customer_id: window.currentUser ? window.currentUser.id : 'guest_' + Date.now(),
     customer_name: name,
     customer_phone: phone,
+    address: address,
+    delivery_address: address,
+    wilaya: wilayaNum.toString(),
+    commune: 'غير محدد',
+    store_id: p.storeId || (storeInfo ? storeInfo.id : null) || 'direct',
+    store_name: p.storeName || (storeInfo ? storeInfo.name : null) || 'متجر معتمد',
+    total_amount: totalAmount,
+    payment_method: 'الدفع عند الاستلام',
+    payment_status: 'pending',
+    status: 'pending',
+    items: JSON.stringify([{ id: p.id, name: p.name, price: p.price, qty: qty, emoji: p.emoji, storeName: p.storeName }]),
+    created_at: new Date().toISOString(),
+    
+    // Additional fallback keys for local state compatibility
     customerName: name,
     customerPhone: phone,
-    wilaya: wilaya,
-    address: address,
-    store_id: p.storeId || storeInfo.id || 'direct',
-    store_name: p.storeName || storeInfo.name || 'متجر معتمد',
-    storeId: p.storeId || storeInfo.id || 'direct',
-    storeName: p.storeName || storeInfo.name || 'متجر معتمد',
-    total_amount: totalAmount,
+    storeId: p.storeId || (storeInfo ? storeInfo.id : null) || 'direct',
+    storeName: p.storeName || (storeInfo ? storeInfo.name : null) || 'متجر معتمد',
     totalAmount: totalAmount,
     total: totalAmount,
-    status: 'جديد 🆕',
-    created_at: new Date().toISOString(),
-    items: JSON.stringify([{ id: p.id, name: p.name, price: p.price, qty: qty, emoji: p.emoji, storeName: p.storeName }])
+    createdAt: new Date().toISOString()
   };
 
   // Save locally

@@ -223,11 +223,15 @@ window.renderStoresDirectory = function() {
     });
   }
 
-  // Remove legacy fake stores (أم زين)
+  // Remove legacy fake stores (أم زين) safely
   for (let key of Array.from(storesMap.keys())) {
     let s = storesMap.get(key);
-    if (s.name.includes('أم زين') || s.name.includes('ام زين') || s.id.includes('om_zayn')) {
-      storesMap.delete(key);
+    if (s) {
+      const sName = s.name ? String(s.name) : '';
+      const sId = s.id ? String(s.id) : '';
+      if (sName.includes('أم زين') || sName.includes('ام زين') || sId.includes('om_zayn')) {
+        storesMap.delete(key);
+      }
     }
   }
 
