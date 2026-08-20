@@ -81,7 +81,7 @@ export class AuthService {
 
     if (insertError || !newUser) {
       // Rollback auth user if profile insertion failed to maintain transactional consistency
-      await supabase.auth.admin.deleteUser(supabaseUid).catch(() => {});
+      await supabase.auth.admin.deleteUser(supabaseUid).catch(() => undefined);
       throw new ConflictException('تعذر إنشاء الملف الشخصي المطابق للمستخدم، يرجى إعادة المحاولة');
     }
 
