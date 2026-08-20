@@ -138,33 +138,18 @@ class MainActivity : ComponentActivity() {
                         filePathCallback?.onReceiveValue(null)
                         filePathCallback = callback
                         try {
-                            val acceptTypes = params?.acceptTypes?.filter { it.isNotEmpty() }?.toTypedArray()
-                            val isMultiple = params?.mode == WebChromeClient.FileChooserParams.MODE_OPEN_MULTIPLE
-                            
-                            val contentIntent = Intent(Intent.ACTION_GET_CONTENT).apply {
+                            val intent = params?.createIntent() ?: Intent(Intent.ACTION_GET_CONTENT).apply {
+                                type = "*/*"
                                 addCategory(Intent.CATEGORY_OPENABLE)
-                                if (!acceptTypes.isNullOrEmpty()) {
-                                    if (acceptTypes.size == 1) {
-                                        type = acceptTypes[0]
-                                    } else {
-                                        type = "*/*"
-                                        putExtra(Intent.EXTRA_MIME_TYPES, acceptTypes)
-                                    }
-                                } else {
-                                    type = "*/*"
-                                    putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("image/*", "video/*"))
-                                }
-                                if (isMultiple) {
-                                    putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
-                                }
+                                putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
                             }
-                            
-                            val chooserIntent = Intent.createChooser(contentIntent, "اختر وسائط المنتج (صور أو فيديو)")
+                            val chooserIntent = Intent.createChooser(intent, "اختر وسائط المنتج")
                             fileChooserLauncher.launch(chooserIntent)
                         } catch (e: Exception) {
                             try {
-                                val fallbackIntent = params?.createIntent() ?: Intent(Intent.ACTION_GET_CONTENT).apply {
-                                    type = "*/*"
+                                val fallbackIntent = Intent(Intent.ACTION_GET_CONTENT).apply {
+                                    type = "image/*"
+                                    addCategory(Intent.CATEGORY_OPENABLE)
                                 }
                                 fileChooserLauncher.launch(fallbackIntent)
                             } catch (err: Exception) {
