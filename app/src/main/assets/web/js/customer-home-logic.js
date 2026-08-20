@@ -5281,10 +5281,23 @@ window.filterAppWilayas = function(search) {
   renderAppWilayasGrid(filtered);
 };
 
+window.openBusinessHubWithWilayaSelector = function() {
+  state.redirectAfterWilayaSelect = 'wilaya-hub';
+  window.openChangeWilayaModal();
+};
+
 window.selectAppWilaya = function(wilaya) {
   localStorage.setItem('zalo_selected_wilaya', wilaya);
   closeChangeWilayaModal();
   applyActiveWilayaFilter();
+  
+  if (state.redirectAfterWilayaSelect === 'wilaya-hub') {
+    state.redirectAfterWilayaSelect = null;
+    window.switchTab('wilaya-hub');
+    if (typeof window.renderWilayaDiscoveryHub === 'function') {
+      window.renderWilayaDiscoveryHub(wilaya);
+    }
+  }
 };
 
 window.applyActiveWilayaFilter = function() {

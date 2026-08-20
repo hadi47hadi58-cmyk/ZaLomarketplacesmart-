@@ -195,7 +195,7 @@
     </div>
 
     <div class="sm-sec" id="sm-sec-partners">شركاء ZaLo والبيع</div>
-    <div class="smi" onclick="closeSide(); switchTab('wilaya-hub')" role="button" tabindex="0" aria-label="دخول مركز أعمال وتجارة الجزائر">
+    <div class="smi" onclick="closeSide(); window.openBusinessHubWithWilayaSelector()" role="button" tabindex="0" aria-label="دخول مركز أعمال وتجارة الجزائر">
       <span class="si" style="color:var(--brand-gold)"><i class="fa-solid fa-map-location-dot"></i></span>
       <div>
         <div class="sn">مركز أعمال وتجارة الجزائر 🇩🇿</div>
@@ -392,7 +392,7 @@
               <span id="hub-wilaya-subtitle" style="font-size: 11px; color: #64748b; font-weight: 700;">التخصصات والفروع والمتاجر المعتمدة</span>
             </div>
           </div>
-          <button onclick="openWilayaPickerModal()" style="background: #f0f9ff; border: 1px solid #bae6fd; color: #0284c7; border-radius: 10px; padding: 6px 12px; font-family: 'Cairo', sans-serif; font-size: 11px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 4px;">
+          <button onclick="window.openBusinessHubWithWilayaSelector()" style="background: #f0f9ff; border: 1px solid #bae6fd; color: #0284c7; border-radius: 10px; padding: 6px 12px; font-family: 'Cairo', sans-serif; font-size: 11px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 4px;">
             <i class="fa-solid fa-arrows-rotate"></i> تغيير الولاية
           </button>
         </div>
