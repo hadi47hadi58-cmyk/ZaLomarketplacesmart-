@@ -12,6 +12,42 @@
 <script src="js/indexed-db-cache.js"></script>
 <link rel="stylesheet" href="css/customer-home.css">
 <script src="js/customer-home-ui.js"></script>
+<script>
+  // Early global fallbacks to guarantee buttons work instantly even before module loads
+  window.openSide = window.openSide || function() {
+    var sm = document.getElementById('sidemenu');
+    var ov = document.getElementById('overlay');
+    if (sm) sm.classList.add('open');
+    if (ov) ov.classList.add('show');
+  };
+  window.closeSide = window.closeSide || function() {
+    var sm = document.getElementById('sidemenu');
+    var ov = document.getElementById('overlay');
+    if (sm) sm.classList.remove('open');
+    if (ov) ov.classList.remove('show');
+  };
+  window.switchTab = window.switchTab || function(tabId) {
+    if (window.state) window.state.activeTab = tabId;
+    document.querySelectorAll('.screen').forEach(function(el) { el.classList.remove('active'); });
+    document.querySelectorAll('.bnav-btn-mockup').forEach(function(el) { el.classList.remove('active'); });
+    var target = document.getElementById('screen-' + tabId);
+    if (target) target.classList.add('active');
+    var btn = document.querySelector('.bnav-btn-mockup[data-tab="' + tabId + '"], #bnav-' + tabId);
+    if (btn) btn.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+  window.openTopStoresModal = window.openTopStoresModal || function() {
+    var m = document.getElementById('topStoresModal');
+    if (m) m.style.display = 'flex';
+  };
+  window.toggleBottomSearch = window.toggleBottomSearch || function() {
+    window.switchTab('home');
+    setTimeout(function() {
+      var inp = document.getElementById('homeSearchInp');
+      if (inp) inp.focus();
+    }, 100);
+  };
+</script>
 </head>
 <body>
 
