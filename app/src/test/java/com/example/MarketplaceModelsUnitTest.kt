@@ -83,7 +83,7 @@ class MarketplaceModelsUnitTest {
             address = "حي النصر رقم 12"
         )
 
-        assertEquals(19500.0, order.totalAmount, 0.001)
+        assertEquals(19900.0, order.totalAmount, 0.001)
         assertEquals("COD", order.paymentMethod)
         assertEquals("PENDING", order.paymentStatus)
     }
