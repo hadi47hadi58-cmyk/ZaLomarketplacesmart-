@@ -151,6 +151,10 @@ const BALADIYAS = {
   "default": ["مركز البلدية الرئيسي", "حي السوق المركزي", "المنطقة التجارية", "بلدية أخرى (اكتبها في العنوان)"]
 };
 
+window.ALGERIA_WILAYAS = ALGERIA_WILAYAS;
+window.ALGERIAN_WILAYAS = ALGERIA_WILAYAS;
+window.BALADIYAS = BALADIYAS;
+
 const CATEGORIES_NEW = [
   { name: "قطع غيار", icon: "⚙️" },
   { name: "مواد غذائية", icon: "🍎" },
@@ -1984,7 +1988,11 @@ window.toggleBottomSearch = function() {
 async function loadProducts() {
   const grid = document.getElementById('home-pgrid');
   if (!grid) return;
-  const fakeNames = ["حامل الهواتف المحمولة", "ساعة ذكية رياضية", "ساعة ذكية", "طقم أواني", "أحذية", "حذاء رياضي", "هاتف ذكي", "حامل دفتر", "فراش تغيير", "حامل دفتر الصحي"];
+  const fakeNames = [
+    "حامل الهواتف المحمولة", "ساعة ذكية رياضية", "ساعة ذكية", "طقم أواني", "أحذية", 
+    "حذاء رياضي", "هاتف ذكي", "حامل دفتر", "فراش تغيير", "حامل دفتر الصحي", "مسمن", 
+    "أم زين", "ام زين", "أكل تقليدي", "init_prod_om_zayn", "story_init_1"
+  ];
   let remoteProds = null;
   let officialStores = [];
   let currentStories = [];
@@ -2002,14 +2010,14 @@ async function loadProducts() {
           name: author,
           storeId: rp.store_id || rp.user_id || ('store_' + encodeURIComponent(author)),
           userId: rp.user_id || 'merchant',
-          wilaya: rp.wilaya || 'الجزائر',
+          wilaya: rp.wilaya || '58 - المنيعة',
           category: rp.category || 'عام',
           subcategory: rp.subcategory || 'تخصص عام',
           price: rp.price || '0',
           quantity: rp.quantity || '1',
           caption: cap,
           title: rp.title || cap,
-          phone: rp.phone || '',
+          phone: rp.phone || '0698694010',
           image: rp.image_url || rp.image || 'images/wilaya-thumb.jpg',
           logo: rp.logo_url || rp.logo || rp.store_logo || 'assets/icon-192.svg',
           likes: rp.likes || 1,
@@ -2020,7 +2028,7 @@ async function loadProducts() {
       localStorage.setItem('zalo_live_stories', JSON.stringify(currentStories));
       window.liveStoriesList = currentStories;
     } else {
-        currentStories = JSON.parse(localStorage.getItem('zalo_live_stories') || '[]');
+      currentStories = JSON.parse(localStorage.getItem('zalo_live_stories') || '[]');
     }
 
     const storesData = await fetchStoresDirectory();
@@ -2030,10 +2038,10 @@ async function loadProducts() {
         return {
           id: rs.id,
           name: sName,
-          wilaya: rs.wilaya || 'الجزائر',
+          wilaya: rs.wilaya || '58 - المنيعة',
           commune: rs.baladiya || rs.commune || '',
           category: rs.category || 'عام',
-          phone: rs.phone || '',
+          phone: rs.phone || '0698694010',
           logo: rs.logo_url || 'assets/icon-192.svg',
           coverImage: rs.banner_url || 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=500',
           isOfficial: true,
@@ -2042,7 +2050,7 @@ async function loadProducts() {
       });
       localStorage.setItem('zalo_official_stores', JSON.stringify(officialStores));
     } else {
-        officialStores = JSON.parse(localStorage.getItem('zalo_official_stores') || '[]');
+      officialStores = JSON.parse(localStorage.getItem('zalo_official_stores') || '[]');
     }
 
     const prodsData = await fetchProducts();
@@ -2050,11 +2058,11 @@ async function loadProducts() {
       remoteProds = prodsData;
     }
   } catch(e) {
-      console.warn("Failed to fetch from Supabase:", e);
-      try {
-        officialStores = JSON.parse(localStorage.getItem('zalo_official_stores') || '[]');
-        currentStories = JSON.parse(localStorage.getItem('zalo_live_stories') || '[]');
-      } catch(e) {}
+    console.warn("Failed to fetch from Supabase:", e);
+    try {
+      officialStores = JSON.parse(localStorage.getItem('zalo_official_stores') || '[]');
+      currentStories = JSON.parse(localStorage.getItem('zalo_live_stories') || '[]');
+    } catch(e) {}
   }
 
   // Also include current merchant store if exists in settings
@@ -2066,10 +2074,10 @@ async function loadProducts() {
         officialStores.push({
           id: mSettings.id || 'merchant_self',
           name: msName,
-          wilaya: mSettings.wilaya || 'الجزائر',
+          wilaya: mSettings.wilaya || '58 - المنيعة',
           commune: mSettings.commune || '',
           category: mSettings.category || 'عام',
-          phone: mSettings.phone || '',
+          phone: mSettings.phone || '0698694010',
           logo: mSettings.logoImg || mSettings.logo || 'assets/icon-192.svg',
           coverImage: mSettings.bannerImg || 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=500',
           isOfficial: true,
@@ -2106,8 +2114,8 @@ async function loadProducts() {
           image: st.image || 'images/wilaya-thumb.jpg',
           storeId: st.storeId || 'store_' + encodeURIComponent(st.author || ''),
           storeName: st.author || 'متجر معتمد',
-          wilaya: st.wilaya || 'الجزائر',
-          phone: st.phone || '',
+          wilaya: st.wilaya || '58 - المنيعة',
+          phone: st.phone || '0698694010',
           category: st.category || 'عام'
         });
       }
@@ -2118,17 +2126,18 @@ async function loadProducts() {
   if (allSources.length === 0) {
     allSources = [
       {
-        id: 'init_prod_om_zayn',
-        name: 'أكل تقليدي ومسمن الدار الأصيل',
-        price: 1000,
+        id: 'init_prod_zalo_service_phone_holder',
+        name: 'سيبور هاتف نقال 2',
+        price: 2500,
         stock: 50,
-        category: 'أطعمة ومأكولات',
-        description: 'مسمن الدار الأصيل ولذة وتقاليد جزائرية أصيلة للطلب المباشر.',
-        image: 'https://images.unsplash.com/photo-1541518763669-27fef04b14ea?w=600&auto=format&fit=crop&q=80',
-        storeId: 'store_om_zayn',
-        storeName: 'ام زين',
+        category: 'إلكترونيات وهواتف',
+        subcategory: 'إكسسوارات الهواتف',
+        description: 'حامل الهواتف الذكية للسيارات والمكاتب متين وقابل للدوران 360 درجة مع ثبات فائق.',
+        image: 'https://images.unsplash.com/photo-1586105251261-72a756497a11?w=600&auto=format&fit=crop&q=80',
+        storeId: 'store_zalo_all',
+        storeName: 'Zalo all service',
         wilaya: '58 - المنيعة',
-        phone: '0658000000',
+        phone: '0698694010',
         status: 'active'
       },
       {
@@ -2137,40 +2146,28 @@ async function loadProducts() {
         price: 3000,
         stock: 25,
         category: 'أطفال ورضع',
+        subcategory: 'مستلزمات الأطفال',
         description: 'طقم بوشات أطفال وحقائب ممتازة بجودة عالية ومطرزة بحرفية.',
         image: 'https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?w=600&auto=format&fit=crop&q=80',
         storeId: 'store_zalo_all',
         storeName: 'Zalo all service',
         wilaya: '58 - المنيعة',
-        phone: '0658000000',
+        phone: '0698694010',
         status: 'active'
       },
       {
         id: 'init_prod_zalo_service_2',
-        name: 'سيرفات رياضي محترف',
+        name: 'سيرفات رياضي رجالي',
         price: 5000,
         stock: 20,
         category: 'ملابس وأزياء',
-        description: 'أطقم سيرفات رياضي ممتازة بخامات مريحة وعالية الجودة.',
+        subcategory: 'ملابس رياضية',
+        description: 'أطقم سيرفات رياضي ممتازة بخامات مريحة وعالية الجودة لكافة المقاسات.',
         image: 'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=600&auto=format&fit=crop&q=80',
         storeId: 'store_zalo_all',
         storeName: 'Zalo all service',
         wilaya: '58 - المنيعة',
-        phone: '0658000000',
-        status: 'active'
-      },
-      {
-        id: 'init_prod_zalo_service_3',
-        name: 'Zalo فون حامل هاتف ذكي للسيارات',
-        price: 1000,
-        stock: 40,
-        category: 'إلكترونيات وهواتف',
-        description: 'حامل الهاتف المغناطيسي الذكي للسيارات ثبات مطلق وأمان أثناء القيادة.',
-        image: 'https://images.unsplash.com/photo-1586105251261-72a756497a11?w=600&auto=format&fit=crop&q=80',
-        storeId: 'store_zalo_all',
-        storeName: 'Zalo all service',
-        wilaya: '58 - المنيعة',
-        phone: '0658000000',
+        phone: '0698694010',
         status: 'active'
       }
     ];
@@ -2178,40 +2175,58 @@ async function loadProducts() {
     if (!currentStories || currentStories.length === 0) {
       currentStories = [
         {
-          id: 'story_init_1',
-          author: 'ام زين',
-          name: 'ام زين',
-          store_name: 'ام زين',
-          storeId: 'store_om_zayn',
+          id: 'story_init_phone_holder',
+          author: 'Zalo all service',
+          name: 'Zalo all service',
+          store_name: 'Zalo all service',
+          storeId: 'store_zalo_all',
           wilaya: '58 - المنيعة',
-          category: 'أطعمة ومأكولات',
-          price: '1000',
-          caption: 'مسمن الدار الأصيل... لذة و تقاليد',
-          image: 'https://images.unsplash.com/photo-1541518763669-27fef04b14ea?w=600&auto=format&fit=crop&q=80',
+          category: 'إلكترونيات وهواتف',
+          price: '2500',
+          caption: 'سيبور هاتف نقال 2 عالي الجودة للسيارات والمكاتب متوفر الآن',
+          image: 'https://images.unsplash.com/photo-1586105251261-72a756497a11?w=600&auto=format&fit=crop&q=80',
           logo: 'assets/icon-192.svg',
-          phone: '0658000000',
-          likes: 2,
+          phone: '0698694010',
+          likes: 5,
           time: 'منذ قليل'
         },
         {
-          id: 'story_init_2',
-          author: 'Zalo All service',
-          name: 'Zalo All service',
-          store_name: 'Zalo All service',
+          id: 'story_init_kids_bag',
+          author: 'Zalo all service',
+          name: 'Zalo all service',
+          store_name: 'Zalo all service',
           storeId: 'store_zalo_all',
           wilaya: '58 - المنيعة',
-          category: 'عام',
+          category: 'أطفال ورضع',
           price: '3000',
-          caption: 'بوشات أطفال وتشكيلة مستلزمات حديثة',
+          caption: 'بوشات أطفال وتشكيلة مستلزمات حديثة وممتازة',
           image: 'https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?w=600&auto=format&fit=crop&q=80',
           logo: 'assets/icon-192.svg',
-          phone: '0658000000',
-          likes: 1,
+          phone: '0698694010',
+          likes: 3,
           time: 'منذ قليل'
         }
       ];
       try { localStorage.setItem('zalo_live_stories', JSON.stringify(currentStories)); } catch(e) {}
       window.liveStoriesList = currentStories;
+    }
+
+    if (!officialStores || officialStores.length === 0) {
+      officialStores = [
+        {
+          id: 'store_zalo_all',
+          name: 'Zalo all service',
+          wilaya: '58 - المنيعة',
+          commune: 'المنيعة',
+          category: 'إلكترونيات وخدمات شاملة',
+          phone: '0698694010',
+          logo: 'assets/icon-192.svg',
+          coverImage: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=500',
+          isOfficial: true,
+          status: 'active'
+        }
+      ];
+      try { localStorage.setItem('zalo_official_stores', JSON.stringify(officialStores)); } catch(e) {}
     }
   }
 
@@ -2244,8 +2259,8 @@ async function loadProducts() {
         image: p.image || p.imageUrl || p.image_url || p.imageURL || 'assets/icon-192.svg',
         storeId: p.store_id || p.storeId || 'direct',
         storeName: p.store_name || p.storeName || 'متجر معتمد',
-        wilaya: p.wilaya || 'الجزائر',
-        phone: p.phone || '',
+        wilaya: p.wilaya || '58 - المنيعة',
+        phone: p.phone || '0698694010',
         status: p.status || 'active'
       };
     });
@@ -2254,12 +2269,18 @@ async function loadProducts() {
     localStorage.setItem('zalo_products', JSON.stringify(merged));
   } catch(e) {}
 
+  window.allSources = merged;
   state.loadedProducts = merged;
+  window.officialStores = officialStores;
+  window.liveStoriesList = currentStories;
+
   if (typeof initStoriesSystem === 'function') initStoriesSystem();
   applyActiveWilayaFilter();
   if (typeof renderCategoriesSlider === 'function') renderCategoriesSlider();
   if (typeof renderCategoriesTab === 'function') renderCategoriesTab();
+  if (typeof window.renderStoresDirectory === 'function') window.renderStoresDirectory();
   if (typeof window.renderInlineLiveStoriesFeed === 'function') window.renderInlineLiveStoriesFeed();
+  if (typeof window.renderHomeStories === 'function') window.renderHomeStories();
 }
 
 window.getProductCardImageHTML = function(pName, imgUrl) {
@@ -3276,14 +3297,18 @@ window.clearOldMockData = function() {
   try {
     localStorage.removeItem('zalo_idb_products_backup');
   } catch(e) {}
-  const fakeNames = ["ساعة ذكية رياضية", "ساعة ذكية M1", "طقم أواني", "أحذية", "حذاء رياضي", "هاتف ذكي", "حامل الهواتف المحمولة"];
+  const fakeNames = [
+    "ساعة ذكية رياضية", "ساعة ذكية M1", "طقم أواني", "أحذية", "حذاء رياضي", "هاتف ذكي", 
+    "حامل الهواتف المحمولة", "مسمن", "أم زين", "ام زين", "حامل دفتر", "دفتر الصحي", "دفتر", 
+    "أكل تقليدي", "init_prod_om_zayn", "story_init_1"
+  ];
   const removeFakes = (key) => {
     try {
       let items = JSON.parse(localStorage.getItem(key) || '[]');
       let initialCount = items.length;
       items = items.filter(item => {
-        let name = item.name || item.productName || item.caption || item.title || item.storeName || '';
-        return !fakeNames.some(fake => name.includes(fake));
+        let name = (item.name || item.productName || item.caption || item.title || item.storeName || item.id || '').toLowerCase();
+        return !fakeNames.some(fake => name.includes(fake.toLowerCase()));
       });
       if (items.length !== initialCount) {
         localStorage.setItem(key, JSON.stringify(items));
@@ -3293,6 +3318,7 @@ window.clearOldMockData = function() {
   removeFakes('zalo_products');
   removeFakes('products');
   removeFakes('zalo_live_stories');
+  removeFakes('zalo_official_stores');
 };
 window.clearOldMockData();
 
@@ -3300,27 +3326,58 @@ window.clearOldMockData();
 window.liveStoriesList = [];
 
 window.initStoriesSystem = function() {
-  let storedStories = JSON.parse(localStorage.getItem('zalo_live_stories') || '[]');
+  let storedStories = [];
+  try {
+    storedStories = JSON.parse(localStorage.getItem('zalo_live_stories') || '[]');
+  } catch(e) {}
   
+  const fakeStoryKeywords = ["مسمن", "أم زين", "ام زين", "دفتر", "طقم أواني", "أكل تقليدي", "init_prod_om_zayn", "story_init_1"];
   // Deduplicate stored stories by ID and caption
   const seenIds = new Set();
   const seenCaptions = new Set();
-  storedStories = storedStories.filter(st => {
-    if (!st || !st.id || seenIds.has(st.id) || seenCaptions.has(st.caption)) return false;
+  storedStories = (storedStories || []).filter(st => {
+    if (!st || !st.id) return false;
+    let cap = (st.caption || st.title || st.author || st.id || '').toLowerCase();
+    if (fakeStoryKeywords.some(kw => cap.includes(kw))) return false;
+    if (seenIds.has(st.id) || seenCaptions.has(st.caption)) return false;
     seenIds.add(st.id);
-    seenCaptions.add(st.caption);
+    if (st.caption) seenCaptions.add(st.caption);
     return true;
   });
 
+  // If no stories stored, build dynamic stories from active products
   if (storedStories.length === 0) {
-    // No mock stories by default; stories will be populated directly from verified merchant posts & live offers
-    const defaultStories = [];
-    localStorage.setItem('zalo_live_stories', JSON.stringify(defaultStories));
-    window.liveStoriesList = defaultStories;
-  } else {
-    localStorage.setItem('zalo_live_stories', JSON.stringify(storedStories));
-    window.liveStoriesList = storedStories;
+    let prods = window.allSources || state.loadedProducts || [];
+    if (!prods.length) {
+      try { prods = JSON.parse(localStorage.getItem('zalo_products') || '[]'); } catch(e) {}
+    }
+    if (prods.length > 0) {
+      storedStories = prods.slice(0, 10).map((p, idx) => ({
+        id: p.id || ('st_' + idx),
+        author: p.storeName || p.store_name || 'Zalo all service',
+        store_name: p.storeName || p.store_name || 'Zalo all service',
+        name: p.storeName || p.store_name || 'Zalo all service',
+        storeId: p.storeId || p.store_id || 'store_zalo_all',
+        userId: p.storeId || 'merchant',
+        wilaya: p.wilaya || '58 - المنيعة',
+        category: p.category || 'عرض لحظي',
+        subcategory: p.subcategory || '',
+        price: p.price || '2500',
+        caption: (p.name || p.productName || 'عرض خاص') + (p.description ? ' - ' + p.description : ''),
+        title: p.name || p.productName || 'عرض خاص',
+        image: p.image || p.image_url || 'https://images.unsplash.com/photo-1586105251261-72a756497a11?w=600&auto=format&fit=crop&q=80',
+        logo: 'assets/icon-192.svg',
+        phone: p.phone || '0698694010',
+        time: 'الآن',
+        likes: 15 + idx
+      }));
+    }
   }
+
+  try {
+    localStorage.setItem('zalo_live_stories', JSON.stringify(storedStories));
+  } catch(e) {}
+  window.liveStoriesList = storedStories;
 
   // Also seed into ratings dictionary
   const allRatings = JSON.parse(localStorage.getItem('zalo_product_ratings') || '{}');
@@ -4203,11 +4260,23 @@ window.toggleQuickOrderForm = function(forceShow) {
 
   if (form.style.display === 'flex') {
     const wilSelect = document.getElementById('qo-wilaya');
-    if (wilSelect && (!wilSelect.options || wilSelect.options.length <= 1)) {
-      if (typeof ALGERIAN_WILAYAS !== 'undefined') {
-        wilSelect.innerHTML = ALGERIAN_WILAYAS.map(w => `<option value="${w.name}">${w.code} - ${w.name}</option>`).join('');
+    if (wilSelect) {
+      const wilList = (typeof ALGERIA_WILAYAS !== 'undefined' && Array.isArray(ALGERIA_WILAYAS) && ALGERIA_WILAYAS.length > 0) ? ALGERIA_WILAYAS : (window.ALGERIA_WILAYAS || []);
+      if (wilList && wilList.length > 0) {
+        wilSelect.innerHTML = wilList.map(w => `<option value="${w.name}">${w.id || w.code || ''} - ${w.name}</option>`).join('');
       }
     }
+    
+    // Auto-fill user info if available
+    const nameInput = document.getElementById('qo-fullname');
+    const phoneInput = document.getElementById('qo-phone');
+    if (nameInput && !nameInput.value) {
+      nameInput.value = localStorage.getItem('zalo_user_name') || (window.currentUser ? (window.currentUser.user_metadata?.full_name || window.currentUser.name || '') : '');
+    }
+    if (phoneInput && !phoneInput.value) {
+      phoneInput.value = localStorage.getItem('zalo_user_phone') || (window.currentUser ? (window.currentUser.user_metadata?.phone || window.currentUser.phone || '') : '');
+    }
+
     if (state.selectedProduct && state.selectedProduct.wilaya && wilSelect) {
       const pWil = state.selectedProduct.wilaya.replace(/^[0-9\s\-]+/, '').trim();
       for (let i = 0; i < wilSelect.options.length; i++) {
@@ -4479,8 +4548,9 @@ window.loadCartItems = function() {
 
   const wilSelect = document.getElementById('cart-wil');
   if (wilSelect && (!wilSelect.options || wilSelect.options.length <= 1)) {
-    if (typeof ALGERIAN_WILAYAS !== 'undefined') {
-      wilSelect.innerHTML = ALGERIAN_WILAYAS.map(w => `<option value="${w.name}">${w.code} - ${w.name}</option>`).join('');
+    const wilList = (typeof ALGERIA_WILAYAS !== 'undefined' && Array.isArray(ALGERIA_WILAYAS) && ALGERIA_WILAYAS.length > 0) ? ALGERIA_WILAYAS : (window.ALGERIA_WILAYAS || []);
+    if (wilList && wilList.length > 0) {
+      wilSelect.innerHTML = '<option value="">اختر ولاية التسليم...</option>' + wilList.map(w => `<option value="${w.name}">${w.id || w.code || ''} - ${w.name}</option>`).join('');
     }
   }
 

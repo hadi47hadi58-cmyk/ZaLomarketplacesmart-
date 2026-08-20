@@ -408,6 +408,24 @@ window.merchantUnifiedAddProduct = async function(e) {
         localStorage.setItem('zalo_live_stories', JSON.stringify(stories.slice(0, 50)));
     } catch(e) {}
 
+    // 2.5 Ensure store is added to zalo_official_stores
+    try {
+        let offStores = JSON.parse(localStorage.getItem('zalo_official_stores') || '[]');
+        if (!offStores.some(s => s.name === realStoreName || s.id === storeId)) {
+            offStores.unshift({
+                id: storeId,
+                name: realStoreName,
+                wilaya: realWilaya,
+                phone: realPhone,
+                logo: 'assets/icon-192.svg',
+                coverImage: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=500',
+                isOfficial: true,
+                status: 'active'
+            });
+            localStorage.setItem('zalo_official_stores', JSON.stringify(offStores));
+        }
+    } catch(e) {}
+
     // 3. BACKGROUND ASYNC SYNC TO SUPABASE
     try {
         if (typeof addProductToSupabase === 'function') {

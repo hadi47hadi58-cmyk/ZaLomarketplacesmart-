@@ -10,29 +10,38 @@ window.getMergedStoriesList = function() {
   if (!stories.length && window.liveStoriesList && window.liveStoriesList.length) {
     stories = window.liveStoriesList;
   }
+  
+  const fakeStoryKeywords = ["مسمن", "أم زين", "ام زين", "دفتر", "طقم أواني", "أكل تقليدي", "init_prod_om_zayn", "story_init_1"];
+  stories = (stories || []).filter(st => {
+    if (!st || !st.id) return false;
+    let cap = (st.caption || st.title || st.author || st.id || '').toLowerCase();
+    return !fakeStoryKeywords.some(kw => cap.includes(kw));
+  });
+
   if (!stories.length) {
-    // Try products in localStorage
-    try {
-      const prods = JSON.parse(localStorage.getItem('zalo_products') || '[]');
-      if (prods.length) {
-        stories = prods.slice(0, 10).map((p, idx) => ({
-          id: p.id || ('st_' + idx),
-          author: p.storeName || p.store_name || 'متجر معتمد',
-          storeId: p.storeId || p.store_id || 'store_1',
-          wilaya: p.wilaya || 'الجزائر',
-          category: p.category || 'عرض حصري',
-          subcategory: p.subcategory || '',
-          price: p.price || 0,
-          caption: (p.name || p.productName || 'عرض خاص') + (p.description ? ' - ' + p.description : ''),
-          title: p.name || p.productName || 'عرض خاص',
-          image: p.image || p.image_url || 'images/wilaya-thumb.jpg',
-          logo: 'assets/icon-192.svg',
-          phone: p.phone || '0550000000',
-          time: 'الآن',
-          likes: 12 + idx
-        }));
-      }
-    } catch(e) {}
+    // Try products from window.allSources or localStorage
+    let prods = window.allSources || [];
+    if (!prods.length) {
+      try { prods = JSON.parse(localStorage.getItem('zalo_products') || '[]'); } catch(e) {}
+    }
+    if (prods.length) {
+      stories = prods.slice(0, 10).map((p, idx) => ({
+        id: p.id || ('st_' + idx),
+        author: p.storeName || p.store_name || 'Zalo all service',
+        storeId: p.storeId || p.store_id || 'store_zalo_all',
+        wilaya: p.wilaya || '58 - المنيعة',
+        category: p.category || 'عرض حصري',
+        subcategory: p.subcategory || '',
+        price: p.price || 0,
+        caption: (p.name || p.productName || 'عرض خاص') + (p.description ? ' - ' + p.description : ''),
+        title: p.name || p.productName || 'عرض خاص',
+        image: p.image || p.image_url || 'https://images.unsplash.com/photo-1586105251261-72a756497a11?w=600&auto=format&fit=crop&q=80',
+        logo: 'assets/icon-192.svg',
+        phone: p.phone || '0698694010',
+        time: 'الآن',
+        likes: 12 + idx
+      }));
+    }
   }
   return stories;
 };
@@ -94,27 +103,108 @@ window.renderStoresDirectory = function() {
   const container = document.getElementById('directory-wilayas-container');
   if (!container) return;
   
-  if (!window.allSources || window.allSources.length === 0) {
-    container.innerHTML = '<div style="text-align: center; padding: 20px; color: #94a3b8; font-size: 12px; font-weight: 700;">لا توجد متاجر متاحة حالياً.</div>';
-    return;
-  }
-
-  // Extract unique stores
   const storesMap = new Map();
-  window.allSources.forEach(p => {
-    if (p.storeId && p.storeName) {
-      if (!storesMap.has(p.storeId)) {
-        storesMap.set(p.storeId, {
-          id: p.storeId,
-          name: p.storeName,
-          wilaya: p.wilaya || 'غير محدد',
-          phone: p.phone || '',
+
+  // 1. Collect from window.officialStores
+  if (window.officialStores && Array.isArray(window.officialStores)) {
+    window.officialStores.forEach(s => {
+      if (s.name) {
+        const sId = s.id || ('store_' + encodeURIComponent(s.name));
+        storesMap.set(sId, {
+          id: sId,
+          name: s.name,
+          wilaya: s.wilaya || '58 - المنيعة',
+          phone: s.phone || '0698694010',
+          logo: s.logo || 'assets/icon-192.svg',
           productCount: 0
         });
       }
-      storesMap.get(p.storeId).productCount++;
+    });
+  }
+
+  // 2. Collect from localStorage official stores
+  try {
+    const locStores = JSON.parse(localStorage.getItem('zalo_official_stores') || '[]');
+    locStores.forEach(s => {
+      if (s.name) {
+        const sId = s.id || ('store_' + encodeURIComponent(s.name));
+        if (!storesMap.has(sId)) {
+          storesMap.set(sId, {
+            id: sId,
+            name: s.name,
+            wilaya: s.wilaya || '58 - المنيعة',
+            phone: s.phone || '0698694010',
+            logo: s.logo || 'assets/icon-192.svg',
+            productCount: 0
+          });
+        }
+      }
+    });
+  } catch(e) {}
+
+  // 3. Collect from localStorage merchant store settings
+  try {
+    const mSettings = JSON.parse(localStorage.getItem('zalo_merchant_store_settings') || '{}');
+    if (mSettings.storeName || mSettings.name) {
+      const msName = mSettings.storeName || mSettings.name;
+      const msId = mSettings.id || 'merchant_self';
+      if (!storesMap.has(msId)) {
+        storesMap.set(msId, {
+          id: msId,
+          name: msName,
+          wilaya: mSettings.wilaya || '58 - المنيعة',
+          phone: mSettings.phone || '0698694010',
+          logo: mSettings.logoImg || 'assets/icon-192.svg',
+          productCount: 0
+        });
+      }
+    }
+  } catch(e) {}
+
+  // 4. Collect from all products (window.allSources & localStorage)
+  let allProds = window.allSources || [];
+  if (!allProds.length) {
+    try { allProds = JSON.parse(localStorage.getItem('zalo_products') || '[]'); } catch(e) {}
+  }
+  
+  allProds.forEach(p => {
+    if (p.deleted === true || p.status === 'deleted') return;
+    const sName = (p.storeName || p.store_name || '').trim();
+    if (sName) {
+      const sId = p.storeId || p.store_id || ('store_' + encodeURIComponent(sName));
+      if (!storesMap.has(sId)) {
+        storesMap.set(sId, {
+          id: sId,
+          name: sName,
+          wilaya: p.wilaya || '58 - المنيعة',
+          phone: p.phone || '0698694010',
+          logo: 'assets/icon-192.svg',
+          productCount: 0
+        });
+      }
+      storesMap.get(sId).productCount++;
     }
   });
+
+  // Ensure default official store if empty
+  if (storesMap.size === 0) {
+    storesMap.set('store_zalo_all', {
+      id: 'store_zalo_all',
+      name: 'Zalo all service',
+      wilaya: '58 - المنيعة',
+      phone: '0698694010',
+      logo: 'assets/icon-192.svg',
+      productCount: (allProds.length || 3)
+    });
+  }
+
+  // Remove legacy fake stores (أم زين)
+  for (let key of Array.from(storesMap.keys())) {
+    let s = storesMap.get(key);
+    if (s.name.includes('أم زين') || s.name.includes('ام زين') || s.id.includes('om_zayn')) {
+      storesMap.delete(key);
+    }
+  }
 
   const stores = Array.from(storesMap.values());
   
@@ -132,28 +222,32 @@ window.renderStoresDirectory = function() {
 
   let html = '';
   stores.forEach(store => {
-    // Generate an avatar initial
     const initial = store.name.charAt(0).toUpperCase();
     const wilayaNum = store.wilaya.match(/\d+/) ? store.wilaya.match(/\d+/)[0] : '';
     const wilayaName = store.wilaya.replace(/^\d+\s*-\s*/, '');
+    const safeStoreId = (store.id || '').replace(/'/g, "\\'");
+    const safeStoreName = (store.name || '').replace(/'/g, "\\'");
     
     html += `
-      <div onclick="window.location.href='customer-store.html?id=${encodeURIComponent(store.id)}'" style="display: flex; align-items: center; justify-content: space-between; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 16px; padding: 12px 16px; cursor: pointer; transition: all 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.02);" onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='#f8fafc'">
+      <div onclick="if(typeof window.openStoreView==='function'){ window.openStoreView('${safeStoreId}', '${safeStoreName}'); } else { window.showToast('جاري فتح صفحة المتجر...'); }" style="display: flex; align-items: center; justify-content: space-between; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 12px 16px; cursor: pointer; transition: all 0.2s; box-shadow: 0 2px 6px rgba(0,0,0,0.03); margin-bottom: 8px;" onmouseover="this.style.background='#f8fafc'; this.style.borderColor='#38bdf8';" onmouseout="this.style.background='#ffffff'; this.style.borderColor='#e2e8f0';">
         <div style="display: flex; align-items: center; gap: 12px;">
-          <div style="width: 44px; height: 44px; border-radius: 14px; background: linear-gradient(135deg, #0f172a, #1e293b); color: white; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 900; box-shadow: 0 4px 10px rgba(15, 23, 42, 0.2);">
+          <div style="width: 44px; height: 44px; border-radius: 14px; background: linear-gradient(135deg, #0284c7, #0369a1); color: white; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 900; box-shadow: 0 4px 10px rgba(2, 132, 199, 0.25);">
             ${initial}
           </div>
           <div>
-            <h4 style="font-size: 14px; font-weight: 900; color: #0f172a; margin: 0 0 2px 0;">${store.name}</h4>
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <span style="font-size: 10.5px; color: #64748b; font-weight: 700; background: #e2e8f0; padding: 2px 8px; border-radius: 10px; display: flex; align-items: center; gap: 4px;">
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <h4 style="font-size: 14px; font-weight: 900; color: #0f172a; margin: 0;">${store.name}</h4>
+              <i class="fa-solid fa-circle-check" style="color: #0284c7; font-size: 12px;" title="متجر معتمد"></i>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px; margin-top: 4px;">
+              <span style="font-size: 11px; color: #64748b; font-weight: 700; background: #f1f5f9; padding: 2px 8px; border-radius: 10px; display: flex; align-items: center; gap: 4px;">
                 <i class="fa-solid fa-location-dot" style="color: #ef4444;"></i> ولاية ${wilayaName} ${wilayaNum ? '('+wilayaNum+')' : ''}
               </span>
-              <span style="font-size: 10px; color: #059669; font-weight: 800;">${store.productCount} منتجات</span>
+              <span style="font-size: 10.5px; color: #059669; font-weight: 800; background: #ecfdf5; padding: 2px 8px; border-radius: 10px;">${store.productCount > 0 ? store.productCount + ' منتجات' : 'متجر نشط'}</span>
             </div>
           </div>
         </div>
-        <div style="width: 32px; height: 32px; border-radius: 10px; background: #ffffff; border: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: center; color: #0284c7;">
+        <div style="width: 32px; height: 32px; border-radius: 10px; background: #f8fafc; border: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: center; color: #0284c7;">
           <i class="fa-solid fa-chevron-left" style="font-size: 12px;"></i>
         </div>
       </div>
