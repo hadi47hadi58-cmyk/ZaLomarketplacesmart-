@@ -506,41 +506,43 @@
       </div>
       
       <!-- Shipping form (Shows if cart is not empty) -->
-      <div id="cart-checkout-form-container" style="display: none; background: #ffffff; border: 1.5px solid var(--metallic-gold); border-radius: 16px; padding: 16px; flex-direction: column; gap: 12px; margin-top: 10px;">
-        <h4 style="font-size: 14px; font-weight: 800; color: var(--navy); border-bottom: 1px solid var(--bd); padding-bottom: 8px;"> تفاصيل توصيل الطلب والشحن</h4>
+      <div id="cart-checkout-form-container" style="display: none; background: #ffffff; border: 2px solid #86efac; border-radius: 18px; padding: 18px; flex-direction: column; gap: 14px; margin-top: 10px; box-shadow: 0 4px 16px rgba(0,0,0,0.04);">
+        <h4 style="font-size: 14.5px; font-weight: 900; color: #15803d; border-bottom: 1.5px solid #f1f5f9; padding-bottom: 10px; margin: 0; display: flex; align-items: center; gap: 8px;">
+          <i class="fa-solid fa-truck-fast"></i> تفاصيل توصيل الطلب والشحن لولايتك
+        </h4>
         
-        <div class="form-group">
-          <label>اسم المستلم الثلاثي بالكامل *</label>
-          <input type="text" id="cart-name" class="form-control" placeholder="مثال: أحمد بلقاسم">
+        <div class="form-group" style="margin: 0;">
+          <label style="font-size: 12px; font-weight: 800; color: var(--navy); margin-bottom: 4px; display: block;">اسم المستلم الثلاثي بالكامل *</label>
+          <input type="text" id="cart-name" class="form-control" placeholder="مثال: أحمد بلقاسم" style="height: 44px; border-radius: 12px;">
         </div>
         
-        <div class="form-group">
-          <label>رقم الهاتف النشط للتوصيل *</label>
-          <input type="tel" id="cart-phone" class="form-control" placeholder="مثال: 0555123456">
+        <div class="form-group" style="margin: 0;">
+          <label style="font-size: 12px; font-weight: 800; color: var(--navy); margin-bottom: 4px; display: block;">رقم الهاتف للتأكيد والتوصيل *</label>
+          <input type="tel" id="cart-phone" class="form-control" placeholder="مثال: 0658000000" style="height: 44px; border-radius: 12px;">
         </div>
 
-        <div class="form-group">
-          <label>الولاية (اختر من الـ 69 ولاية) *</label>
-          <select id="cart-wil" class="form-control">
-            <!-- Dynamic states loaded -->
+        <div class="form-group" style="margin: 0;">
+          <label style="font-size: 12px; font-weight: 800; color: var(--navy); margin-bottom: 4px; display: block;">ولاية التسليم (اختر من الـ 69 ولاية) *</label>
+          <select id="cart-wil" class="form-control" style="height: 44px; border-radius: 12px; font-weight: 700;">
+            <option value="">اختر ولاية التسليم...</option>
           </select>
         </div>
 
-        <div class="form-group">
-          <label>العنوان الدقيق للاستلام *</label>
-          <input type="text" id="cart-addr" class="form-control" placeholder="مثال: شارع الشهداء المقابل للبريد المركزي">
+        <div class="form-group" style="margin: 0;">
+          <label style="font-size: 12px; font-weight: 800; color: var(--navy); margin-bottom: 4px; display: block;">البلدية والعنوان الدقيق للاستلام *</label>
+          <input type="text" id="cart-addr" class="form-control" placeholder="مثال: وسط البلدية / شارع الاستقلال" style="height: 44px; border-radius: 12px;">
         </div>
 
-        <div class="form-group">
-          <label>طريقة الدفع المتوفرة *</label>
-          <select id="cart-pay" class="form-control">
-            <option value="cod">الدفع يداً بيد عند الاستلام (COD)</option>
-            <option value="cc">الدفع المسبق عبر البطاقة الذهبية / CIB</option>
+        <div class="form-group" style="margin: 0;">
+          <label style="font-size: 12px; font-weight: 800; color: var(--navy); margin-bottom: 4px; display: block;">طريقة الدفع المتوفرة *</label>
+          <select id="cart-pay" class="form-control" style="height: 44px; border-radius: 12px; font-weight: 700;">
+            <option value="cod">الدفع يداً بيد عند الاستلام (COD) 💵</option>
+            <option value="cc">الدفع المسبق عبر البطاقة الذهبية / CIB 💳</option>
           </select>
         </div>
 
-        <button onclick="checkoutCart()" class="btn-p" style="background: var(--brand-green); margin-top: 10px; height: 48px; box-shadow: 0 4px 12px rgba(26,92,42,0.2);">
-          <i class="fa-solid fa-circle-check"></i> تأكيد وإرسال الطلبات الآن
+        <button onclick="checkoutCart()" style="width: 100%; height: 50px; background: linear-gradient(135deg, #16a34a, #15803d); color: white; border: none; border-radius: 14px; font-weight: 900; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 16px rgba(22,163,74,0.35); font-family: 'Cairo', sans-serif; margin-top: 4px;">
+          <i class="fa-solid fa-circle-check" style="font-size: 18px;"></i> تأكيد الطلب واستلام الوصل 📄
         </button>
       </div>
 
@@ -609,6 +611,8 @@
     <div id="store-products-grid" style="padding: 16px; display: flex; flex-direction: column; gap: 16px;">
       <!-- Store products will be rendered here -->
     </div>
+  </div>
+
   <!-- SCREEN 6: ORDERS (طلباتي والتتبع) - Triggered via Sidebar -->
   <div class="screen" id="screen-orders">
     <div class="screen-title"><i class="fa-solid fa-clipboard-list"></i> طلبيات الشراء وتتبع الشاحنات</div>
@@ -805,31 +809,36 @@
           </button>
 
           <!-- Quick Direct Order Inline Form Container -->
-          <div id="pd-quick-order-form" style="display:none; background:#f8fafc; border:2px solid #16a34a; border-radius:16px; padding:14px; flex-direction:column; gap:10px; box-shadow:0 6px 18px rgba(0,0,0,0.06);">
-            <div style="font-size:13px; font-weight:900; color:var(--navy); display:flex; justify-content:space-between; align-items:center;">
-              <span style="display:flex; align-items:center; gap:6px;"><i class="fa-solid fa-file-signature" style="color:#16a34a;"></i> إدخال معلومات الطلب السريع</span>
-              <button onclick="toggleQuickOrderForm(false)" style="background:none; border:none; color:var(--gray); cursor:pointer; font-weight:bold; font-size:16px;">✕</button>
+          <div id="pd-quick-order-form" style="display:none; background:#f0fdf4; border:2px solid #16a34a; border-radius:18px; padding:16px; flex-direction:column; gap:12px; box-shadow:0 8px 24px rgba(22,163,74,0.12);">
+            <div style="font-size:13.5px; font-weight:900; color:var(--navy); display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #dcfce7; padding-bottom:8px;">
+              <span style="display:flex; align-items:center; gap:6px; color:#15803d;"><i class="fa-solid fa-file-signature" style="color:#16a34a; font-size:16px;"></i> إدخال معلومات الطلب الفوري المباشر</span>
+              <button onclick="toggleQuickOrderForm(false)" style="background:none; border:none; color:var(--gray); cursor:pointer; font-weight:bold; font-size:16px; padding:4px 8px;">✕</button>
             </div>
-            <input type="text" id="qo-fullname" placeholder="الاسم واللقب الكامل *" style="width:100%; height:40px; border:1.5px solid #cbd5e1; border-radius:10px; padding:0 12px; font-size:12px; font-weight:700; outline:none; background:#fff;">
-            <input type="tel" id="qo-phone" placeholder="رقم الهاتف للتأكيد (مثال: 0658000000) *" style="width:100%; height:40px; border:1.5px solid #cbd5e1; border-radius:10px; padding:0 12px; font-size:12px; font-weight:700; outline:none; background:#fff;">
-            <div style="display:flex; gap:8px;">
-              <select id="qo-wilaya" style="flex:1; height:40px; border:1.5px solid #cbd5e1; border-radius:10px; padding:0 10px; font-size:11.5px; font-weight:700; background:#fff; outline:none;">
+            
+            <div>
+              <label style="font-size:11.5px; font-weight:800; color:#1e293b; margin-bottom:4px; display:block;">الاسم واللقب الكامل *</label>
+              <input type="text" id="qo-fullname" placeholder="مثال: محمد بلقاسم" style="width:100%; height:44px; border:1.5px solid #cbd5e1; border-radius:12px; padding:0 14px; font-size:12.5px; font-weight:700; outline:none; background:#fff; font-family:'Cairo',sans-serif; color:var(--navy);">
+            </div>
+
+            <div>
+              <label style="font-size:11.5px; font-weight:800; color:#1e293b; margin-bottom:4px; display:block;">رقم الهاتف للتأكيد والتوصيل *</label>
+              <input type="tel" id="qo-phone" placeholder="مثال: 0658000000" style="width:100%; height:44px; border:1.5px solid #cbd5e1; border-radius:12px; padding:0 14px; font-size:12.5px; font-weight:700; outline:none; background:#fff; font-family:'Cairo',sans-serif; color:var(--navy);">
+            </div>
+
+            <div>
+              <label style="font-size:11.5px; font-weight:800; color:#1e293b; margin-bottom:4px; display:block;">ولاية التسليم (اختر من الـ 69 ولاية) *</label>
+              <select id="qo-wilaya" style="width:100%; height:44px; border:1.5px solid #cbd5e1; border-radius:12px; padding:0 12px; font-size:12.5px; font-weight:700; background:#fff; outline:none; font-family:'Cairo',sans-serif; color:var(--navy);">
                 <option value="">اختر ولاية التسليم...</option>
-                <option value="58 - المنيعة">58 - المنيعة</option>
-                <option value="16 - الجزائر">16 - الجزائر</option>
-                <option value="31 - وهران">31 - وهران</option>
-                <option value="25 - قسنطينة">25 - قسنطينة</option>
-                <option value="19 - سطيف">19 - سطيف</option>
-                <option value="09 - البليدة">09 - البليدة</option>
-                <option value="47 - غرداية">47 - غرداية</option>
-                <option value="30 - ورقلة">30 - ورقلة</option>
-                <option value="06 - بجاية">06 - بجاية</option>
-                <option value="15 - تيزي وزو">15 - تيزي وزو</option>
               </select>
-              <input type="text" id="qo-address" placeholder="البلدية / العنوان *" style="flex:1; height:40px; border:1.5px solid #cbd5e1; border-radius:10px; padding:0 12px; font-size:12px; font-weight:700; outline:none; background:#fff;">
             </div>
-            <button onclick="submitQuickDirectOrder()" style="width:100%; height:44px; background:linear-gradient(135deg, #16a34a, #15803d); color:white; border:none; border-radius:12px; font-weight:900; font-size:13.5px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 4px 12px rgba(22,163,74,0.3);">
-              <i class="fa-solid fa-check-circle"></i> تأكيد الطلب واستلام الوصل 📄
+
+            <div>
+              <label style="font-size:11.5px; font-weight:800; color:#1e293b; margin-bottom:4px; display:block;">البلدية والعنوان الدقيق للاستلام *</label>
+              <input type="text" id="qo-address" placeholder="مثال: وسط البلدية / قرب البريد المركزي" style="width:100%; height:44px; border:1.5px solid #cbd5e1; border-radius:12px; padding:0 14px; font-size:12.5px; font-weight:700; outline:none; background:#fff; font-family:'Cairo',sans-serif; color:var(--navy);">
+            </div>
+
+            <button onclick="submitQuickDirectOrder()" style="width:100%; height:48px; background:linear-gradient(135deg, #16a34a, #15803d); color:white; border:none; border-radius:14px; font-weight:900; font-size:14px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 4px 16px rgba(22,163,74,0.35); font-family:'Cairo',sans-serif;">
+              <i class="fa-solid fa-circle-check" style="font-size:17px;"></i> تأكيد الطلب واستلام الوصل 📄
             </button>
           </div>
 

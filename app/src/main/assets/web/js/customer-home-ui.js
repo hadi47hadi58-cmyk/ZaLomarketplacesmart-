@@ -233,10 +233,14 @@ window.renderStoresDirectory = function() {
 
   const stores = Array.from(storesMap.values());
   
-  // Sort stores by Wilaya number (1 to 69)
+  // Sort stores by Wilaya number (1 to 69) safely
   stores.sort((a, b) => {
-    const numA = parseInt((a.wilaya.match(/\d+/) || [999])[0], 10);
-    const numB = parseInt((b.wilaya.match(/\d+/) || [999])[0], 10);
+    const strA = String(a.wilaya || '58 - المنيعة');
+    const strB = String(b.wilaya || '58 - المنيعة');
+    const matchA = strA.match(/\d+/);
+    const matchB = strB.match(/\d+/);
+    const numA = parseInt(matchA ? matchA[0] : '999', 10);
+    const numB = parseInt(matchB ? matchB[0] : '999', 10);
     return numA - numB;
   });
 
@@ -247,9 +251,11 @@ window.renderStoresDirectory = function() {
 
   let html = '';
   stores.forEach(store => {
-    const initial = store.name.charAt(0).toUpperCase();
-    const wilayaNum = store.wilaya.match(/\d+/) ? store.wilaya.match(/\d+/)[0] : '';
-    const wilayaName = store.wilaya.replace(/^\d+\s*-\s*/, '');
+    const initial = (store.name || 'M').charAt(0).toUpperCase();
+    const strWilaya = String(store.wilaya || '58 - المنيعة');
+    const matchW = strWilaya.match(/\d+/);
+    const wilayaNum = matchW ? matchW[0] : '';
+    const wilayaName = strWilaya.replace(/^\d+\s*-\s*/, '');
     const safeStoreId = (store.id || '').replace(/'/g, "\\'");
     const safeStoreName = (store.name || '').replace(/'/g, "\\'");
     

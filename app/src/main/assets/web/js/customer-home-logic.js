@@ -4307,10 +4307,10 @@ window.toggleQuickOrderForm = function(forceShow) {
 
   if (form.style.display === 'flex') {
     const wilSelect = document.getElementById('qo-wilaya');
-    if (wilSelect) {
+    if (wilSelect && (!wilSelect.options || wilSelect.options.length <= 1)) {
       const wilList = (typeof ALGERIA_WILAYAS !== 'undefined' && Array.isArray(ALGERIA_WILAYAS) && ALGERIA_WILAYAS.length > 0) ? ALGERIA_WILAYAS : (window.ALGERIA_WILAYAS || []);
       if (wilList && wilList.length > 0) {
-        wilSelect.innerHTML = wilList.map(w => `<option value="${w.name}">${w.id || w.code || ''} - ${w.name}</option>`).join('');
+        wilSelect.innerHTML = '<option value="">اختر ولاية التسليم...</option>' + wilList.map(w => `<option value="${w.name}">${w.id || w.code || ''} - ${w.name}</option>`).join('');
       }
     }
     
@@ -5007,14 +5007,33 @@ const WILAYAS = [
 ];
 
 function populateCheckoutWilayas() {
-  const sel = document.getElementById('cart-wil');
-  if (sel) {
-    sel.innerHTML = '<option value="">اختر ولاية التسليم...</option>';
-    WILAYAS.forEach(w => {
-      const o = document.createElement('option');
-      o.value = w.n;
-      o.textContent = w.n;
-      sel.appendChild(o);
+  const list = (typeof ALGERIA_WILAYAS !== 'undefined' && Array.isArray(ALGERIA_WILAYAS) && ALGERIA_WILAYAS.length > 0) 
+    ? ALGERIA_WILAYAS 
+    : [];
+
+  if (list.length > 0) {
+    // 1. Populate cart-wil (Cart Checkout Wilaya)
+    const sel1 = document.getElementById('cart-wil');
+    if (sel1) {
+      sel1.innerHTML = '<option value="">اختر ولاية التسليم...</option>' + 
+        list.map(w => `<option value="${w.name}">${w.id} - ${w.name}</option>`).join('');
+    }
+
+    // 2. Populate qo-wilaya (Quick Direct Order Wilaya)
+    const sel2 = document.getElementById('qo-wilaya');
+    if (sel2) {
+      sel2.innerHTML = '<option value="">اختر ولاية التسليم...</option>' + 
+        list.map(w => `<option value="${w.name}">${w.id} - ${w.name}</option>`).join('');
+    }
+  } else {
+    // Fallback to WILAYAS
+    const fallbackList = (typeof WILAYAS !== 'undefined' && Array.isArray(WILAYAS)) ? WILAYAS : [];
+    ['cart-wil', 'qo-wilaya'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.innerHTML = '<option value="">اختر ولاية التسليم...</option>' + 
+          fallbackList.map(w => `<option value="${w.n}">${w.n}</option>`).join('');
+      }
     });
   }
 }
