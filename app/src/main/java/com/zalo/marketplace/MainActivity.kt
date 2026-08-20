@@ -43,17 +43,18 @@ class MainActivity : ComponentActivity() {
     ) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             val data: Intent? = result.data
-            val results = if (data != null) {
-                if (data.dataString != null) {
-                    arrayOf(Uri.parse(data.dataString))
-                } else if (data.clipData != null) {
+            val results: Array<Uri>? = when {
+                data?.clipData != null -> {
                     val clipData = data.clipData!!
                     Array(clipData.itemCount) { i -> clipData.getItemAt(i).uri }
-                } else {
-                    null
                 }
-            } else {
-                null
+                data?.data != null -> {
+                    arrayOf(data.data!!)
+                }
+                data?.dataString != null -> {
+                    arrayOf(Uri.parse(data.dataString))
+                }
+                else -> null
             }
             filePathCallback?.onReceiveValue(results)
         } else {
@@ -137,16 +138,39 @@ class MainActivity : ComponentActivity() {
                         filePathCallback?.onReceiveValue(null)
                         filePathCallback = callback
                         try {
-                            val intent = params?.createIntent() ?: Intent(Intent.ACTION_GET_CONTENT).apply {
-                                type = "*/*"
-                                putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("image/*", "video/*"))
+                            val acceptTypes = params?.acceptTypes?.filter { it.isNotEmpty() }?.toTypedArray()
+                            val isMultiple = params?.mode == WebChromeClient.FileChooserParams.MODE_OPEN_MULTIPLE
+                            
+                            val contentIntent = Intent(Intent.ACTION_GET_CONTENT).apply {
                                 addCategory(Intent.CATEGORY_OPENABLE)
-                                putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+                                if (!acceptTypes.isNullOrEmpty()) {
+                                    if (acceptTypes.size == 1) {
+                                        type = acceptTypes[0]
+                                    } else {
+                                        type = "*/*"
+                                        putExtra(Intent.EXTRA_MIME_TYPES, acceptTypes)
+                                    }
+                                } else {
+                                    type = "*/*"
+                                    putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("image/*", "video/*"))
+                                }
+                                if (isMultiple) {
+                                    putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+                                }
                             }
-                            fileChooserLauncher.launch(intent)
+                            
+                            val chooserIntent = Intent.createChooser(contentIntent, "اختر وسائط المنتج (صور أو فيديو)")
+                            fileChooserLauncher.launch(chooserIntent)
                         } catch (e: Exception) {
-                            filePathCallback?.onReceiveValue(null)
-                            filePathCallback = null
+                            try {
+                                val fallbackIntent = params?.createIntent() ?: Intent(Intent.ACTION_GET_CONTENT).apply {
+                                    type = "*/*"
+                                }
+                                fileChooserLauncher.launch(fallbackIntent)
+                            } catch (err: Exception) {
+                                filePathCallback?.onReceiveValue(null)
+                                filePathCallback = null
+                            }
                         }
                     }
                 )

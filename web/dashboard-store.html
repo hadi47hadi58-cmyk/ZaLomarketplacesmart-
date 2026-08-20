@@ -693,43 +693,43 @@
                             </div>
                         </div>
 
-                        <!-- UNIFIED INSTANT MEDIA UPLOAD SECTION (INSTANT PHOTOS & INSTANT 20s VIDEO) -->
+                        <!-- UNIFIED MEDIA UPLOAD SECTION (IMAGE & OPTIONAL 20s VIDEO) -->
                         <div class="bg-gradient-to-r from-sky-50 via-blue-50 to-indigo-50 p-3 rounded-2xl border border-sky-200 space-y-2 shadow-sm">
                             <div class="flex items-center justify-between">
                                 <span class="text-[11px] text-slate-800 font-black flex items-center gap-1.5">
-                                    <i class="fa-solid fa-camera text-sky-600 text-sm"></i>
-                                    <span>وسائط العرض والمنتج (رفع صور لحظية أو فيديو لحظي)</span>
+                                    <i class="fa-solid fa-images text-sky-600 text-sm"></i>
+                                    <span>صور المنتج والوسائط المعروضة *</span>
                                 </span>
                                 <span class="text-[10px] text-emerald-700 bg-emerald-100/80 border border-emerald-300 px-2 py-0.5 rounded-full font-black flex items-center gap-1">
                                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                                    <span>بث مباشر وسوق موحد</span>
+                                    <span>معاينة فورية وسوق موحد</span>
                                 </span>
                             </div>
                             
                             <div class="grid grid-cols-2 gap-2">
-                                <!-- Instant Photo Upload / Capture -->
-                                <div class="relative bg-white border-2 border-dashed border-sky-400 hover:border-sky-600 rounded-xl p-2 text-center cursor-pointer transition-all flex flex-col items-center justify-center min-h-[90px] shadow-sm group">
-                                    <input type="file" id="merchant-unified-img-file" accept="image/*" multiple class="absolute inset-0 opacity-0 cursor-pointer z-10" onchange="previewUnifiedImg(this)" title="التقاط أو رفع صور لحظية">
+                                <!-- Photo Upload / Capture -->
+                                <div class="relative bg-white border-2 border-dashed border-sky-400 hover:border-sky-600 rounded-xl p-2 text-center cursor-pointer transition-all flex flex-col items-center justify-center min-h-[95px] shadow-sm group">
+                                    <input type="file" id="merchant-unified-img-file" accept="image/*" multiple class="absolute inset-0 opacity-0 cursor-pointer z-10" onchange="previewUnifiedImg(this)" title="رفع صور المنتج">
                                     <div id="unified-img-lbl" class="text-xs text-sky-700 font-black flex flex-col items-center gap-1">
                                         <div class="w-8 h-8 rounded-full bg-sky-100 text-sky-600 flex items-center justify-center group-hover:scale-110 transition-transform">
-                                            <i class="fa-solid fa-camera-retro text-base"></i>
+                                            <i class="fa-solid fa-cloud-arrow-up text-base"></i>
                                         </div>
-                                        <span class="text-[11px]">📸 التقاط / رفع صور لحظية</span>
-                                        <span class="text-[9px] text-slate-400 font-normal">(صور متعددة أو من الكاميرا)</span>
+                                        <span class="text-[11px]">📸 رفع صور المنتج</span>
+                                        <span class="text-[9px] text-slate-400 font-normal">(صورة واحدة أو متعددة)</span>
                                     </div>
                                     <div id="unified-img-preview-container" class="hidden flex-wrap justify-center gap-1 mt-1 z-20">
                                         <img id="unified-img-preview" class="w-16 h-16 object-cover rounded-lg border-2 border-sky-500 shadow-sm">
                                     </div>
                                 </div>
 
-                                <!-- Instant Video Upload / Recording (Max 20s) -->
-                                <div class="relative bg-white border-2 border-dashed border-rose-400 hover:border-rose-600 rounded-xl p-2 text-center cursor-pointer transition-all flex flex-col items-center justify-center min-h-[90px] shadow-sm group">
-                                    <input type="file" id="merchant-unified-vid-file" accept="video/*" class="absolute inset-0 opacity-0 cursor-pointer z-10" onchange="validateAndPreviewUnifiedVid(this)" title="تسجيل أو رفع فيديو لحظي">
+                                <!-- Video Upload / Recording (Optional, Max 20s) -->
+                                <div class="relative bg-white border-2 border-dashed border-rose-400 hover:border-rose-600 rounded-xl p-2 text-center cursor-pointer transition-all flex flex-col items-center justify-center min-h-[95px] shadow-sm group">
+                                    <input type="file" id="merchant-unified-vid-file" accept="video/*" class="absolute inset-0 opacity-0 cursor-pointer z-10" onchange="validateAndPreviewUnifiedVid(this)" title="رفع فيديو قصير للمنتج">
                                     <div id="unified-vid-lbl" class="text-xs text-rose-700 font-black flex flex-col items-center gap-1">
                                         <div class="w-8 h-8 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center group-hover:scale-110 transition-transform">
                                             <i class="fa-solid fa-video text-base"></i>
                                         </div>
-                                        <span class="text-[11px]">🎥 تسجيل / رفع فيديو لحظي</span>
+                                        <span class="text-[11px]">🎥 فيديو للمنتج (اختياري)</span>
                                         <span class="text-[9px] text-rose-500 font-normal">(أقصى مدة 20 ثانية)</span>
                                     </div>
                                     <div id="unified-vid-preview-container" class="hidden flex-col items-center gap-1 mt-1 z-20">
