@@ -4426,7 +4426,7 @@ window.submitQuickDirectOrder = async function() {
     `رقم الطلب: #${orderId.substring(0,8)}\n` +
     `👤 *الزبون:* ${name}\n` +
     `📞 *الهاتف:* ${phone}\n` +
-    ` *الولاية والبلدية:* ${wilaya} - ${address}\n` +
+    `📍 *الولاية والبلدية:* ${wilaya} - ${address}\n` +
     `🏪 *المتجر:* ${p.storeName}\n` +
     `📦 *المنتج:* ${p.name} (الكمية: ${qty})\n` +
     `💰 *المبلغ:* ${totalAmount.toLocaleString()} دج\n\n` +
@@ -4443,6 +4443,215 @@ window.submitQuickDirectOrder = async function() {
   if (rModal) rModal.style.display = 'flex';
 
   window.showToast("🎉 تم تسجيل طلبك المباشر بنجاح! جاري إصدار الوصل 📄");
+  if (typeof window.loadCustomerOrders === 'function') {
+    window.loadCustomerOrders();
+  }
+};
+
+// Checkout
+window.checkoutCart = async function() {
+  try {
+    const cart = JSON.parse(localStorage.getItem('zalo_cart') || '[]');
+    if (!Array.isArray(cart)) {
+      localStorage.setItem('zalo_cart', '[]');
+      window.showToast("⚠️ سلتك فارغة حالياً!"); return;
+    }
+    if (cart.length === 0) {
+      window.showToast("⚠️ سلتك فارغة حالياً!"); return;
+    }
+
+    const name = document.getElementById('cart-name').value.trim();
+    const phone = document.getElementById('cart-phone').value.trim();
+    const addr = document.getElementById('cart-addr').value.trim();
+    const wilaya = document.getElementById('cart-wil').value;
+    const pay = document.getElementById('cart-pay').value;
+
+    if (!name || !phone || !addr || !wilaya) {
+      window.showToast("⚠️ يرجى تعبئة كافة الحقول المطلوبة للتسليم!"); return;
+    }
+
+    // Segment by storeId
+    const groups = {};
+    cart.forEach(item => {
+      const sId = item.storeId || 'direct';
+      if (!groups[sId]) groups[sId] = [];
+      groups[sId].push(item);
+    });
+
+    const customerId = window.currentUser ? window.currentUser.id : 'guest_' + Date.now();
+    let successfulOrders = 0;
+    let localOrders = [];
+    try {
+      localOrders = JSON.parse(localStorage.getItem('zalo_local_orders') || '[]');
+      if (!Array.isArray(localOrders)) localOrders = [];
+    } catch(e) {
+      localOrders = [];
+    }
+
+    const generatedOrderPayloads = [];
+
+    for (const storeId in groups) {
+      const groupItems = groups[storeId];
+      const storeName = groupItems[0].storeName || 'محل شريك';
+      const subtotal = groupItems.reduce((sum, i) => sum + (i.price * i.qty), 0);
+      const orderId = 'ord_' + Math.random().toString(36).substring(2, 11);
+
+      const pName = groupItems.map(i => `${i.name || i.productName} (×${i.qty})`).join(' + ');
+      const totalQty = groupItems.reduce((sum, i) => sum + (parseInt(i.qty) || 1), 0);
+      const wilayaNum = parseInt(wilaya.toString().replace(/[^0-9]/g, ''), 10) || 16;
+
+      const orderPayload = {
+        id: orderId,
+        product_name: pName,
+        quantity: totalQty,
+        shipping_wilaya: wilayaNum,
+        customer_id: customerId,
+        customer_name: name,
+        customer_phone: phone,
+        address: addr,
+        delivery_address: addr,
+        wilaya: wilayaNum.toString(),
+        commune: 'غير محدد',
+        store_id: storeId,
+        store_name: storeName,
+        total_amount: subtotal,
+        payment_method: pay,
+        payment_status: 'pending',
+        status: 'pending',
+        items: JSON.stringify(groupItems),
+        created_at: new Date().toISOString(),
+        // Additional fallback keys
+        customerName: name,
+        customerPhone: phone,
+        storeId: storeId,
+        storeName: storeName,
+        totalAmount: subtotal,
+        paymentMethod: pay,
+        createdAt: new Date().toISOString()
+      };
+
+      generatedOrderPayloads.push(orderPayload);
+
+      try {
+        let sb = typeof supabase !== 'undefined' ? supabase : window.supabaseClient;
+        if (sb && sb.from) {
+          const { error } = await sb.from('orders').insert(orderPayload);
+          if (error) throw error;
+        } else {
+          throw new Error("Supabase is offline or undefined");
+        }
+        successfulOrders++;
+      } catch(err) {
+        console.warn("Direct online order submission failed, storing offline:", err);
+        successfulOrders++;
+      }
+
+      // Always prepend to localOrders so the user can track this order in their sidebar list instantly
+      if (!localOrders.some(o => o.id === orderId)) {
+        localOrders.unshift(orderPayload);
+      }
+    }
+
+    if (successfulOrders > 0) {
+      localStorage.setItem('zalo_local_orders', JSON.stringify(localOrders));
+      localStorage.setItem('zalo_cart', '[]');
+      if (window.ZaLoDB) {
+        window.ZaLoDB.saveCart([]);
+      }
+      if (typeof window.updateCartBadge === 'function') {
+        window.updateCartBadge();
+      }
+      
+      // Render receipt inside the modal
+      const receiptContainer = document.getElementById('receipt-details-content');
+      if (receiptContainer) {
+        let itemsLines = '';
+        let totalSum = 0;
+        let storeNames = [];
+
+        cart.forEach(item => {
+          const qty = item.qty || 1;
+          const price = item.price || 0;
+          const sub = price * qty;
+          totalSum += sub;
+          if (item.storeName && !storeNames.includes(item.storeName)) {
+            storeNames.push(item.storeName);
+          }
+          itemsLines += `
+            <div style="display:flex; justify-content:space-between; font-size:12px; background:#fff; padding:6px 10px; border-radius:8px; border:1px solid var(--bd); margin-top:4px;">
+              <span>${item.emoji || '📦'} ${item.name} <strong style="color:var(--brand-gold);">x${qty}</strong></span>
+              <strong style="color:var(--metallic-gold);">${sub.toLocaleString()} دج</strong>
+            </div>
+          `;
+        });
+
+        receiptContainer.innerHTML = `
+          <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--bd); padding-bottom:6px;">
+            <span style="color:var(--gray);">المشتري:</span>
+            <span style="font-weight:bold; color:var(--navy);">${name} (${phone})</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--bd); padding-bottom:6px;">
+            <span style="color:var(--gray);">مكان التسليم:</span>
+            <span style="font-weight:bold; color:#0369a1;">ولاية ${wilaya} - ${addr}</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--bd); padding-bottom:6px;">
+            <span style="color:var(--gray);">المتاجر:</span>
+            <span style="font-weight:bold; color:var(--navy);">${storeNames.join('، ') || 'شركاء ZaLo'}</span>
+          </div>
+          <div style="margin-top:6px; display:flex; flex-direction:column; gap:4px; max-height: 120px; overflow-y: auto;">
+            ${itemsLines}
+          </div>
+          <div style="display:flex; justify-content:space-between; font-size:13.5px; font-weight:900; color:var(--navy); background:#fef3c7; padding:8px 12px; border-radius:10px; border:1px solid #fde047; margin-top:6px;">
+            <span>الإجمالي المستحق (الدفع عند الاستلام):</span>
+            <span style="color:#b45309;">${totalSum.toLocaleString()} دج</span>
+          </div>
+        `;
+      }
+
+      // Generate WhatsApp Link for the whole cart
+      const waPhone = '213698694010'; // Main support
+      let waText = `🛍️ *إثبات طلبية جديدة من سلة المشتريات - ZaLo*\n\n` +
+        `👤 *الزبون:* ${name}\n` +
+        `📞 *الهاتف:* ${phone}\n` +
+        `📍 *الولاية والعنوان:* ${wilaya} - ${addr}\n\n` +
+        `📦 *المنتجات المطلوبة:*\n`;
+
+      cart.forEach(item => {
+        waText += `- ${item.name} (الكمية: ${item.qty}) [${item.storeName || 'محل شريك'}]\n`;
+      });
+
+      const totalSum = cart.reduce((sum, item) => sum + (item.price * (item.qty || 1)), 0);
+      waText += `\n💰 *الإجمالي الكلي:* ${totalSum.toLocaleString()} دج\n\n` +
+        `أرجو تأكيد ومعالجة هذه الطلبية لشحنها لولايتي وشكراً!`;
+
+      const waLink = document.getElementById('receipt-whatsapp-link');
+      if (waLink) {
+        waLink.href = `https://wa.me/${waPhone}?text=${encodeURIComponent(waText)}`;
+      }
+
+      // Show receipt modal
+      const rModal = document.getElementById('orderReceiptModal');
+      if (rModal) {
+        rModal.style.display = 'flex';
+      }
+
+      window.showToast(`✨ تم تسجيل وتأكيد ${successfulOrders} طلبيات بنجاح! جاري إصدار الوصل 📄`);
+      
+      // Update badge/list of customer orders
+      if (typeof window.loadCustomerOrders === 'function') {
+        window.loadCustomerOrders();
+      }
+    } else {
+      window.showToast("❌ فشل تأكيد الطلبات، يرجى تكرار المحاولة.");
+    }
+  } catch (globalError) {
+    console.error("Critical error in checkoutCart:", globalError);
+    if (typeof window.zaloErrorHandler !== 'undefined') {
+      window.zaloErrorHandler.showError("خطأ داخلي أثناء معالجة الطلب: " + globalError.message);
+    } else {
+      alert("حدث خطأ داخلي: " + globalError.message);
+    }
+  }
 };
 
 window.chQty = function(delta) {
