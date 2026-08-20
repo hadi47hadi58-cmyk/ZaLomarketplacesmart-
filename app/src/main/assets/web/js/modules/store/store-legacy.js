@@ -707,6 +707,12 @@
                 let minOrderLabel = p.minOrder ? `<span class="text-[9px] text-amber-600 font-bold">أقل كمية: ${p.minOrder}</span>` : '';
                 let catLabel = p.category ? `<span class="text-[9px] bg-sky-50 text-sky-600 border border-sky-100 px-2 py-0.5 rounded font-bold">${p.category}${p.subcategory ? ' - ' + p.subcategory : ''}</span>` : '';
                 let pImg = p.image || p.image_url || p.img || 'assets/icon-192.svg';
+                if (typeof pImg === 'string' && pImg.startsWith('[')) {
+                    try {
+                        const parsed = JSON.parse(pImg);
+                        if (Array.isArray(parsed) && parsed.length > 0) pImg = parsed[0];
+                    } catch(e) {}
+                }
 
                 let item = document.createElement("tr");
                 item.className = "border-t border-slate-100 hover:bg-slate-50 transition";

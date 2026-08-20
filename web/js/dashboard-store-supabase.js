@@ -1,4 +1,4 @@
-import { supabase } from '../supabase-config.js';
+import { supabase } from './supabase-config.js';
 
 export async function addProductToSupabase(productData) {
     if (!supabase) return false;

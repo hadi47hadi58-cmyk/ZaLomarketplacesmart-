@@ -1,4 +1,4 @@
-import { supabase } from '../supabase-config.js';
+import { supabase } from './supabase-config.js';
 
 export async function fetchLiveStories() {
     try {

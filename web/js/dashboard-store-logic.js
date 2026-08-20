@@ -4,9 +4,10 @@ import { deleteProductFromSupabase, deleteStoryFromSupabase } from './dashboard-
 window.unifiedMediaData = { type: 'none', url: '', urls: [], files: [], isVideo: false };
 
 // Ultra-fast instant image compressor using in-memory HTML5 Canvas
-function compressImageInstant(file, maxWidth = 1000, quality = 0.82) {
+function compressImageInstant(file, maxWidth = 800, quality = 0.78) {
     return new Promise((resolve) => {
         try {
+            if (!file) return resolve('');
             const reader = new FileReader();
             reader.onload = function(e) {
                 const img = new Image();
@@ -18,6 +19,10 @@ function compressImageInstant(file, maxWidth = 1000, quality = 0.82) {
                         if (width > maxWidth) {
                             height = Math.round((height * maxWidth) / width);
                             width = maxWidth;
+                        }
+                        if (height > maxWidth) {
+                            width = Math.round((width * maxWidth) / height);
+                            height = maxWidth;
                         }
                         canvas.width = width;
                         canvas.height = height;
@@ -225,9 +230,6 @@ window.resetUnifiedMedia = function() {
 };
 
 window.merchantUnifiedAddProduct = async function(e) {
-  window.addProductToSupabase = addProductToSupabase;
-  window.addStoryToSupabase = addStoryToSupabase;
-  window.uploadFileToSupabase = uploadFileToSupabase;
     if (e) e.preventDefault();
     
     let storeId = localStorage.getItem('zalo_current_store_id') || localStorage.getItem('zalo_uid') || 'default_store';
@@ -285,7 +287,7 @@ window.merchantUnifiedAddProduct = async function(e) {
         if (typeof Swal !== 'undefined') Swal.fire('خطأ!', 'يرجى إدخال اسم وسعر السلعة.', 'error');
         if (btn) {
             btn.disabled = false;
-            btn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> حفظ ونشر السلعة بالمتجر 🚀';
+            btn.innerHTML = '<i class="fa-solid fa-paper-plane text-sm"></i> <span>🚀 نشر العرض المباشر وإضافة المنتج للمعرض الرقمي</span>';
         }
         return;
     }
@@ -299,7 +301,7 @@ window.merchantUnifiedAddProduct = async function(e) {
         }
         if (btn) {
             btn.disabled = false;
-            btn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> حفظ ونشر السلعة بالمتجر 🚀';
+            btn.innerHTML = '<i class="fa-solid fa-paper-plane text-sm"></i> <span>🚀 نشر العرض المباشر وإضافة المنتج للمعرض الرقمي</span>';
         }
         return;
     }
@@ -319,26 +321,30 @@ window.merchantUnifiedAddProduct = async function(e) {
     let pMedia = mediaObj.url || 'assets/icon-192.svg';
     let pVideo = mediaObj.isVideo ? mediaObj.url : '';
 
-    // Handle storage upload if available
-    if (typeof uploadFileToSupabase === 'function') {
-        if (mediaObj.isVideo && mediaObj.file) {
-            const vidUrl = await uploadFileToSupabase(mediaObj.file, 'videos');
-            if (vidUrl) {
-                pMedia = vidUrl;
-                pVideo = vidUrl;
-            }
-        } else if (mediaObj.type === 'images' && mediaObj.files && mediaObj.files.length > 0) {
-            const uploadPromises = mediaObj.files.map(f => uploadFileToSupabase(f, 'products'));
-            const urls = await Promise.all(uploadPromises);
-            const validUrls = urls.filter(u => u !== null);
-            if (validUrls.length > 0) {
-                pMedia = validUrls.length === 1 ? validUrls[0] : JSON.stringify(validUrls);
+    // Fast storage upload attempt (Non-blocking fallback to instant dataUrl)
+    try {
+        if (typeof uploadFileToSupabase === 'function') {
+            if (mediaObj.isVideo && mediaObj.file) {
+                const vidUrl = await uploadFileToSupabase(mediaObj.file, 'videos');
+                if (vidUrl) {
+                    pMedia = vidUrl;
+                    pVideo = vidUrl;
+                }
+            } else if (mediaObj.type === 'images' && mediaObj.files && mediaObj.files.length > 0) {
+                const uploadPromises = mediaObj.files.map(f => uploadFileToSupabase(f, 'products'));
+                const urls = await Promise.all(uploadPromises);
+                const validUrls = urls.filter(u => u !== null);
+                if (validUrls.length > 0) {
+                    pMedia = validUrls.length === 1 ? validUrls[0] : JSON.stringify(validUrls);
+                }
             }
         }
-    } else {
-        if (mediaObj.type === 'images' && mediaObj.urls.length > 0) {
-            pMedia = mediaObj.urls.length === 1 ? mediaObj.urls[0] : JSON.stringify(mediaObj.urls);
-        }
+    } catch(uploadErr) {
+        console.warn('Storage upload fallback to instant compressed dataURL:', uploadErr);
+    }
+
+    if (mediaObj.type === 'images' && mediaObj.urls && mediaObj.urls.length > 0 && !pMedia.startsWith('http')) {
+        pMedia = mediaObj.urls.length === 1 ? mediaObj.urls[0] : JSON.stringify(mediaObj.urls);
     }
 
     const isVideo = mediaObj.isVideo || false;
@@ -371,36 +377,44 @@ window.merchantUnifiedAddProduct = async function(e) {
         created_at: new Date().toISOString()
     };
 
-    // 1. Sync to Supabase products table
-    let supabaseSuccess = true;
+    // 1. INSTANT LOCAL CACHE & STORE CATALOG PERSISTENCE (Zero Lag)
     try {
-        if (typeof addProductToSupabase === 'function') {
-             supabaseSuccess = await addProductToSupabase(newProduct);
-        }
-    } catch (err) {
-        console.error('Supabase product sync error:', err);
-        supabaseSuccess = false;
-    }
-
-    if (!supabaseSuccess) {
-        if (typeof Swal !== 'undefined') Swal.fire('فشل المزامنة!', 'حدث خطأ أثناء الرفع إلى الخادم. يرجى التحقق من جودة الاتصال وحجم الملفات.', 'error');
-        if (btn) {
-            btn.disabled = false;
-            btn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> حفظ ونشر السلعة بالمتجر 🚀';
-        }
-        return;
-    }
-
-    // 2. Save to local products DB (Cache)
-    let dbProducts = [];
-    try {
-        dbProducts = JSON.parse(localStorage.getItem('zalo_products') || '[]');
+        let dbProducts = JSON.parse(localStorage.getItem('zalo_products') || '[]');
         dbProducts.unshift(newProduct);
-        localStorage.setItem('zalo_products', JSON.stringify(dbProducts.slice(0, 50)));
+        localStorage.setItem('zalo_products', JSON.stringify(dbProducts.slice(0, 100)));
     } catch(e) {}
 
-    // 3. UNIFIED LIVE BROADCAST: Automatically sync as an active Live Story
+    // 2. UNIFIED LIVE BROADCAST: Automatically sync as an active Live Story
     try {
+        let stories = JSON.parse(localStorage.getItem('zalo_live_stories') || '[]');
+        const storyObj = {
+            id: pId,
+            author: realStoreName,
+            store_name: realStoreName,
+            storeId: storeId,
+            wilaya: realWilaya,
+            category: mainCat,
+            price: prodPrice,
+            caption: prodName,
+            image: pMedia,
+            image_url: pMedia,
+            video_url: isVideo ? pMedia : null,
+            is_video: isVideo,
+            phone: realPhone,
+            is_active: true,
+            created_at: new Date().toISOString()
+        };
+        stories.unshift(storyObj);
+        localStorage.setItem('zalo_live_stories', JSON.stringify(stories.slice(0, 50)));
+    } catch(e) {}
+
+    // 3. BACKGROUND ASYNC SYNC TO SUPABASE
+    try {
+        if (typeof addProductToSupabase === 'function') {
+            addProductToSupabase(newProduct).then(res => {
+                console.log('Supabase product sync success:', res);
+            }).catch(err => console.warn('Supabase product sync warning:', err));
+        }
         if (typeof addStoryToSupabase === 'function') {
             const storyObj = {
                 id: pId,
@@ -418,10 +432,10 @@ window.merchantUnifiedAddProduct = async function(e) {
                 is_active: true,
                 created_at: new Date().toISOString()
             };
-            await addStoryToSupabase(storyObj);
+            addStoryToSupabase(storyObj).catch(e => console.warn('Supabase story sync warning:', e));
         }
-    } catch(storyErr) {
-        console.warn('Auto story sync error:', storyErr);
+    } catch (err) {
+        console.warn('Background Supabase sync error:', err);
     }
 
     // Clear form and reset media preview
@@ -449,12 +463,13 @@ window.merchantUnifiedAddProduct = async function(e) {
     
     if (btn) {
         btn.disabled = false;
-        btn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> حفظ ونشر السلعة بالمتجر 🚀';
+        btn.innerHTML = '<i class="fa-solid fa-paper-plane text-sm"></i> <span>🚀 نشر العرض المباشر وإضافة المنتج للمعرض الرقمي</span>';
     }
 
     if (typeof renderMerchantProducts === 'function') renderMerchantProducts();
     if (typeof loadMerchantProducts === 'function') loadMerchantProducts();
     if (typeof loadMerchantStats === 'function') loadMerchantStats();
+    if (typeof updateCounters === 'function') updateCounters();
 };
 
 window.switchProductSubTab = function(tab) {
