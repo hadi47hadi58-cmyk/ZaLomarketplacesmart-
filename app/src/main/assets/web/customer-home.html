@@ -116,9 +116,21 @@
       <div class="sm-user-avatar">
         <i class="fa-solid fa-circle-user"></i>
       </div>
-      <div style="font-size: 14px; font-weight: 800;" id="drawer-user-email">تحميل...</div>
-      <div style="font-size: 10px; color: rgba(255,255,255,0.7);">معرف الحساب: #<span id="drawer-user-id">...</span></div>
+      <div style="font-size: 14px; font-weight: 800;" id="drawer-user-email">مستخدم ZaLo معتمد</div>
+      <div style="font-size: 10px; color: rgba(255,255,255,0.7);">معرف الحساب: #<span id="drawer-user-id">ZALO-69</span></div>
     </div>
+    <script>
+      (function() {
+        try {
+          const savedEmail = localStorage.getItem('zalo_user_email') || localStorage.getItem('user_email') || sessionStorage.getItem('user_email') || 'مستخدم ZaLo معتمد';
+          const savedUid = localStorage.getItem('zalo_uid') || localStorage.getItem('user_uid') || 'ZALO-69';
+          const elEmail = document.getElementById('drawer-user-email');
+          const elId = document.getElementById('drawer-user-id');
+          if (elEmail) elEmail.innerText = savedEmail;
+          if (elId) elId.innerText = String(savedUid).slice(0, 8);
+        } catch(e) {}
+      })();
+    </script>
 
     <div class="sm-sec" id="sm-sec-ops">العمليات والطلبات</div>
     <div class="smi" onclick="closeSide(); switchTab('home')" role="button" tabindex="0" aria-label="التحويل للصفحة الرئيسية واستكشاف السوق">

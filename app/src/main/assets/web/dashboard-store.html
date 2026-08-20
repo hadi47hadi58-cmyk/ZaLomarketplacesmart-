@@ -477,7 +477,7 @@
                         </div>
                         <div>
                             <label class="block text-[11px] text-slate-600 font-black mb-1">ولاية النشاط والفرز الجغرافي *</label>
-                            <select id="settings-wilaya" class="w-full bg-slate-50 border border-slate-200 text-[11px] rounded-xl py-2.5 px-3 focus:outline-none focus:border-sky-400 font-black text-slate-800">
+                            <select id="settings-wilaya" onchange="window.handleStoreWilayaChange(this.value)" class="w-full bg-slate-50 border border-slate-200 text-[11px] rounded-xl py-2.5 px-3 focus:outline-none focus:border-sky-400 font-black text-slate-800">
                                 <option value="01 أدرار">01 أدرار</option>
                                 <option value="02 الشلف">02 الشلف</option>
                                 <option value="03 الأغواط">03 الأغواط</option>
@@ -540,12 +540,13 @@
                         </div>
                         <div>
                             <label class="block text-[11px] text-slate-600 font-black mb-1">البلدية والمنطقة *</label>
-                            <select id="settings-commune" class="w-full bg-slate-50 border border-slate-200 text-[11px] rounded-xl py-2.5 px-3 focus:outline-none focus:border-sky-400 font-black text-slate-800">
+                            <select id="settings-commune" onchange="window.handleStoreCommuneChange(this.value)" class="w-full bg-slate-50 border border-slate-200 text-[11px] rounded-xl py-2.5 px-3 focus:outline-none focus:border-sky-400 font-black text-slate-800">
                                 <option value="بلدية المنيعة">بلدية المنيعة</option>
                                 <option value="بلدية حاسي الفحل">بلدية حاسي الفحل</option>
                                 <option value="بلدية حاسي القارة">بلدية حاسي القارة</option>
                                 <option value="بلدية أخرى (اكتبها في العنوان)">بلدية أخرى (اكتبها في العنوان)</option>
                             </select>
+                            <input type="text" id="settings-custom-commune" placeholder="اكتب اسم البلدية أو المنطقة يدوياً..." class="hidden w-full bg-slate-50 border border-slate-200 text-[11px] rounded-xl py-2 px-3 mt-1.5 focus:outline-none focus:border-sky-400 font-bold text-slate-800">
                         </div>
                     </div>
 
