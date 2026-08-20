@@ -780,7 +780,25 @@ window.submitStoreVerificationDocuments = function(e) {
     }
 };
 
+async function refreshMerchantSidebarProfile() {
+    try {
+        const storeSettings = JSON.parse(localStorage.getItem('zalo_merchant_store_settings') || '{}');
+        const storeName = storeSettings.storeName || storeSettings.name || localStorage.getItem('zalo_active_store') || 'متجر ZaLo';
+        const userEmail = localStorage.getItem('zalo_user_email') || 'merchant@zalo.dz';
+        const logoImg = storeSettings.logoImg || localStorage.getItem('zalo_merchant_logo') || 'assets/icon-192.svg';
+
+        const nameEl = document.getElementById('sidebar-user-name');
+        const emailEl = document.getElementById('sidebar-user-email');
+        const logoEl = document.getElementById('sidebar-store-logo-preview');
+
+        if (nameEl) nameEl.textContent = storeName;
+        if (emailEl) emailEl.textContent = userEmail;
+        if (logoEl && logoImg) logoEl.src = logoImg;
+    } catch(e) {}
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+    refreshMerchantSidebarProfile();
     let storeId = localStorage.getItem('zalo_current_store_id') || localStorage.getItem('zalo_uid') || 'default_store';
     const isPaused = localStorage.getItem('zalo_publishing_paused_' + storeId) === 'true';
     const isVerified = localStorage.getItem('zalo_merchant_verified_' + storeId) === 'true';

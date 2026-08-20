@@ -355,8 +355,9 @@
         المتابعة بحساب Google
       </button>
 
-    <div class="register-link" style="margin-top: 8px;">
-      <a href="forgot-password.html" style="color: var(--error); font-weight: bold; text-decoration: underline;">نسيت كلمة المرور؟</a>
+    <div class="register-link" style="margin-top: 8px; display: flex; justify-content: space-between; align-items: center;">
+      <a href="forgot-password.html" style="color: var(--text2); font-weight: 700; text-decoration: underline;">نسيت كلمة المرور؟</a>
+      <a href="register-step1.html" style="color: var(--green); font-weight: 800; text-decoration: none;">فتح حساب متجر جديد 🏪</a>
     </div>
   </div>
 </div>
@@ -510,6 +511,70 @@
       }
       checkActiveSession();
 
+      async function syncMerchantSession(userId, userEmail, token) {
+        localStorage.setItem('zalo_session_jwt', token || ('token-' + Date.now()));
+        localStorage.setItem('zalo_token', token || ('token-' + Date.now()));
+        localStorage.setItem('zalo_user_email', userEmail);
+        localStorage.setItem('zalo_uid', userId);
+        localStorage.setItem('user_uid', userId);
+        localStorage.setItem('zalo_role', 'MERCHANT');
+        localStorage.setItem('zalo_user_role', 'merchant');
+        localStorage.setItem('user_role', 'merchant');
+        sessionStorage.setItem('user_logged_in', 'true');
+
+        try {
+          // 1. Fetch store from Supabase stores table
+          const { data: store } = await supabaseClient
+            .from('stores')
+            .select('*')
+            .or(`merchant_id.eq.${userId},merchant_email.eq.${userEmail},email.eq.${userEmail}`)
+            .maybeSingle();
+
+          if (store) {
+            localStorage.setItem('zalo_current_store_id', store.id);
+            localStorage.setItem('zalo_store_id', store.id);
+            localStorage.setItem('zalo_active_store', store.name || 'متجر معتمد');
+            sessionStorage.setItem('merchant_store_name', store.name || 'متجر معتمد');
+            const storeSettings = {
+              id: store.id,
+              storeName: store.name || 'متجرك المعتمد',
+              phone: store.phone || '',
+              wilaya: store.wilaya || 'الجزائر',
+              commune: store.commune || store.baladiya || '',
+              category: store.category || 'عام',
+              logoImg: store.logo_url || 'assets/icon-192.svg',
+              coverImg: store.banner_url || 'assets/icon-192.svg'
+            };
+            localStorage.setItem('zalo_merchant_store_settings', JSON.stringify(storeSettings));
+          } else {
+            // 2. Fetch from merchant_requests or profiles
+            const { data: reqData } = await supabaseClient
+              .from('merchant_requests')
+              .select('*')
+              .or(`user_id.eq.${userId},email.eq.${userEmail}`)
+              .maybeSingle();
+
+            if (reqData && reqData.store_name) {
+              localStorage.setItem('zalo_active_store', reqData.store_name);
+              localStorage.setItem('zalo_current_store_id', reqData.id || userId);
+              const storeSettings = {
+                id: reqData.id || userId,
+                storeName: reqData.store_name,
+                phone: reqData.phone || '',
+                wilaya: reqData.wilaya || 'الجزائر',
+                commune: reqData.commune || '',
+                category: reqData.category || 'عام',
+                logoImg: reqData.logo || 'assets/icon-192.svg',
+                coverImg: reqData.front_image || 'assets/icon-192.svg'
+              };
+              localStorage.setItem('zalo_merchant_store_settings', JSON.stringify(storeSettings));
+            }
+          }
+        } catch(e) {
+          console.warn("Could not sync remote merchant profile:", e);
+        }
+      }
+
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
         errorDiv.style.display = 'none';
@@ -531,11 +596,11 @@
           try {
             const res = await EmailVerification.verifyCode(email, code);
             if (res.success) {
-              localStorage.setItem('zalo_session_jwt', res.token || ('mock-otp-token-' + Date.now()));
-              localStorage.setItem('zalo_user_email', email);
-              localStorage.setItem('zalo_uid', res.userId || ('MERCHANT-' + Date.now()));
+              const uId = res.userId || ('MERCHANT-' + Date.now());
+              const token = res.token || ('mock-otp-token-' + Date.now());
+              await syncMerchantSession(uId, email, token);
               showSuccess('✨ تم التحقق من الرمز بنجاح!');
-              setTimeout(() => window.location.replace('dashboard-store.html'), 800);
+              setTimeout(() => window.location.replace('dashboard-store.html'), 600);
             } else {
               throw new Error(res.message || 'رمز التحقق غير صحيح.');
             }
@@ -552,11 +617,11 @@
           try {
             const { error, data } = await supabaseClient.auth.signInWithPassword({ email, password });
             if (error) throw error;
-            localStorage.setItem('zalo_session_jwt', (data && data.session) ? data.session.access_token : ('mock-pwd-token-' + Date.now()));
-            localStorage.setItem('zalo_user_email', email);
-            localStorage.setItem('zalo_uid', (data && data.user) ? data.user.id : ('MERCHANT-' + Date.now()));
+            const uId = (data && data.user) ? data.user.id : ('MERCHANT-' + Date.now());
+            const token = (data && data.session) ? data.session.access_token : ('mock-pwd-token-' + Date.now());
+            await syncMerchantSession(uId, email, token);
             showSuccess('✨ تم تسجيل الدخول بنجاح!');
-            setTimeout(() => window.location.replace('dashboard-store.html'), 800);
+            setTimeout(() => window.location.replace('dashboard-store.html'), 600);
           } catch (err) {
             showError(err.message || 'فشل تسجيل الدخول ❌');
             loginBtn.disabled = false;
