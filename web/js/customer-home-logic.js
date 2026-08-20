@@ -9,9 +9,9 @@ import {
   getDocs,
   doc,
   getDoc
-} from "./js/supabase-db-compat.js";
-import { supabase } from "./js/supabase-config.js";
-import { ALGERIA_PROMPTS } from "./js/algeria-prompts.js";
+} from "./supabase-db-compat.js";
+import { supabase } from "./supabase-config.js";
+import { ALGERIA_PROMPTS } from "./algeria-prompts.js";
 window.ALGERIA_PROMPTS = ALGERIA_PROMPTS;
 window.supabaseClient = supabase;
 window.supabase = supabase;

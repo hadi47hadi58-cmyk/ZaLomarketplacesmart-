@@ -1,45 +1,117 @@
 import { addProductToSupabase, addStoryToSupabase } from './dashboard-store-supabase.js';
 import { deleteProductFromSupabase, deleteStoryFromSupabase } from './dashboard-store-supabase-del.js';
 
-window.unifiedMediaData = { type: 'none', url: '', isVideo: false };
+window.unifiedMediaData = { type: 'none', url: '', urls: [], isVideo: false };
 
-window.previewUnifiedImg = function(input) {
+// Ultra-fast instant image compressor using in-memory HTML5 Canvas
+function compressImageInstant(file, maxWidth = 1000, quality = 0.82) {
+    return new Promise((resolve) => {
+        try {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    try {
+                        const canvas = document.createElement('canvas');
+                        let width = img.width;
+                        let height = img.height;
+                        if (width > maxWidth) {
+                            height = Math.round((height * maxWidth) / width);
+                            width = maxWidth;
+                        }
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        const dataUrl = canvas.toDataURL('image/jpeg', quality);
+                        resolve(dataUrl);
+                    } catch(err) {
+                        resolve(e.target.result);
+                    }
+                };
+                img.onerror = function() {
+                    resolve(e.target.result);
+                };
+                img.src = e.target.result;
+            };
+            reader.onerror = function() {
+                resolve('');
+            };
+            reader.readAsDataURL(file);
+        } catch(e) {
+            resolve('');
+        }
+    });
+}
+
+window.previewUnifiedImg = async function(input) {
     if (!input.files || input.files.length === 0) return;
-    window.unifiedMediaData = { type: 'images', urls: [], isVideo: false };
-    
-    let loadedCount = 0;
     const totalFiles = input.files.length;
     
+    const lbl = document.getElementById('unified-img-lbl');
+    const imgPrev = document.getElementById('unified-img-preview');
+    const imgContainer = document.getElementById('unified-img-preview-container');
+    const vidContainer = document.getElementById('unified-vid-preview-container');
+    const resetBtn = document.getElementById('unified-media-reset-btn');
+
+    if (lbl) {
+        lbl.innerHTML = '<i class="fa-solid fa-spinner fa-spin text-sky-600"></i> <span>جاري معالجة الصور اللحظية...</span>';
+    }
+
+    const compressedUrls = [];
     for (let i = 0; i < totalFiles; i++) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            window.unifiedMediaData.urls.push(e.target.result);
-            loadedCount++;
-            
-            if (loadedCount === totalFiles) {
-                const lbl = document.getElementById('unified-img-lbl');
-                const imgPrev = document.getElementById('unified-img-preview');
-                const vidPrev = document.getElementById('unified-vid-preview');
-                if (lbl) {
-                    lbl.innerText = `✅ تم تحديد ${totalFiles} صور`;
-                    lbl.className = 'text-xs text-emerald-600 font-black';
-                }
-                if (imgPrev) {
-                    imgPrev.src = window.unifiedMediaData.urls[0];
-                    imgPrev.classList.remove('hidden');
-                }
-                if (vidPrev) {
-                    vidPrev.classList.add('hidden');
-                }
-            }
-        };
-        reader.readAsDataURL(input.files[i]);
+        const compressed = await compressImageInstant(input.files[i]);
+        if (compressed) compressedUrls.push(compressed);
+    }
+
+    if (compressedUrls.length === 0) {
+        if (lbl) {
+            lbl.innerHTML = `
+                <div class="w-8 h-8 rounded-full bg-sky-100 text-sky-600 flex items-center justify-center">
+                    <i class="fa-solid fa-camera-retro text-base"></i>
+                </div>
+                <span class="text-[11px]">📸 التقاط / رفع صور لحظية</span>
+                <span class="text-[9px] text-slate-400 font-normal">(صور متعددة أو من الكاميرا)</span>
+            `;
+        }
+        return;
+    }
+
+    window.unifiedMediaData = { type: 'images', url: compressedUrls[0], urls: compressedUrls, isVideo: false };
+
+    if (lbl) {
+        lbl.innerHTML = `
+            <div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center">
+                <i class="fa-solid fa-circle-check text-base"></i>
+            </div>
+            <span class="text-[11px] text-emerald-700 font-black">✅ تم التقاط/رفع ${compressedUrls.length} صور</span>
+            <span class="text-[9px] text-emerald-600">جاهزة للبث اللحظي</span>
+        `;
+    }
+
+    if (imgPrev) {
+        imgPrev.src = compressedUrls[0];
+    }
+    if (imgContainer) {
+        imgContainer.classList.remove('hidden');
+        imgContainer.classList.add('flex');
+    }
+    if (vidContainer) {
+        vidContainer.classList.add('hidden');
+    }
+    if (resetBtn) {
+        resetBtn.classList.remove('hidden');
     }
 };
 
 window.validateAndPreviewUnifiedVid = function(input) {
     if (!input.files || !input.files[0]) return;
     const file = input.files[0];
+
+    const lbl = document.getElementById('unified-vid-lbl');
+    if (lbl) {
+        lbl.innerHTML = '<i class="fa-solid fa-spinner fa-spin text-rose-600"></i> <span>جاري فحص الفيديو اللحظي...</span>';
+    }
 
     // Create temporary video element to validate duration (max 20 seconds)
     const tempVid = document.createElement('video');
@@ -51,13 +123,14 @@ window.validateAndPreviewUnifiedVid = function(input) {
                 Swal.fire({
                     icon: 'warning',
                     title: 'مدة الفيديو تتجاوز 20 ثانية! ⏱️',
-                    text: `مدة الفيديو المختار ${Math.round(tempVid.duration)} ثانية. يرجى اختيار مقطع فيديو لا يتجاوز 20 ثانية للبث المباشر والقصص اللحظية.`,
+                    text: `مدة الفيديو المختار ${Math.round(tempVid.duration)} ثانية. يرجى اختيار أو تسجيل مقطع فيديو لا يتجاوز 20 ثانية للبث المباشر والقصص اللحظية.`,
                     confirmButtonText: 'حسناً'
                 });
             } else {
                 alert(`مدة الفيديو المختار ${Math.round(tempVid.duration)} ثانية. الحد الأقصى المسموح به هو 20 ثانية للبث اللحظي!`);
             }
             input.value = '';
+            window.resetUnifiedMedia();
             return;
         }
 
@@ -67,27 +140,78 @@ window.validateAndPreviewUnifiedVid = function(input) {
             window.unifiedMediaData = { type: 'video', url: e.target.result, isVideo: true };
             const vidLbl = document.getElementById('unified-vid-lbl');
             const vidPrev = document.getElementById('unified-vid-preview');
-            const imgPrev = document.getElementById('unified-img-preview');
+            const vidContainer = document.getElementById('unified-vid-preview-container');
+            const imgContainer = document.getElementById('unified-img-preview-container');
+            const resetBtn = document.getElementById('unified-media-reset-btn');
+
             if (vidLbl) {
-                vidLbl.innerText = `✅ فيديو (${Math.round(tempVid.duration)}ثا)`;
-                vidLbl.className = 'text-xs text-emerald-600 font-black';
+                vidLbl.innerHTML = `
+                    <div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center">
+                        <i class="fa-solid fa-circle-check text-base"></i>
+                    </div>
+                    <span class="text-[11px] text-emerald-700 font-black">✅ فيديو لحظي (${Math.round(tempVid.duration)}ثا)</span>
+                    <span class="text-[9px] text-emerald-600">جاهز للبث والعرض</span>
+                `;
             }
             if (vidPrev) {
                 vidPrev.src = e.target.result;
-                vidPrev.classList.remove('hidden');
             }
-            if (imgPrev) {
-                imgPrev.classList.add('hidden');
+            if (vidContainer) {
+                vidContainer.classList.remove('hidden');
+                vidContainer.classList.add('flex');
             }
-            const imgLbl = document.getElementById('unified-img-lbl');
-            if (imgLbl) {
-                imgLbl.innerText = 'اختيار صورة';
-                imgLbl.className = 'text-xs text-sky-600 font-bold flex flex-col items-center gap-1';
+            if (imgContainer) {
+                imgContainer.classList.add('hidden');
+            }
+            if (resetBtn) {
+                resetBtn.classList.remove('hidden');
             }
         };
         reader.readAsDataURL(file);
     };
     tempVid.src = URL.createObjectURL(file);
+};
+
+window.resetUnifiedMedia = function() {
+    window.unifiedMediaData = { type: 'none', url: '', urls: [], isVideo: false };
+    const imgInput = document.getElementById('merchant-unified-img-file');
+    const vidInput = document.getElementById('merchant-unified-vid-file');
+    if (imgInput) imgInput.value = '';
+    if (vidInput) vidInput.value = '';
+    
+    const imgLbl = document.getElementById('unified-img-lbl');
+    const vidLbl = document.getElementById('unified-vid-lbl');
+    const imgPrev = document.getElementById('unified-img-preview');
+    const vidPrev = document.getElementById('unified-vid-preview');
+    const imgContainer = document.getElementById('unified-img-preview-container');
+    const vidContainer = document.getElementById('unified-vid-preview-container');
+    const resetBtn = document.getElementById('unified-media-reset-btn');
+
+    if (imgLbl) {
+        imgLbl.innerHTML = `
+            <div class="w-8 h-8 rounded-full bg-sky-100 text-sky-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <i class="fa-solid fa-camera-retro text-base"></i>
+            </div>
+            <span class="text-[11px]">📸 التقاط / رفع صور لحظية</span>
+            <span class="text-[9px] text-slate-400 font-normal">(صور متعددة أو من الكاميرا)</span>
+        `;
+        imgLbl.className = 'text-xs text-sky-700 font-black flex flex-col items-center gap-1';
+    }
+    if (vidLbl) {
+        vidLbl.innerHTML = `
+            <div class="w-8 h-8 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <i class="fa-solid fa-video text-base"></i>
+            </div>
+            <span class="text-[11px]">🎥 تسجيل / رفع فيديو لحظي</span>
+            <span class="text-[9px] text-rose-500 font-normal">(أقصى مدة 20 ثانية)</span>
+        `;
+        vidLbl.className = 'text-xs text-rose-700 font-black flex flex-col items-center gap-1';
+    }
+    if (imgPrev) { imgPrev.src = ''; }
+    if (vidPrev) { vidPrev.src = ''; }
+    if (imgContainer) { imgContainer.classList.add('hidden'); }
+    if (vidContainer) { vidContainer.classList.add('hidden'); }
+    if (resetBtn) { resetBtn.classList.add('hidden'); }
 };
 
 window.merchantUnifiedAddProduct = async function(e) {
@@ -372,15 +496,9 @@ window.merchantUnifiedAddProduct = async function(e) {
     document.getElementById('prod-sku').value = 'SKU-' + Math.floor(1000 + Math.random() * 9000);
     document.getElementById('prod-desc').value = '';
     
-    window.unifiedMediaData = { type: 'none', url: '', isVideo: false };
-    const imgPrev = document.getElementById('unified-img-preview');
-    if (imgPrev) { imgPrev.src = ''; imgPrev.classList.add('hidden'); }
-    const vidPrev = document.getElementById('unified-vid-preview');
-    if (vidPrev) { vidPrev.src = ''; vidPrev.classList.add('hidden'); }
-    const imgLbl = document.getElementById('unified-img-lbl');
-    if (imgLbl) { imgLbl.innerText = 'اختيار صورة'; imgLbl.className = 'text-xs text-sky-600 font-bold flex flex-col items-center gap-1'; }
-    const vidLbl = document.getElementById('unified-vid-lbl');
-    if (vidLbl) { vidLbl.innerText = 'فيديو (أقصاه 20ثا)'; vidLbl.className = 'text-xs text-rose-600 font-bold flex flex-col items-center gap-1'; }
+    if (typeof window.resetUnifiedMedia === 'function') {
+        window.resetUnifiedMedia();
+    }
 
     if (typeof Swal !== 'undefined') {
         Swal.fire({
