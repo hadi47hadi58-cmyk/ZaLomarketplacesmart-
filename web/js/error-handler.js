@@ -1,48 +1,38 @@
 /**
  * ZaLo Smart - Global Error Handler
- * Prevents silent failures by catching unhandled promise rejections and errors.
+ * Manages errors safely and prevents intrusive blocking popups during background operations.
  */
 
-function showZaLoErrorAlert(message, title = "خطأ في النظام") {
-    // If SweetAlert2 is available, use it for better UI
-    if (typeof Swal !== 'undefined') {
+function showZaLoErrorAlert(message, title = "تنبيه") {
+    // Show non-blocking toast or clean modal only for user-initiated critical actions
+    if (typeof window.showToast === 'function') {
+        window.showToast(message);
+    } else if (typeof Swal !== 'undefined') {
         Swal.fire({
-            icon: 'error',
+            icon: 'warning',
             title: title,
             text: message,
-            confirmButtonColor: '#3085d6',
+            confirmButtonColor: '#d4af37',
             confirmButtonText: 'حسناً'
         });
     } else {
-        alert(`${title}\n\n${message}`);
+        console.warn(`[ZaLo Alert] ${title}: ${message}`);
     }
 }
 
-// Catch unhandled Promise rejections (e.g. failed Supabase network calls)
+// Log unhandled Promise rejections safely to console without blocking the UI
 window.addEventListener('unhandledrejection', function (event) {
-    console.error('Unhandled promise rejection:', event.reason);
-    
-    let message = 'حدث خطأ غير متوقع أثناء معالجة طلبك.';
-    
-    if (event.reason) {
-        if (event.reason.message && event.reason.message.includes('Failed to fetch')) {
-            message = 'فشل الاتصال بالخادم. يرجى التحقق من اتصالك بالإنترنت والمحاولة مجدداً.';
-        } else if (event.reason.code && event.reason.details) {
-            // Likely a Supabase error
-            message = `خطأ في قاعدة البيانات: ${event.reason.message}`;
-        }
-    }
-    
-    showZaLoErrorAlert(message);
+    console.warn('[ZaLo Background Event Handled]:', event.reason);
+    // Do not pop up alerts for background retries, network hiccups, or guest checks
+    event.preventDefault();
 });
 
-// Catch synchronous errors
+// Catch synchronous errors without blocking the user
 window.addEventListener('error', function (event) {
-    console.error('Global error caught:', event.error);
-    // Ignore harmless script errors that don't need user interruption, 
-    // but log them. We only alert for critical failures if needed.
+    console.warn('[ZaLo Script Notice]:', event.message || event.error);
 });
 
 window.zaloErrorHandler = {
     showError: showZaLoErrorAlert
 };
+
