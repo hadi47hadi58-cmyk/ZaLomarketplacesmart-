@@ -1987,7 +1987,6 @@ window.toggleBottomSearch = function() {
 // Fetch and render products on screen-home
 async function loadProducts() {
   const grid = document.getElementById('home-pgrid');
-  if (!grid) return;
   const fakeNames = [
     "حامل الهواتف المحمولة", "ساعة ذكية رياضية", "ساعة ذكية", "طقم أواني", "أحذية", 
     "حذاء رياضي", "هاتف ذكي", "حامل دفتر", "فراش تغيير", "حامل دفتر الصحي", "مسمن", 
@@ -5104,6 +5103,14 @@ window.loadCustomerOrders = async function() {
             <span style="color:var(--navy);">المجموع شامل التوصيل:</span>
             <span style="color:var(--metallic-gold);">${totalAmt.toLocaleString()} دج</span>
           </div>
+          ${status === 'pending' ? `
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px; border-top:1px dashed var(--bd); padding-top:8px;">
+            <span style="font-size:11px; color:var(--gray);">هل هذا الطلب مكرر؟</span>
+            <button onclick="window.deleteCustomerOrder('${ord.id}')" style="background:#fef2f2; border:1.5px solid #fca5a5; color:#ef4444; border-radius:10px; padding:6px 12px; font-family:'Cairo',sans-serif; font-size:11px; font-weight:800; cursor:pointer; display:flex; align-items:center; gap:5px; transition:all 0.15s; outline:none;" onmouseover="this.style.background='#fee2e2'" onmouseout="this.style.background='#fef2f2'">
+              <i class="fa-solid fa-trash-can"></i> حذف وإلغاء الطلب المكرر
+            </button>
+          </div>
+          ` : ''}
         </div>
       `;
     });
@@ -5166,6 +5173,75 @@ window.loadCustomerOrders = async function() {
   } catch(e) {
     console.error(e);
     container.innerHTML = '<div style="text-align:center; padding:20px; color:var(--gray);">فشل تحميل الفواتير.</div>';
+  }
+};
+
+window.deleteCustomerOrder = async function(orderId) {
+  if (!confirm('هل أنت متأكد من رغبتك في حذف وإلغاء هذا الطلب بشكل نهائي لعدم التكرار؟')) return;
+  
+  if (typeof window.showToast === 'function') {
+    window.showToast('جاري إلغاء وحذف الطلب المكرر...');
+  } else {
+    alert('جاري إلغاء وحذف الطلب المكرر...');
+  }
+  
+  // 1. Delete from Supabase
+  try {
+    if (typeof supabase !== 'undefined' && supabase.from) {
+      const { error } = await supabase.from('orders').delete().eq('id', orderId);
+      if (error) {
+        console.error("Supabase delete order error:", error);
+      }
+    }
+  } catch(e) {
+    console.error("Supabase exception on delete:", e);
+  }
+
+  // 2. Delete from local storage
+  try {
+    let offline = JSON.parse(localStorage.getItem('zalo_local_orders') || '[]');
+    offline = offline.filter(o => o.id !== orderId);
+    localStorage.setItem('zalo_local_orders', JSON.stringify(offline));
+  } catch(e) {}
+
+  if (typeof window.showToast === 'function') {
+    window.showToast('تم حذف وإلغاء الطلب المكرر بنجاح 🗑️');
+  } else {
+    alert('تم حذف وإلغاء الطلب المكرر بنجاح 🗑️');
+  }
+  
+  window.loadCustomerOrders();
+};
+
+window.resetHomeView = function() {
+  if (typeof closeSide === 'function') closeSide();
+  
+  // Close any open product detail modals or feeds
+  const pModal = document.getElementById('productModal');
+  if (pModal) pModal.style.display = 'none';
+  
+  const sModal = document.getElementById('storyViewerModal');
+  if (sModal) sModal.style.display = 'none';
+
+  const fModal = document.getElementById('liveOffersFeedModal');
+  if (fModal) fModal.style.display = 'none';
+
+  if (typeof closeCategoryDetailView === 'function') closeCategoryDetailView();
+  
+  // Switch to home tab
+  if (typeof window.switchTab === 'function') {
+    window.switchTab('home');
+  }
+  
+  // Switch feed view to stories
+  if (typeof switchHomeFeedView === 'function') {
+    switchHomeFeedView('stories');
+  }
+  
+  // Scroll home screen back to the top smoothly
+  const homeScreen = document.getElementById('screen-home');
+  if (homeScreen) {
+    homeScreen.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 };
 
