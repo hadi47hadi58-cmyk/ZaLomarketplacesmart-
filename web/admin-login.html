@@ -534,8 +534,12 @@
               localStorage.setItem('zalo_session_jwt', res.token || ('mock-otp-token-' + Date.now()));
               localStorage.setItem('zalo_user_email', email);
               localStorage.setItem('zalo_uid', res.userId || ('ADMIN-' + Date.now()));
+              localStorage.setItem('zalo_role', 'ADMIN');
+              localStorage.setItem('zalo_user_role', 'ADMIN');
+              localStorage.setItem('zalo_admin_name', 'المدير العام المعتمد');
+              sessionStorage.setItem('admin_logged_in_session', 'true');
               showSuccess('✨ تم التحقق من الرمز بنجاح!');
-              setTimeout(() => window.location.replace('dashboard-admin.html'), 800);
+              setTimeout(() => window.location.replace('dashboard-admin.html'), 500);
             } else {
               throw new Error(res.message || 'رمز التحقق غير صحيح.');
             }
@@ -555,8 +559,12 @@
             localStorage.setItem('zalo_session_jwt', (data && data.session) ? data.session.access_token : ('mock-pwd-token-' + Date.now()));
             localStorage.setItem('zalo_user_email', email);
             localStorage.setItem('zalo_uid', (data && data.user) ? data.user.id : ('ADMIN-' + Date.now()));
+            localStorage.setItem('zalo_role', 'ADMIN');
+            localStorage.setItem('zalo_user_role', 'ADMIN');
+            localStorage.setItem('zalo_admin_name', 'المدير العام المعتمد');
+            sessionStorage.setItem('admin_logged_in_session', 'true');
             showSuccess('✨ تم تسجيل الدخول بنجاح!');
-            setTimeout(() => window.location.replace('dashboard-admin.html'), 800);
+            setTimeout(() => window.location.replace('dashboard-admin.html'), 500);
           } catch (err) {
             showError(err.message || 'فشل تسجيل الدخول ❌');
             loginBtn.disabled = false;

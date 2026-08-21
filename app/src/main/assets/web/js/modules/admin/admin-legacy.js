@@ -52,13 +52,13 @@
             const overlay = document.getElementById("sidebar-overlay");
             if (!sidebar) return;
 
+            sidebar.classList.remove("hidden");
+            sidebar.classList.add("flex");
             sidebar.style.display = "flex";
-            sidebar.classList.remove("hidden", "lg:hidden");
-            sidebar.classList.add("flex", "lg:flex");
 
-            if (overlay && window.innerWidth < 1024) {
-                overlay.style.display = "block";
+            if (overlay) {
                 overlay.classList.remove("hidden");
+                overlay.style.display = "block";
             }
         };
 
@@ -67,13 +67,15 @@
             const overlay = document.getElementById("sidebar-overlay");
             if (!sidebar) return;
 
-            sidebar.style.display = "none";
-            sidebar.classList.add("hidden", "lg:hidden");
-            sidebar.classList.remove("flex", "lg:flex");
+            if (window.innerWidth < 1024) {
+                sidebar.classList.add("hidden");
+                sidebar.classList.remove("flex");
+                sidebar.style.display = "none";
+            }
 
             if (overlay) {
-                overlay.style.display = "none";
                 overlay.classList.add("hidden");
+                overlay.style.display = "none";
             }
         };
 
@@ -81,11 +83,18 @@
             const sidebar = document.getElementById("zalo-sidebar");
             if (!sidebar) return;
 
-            const computedDisplay = window.getComputedStyle(sidebar).display;
-            if (computedDisplay === "none" || sidebar.style.display === "none") {
-                window.openSidebar();
+            if (window.innerWidth < 1024) {
+                if (sidebar.classList.contains("hidden") || sidebar.style.display === "none") {
+                    window.openSidebar();
+                } else {
+                    window.closeSidebar();
+                }
             } else {
-                window.closeSidebar();
+                if (sidebar.style.display === "none") {
+                    sidebar.style.display = "flex";
+                } else {
+                    sidebar.style.display = "none";
+                }
             }
         };
 
@@ -173,8 +182,12 @@
             const userName = localStorage.getItem('zalo_user_name') || 'المدير العام المعتمد';
             const sName = document.getElementById('sidebar-user-name');
             const sEmail = document.getElementById('sidebar-user-email');
+            const hName = document.getElementById('header-user-name');
+            const hEmail = document.getElementById('header-user-email');
             if (sName) sName.innerText = userName;
             if (sEmail) sEmail.innerText = userEmail;
+            if (hName) hName.innerText = userName;
+            if (hEmail) hEmail.innerText = userEmail;
 
             // Seed announcements
             let announcements = getDB("global_announcements", [
@@ -189,33 +202,12 @@
             renderRegistrations();
             
             // New Modules Initialization
-            loadGlobalSettings();
-            regenerateGlobalQR();
-            renderFinancialReports();
-            renderUsersTable();
-            renderGlobalProductsTable();
-            initTeamManagement();
-        }
-
-            // Seed announcements
-            let announcements = getDB("global_announcements", [
-                { id: "a1", text: "مرحبا بكم في منصة زالو ديزاد، تم تفعيل بوابات الرقابة الأمنية بالكامل.", type: "إداري", date: "2026-07-14 10:15", popup: false }
-            ]);
-            setDB("global_announcements", announcements);
-
-            // Populate ui
-            renderStats();
-            renderWilayaTable();
-            renderAnnouncements();
-            renderRegistrations();
-            
-            // New Modules Initialization
-            loadGlobalSettings();
-            regenerateGlobalQR();
-            renderFinancialReports();
-            renderUsersTable();
-            renderGlobalProductsTable();
-            initTeamManagement();
+            if (typeof loadGlobalSettings === 'function') loadGlobalSettings();
+            if (typeof regenerateGlobalQR === 'function') regenerateGlobalQR();
+            if (typeof renderFinancialReports === 'function') renderFinancialReports();
+            if (typeof renderUsersTable === 'function') renderUsersTable();
+            if (typeof renderGlobalProductsTable === 'function') renderGlobalProductsTable();
+            if (typeof initTeamManagement === 'function') initTeamManagement();
         }
 
         // Render counters

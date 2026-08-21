@@ -8,37 +8,69 @@ export class SessionManager {
   constructor() {}
 
   async getSupabaseSession() {
-    if (!window.supabaseClient) return null;
-    const { data: { session }, error } = await window.supabaseClient.auth.getSession();
-    if (error) {
-        console.error("Session Error:", error.message);
-        return null;
+    if (!window.supabaseClient && !window.supabase) return null;
+    const client = window.supabaseClient || window.supabase;
+    try {
+      const { data: { session }, error } = await client.auth.getSession();
+      if (error) {
+          console.warn("Session Error:", error.message);
+          return null;
+      }
+      return session;
+    } catch(e) {
+      return null;
     }
-    return session;
   }
 
   async isAuthenticated() {
     const session = await this.getSupabaseSession();
-    return !!session && !!session.user;
+    if (session && session.user) return true;
+
+    // Check local session tokens and admin/merchant login state
+    const localToken = localStorage.getItem('zalo_session_jwt') || localStorage.getItem('zalo_token') || localStorage.getItem('zalo_uid');
+    const localRole = localStorage.getItem('zalo_role');
+    const localEmail = localStorage.getItem('zalo_user_email');
+    const adminSession = sessionStorage.getItem('admin_logged_in_session');
+    const path = window.location.pathname;
+
+    if (path.includes('dashboard-admin.html') && (adminSession === 'true' || localRole === 'ADMIN' || localRole === 'SUPER_ADMIN' || localToken || localEmail)) {
+      return true;
+    }
+    if (path.includes('dashboard-store.html') && (localRole === 'MERCHANT' || localToken || localEmail)) {
+      return true;
+    }
+    if (path.includes('dashboard-manager.html') && (localRole === 'MANAGER' || localRole === 'TEAM' || localToken || localEmail)) {
+      return true;
+    }
+    if (localToken && (localRole || localEmail)) {
+      return true;
+    }
+
+    return false;
   }
 
   async getSessionData() {
     const session = await this.getSupabaseSession();
     const role = await this.getUserRole();
     return {
-      token: session?.access_token || null,
+      token: session?.access_token || localStorage.getItem('zalo_session_jwt') || null,
       role: role.toLowerCase(),
-      email: session?.user?.email || null,
-      name: session?.user?.user_metadata?.full_name || session?.user?.user_metadata?.name || ''
+      email: session?.user?.email || localStorage.getItem('zalo_user_email') || null,
+      name: session?.user?.user_metadata?.full_name || session?.user?.user_metadata?.name || localStorage.getItem('zalo_user_name') || ''
     };
   }
 
   async getUserRole() {
-    const session = await this.getSupabaseSession();
-    if (!session || !session.user) return 'CUSTOMER';
-
     const path = window.location.pathname;
     const localRole = localStorage.getItem('zalo_role');
+
+    // Contextual role per page
+    if (path.includes('dashboard-admin.html')) return 'ADMIN';
+    if (path.includes('dashboard-store.html')) return 'MERCHANT';
+    if (path.includes('dashboard-manager.html')) return 'MANAGER';
+
+    const session = await this.getSupabaseSession();
+    if (!session || !session.user) return (localRole || 'CUSTOMER').toUpperCase();
 
     // 1. Check token metadata for role
     let role = session.user.app_metadata?.role || session.user.user_metadata?.role;
@@ -46,58 +78,48 @@ export class SessionManager {
     // 2. Fetch role from Supabase profiles table
     if (!role) {
         try {
-            const { data: profile } = await window.supabaseClient
-                .from('profiles')
-                .select('role')
-                .eq('id', session.user.id)
-                .maybeSingle();
-            
-            if (profile && profile.role) {
-                role = profile.role;
+            const client = window.supabaseClient || window.supabase;
+            if (client && client.from) {
+                const { data: profile } = await client
+                    .from('profiles')
+                    .select('role')
+                    .eq('id', session.user.id)
+                    .maybeSingle();
+                
+                if (profile && profile.role) {
+                    role = profile.role;
+                }
             }
         } catch (error) {
             console.error("Error fetching user role from Supabase profiles:", error);
         }
     }
 
-    // 3. Robust context fallback to prevent accidental role loss during redirection
-    if ((!role || role === 'CUSTOMER')) {
-        if (path.includes('dashboard-admin.html') && (localRole === 'ADMIN' || localRole === 'SUPER_ADMIN')) role = localRole;
-        else if (path.includes('dashboard-store.html') && localRole === 'MERCHANT') role = localRole;
-        else if (path.includes('dashboard-manager.html') && (localRole === 'MANAGER' || localRole === 'TEAM')) role = localRole;
-        else if (localRole && localRole !== 'CUSTOMER') role = localRole;
-    }
+    if (!role && localRole) role = localRole;
 
-    // 4. Page context fallback
-    if ((!role || role === 'CUSTOMER')) {
-        if (path.includes('dashboard-admin.html')) role = 'ADMIN';
-        else if (path.includes('dashboard-store.html')) role = 'MERCHANT';
-        else if (path.includes('dashboard-manager.html')) role = 'MANAGER';
-    }
-
-    return (role || localRole || 'CUSTOMER').toUpperCase();
+    return (role || 'CUSTOMER').toUpperCase();
   }
 
   async handleAutoRedirection() {
-    const isAuth = await this.isAuthenticated();
-    const role = isAuth ? await this.getUserRole() : null;
     const path = window.location.pathname;
-
     const isGuestPage = path.includes('-login.html') || path.includes('register');
     const isProtectedPage = path.includes('dashboard');
+
+    if (isProtectedPage) {
+      const isAuth = await this.isAuthenticated();
+      if (!isAuth) {
+        console.warn(`[SessionManager] Unauthenticated user on protected page. Redirecting to login.`);
+        this.logoutAndRedirect();
+      }
+      return;
+    }
+
+    const isAuth = await this.isAuthenticated();
+    const role = isAuth ? await this.getUserRole() : null;
 
     if (isAuth && isGuestPage) {
       console.log(`[SessionManager] Authenticated user on guest page. Redirecting to appropriate home.`);
       this.redirectToHome(role);
-    } else if (!isAuth && isProtectedPage) {
-      console.warn(`[SessionManager] Unauthenticated user on protected page. Redirecting to login.`);
-      this.logoutAndRedirect();
-    } else if (isAuth && isProtectedPage) {
-        // Allow valid roles without unnecessary bouncing
-        if (path.includes('dashboard-admin.html') && role !== 'ADMIN' && role !== 'SUPER_ADMIN') {
-             // If user is logged in as merchant/customer on admin dashboard, check if they are authorized
-             console.warn("[SessionManager] Role check on admin dashboard:", role);
-        }
     }
   }
 
