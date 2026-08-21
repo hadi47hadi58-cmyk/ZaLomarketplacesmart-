@@ -250,39 +250,26 @@ window.merchantAddProductReal = async function(e) {
             store = newStore || { id: session.user.id, name: storeName };
         }
         
-        // Enforce product publishing limit (3 products max for trial/unverified, or if paused by admin)
-        const existingProds = await fetchStoreProducts();
-        const isPaused = localStorage.getItem('zalo_publishing_paused_' + store.id) === 'true';
-        const isVerified = localStorage.getItem('zalo_merchant_verified_' + store.id) === 'true' || store.is_verified === true;
-
-        if (isPaused || (!isVerified && existingProds.length >= 3)) {
-            const msgTitle = isPaused ? 'النشر موقوف من قبل الإدارة! 🛑' : 'تم الوصول للحد الأقصى للنشر التجريبي (3 منتجات)! ⚠️';
-            const msgBody = isPaused 
-                ? 'تم إيقاف نشر المعروضات مؤقتاً لمتجركم. يرجى التواصل مع الإدارة عبر الواتساب لتأكيد الوثائق والاشتراك.'
-                : 'لقد استوفيت الحد الأقصى المسموح به للنشر التجريبي (3 منتجات). لاستكمال رفع بقية معروضات متجرك، يرجى تقديم وثائق المحل ودفع الاشتراك.';
-
-            if (typeof Swal !== 'undefined') {
-                Swal.fire({
-                    icon: 'warning',
-                    title: msgTitle,
-                    html: `
-                        <div class="text-right space-y-3">
-                            <p class="text-xs text-slate-700 leading-relaxed font-bold">${msgBody}</p>
-                            <div class="pt-2 text-center">
-                                <a href="https://wa.me/213658000000?text=${encodeURIComponent('مرحباً إدارة ZaLo، أود استكمال وثائق متجر ' + (store.name || '') + ' ودفع الاشتراك لتفعيل النشر المباشر.')}" target="_blank" class="inline-flex items-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-black transition shadow-md">
-                                    <i class="fa-brands fa-whatsapp text-sm"></i>
-                                    <span>تواصل عبر الواتساب للتفعيل والوثائق 💬</span>
-                                </a>
-                            </div>
-                        </div>
-                    `,
-                    confirmButtonText: 'حسناً',
-                    confirmButtonColor: '#10b981'
-                });
-            } else {
-                alert(`${msgTitle}\n${msgBody}`);
+        // Ensure store row exists in stores table with an integer ID
+        if (!store || !store.id || isNaN(parseInt(store.id))) {
+            const storeName = session.user.user_metadata?.store_name || session.user.email?.split('@')[0] || 'متجر معتمد';
+            const { data: newStore } = await window.supabase
+                .from('stores')
+                .upsert({
+                    merchant_id: session.user.id,
+                    name: storeName,
+                    store_name: storeName,
+                    merchant_email: session.user.email,
+                    status: 'active',
+                    is_official: true,
+                    is_verified: true,
+                    wilaya: '58 - المنيعة'
+                }, { onConflict: 'name' })
+                .select('id, name')
+                .maybeSingle();
+            if (newStore && newStore.id) {
+                store = newStore;
             }
-            return;
         }
 
         const name = document.getElementById('prod-name')?.value || 'منتج جديد';

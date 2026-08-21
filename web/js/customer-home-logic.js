@@ -1860,7 +1860,11 @@ document.getElementById('merchantRequestForm').addEventListener('submit', async 
   };
 
   try {
-    await supabase.from('merchant_requests').upsert(payload);
+    await supabase.from('merchant_requests').upsert({
+      ...payload,
+      status: 'approved'
+    });
+    
     await supabase.from('profiles').upsert({
       id: user.id,
       name: storeName,
@@ -1868,9 +1872,29 @@ document.getElementById('merchantRequestForm').addEventListener('submit', async 
       phone: phone,
       wilaya: wilaya,
       role: 'merchant',
-      status: 'pending',
+      status: 'active',
       updatedAt: new Date().toISOString()
     });
+
+    // Directly register in stores table so merchant can immediately publish products and stories
+    try {
+      await supabase.from('stores').upsert({
+        name: storeName,
+        store_name: storeName,
+        merchant_id: user.id,
+        merchant_email: user.email,
+        phone: phone,
+        wilaya: wilaya,
+        category: 'عام',
+        status: 'active',
+        is_official: true,
+        is_verified: true,
+        logo_url: 'assets/icon-192.svg',
+        updated_at: new Date().toISOString()
+      }, { onConflict: 'name' });
+    } catch(storeErr) {
+      console.warn("Direct store upsert notice:", storeErr);
+    }
 
     // Save locally to stores_list_old so Admin Dashboard can see it instantly
     try {

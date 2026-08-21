@@ -1,7 +1,7 @@
 import { supabase } from './supabase-config.js';
 
 export async function upsertStoreToSupabase(storeData) {
-    if (!supabase || !storeData) return false;
+    if (!supabase || !storeData) return null;
     try {
         const storeName = storeData.name || storeData.storeName || storeData.store_name || 'متجر معتمد';
         const payload = {
@@ -15,55 +15,97 @@ export async function upsertStoreToSupabase(storeData) {
             banner_url: storeData.coverImg || storeData.coverImage || storeData.banner_url || 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=500',
             status: 'active',
             is_official: true,
+            is_verified: true,
             updated_at: new Date().toISOString()
         };
-        if (storeData.id && !String(storeData.id).startsWith('store_')) {
-            payload.id = storeData.id;
+        if (storeData.merchant_id) {
+            payload.merchant_id = String(storeData.merchant_id);
+        }
+        if (storeData.id && !isNaN(parseInt(storeData.id)) && !String(storeData.id).startsWith('store_')) {
+            payload.id = parseInt(storeData.id);
         }
 
-        const { data, error } = await supabase.from('stores').upsert(payload, { onConflict: 'name' });
-        if (error) {
-            // Fallback: try simple insert
-            await supabase.from('stores').insert([payload]);
+        // 1. Try to find existing store by name or merchant_id
+        let existingStore = null;
+        if (payload.id) {
+            const { data } = await supabase.from('stores').select('id, name').eq('id', payload.id).maybeSingle();
+            existingStore = data;
         }
-        return true;
+        if (!existingStore && payload.name) {
+            const { data } = await supabase.from('stores').select('id, name').eq('name', payload.name).maybeSingle();
+            existingStore = data;
+        }
+        if (!existingStore && payload.merchant_id) {
+            const { data } = await supabase.from('stores').select('id, name').eq('merchant_id', payload.merchant_id).maybeSingle();
+            existingStore = data;
+        }
+
+        if (existingStore && existingStore.id) {
+            await supabase.from('stores').update(payload).eq('id', existingStore.id);
+            return existingStore;
+        }
+
+        // 2. Insert new store if not existing
+        const { data: inserted, error } = await supabase.from('stores').insert([payload]).select('id, name').maybeSingle();
+        if (!error && inserted) {
+            return inserted;
+        }
+
+        // Fallback upsert
+        const { data: upserted } = await supabase.from('stores').upsert(payload).select('id, name').maybeSingle();
+        return upserted || existingStore || null;
     } catch(e) {
         console.warn("Supabase upsertStoreToSupabase exception:", e);
-        return false;
+        return null;
     }
 }
 
 export async function addProductToSupabase(productData) {
     if (!supabase || !productData) return false;
     try {
-        const { data, error } = await supabase.from('products').insert([productData]);
+        const storeName = productData.storeName || productData.store_name || productData.store || 'متجر معتمد';
+        
+        // 1. Ensure store exists in stores table to satisfy foreign key requirement
+        let storeRecord = await upsertStoreToSupabase({
+            name: storeName,
+            wilaya: productData.wilaya,
+            phone: productData.phone,
+            merchant_id: productData.merchant_id || productData.user_id,
+            logo: productData.logo || 'assets/icon-192.svg'
+        });
+
+        const storeIdInt = (storeRecord && storeRecord.id && !isNaN(parseInt(storeRecord.id)))
+            ? parseInt(storeRecord.id)
+            : (productData.store_id && !isNaN(parseInt(productData.store_id)) ? parseInt(productData.store_id) : null);
+
+        const productName = productData.name || productData.productName || 'منتج جديد';
+        const priceNum = parseFloat(productData.price) || 0;
+        const stockInt = parseInt(productData.stock) || 1;
+        const img = productData.image || productData.image_url || productData.imageUrl || 'assets/icon-192.svg';
+
+        const cleanPayload = {
+            name: productName,
+            price: priceNum,
+            stock: stockInt,
+            category: productData.category || 'عام',
+            description: productData.description || '',
+            image_url: img,
+            status: 'active'
+        };
+
+        if (storeIdInt) {
+            cleanPayload.store_id = storeIdInt;
+        }
+
+        const { data, error } = await supabase.from('products').insert([cleanPayload]).select();
         if (error) {
             console.warn("Error inserting product into products table:", error);
-            // Try trimmed payload matching standard columns
-            const cleanPayload = {
-                name: productData.name || productData.productName,
-                price: productData.price,
-                stock: productData.stock || 1,
-                category: productData.category || 'عام',
-                description: productData.description || '',
-                image_url: productData.image || productData.image_url || productData.imageUrl,
-                store_name: productData.storeName || productData.store_name,
-                wilaya: productData.wilaya,
-                phone: productData.phone,
-                status: 'active'
-            };
+            // Fallback try without store_id if foreign key fails
+            delete cleanPayload.store_id;
             const { error: err2 } = await supabase.from('products').insert([cleanPayload]);
             if (err2) console.warn("Retry product insert warning:", err2);
-        }
-        
-        // Also ensure store is registered in Supabase stores table
-        if (productData.storeName || productData.store_name) {
-            upsertStoreToSupabase({
-                name: productData.storeName || productData.store_name,
-                wilaya: productData.wilaya,
-                phone: productData.phone,
-                logo: productData.logo || 'assets/icon-192.svg'
-            });
+        } else {
+            console.log("Successfully added product to Supabase products table:", data);
         }
         return true;
     } catch (e) {
