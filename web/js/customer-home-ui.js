@@ -11,7 +11,7 @@ window.getMergedStoriesList = function() {
     stories = window.liveStoriesList;
   }
   
-  const fakeStoryKeywords = ["مسمن", "أم زين", "ام زين", "دفتر", "طقم أواني", "أكل تقليدي", "init_prod_om_zayn", "story_init_1"];
+  const fakeStoryKeywords = [];
   stories = (stories || []).filter(st => {
     if (!st || !st.id) return false;
     let cap = (st.caption || st.title || st.author || st.id || '').toLowerCase();

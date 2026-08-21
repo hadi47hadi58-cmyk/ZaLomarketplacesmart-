@@ -3346,11 +3346,7 @@ window.clearOldMockData = function() {
   try {
     localStorage.removeItem('zalo_idb_products_backup');
   } catch(e) {}
-  const fakeNames = [
-    "ساعة ذكية رياضية", "ساعة ذكية M1", "طقم أواني", "أحذية", "حذاء رياضي", "هاتف ذكي", 
-    "حامل الهواتف المحمولة", "مسمن", "أم زين", "ام زين", "حامل دفتر", "دفتر الصحي", "دفتر", 
-    "أكل تقليدي", "init_prod_om_zayn", "story_init_1"
-  ];
+  const fakeNames = [];
   const removeFakes = (key) => {
     try {
       let items = JSON.parse(localStorage.getItem(key) || '[]');
@@ -3380,7 +3376,7 @@ window.initStoriesSystem = function() {
     storedStories = JSON.parse(localStorage.getItem('zalo_live_stories') || '[]');
   } catch(e) {}
   
-  const fakeStoryKeywords = ["مسمن", "أم زين", "ام زين", "دفتر", "طقم أواني", "أكل تقليدي", "init_prod_om_zayn", "story_init_1"];
+  const fakeStoryKeywords = [];
   // Deduplicate stored stories by ID and caption
   const seenIds = new Set();
   const seenCaptions = new Set();
