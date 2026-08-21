@@ -99,42 +99,72 @@ window.switchHomeFeedView = function(view) {
   }
 };
 
-window.renderStoresDirectory = function() {
+window.renderStoresDirectory = async function() {
   const container = document.getElementById('directory-wilayas-container');
   if (!container) return;
   
   const storesMap = new Map();
 
-  // 1. Collect from window.officialStores
+  // 1. First prioritize fetching live from Supabase stores table if client available
+  try {
+    const sb = window.supabase || window.supabaseClient;
+    if (sb && sb.from) {
+      const { data: dbStores, error } = await sb.from('stores').select('*').order('wilaya', { ascending: true });
+      if (!error && dbStores && Array.isArray(dbStores)) {
+        dbStores.forEach(s => {
+          const sName = (s.name || s.store_name || '').trim();
+          if (sName) {
+            const sId = String(s.id || ('store_' + encodeURIComponent(sName)));
+            storesMap.set(sId, {
+              id: sId,
+              name: sName,
+              wilaya: s.wilaya || '58 - المنيعة',
+              phone: s.phone || '0698694010',
+              logo: s.logo_url || s.logo || 'assets/icon-192.svg',
+              productCount: 0
+            });
+          }
+        });
+      }
+    }
+  } catch(e) {
+    console.warn("Direct Supabase fetch for directory:", e);
+  }
+
+  // 2. Collect from window.officialStores
   if (window.officialStores && Array.isArray(window.officialStores)) {
     window.officialStores.forEach(s => {
-      if (s.name) {
-        const sId = s.id || ('store_' + encodeURIComponent(s.name));
-        storesMap.set(sId, {
-          id: sId,
-          name: s.name,
-          wilaya: s.wilaya || '58 - المنيعة',
-          phone: s.phone || '0698694010',
-          logo: s.logo || 'assets/icon-192.svg',
-          productCount: 0
-        });
+      const sName = (s.name || s.store_name || '').trim();
+      if (sName) {
+        const sId = String(s.id || ('store_' + encodeURIComponent(sName)));
+        if (!storesMap.has(sId)) {
+          storesMap.set(sId, {
+            id: sId,
+            name: sName,
+            wilaya: s.wilaya || '58 - المنيعة',
+            phone: s.phone || '0698694010',
+            logo: s.logo || s.logo_url || 'assets/icon-192.svg',
+            productCount: 0
+          });
+        }
       }
     });
   }
 
-  // 2. Collect from localStorage official stores
+  // 3. Collect from localStorage official stores
   try {
     const locStores = JSON.parse(localStorage.getItem('zalo_official_stores') || '[]');
     locStores.forEach(s => {
-      if (s.name) {
-        const sId = s.id || ('store_' + encodeURIComponent(s.name));
+      const sName = (s.name || s.store_name || '').trim();
+      if (sName) {
+        const sId = String(s.id || ('store_' + encodeURIComponent(sName)));
         if (!storesMap.has(sId)) {
           storesMap.set(sId, {
             id: sId,
-            name: s.name,
+            name: sName,
             wilaya: s.wilaya || '58 - المنيعة',
             phone: s.phone || '0698694010',
-            logo: s.logo || 'assets/icon-192.svg',
+            logo: s.logo || s.logo_url || 'assets/icon-192.svg',
             productCount: 0
           });
         }
@@ -142,12 +172,12 @@ window.renderStoresDirectory = function() {
     });
   } catch(e) {}
 
-  // 3. Collect from localStorage merchant store settings
+  // 4. Collect from localStorage merchant store settings
   try {
     const mSettings = JSON.parse(localStorage.getItem('zalo_merchant_store_settings') || '{}');
     if (mSettings.storeName || mSettings.name) {
-      const msName = mSettings.storeName || mSettings.name;
-      const msId = mSettings.id || 'merchant_self';
+      const msName = (mSettings.storeName || mSettings.name).trim();
+      const msId = String(mSettings.id || 'merchant_self');
       if (!storesMap.has(msId)) {
         storesMap.set(msId, {
           id: msId,
@@ -161,8 +191,11 @@ window.renderStoresDirectory = function() {
     }
   } catch(e) {}
 
-  // 4. Collect from all products (state.loadedProducts, window.allSources & localStorage)
-  let allProds = state?.loadedProducts || window.allSources || [];
+  // 5. Collect from all products (state.loadedProducts, window.allSources & localStorage)
+  let allProds = window.allSources || [];
+  if (typeof state !== 'undefined' && state?.loadedProducts && state.loadedProducts.length) {
+    allProds = state.loadedProducts;
+  }
   if (!allProds.length) {
     try { allProds = JSON.parse(localStorage.getItem('zalo_products') || '[]'); } catch(e) {}
   }
@@ -171,7 +204,7 @@ window.renderStoresDirectory = function() {
     if (p.deleted === true || p.status === 'deleted') return;
     const sName = (p.storeName || p.store_name || '').trim();
     if (sName) {
-      const sId = p.storeId || p.store_id || ('store_' + encodeURIComponent(sName));
+      const sId = String(p.storeId || p.store_id || ('store_' + encodeURIComponent(sName)));
       const pLogo = p.logo || p.storeLogo || p.image || 'assets/icon-192.svg';
       if (!storesMap.has(sId)) {
         storesMap.set(sId, {
@@ -189,12 +222,12 @@ window.renderStoresDirectory = function() {
     }
   });
 
-  // 5. Collect from live stories feed
+  // 6. Collect from live stories feed
   const feedStories = window.liveStoriesList || [];
   feedStories.forEach(st => {
     const sName = (st.author || st.store_name || '').trim();
     if (sName) {
-      const sId = st.storeId || ('store_' + encodeURIComponent(sName));
+      const sId = String(st.storeId || ('store_' + encodeURIComponent(sName)));
       const sLogo = st.logo || st.image || 'assets/icon-192.svg';
       if (!storesMap.has(sId)) {
         storesMap.set(sId, {
@@ -249,8 +282,8 @@ window.renderStoresDirectory = function() {
     const matchW = strWilaya.match(/\d+/);
     const wilayaNum = matchW ? matchW[0] : '';
     const wilayaName = strWilaya.replace(/^\d+\s*-\s*/, '');
-    const safeStoreId = (store.id || '').replace(/'/g, "\\'");
-    const safeStoreName = (store.name || '').replace(/'/g, "\\'");
+    const safeStoreId = String(store.id || '').replace(/'/g, "\\'");
+    const safeStoreName = String(store.name || '').replace(/'/g, "\\'");
     
     html += `
       <div onclick="if(typeof window.openStoreView==='function'){ window.openStoreView('${safeStoreId}', '${safeStoreName}'); } else { window.showToast('جاري فتح صفحة المتجر...'); }" style="display: flex; align-items: center; justify-content: space-between; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 12px 16px; cursor: pointer; transition: all 0.2s; box-shadow: 0 2px 6px rgba(0,0,0,0.03); margin-bottom: 8px;" onmouseover="this.style.background='#f8fafc'; this.style.borderColor='#38bdf8';" onmouseout="this.style.background='#ffffff'; this.style.borderColor='#e2e8f0';">

@@ -238,37 +238,47 @@ window.merchantAddProductReal = async function(e) {
             const storeName = session.user.user_metadata?.store_name || session.user.email?.split('@')[0] || 'متجر معتمد';
             const { data: newStore } = await window.supabase
                 .from('stores')
-                .upsert({
+                .insert([{
                     merchant_id: session.user.id,
                     name: storeName,
+                    store_name: storeName,
                     merchant_email: session.user.email,
                     status: 'approved',
-                    is_verified: true
-                })
+                    is_official: true,
+                    is_verified: true,
+                    wilaya: '58 - المنيعة'
+                }])
                 .select('id, name')
                 .maybeSingle();
-            store = newStore || { id: session.user.id, name: storeName };
+            store = newStore;
         }
         
         // Ensure store row exists in stores table with an integer ID
         if (!store || !store.id || isNaN(parseInt(store.id))) {
             const storeName = session.user.user_metadata?.store_name || session.user.email?.split('@')[0] || 'متجر معتمد';
-            const { data: newStore } = await window.supabase
+            const { data: existingByName } = await window.supabase
                 .from('stores')
-                .upsert({
-                    merchant_id: session.user.id,
-                    name: storeName,
-                    store_name: storeName,
-                    merchant_email: session.user.email,
-                    status: 'active',
-                    is_official: true,
-                    is_verified: true,
-                    wilaya: '58 - المنيعة'
-                }, { onConflict: 'name' })
                 .select('id, name')
+                .eq('name', storeName)
                 .maybeSingle();
-            if (newStore && newStore.id) {
-                store = newStore;
+            if (existingByName) {
+                store = existingByName;
+            } else {
+                const { data: createdStore } = await window.supabase
+                    .from('stores')
+                    .insert([{
+                        merchant_id: session.user.id,
+                        name: storeName,
+                        store_name: storeName,
+                        merchant_email: session.user.email,
+                        status: 'active',
+                        is_official: true,
+                        is_verified: true,
+                        wilaya: '58 - المنيعة'
+                    }])
+                    .select('id, name')
+                    .maybeSingle();
+                if (createdStore) store = createdStore;
             }
         }
 

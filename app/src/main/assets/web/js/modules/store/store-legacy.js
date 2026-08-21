@@ -867,31 +867,51 @@
 
             // Write to Supabase table products if active
             try {
-                if (window.supabaseClient) {
+                const sb = window.supabaseClient || window.supabase;
+                if (sb && sb.from) {
+                    // Ensure store exists in stores table first to get numeric ID
+                    let storeRecord = null;
+                    try {
+                        const { data: exStore } = await sb.from('stores').select('id, name').eq('name', realStoreName).maybeSingle();
+                        storeRecord = exStore;
+                        if (!storeRecord) {
+                            const storePayload = {
+                                name: realStoreName,
+                                store_name: realStoreName,
+                                wilaya: realWilaya,
+                                phone: realPhone,
+                                status: 'active',
+                                is_official: true,
+                                is_verified: true
+                            };
+                            const userUid = localStorage.getItem('zalo_uid') || localStorage.getItem('user_uid');
+                            if (userUid) storePayload.merchant_id = userUid;
+                            const { data: insStore } = await sb.from('stores').insert([storePayload]).select('id, name').maybeSingle();
+                            storeRecord = insStore;
+                        }
+                    } catch(stErr) {
+                        console.warn("Store lookup before product insert warning:", stErr);
+                    }
+
                     const sbPayload = {
-                        id: pId,
-                        productId: pId,
                         name: newProd.productName,
-                        productName: newProd.productName,
                         price: newProd.price,
                         stock: newProd.stock,
                         category: mainCatVal,
-                        subcategory: subCatVal,
                         description: newProd.description,
-                        sku: newProd.sku,
-                        weight: newProd.weight,
-                        minOrder: newProd.minOrder,
-                        store_id: realStoreId,
-                        storeId: realStoreId,
-                        store_name: realStoreName,
-                        storeName: realStoreName,
-                        wilaya: realWilaya,
-                        phone: realPhone,
-                        image: newProd.image,
                         image_url: newProd.image,
                         status: 'active'
                     };
-                    await window.supabaseClient.from('products').insert(sbPayload);
+
+                    if (storeRecord && storeRecord.id && !isNaN(parseInt(storeRecord.id))) {
+                        sbPayload.store_id = parseInt(storeRecord.id);
+                    }
+
+                    const { error: pInsErr } = await sb.from('products').insert([sbPayload]);
+                    if (pInsErr) {
+                        delete sbPayload.store_id;
+                        await sb.from('products').insert([sbPayload]);
+                    }
                     console.log("Successfully inserted product to Supabase products table.");
                 }
             } catch (err) {
