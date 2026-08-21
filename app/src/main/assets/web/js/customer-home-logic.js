@@ -1988,11 +1988,7 @@ window.toggleBottomSearch = function() {
 // Fetch and render products on screen-home
 async function loadProducts() {
   const grid = document.getElementById('home-pgrid');
-  const fakeNames = [
-    "حامل الهواتف المحمولة", "ساعة ذكية رياضية", "ساعة ذكية", "طقم أواني", "أحذية", 
-    "حذاء رياضي", "هاتف ذكي", "حامل دفتر", "فراش تغيير", "حامل دفتر الصحي", "مسمن", 
-    "أم زين", "ام زين", "أكل تقليدي", "init_prod_om_zayn", "story_init_1"
-  ];
+  const fakeNames = [];
   let remoteProds = null;
   let officialStores = [];
   let currentStories = [];
@@ -2246,6 +2242,18 @@ async function loadProducts() {
     })
     .map(p => {
       const id = String(p.id || p.productId || ('p_' + Date.now()));
+      const storeIdVal = p.store_id || p.storeId || 'direct';
+      
+      // Dynamic store lookup: Resolve full store profile from officialStores
+      const matchedStore = officialStores.find(s => 
+        String(s.id) === String(storeIdVal) || 
+        String(s.name).trim().toLowerCase() === String(p.store_name || p.storeName || '').trim().toLowerCase()
+      );
+      
+      const sName = p.store_name || p.storeName || (matchedStore ? matchedStore.name : 'متجر معتمد');
+      const sWilaya = p.wilaya || (matchedStore ? matchedStore.wilaya : '58 - المنيعة');
+      const sPhone = p.phone || (matchedStore ? matchedStore.phone : '0698694010');
+      
       return {
         id: id,
         productId: id,
@@ -2257,10 +2265,10 @@ async function loadProducts() {
         subcategory: p.subcategory || '',
         description: p.description || p.desc || '',
         image: p.image || p.imageUrl || p.image_url || p.imageURL || 'assets/icon-192.svg',
-        storeId: p.store_id || p.storeId || 'direct',
-        storeName: p.store_name || p.storeName || 'متجر معتمد',
-        wilaya: p.wilaya || '58 - المنيعة',
-        phone: p.phone || '0698694010',
+        storeId: storeIdVal,
+        storeName: sName,
+        wilaya: sWilaya,
+        phone: sPhone,
         status: p.status || 'active'
       };
     });

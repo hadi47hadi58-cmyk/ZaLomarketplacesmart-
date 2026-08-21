@@ -223,18 +223,7 @@ window.renderStoresDirectory = function() {
     });
   }
 
-  // Remove legacy fake stores (أم زين) safely
-  for (let key of Array.from(storesMap.keys())) {
-    let s = storesMap.get(key);
-    if (s) {
-      const sName = s.name ? String(s.name) : '';
-      const sId = s.id ? String(s.id) : '';
-      if (sName.includes('أم زين') || sName.includes('ام زين') || sId.includes('om_zayn')) {
-        storesMap.delete(key);
-      }
-    }
-  }
-
+  // Exclude nothing, include all stores dynamically
   const stores = Array.from(storesMap.values());
   
   // Sort stores by Wilaya number (1 to 69) safely
