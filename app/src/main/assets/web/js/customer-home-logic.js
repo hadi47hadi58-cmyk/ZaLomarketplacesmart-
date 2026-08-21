@@ -1,4 +1,5 @@
 import { fetchLiveStories, fetchStoresDirectory, fetchProducts } from './customer-home-supabase.js';
+import './realtime-sync.js';
 
 import {
   initializeApp,

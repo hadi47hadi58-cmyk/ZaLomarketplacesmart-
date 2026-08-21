@@ -93,6 +93,7 @@
     <!-- Strict Authorization & Session Checking -->
     <script type="module">
         import { supabase } from './js/supabase-config.js';
+        import './js/realtime-sync.js';
         import sessionManager from './js/session-manager.js';
         import { initStoreProductsRealtime } from './js/modules/store/store-ui-products.js';
         import { initStoreOrdersRealtime } from './js/modules/store/store-ui-orders.js';

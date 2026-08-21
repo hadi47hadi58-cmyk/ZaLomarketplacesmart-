@@ -1,5 +1,4 @@
 import "./error-handler.js";
-import "./realtime-sync.js";
 // ZaLo Marketplace Smart Sync Update: 2026-07-21
 // ZaLo Smart Marketplace - Supabase Client Config (supabase-config.js)
 // Initializing Supabase Client with standard supabase-js.
