@@ -2146,113 +2146,7 @@ async function loadProducts() {
     });
   }
 
-  // If completely empty (e.g. Incognito or fresh session), populate default verified Algerian stores
-  if (allSources.length === 0) {
-    allSources = [
-      {
-        id: 'init_prod_zalo_service_phone_holder',
-        name: 'سيبور هاتف نقال 2',
-        price: 2500,
-        stock: 50,
-        category: 'إلكترونيات وهواتف',
-        subcategory: 'إكسسوارات الهواتف',
-        description: 'حامل الهواتف الذكية للسيارات والمكاتب متين وقابل للدوران 360 درجة مع ثبات فائق.',
-        image: 'https://images.unsplash.com/photo-1586105251261-72a756497a11?w=600&auto=format&fit=crop&q=80',
-        storeId: 'store_zalo_all',
-        storeName: 'Zalo all service',
-        wilaya: '58 - المنيعة',
-        phone: '0698694010',
-        status: 'active'
-      },
-      {
-        id: 'init_prod_zalo_service_1',
-        name: 'بوشات أطفال وحقائب حصرية',
-        price: 3000,
-        stock: 25,
-        category: 'أطفال ورضع',
-        subcategory: 'مستلزمات الأطفال',
-        description: 'طقم بوشات أطفال وحقائب ممتازة بجودة عالية ومطرزة بحرفية.',
-        image: 'https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?w=600&auto=format&fit=crop&q=80',
-        storeId: 'store_zalo_all',
-        storeName: 'Zalo all service',
-        wilaya: '58 - المنيعة',
-        phone: '0698694010',
-        status: 'active'
-      },
-      {
-        id: 'init_prod_zalo_service_2',
-        name: 'سيرفات رياضي رجالي',
-        price: 5000,
-        stock: 20,
-        category: 'ملابس وأزياء',
-        subcategory: 'ملابس رياضية',
-        description: 'أطقم سيرفات رياضي ممتازة بخامات مريحة وعالية الجودة لكافة المقاسات.',
-        image: 'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=600&auto=format&fit=crop&q=80',
-        storeId: 'store_zalo_all',
-        storeName: 'Zalo all service',
-        wilaya: '58 - المنيعة',
-        phone: '0698694010',
-        status: 'active'
-      }
-    ];
-
-    if (!currentStories || currentStories.length === 0) {
-      currentStories = [
-        {
-          id: 'story_init_phone_holder',
-          author: 'Zalo all service',
-          name: 'Zalo all service',
-          store_name: 'Zalo all service',
-          storeId: 'store_zalo_all',
-          wilaya: '58 - المنيعة',
-          category: 'إلكترونيات وهواتف',
-          price: '2500',
-          caption: 'سيبور هاتف نقال 2 عالي الجودة للسيارات والمكاتب متوفر الآن',
-          image: 'https://images.unsplash.com/photo-1586105251261-72a756497a11?w=600&auto=format&fit=crop&q=80',
-          logo: 'assets/icon-192.svg',
-          phone: '0698694010',
-          likes: 5,
-          time: 'منذ قليل'
-        },
-        {
-          id: 'story_init_kids_bag',
-          author: 'Zalo all service',
-          name: 'Zalo all service',
-          store_name: 'Zalo all service',
-          storeId: 'store_zalo_all',
-          wilaya: '58 - المنيعة',
-          category: 'أطفال ورضع',
-          price: '3000',
-          caption: 'بوشات أطفال وتشكيلة مستلزمات حديثة وممتازة',
-          image: 'https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?w=600&auto=format&fit=crop&q=80',
-          logo: 'assets/icon-192.svg',
-          phone: '0698694010',
-          likes: 3,
-          time: 'منذ قليل'
-        }
-      ];
-      try { localStorage.setItem('zalo_live_stories', JSON.stringify(currentStories)); } catch(e) {}
-      window.liveStoriesList = currentStories;
-    }
-
-    if (!officialStores || officialStores.length === 0) {
-      officialStores = [
-        {
-          id: 'store_zalo_all',
-          name: 'Zalo all service',
-          wilaya: '58 - المنيعة',
-          commune: 'المنيعة',
-          category: 'إلكترونيات وخدمات شاملة',
-          phone: '0698694010',
-          logo: 'assets/icon-192.svg',
-          coverImage: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=500',
-          isOfficial: true,
-          status: 'active'
-        }
-      ];
-      try { localStorage.setItem('zalo_official_stores', JSON.stringify(officialStores)); } catch(e) {}
-    }
-  }
+  // Pure dynamic data model: No dummy/mock products injected when empty. Merged only contains verified Supabase/local items.
 
   // Deduplicate products by id and name
   const seenIds = new Set();
@@ -3418,31 +3312,31 @@ window.initStoriesSystem = function() {
     return true;
   });
 
-  // If no stories stored, build dynamic stories from active products
+  // If no stories stored, build dynamic stories from active products if available
   if (storedStories.length === 0) {
-    let prods = window.allSources || state.loadedProducts || [];
+    let prods = window.allSources || (typeof state !== 'undefined' ? state.loadedProducts : []) || [];
     if (!prods.length) {
       try { prods = JSON.parse(localStorage.getItem('zalo_products') || '[]'); } catch(e) {}
     }
     if (prods.length > 0) {
-      storedStories = prods.slice(0, 10).map((p, idx) => ({
+      storedStories = prods.filter(p => p && (p.name || p.productName)).slice(0, 10).map((p, idx) => ({
         id: p.id || ('st_' + idx),
-        author: p.storeName || p.store_name || 'Zalo all service',
-        store_name: p.storeName || p.store_name || 'Zalo all service',
-        name: p.storeName || p.store_name || 'Zalo all service',
-        storeId: p.storeId || p.store_id || 'store_zalo_all',
+        author: p.storeName || p.store_name || 'متجر معتمد',
+        store_name: p.storeName || p.store_name || 'متجر معتمد',
+        name: p.storeName || p.store_name || 'متجر معتمد',
+        storeId: p.storeId || p.store_id || '',
         userId: p.storeId || 'merchant',
         wilaya: p.wilaya || '58 - المنيعة',
         category: p.category || 'عرض لحظي',
         subcategory: p.subcategory || '',
-        price: p.price || '2500',
+        price: p.price || 0,
         caption: (p.name || p.productName || 'عرض خاص') + (p.description ? ' - ' + p.description : ''),
         title: p.name || p.productName || 'عرض خاص',
-        image: p.image || p.image_url || 'https://images.unsplash.com/photo-1586105251261-72a756497a11?w=600&auto=format&fit=crop&q=80',
-        logo: 'assets/icon-192.svg',
-        phone: p.phone || '0698694010',
+        image: p.image || p.image_url || 'images/wilaya-thumb.jpg',
+        logo: p.logo || p.storeLogo || 'assets/icon-192.svg',
+        phone: p.phone || '',
         time: 'الآن',
-        likes: 15 + idx
+        likes: 1 + idx
       }));
     }
   }

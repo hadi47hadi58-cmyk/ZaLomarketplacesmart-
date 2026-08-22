@@ -11,38 +11,13 @@ window.getMergedStoriesList = function() {
     stories = window.liveStoriesList;
   }
   
-  const fakeStoryKeywords = [];
   stories = (stories || []).filter(st => {
     if (!st || !st.id) return false;
-    let cap = (st.caption || st.title || st.author || st.id || '').toLowerCase();
-    return !fakeStoryKeywords.some(kw => cap.includes(kw));
+    let text = (st.caption || st.title || st.author || st.store_name || st.id || '').toLowerCase();
+    if (text.includes('store_zalo_all') || text.includes('zalo all service')) return false;
+    return true;
   });
 
-  if (!stories.length) {
-    // Try products from window.allSources or localStorage
-    let prods = window.allSources || [];
-    if (!prods.length) {
-      try { prods = JSON.parse(localStorage.getItem('zalo_products') || '[]'); } catch(e) {}
-    }
-    if (prods.length) {
-      stories = prods.slice(0, 10).map((p, idx) => ({
-        id: p.id || ('st_' + idx),
-        author: p.storeName || p.store_name || 'Zalo all service',
-        storeId: p.storeId || p.store_id || 'store_zalo_all',
-        wilaya: p.wilaya || '58 - المنيعة',
-        category: p.category || 'عرض حصري',
-        subcategory: p.subcategory || '',
-        price: p.price || 0,
-        caption: (p.name || p.productName || 'عرض خاص') + (p.description ? ' - ' + p.description : ''),
-        title: p.name || p.productName || 'عرض خاص',
-        image: p.image || p.image_url || 'https://images.unsplash.com/photo-1586105251261-72a756497a11?w=600&auto=format&fit=crop&q=80',
-        logo: 'assets/icon-192.svg',
-        phone: p.phone || '0698694010',
-        time: 'الآن',
-        likes: 12 + idx
-      }));
-    }
-  }
   return stories;
 };
 
@@ -105,21 +80,28 @@ window.renderStoresDirectory = async function() {
   
   const storesMap = new Map();
 
-  // 1. First prioritize fetching live from Supabase stores table if client available
+  // 1. Fetch live from Supabase stores table (only approved / active stores)
   try {
     const sb = window.supabase || window.supabaseClient;
     if (sb && sb.from) {
-      const { data: dbStores, error } = await sb.from('stores').select('*').order('wilaya', { ascending: true });
+      const { data: dbStores, error } = await sb.from('stores')
+        .select('*')
+        .order('wilaya', { ascending: true });
+        
       if (!error && dbStores && Array.isArray(dbStores)) {
         dbStores.forEach(s => {
+          const sStatus = String(s.status || '').toUpperCase();
+          // Only show approved or active stores
+          if (sStatus !== 'APPROVED' && sStatus !== 'ACTIVE') return;
+
           const sName = (s.name || s.store_name || '').trim();
-          if (sName) {
-            const sId = String(s.id || ('store_' + encodeURIComponent(sName)));
+          if (sName && !sName.toLowerCase().includes('zalo all service')) {
+            const sId = String(s.id);
             storesMap.set(sId, {
               id: sId,
               name: sName,
               wilaya: s.wilaya || '58 - المنيعة',
-              phone: s.phone || '0698694010',
+              phone: s.phone || '',
               logo: s.logo_url || s.logo || 'assets/icon-192.svg',
               productCount: 0
             });
@@ -131,132 +113,20 @@ window.renderStoresDirectory = async function() {
     console.warn("Direct Supabase fetch for directory:", e);
   }
 
-  // 2. Collect from window.officialStores
-  if (window.officialStores && Array.isArray(window.officialStores)) {
-    window.officialStores.forEach(s => {
-      const sName = (s.name || s.store_name || '').trim();
-      if (sName) {
-        const sId = String(s.id || ('store_' + encodeURIComponent(sName)));
-        if (!storesMap.has(sId)) {
-          storesMap.set(sId, {
-            id: sId,
-            name: sName,
-            wilaya: s.wilaya || '58 - المنيعة',
-            phone: s.phone || '0698694010',
-            logo: s.logo || s.logo_url || 'assets/icon-192.svg',
-            productCount: 0
-          });
-        }
-      }
-    });
-  }
-
-  // 3. Collect from localStorage official stores
-  try {
-    const locStores = JSON.parse(localStorage.getItem('zalo_official_stores') || '[]');
-    locStores.forEach(s => {
-      const sName = (s.name || s.store_name || '').trim();
-      if (sName) {
-        const sId = String(s.id || ('store_' + encodeURIComponent(sName)));
-        if (!storesMap.has(sId)) {
-          storesMap.set(sId, {
-            id: sId,
-            name: sName,
-            wilaya: s.wilaya || '58 - المنيعة',
-            phone: s.phone || '0698694010',
-            logo: s.logo || s.logo_url || 'assets/icon-192.svg',
-            productCount: 0
-          });
-        }
-      }
-    });
-  } catch(e) {}
-
-  // 4. Collect from localStorage merchant store settings
-  try {
-    const mSettings = JSON.parse(localStorage.getItem('zalo_merchant_store_settings') || '{}');
-    if (mSettings.storeName || mSettings.name) {
-      const msName = (mSettings.storeName || mSettings.name).trim();
-      const msId = String(mSettings.id || 'merchant_self');
-      if (!storesMap.has(msId)) {
-        storesMap.set(msId, {
-          id: msId,
-          name: msName,
-          wilaya: mSettings.wilaya || '58 - المنيعة',
-          phone: mSettings.phone || '0698694010',
-          logo: mSettings.logoImg || 'assets/icon-192.svg',
-          productCount: 0
-        });
-      }
-    }
-  } catch(e) {}
-
-  // 5. Collect from all products (state.loadedProducts, window.allSources & localStorage)
+  // 2. Count products for approved stores
   let allProds = window.allSources || [];
   if (typeof state !== 'undefined' && state?.loadedProducts && state.loadedProducts.length) {
     allProds = state.loadedProducts;
   }
-  if (!allProds.length) {
-    try { allProds = JSON.parse(localStorage.getItem('zalo_products') || '[]'); } catch(e) {}
-  }
   
   allProds.forEach(p => {
     if (p.deleted === true || p.status === 'deleted') return;
-    const sName = (p.storeName || p.store_name || '').trim();
-    if (sName) {
-      const sId = String(p.storeId || p.store_id || ('store_' + encodeURIComponent(sName)));
-      const pLogo = p.logo || p.storeLogo || p.image || 'assets/icon-192.svg';
-      if (!storesMap.has(sId)) {
-        storesMap.set(sId, {
-          id: sId,
-          name: sName,
-          wilaya: p.wilaya || '58 - المنيعة',
-          phone: p.phone || '0698694010',
-          logo: pLogo,
-          productCount: 0
-        });
-      } else if (pLogo && !pLogo.includes('icon-192.svg') && storesMap.get(sId).logo.includes('icon-192.svg')) {
-        storesMap.get(sId).logo = pLogo;
-      }
+    const sId = String(p.storeId || p.store_id || '');
+    if (storesMap.has(sId)) {
       storesMap.get(sId).productCount++;
     }
   });
 
-  // 6. Collect from live stories feed
-  const feedStories = window.liveStoriesList || [];
-  feedStories.forEach(st => {
-    const sName = (st.author || st.store_name || '').trim();
-    if (sName) {
-      const sId = String(st.storeId || ('store_' + encodeURIComponent(sName)));
-      const sLogo = st.logo || st.image || 'assets/icon-192.svg';
-      if (!storesMap.has(sId)) {
-        storesMap.set(sId, {
-          id: sId,
-          name: sName,
-          wilaya: st.wilaya || '58 - المنيعة',
-          phone: st.phone || '0698694010',
-          logo: sLogo,
-          productCount: 1
-        });
-      } else if (sLogo && !sLogo.includes('icon-192.svg')) {
-        storesMap.get(sId).logo = sLogo;
-      }
-    }
-  });
-
-  // Ensure default official store if empty
-  if (storesMap.size === 0) {
-    storesMap.set('store_zalo_all', {
-      id: 'store_zalo_all',
-      name: 'Zalo all service',
-      wilaya: '58 - المنيعة',
-      phone: '0698694010',
-      logo: 'assets/icon-192.svg',
-      productCount: (allProds.length || 3)
-    });
-  }
-
-  // Exclude nothing, include all stores dynamically
   const stores = Array.from(storesMap.values());
   
   // Sort stores by Wilaya number (1 to 69) safely
@@ -271,7 +141,7 @@ window.renderStoresDirectory = async function() {
   });
 
   if (stores.length === 0) {
-    container.innerHTML = '<div style="text-align: center; padding: 20px; color: #94a3b8; font-size: 12px; font-weight: 700;">لا توجد متاجر متاحة حالياً.</div>';
+    container.innerHTML = '<div style="text-align: center; padding: 28px 16px; color: #94a3b8; font-size: 13px; font-weight: 700;"><i class="fa-solid fa-store-slash" style="font-size: 24px; color: #94a3b8; margin-bottom: 8px; display: block;"></i>لا توجد متاجر معتمدة حالياً.</div>';
     return;
   }
 

@@ -8,7 +8,13 @@ export class GeminiController {
   @Post('chat')
   @ApiOperation({ summary: 'بوابة المساعد الذكي الآمنة لـ Gemini' })
   async chat(@Body() body: any, @Res() res: Response) {
-    const apiKey = process.env.GEMINI_API_KEY || "AIzaSyC2KWJfMIQ3YZv9r-Ejp9hBWv3UYkkY_7M";
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+        error: 'Gemini API Key is not configured',
+        success: false
+      });
+    }
     const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
 
     try {
