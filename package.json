@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
-    "jsdom": "^29.1.1"
+    "jsdom": "^29.1.1",
+    "@supabase/supabase-js": "^2.39.3"
   }
 }
