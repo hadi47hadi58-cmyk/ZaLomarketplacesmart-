@@ -1029,8 +1029,12 @@ window.sendChatbotMessage = async function() {
   const loadingId = appendChatMessage('مساعد ZaLo يكتب الآن... ✍️', 'bot loading');
   
   try {
-    const apiKey = window.GEMINI_API_KEY || "AIzaSyC2KWJfMIQ3YZv9r-Ejp9hBWv3UYkkY_7M";
-    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+    let endpoint = '/api/gemini/chat';
+    // Fallback logic if we are running directly from local static HTML files (WebView file protocol)
+    if (window.location.protocol === 'file:' || !window.location.hostname) {
+      const apiKey = window.GEMINI_API_KEY || "AIzaSyC2KWJfMIQ3YZv9r-Ejp9hBWv3UYkkY_7M";
+      endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+    }
     
     // Format current product data securely
     const productsData = (state.loadedProducts || []).map(p => ({

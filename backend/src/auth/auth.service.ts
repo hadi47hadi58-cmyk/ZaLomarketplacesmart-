@@ -95,10 +95,18 @@ export class AuthService {
     // If session is already issued (e.g. automatically on signUp), store it in active sessions
     let token = authData.session?.access_token || null;
     if (authData.session) {
-      await supabase.from('sessions').insert({
-        user_id: supabaseUid,
-        token: token,
-      });
+      try {
+        const { error: sessionError } = await supabase.from('sessions').insert({
+          user_id: newUser.id, // Use the correct integer serial ID
+          token: token,
+          expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString() // Default to 30 days
+        });
+        if (sessionError) {
+          console.error('[AuthService] SignUp session tracking error:', sessionError.message);
+        }
+      } catch (e) {
+        console.warn('[AuthService] SignUp session tracking crashed:', e.message);
+      }
     }
 
     return {
@@ -161,15 +169,25 @@ export class AuthService {
     }
 
     // 3. Track active session in the public.sessions table
-    const { error: sessionError } = await supabase
-      .from('sessions')
-      .insert({
-        user_id: supabaseUid,
-        token: token,
-      });
+    try {
+      const { error: sessionError } = await supabase
+        .from('sessions')
+        .insert({
+          user_id: user.id, // Use the correct integer serial ID
+          token: token,
+          expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString() // Default to 30 days
+        });
 
-    if (sessionError) {
-      throw new ConflictException('فشل في تسجيل جلسة الاتصال الآمنة بقاعدة البيانات');
+      if (sessionError) {
+        console.error('[AuthService] SignIn session tracking error:', sessionError.message);
+        throw new ConflictException(`فشل في تسجيل جلسة الاتصال الآمنة بقاعدة البيانات: ${sessionError.message}`);
+      }
+    } catch (err) {
+      console.error('[AuthService] Session creation crash:', err.message);
+      // If it is a critical database constraint error, bubble it up, otherwise log it
+      if (err instanceof ConflictException) {
+        throw err;
+      }
     }
 
     // Log the successful authentication trace

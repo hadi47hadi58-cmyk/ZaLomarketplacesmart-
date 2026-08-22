@@ -248,7 +248,7 @@ CREATE TABLE IF NOT EXISTS public.sessions (
     user_agent TEXT,
     is_active BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    expires_at TIMESTAMP NOT NULL,
+    expires_at TIMESTAMP DEFAULT (CURRENT_TIMESTAMP + INTERVAL '30 days'),
     last_activity TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -442,7 +442,12 @@ CREATE POLICY "Admins can view and manage all merchant documents" ON public.merc
 -- 4) سياسات المتاجر والتحكم للتجار (Stores Policies)
 DROP POLICY IF EXISTS "Everyone can view approved stores" ON public.stores;
 CREATE POLICY "Everyone can view approved stores" ON public.stores
-    FOR SELECT USING (status = 'APPROVED'::public.store_status OR public.get_current_user_role() = 'ADMIN');
+    FOR SELECT USING (
+        LOWER(status::text) = 'approved' 
+        OR LOWER(status::text) = 'active'
+        OR merchant_id = (SELECT id FROM public.users WHERE supabase_uid = auth.uid())
+        OR public.get_current_user_role() = 'ADMIN'
+    );
 
 DROP POLICY IF EXISTS "Merchants can manage their own stores" ON public.stores;
 CREATE POLICY "Merchants can manage their own stores" ON public.stores
@@ -934,4 +939,44 @@ CREATE POLICY "admin_manage_career_applications" ON public.career_applications
 
 GRANT SELECT, INSERT ON public.career_applications TO anon, authenticated;
 GRANT ALL ON public.career_applications TO service_role;
+
+
+-- 1. إصلاح جدول الجلسات (Sessions Table Fix)
+ALTER TABLE public.sessions ALTER COLUMN expires_at DROP NOT NULL;
+ALTER TABLE public.sessions ALTER COLUMN expires_at SET DEFAULT (NOW() + INTERVAL '30 days');
+
+-- 2. إصلاح سياسة المتاجر (Stores RLS Fix)
+DROP POLICY IF EXISTS "stores_read_policy" ON public.stores;
+DROP POLICY IF EXISTS "Everyone can view approved stores" ON public.stores;
+CREATE POLICY "stores_read_policy" ON public.stores 
+FOR SELECT USING (
+    status::text ILIKE 'active' 
+    OR status::text ILIKE 'approved'
+    OR merchant_id IN (
+        SELECT id FROM public.users WHERE supabase_uid = auth.uid()
+    )
+    OR EXISTS (
+        SELECT 1 FROM public.profiles 
+        WHERE profiles.id = auth.uid() 
+        AND role IN ('admin', 'super_admin')
+    )
+);
+
+-- 3. إصلاح سياسة المنتجات (Products RLS Fix)
+DROP POLICY IF EXISTS "products_read_policy" ON public.products;
+DROP POLICY IF EXISTS "Everyone can view active products" ON public.products;
+CREATE POLICY "products_read_policy" ON public.products 
+FOR SELECT USING (is_active = TRUE);
+
+-- 4. إصلاح جدول المستخدمين (Users Table Fix)
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='users' AND column_name='supabase_uid') THEN
+        ALTER TABLE public.users ADD COLUMN supabase_uid UUID UNIQUE;
+    END IF;
+END$$;
+
+-- 5. فهرس الأمان (هذا السطر آمن وسيعمل)
+CREATE INDEX IF NOT EXISTS idx_users_supabase_uid ON public.users (supabase_uid);
+
 
