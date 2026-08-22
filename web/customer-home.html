@@ -771,6 +771,45 @@
   </div>
 
 
+  <!-- MODAL: ORDER COMPLAINT / DISPUTE SUBMISSION -->
+  <div class="modal-overlay" id="complaintModal" onclick="if(event.target===this) this.style.display='none'" style="display:none; z-index: 1200;">
+    <div class="modal-content" style="max-width: 440px; width: 90%;">
+      <div class="modal-header" style="background: #fef2f2; border-bottom: 1.5px solid #fca5a5;">
+        <span style="color:#ef4444; font-weight:900;"><i class="fa-solid fa-triangle-exclamation"></i> تقديم شكوى / بلاغ رسمي عن طلبية</span>
+        <button class="modal-close" onclick="document.getElementById('complaintModal').style.display='none'">✕</button>
+      </div>
+      <div class="modal-body" style="padding: 20px; text-align: right; direction: rtl;">
+        <form id="complaintRequestForm" onsubmit="window.submitOrderComplaint(event)" style="display:flex; flex-direction:column; gap:12px;">
+          <input type="hidden" id="complaint-order-id">
+          
+          <div class="form-group">
+            <label style="font-weight: 800; font-size: 13px; color: var(--navy);">رقم الطلب المحدد للشكوى:</label>
+            <input type="text" id="complaint-order-display" class="form-control" style="background: #f8fafc; font-weight: bold; color: var(--gray);" readonly>
+          </div>
+
+          <div class="form-group">
+            <label style="font-weight: 800; font-size: 13px; color: var(--navy);">اسم مقدم البلاغ *</label>
+            <input type="text" id="complaint-user-name" class="form-control" required placeholder="اكتب اسمك الكامل المسجل في الطلب">
+          </div>
+
+          <div class="form-group">
+            <label style="font-weight: 800; font-size: 13px; color: var(--navy);">تفاصيل الشكوى أو المشكلة بالتفصيل *</label>
+            <textarea id="complaint-message" class="form-control" rows="4" style="resize:none;" placeholder="يرجى وصف المشكلة بالتفصيل (مثل: تأخر التوصيل، كسر أو تلف السلعة، عدم تطابق السلعة، أو أي مشكلة أخرى مواجهة)..." required></textarea>
+          </div>
+
+          <p style="font-size:10px; color:var(--gray); line-height:1.4; margin: 0;">
+            ⚠️ <b>ملاحظة إدارية:</b> يتم مراجعة وفحص الشكاوى من طرف المدراء المعتمدين بـ 58 ولاية بشكل فوري، وسيتواصل معك الدعم الفني لحل المشكلة أو تعويضك مالياً.
+          </p>
+
+          <button type="submit" class="btn-p" style="background:#dc2626; color:white; height:46px; border:none; border-radius:12px; font-weight:800; cursor:pointer;">
+            <i class="fa-solid fa-paper-plane"></i> إرسال البلاغ لمركز التحكيم والشكاوى 🤝
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+
   <!-- MODAL: PRODUCT DETAILS (Facebook Style Showcase) -->
   <div class="modal-overlay" id="productModal" onclick="if(event.target===this) this.style.display='none'">
     <div class="modal-content" id="prod-detail-wrapper" style="max-width:480px; width:95%; padding:0; border-radius:24px; overflow:hidden; box-shadow:0 20px 50px rgba(0,0,0,0.3); background:#ffffff;">

@@ -7,8 +7,22 @@ import helmet from 'helmet';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // Implement helmet for robust security headers
-  app.use(helmet());
+  // Implement helmet with robust production-grade Content Security Policy (CSP)
+  app.use(helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://apis.google.com"],
+        styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+        fontSrc: ["'self'", "https://fonts.gstatic.com", "https://cdnjs.cloudflare.com"],
+        imgSrc: ["'self'", "data:", "https://images.unsplash.com", "https://*.supabase.co"],
+        connectSrc: ["'self'", "https://*.supabase.co", "wss://*.supabase.co", "https://*.run.app"],
+        frameAncestors: ["'none'"],
+      },
+    },
+    crossOriginEmbedderPolicy: false,
+    crossOriginResourcePolicy: { policy: "cross-origin" }
+  }));
 
   // Configure Cors to allow production and development origins strictly
   app.enableCors({

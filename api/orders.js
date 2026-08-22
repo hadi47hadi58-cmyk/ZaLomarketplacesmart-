@@ -20,10 +20,31 @@ if (supabaseUrl && supabaseServiceRoleKey) {
 }
 
 module.exports = async (req, res) => {
-  // CORS Headers
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  // Dynamic Secure CORS Handler matching backend/src/main.ts standards
+  const origin = req.headers.origin;
+  const allowedOrigins = [
+    'localhost',
+    '127.0.0.1',
+    'run.app',
+    'google.com',
+    'zalo.dz',
+    process.env.ALLOWED_ORIGIN,
+    process.env.FRONTEND_URL
+  ].filter(Boolean);
+
+  let determinedOrigin = 'https://za-lomarketplacesmart.vercel.app'; // Default fallback production domain
+
+  if (origin) {
+    const isAllowed = allowedOrigins.some(domain => origin.includes(domain));
+    if (isAllowed) {
+      determinedOrigin = origin;
+    }
+  }
+
+  res.setHeader('Access-Control-Allow-Origin', determinedOrigin);
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, x-api-key');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
 
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
