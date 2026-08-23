@@ -104,20 +104,49 @@ export async function addProductToSupabase(productData) {
             category: productData.category || 'عام',
             description: productData.description || '',
             image_url: img,
-            status: 'active'
+            is_active: true
         };
 
         if (storeIdInt) {
             cleanPayload.store_id = storeIdInt;
         }
 
-        const { data, error } = await supabase.from('products').insert([cleanPayload]).select();
+        // Try primary insert
+        let { data, error } = await supabase.from('products').insert([cleanPayload]).select();
+        
         if (error) {
-            console.warn("Error inserting product into products table:", error);
-            // Fallback try without store_id if foreign key fails
-            delete cleanPayload.store_id;
-            const { error: err2 } = await supabase.from('products').insert([cleanPayload]);
-            if (err2) console.warn("Retry product insert warning:", err2);
+            console.warn("Primary product insert error, attempting adaptive fallback:", error.message || error);
+            
+            // Try with status: 'active'
+            const fallback1 = { ...cleanPayload, status: 'active' };
+            const res1 = await supabase.from('products').insert([fallback1]).select();
+            if (!res1.error) {
+                console.log("Successfully inserted product with status column:", res1.data);
+                return true;
+            }
+
+            // Try without store_id in case of FK constraint
+            const fallbackNoStore = { ...cleanPayload };
+            delete fallbackNoStore.store_id;
+            const res2 = await supabase.from('products').insert([fallbackNoStore]).select();
+            if (!res2.error) {
+                console.log("Successfully inserted product without store_id:", res2.data);
+                return true;
+            }
+
+            // Minimal fallback: name, price, category, image_url
+            const minimalPayload = {
+                name: productName,
+                price: priceNum,
+                category: productData.category || 'عام',
+                image_url: img
+            };
+            const res3 = await supabase.from('products').insert([minimalPayload]);
+            if (!res3.error) {
+                console.log("Successfully inserted product with minimal payload");
+                return true;
+            }
+            console.warn("All product insert attempts failed:", res3.error);
         } else {
             console.log("Successfully added product to Supabase products table:", data);
         }

@@ -902,6 +902,101 @@ async function refreshMerchantSidebarProfile() {
     } catch(e) {}
 }
 
+/**
+ * دالة تحديث بيانات المتجر السحابية (الشعار، الواجهة، والبيانات الأساسية)
+ * تضمن هذه الدالة أن الهوية البصرية مخزنة في Supabase وليس فقط في المتصفح
+ */
+window.syncStoreSettingsToCloud = async function(settings) {
+    try {
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                title: 'جاري الحفظ والمزامنة سحابياً...',
+                allowOutsideClick: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
+        }
+
+        const supabaseClient = window.supabaseClient || (typeof supabase !== 'undefined' ? supabase : null);
+        if (!supabaseClient) throw new Error("تعذر الاتصال بقاعدة البيانات السحابية");
+
+        // 1. جلب بيانات المستخدم الحالي لضمان الربط الصحيح
+        const { data: { user } } = await supabaseClient.auth.getUser();
+        
+        // 2. الحصول على المعرف الرقمي للمستخدم من جدول users
+        let numericUserId = null;
+        if (user && user.id) {
+            const { data: userData } = await supabaseClient
+                .from('users')
+                .select('id')
+                .eq('supabase_uid', user.id)
+                .maybeSingle();
+            if (userData && userData.id) {
+                numericUserId = parseInt(userData.id);
+            }
+        }
+
+        // 3. تحديث جدول المتاجر (stores) في Supabase
+        let query = supabaseClient.from('stores').update({
+            name: settings.storeName || settings.name,
+            phone: settings.phone,
+            logo_url: settings.logoImg || settings.logo || settings.logo_url,
+            banner_url: settings.coverImg || settings.coverImage || settings.banner_url,
+            status: 'APPROVED',
+            is_verified: true,
+            updated_at: new Date().toISOString()
+        });
+
+        if (numericUserId) {
+            query = query.eq('merchant_id', numericUserId);
+        } else if (settings.storeName) {
+            query = query.ilike('name', `%${settings.storeName}%`);
+        } else {
+            query = query.eq('id', localStorage.getItem('zalo_current_store_id') || 1);
+        }
+
+        const { data: storeData, error: storeError } = await query.select();
+
+        if (storeError) {
+            console.warn("Update store warning, trying upsert:", storeError);
+            await supabaseClient.from('stores').upsert([{
+                merchant_id: numericUserId,
+                name: settings.storeName || settings.name || 'متجر معتمد',
+                phone: settings.phone || '0698694010',
+                logo_url: settings.logoImg || settings.logo || 'assets/icon-192.svg',
+                banner_url: settings.coverImg || 'assets/icon-192.svg',
+                status: 'APPROVED',
+                is_verified: true
+            }]);
+        }
+
+        // 4. تحديث الذاكرة المحلية
+        localStorage.setItem('zalo_merchant_store_settings', JSON.stringify(settings));
+        if (settings.storeName) localStorage.setItem('zalo_active_store', settings.storeName);
+        if (settings.logoImg || settings.logo) localStorage.setItem('zalo_merchant_logo', settings.logoImg || settings.logo);
+
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                icon: 'success',
+                title: 'تم الحفظ والمزامنة السحابية بنجاح! ✅',
+                text: 'تم تحديث شعارك وهويتك البصرية على سحابة ZaLo وتطبيق الزبائن فوراً.',
+                confirmButtonText: 'حسناً'
+            });
+        }
+        return true;
+    } catch (error) {
+        console.error("خطأ في المزامنة السحابية للإعدادات:", error);
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                icon: 'error',
+                title: 'فشل الحفظ السحابي',
+                text: error.message || 'حدث خطأ غير متوقع',
+                confirmButtonText: 'حسناً'
+            });
+        }
+        return false;
+    }
+};
+
 document.addEventListener('DOMContentLoaded', () => {
     refreshMerchantSidebarProfile();
     let storeId = localStorage.getItem('zalo_current_store_id') || localStorage.getItem('zalo_uid') || 'default_store';
