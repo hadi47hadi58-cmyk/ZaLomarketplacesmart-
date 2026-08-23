@@ -17,8 +17,23 @@ export async function upsertStoreToSupabase(storeData) {
             is_verified: true,
             updated_at: new Date().toISOString()
         };
-        if (storeData.merchant_id) {
-            payload.merchant_id = String(storeData.merchant_id);
+        // Resolve numeric INT merchant_id from users table using Supabase Auth UID
+        let numericMerchantId = null;
+        if (storeData.merchant_id && !isNaN(parseInt(storeData.merchant_id))) {
+            numericMerchantId = parseInt(storeData.merchant_id);
+        } else {
+            try {
+                const { data: { user } } = await supabase.auth.getUser();
+                if (user && user.id) {
+                    const { data: uData } = await supabase.from('users').select('id').eq('supabase_uid', user.id).maybeSingle();
+                    if (uData && uData.id) {
+                        numericMerchantId = parseInt(uData.id);
+                    }
+                }
+            } catch(e) {}
+        }
+        if (numericMerchantId) {
+            payload.merchant_id = numericMerchantId;
         }
         if (storeData.id && !isNaN(parseInt(storeData.id)) && !String(storeData.id).startsWith('store_')) {
             payload.id = parseInt(storeData.id);

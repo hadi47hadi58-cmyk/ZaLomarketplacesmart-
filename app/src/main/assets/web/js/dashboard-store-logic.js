@@ -430,12 +430,11 @@ window.merchantUnifiedAddProduct = async function(e) {
         localStorage.setItem('zalo_official_stores', JSON.stringify(offStores));
     } catch(e) {}
 
-    // 3. BACKGROUND ASYNC SYNC TO SUPABASE
+    // 3. SYNCHRONOUS AND FORCED SYNC TO SUPABASE (ZaLo v22 Cloud Pipeline)
     try {
         if (typeof addProductToSupabase === 'function') {
-            addProductToSupabase(newProduct).then(res => {
-                console.log('Supabase product sync success:', res);
-            }).catch(err => console.warn('Supabase product sync warning:', err));
+            const res = await addProductToSupabase(newProduct);
+            console.log('Supabase product sync success:', res);
         }
         if (typeof addStoryToSupabase === 'function') {
             const storyObj = {
@@ -454,10 +453,10 @@ window.merchantUnifiedAddProduct = async function(e) {
                 is_active: true,
                 created_at: new Date().toISOString()
             };
-            addStoryToSupabase(storyObj).catch(e => console.warn('Supabase story sync warning:', e));
+            await addStoryToSupabase(storyObj).catch(e => console.warn('Supabase story sync warning:', e));
         }
     } catch (err) {
-        console.warn('Background Supabase sync error:', err);
+        console.warn('Supabase cloud sync error:', err);
     }
 
     // Clear form and reset media preview
