@@ -1678,62 +1678,32 @@ async function syncMerchantRequestStatus(user) {
 
   try {
     if (user && (user.id || user.email) && typeof supabase !== 'undefined' && supabase.from) {
-      const emailQuery = user.email ? `,email.eq.${user.email}` : '';
-      const uidQuery = user.id ? `id.eq.${user.id},user_id.eq.${user.id}` : 'id.neq.null';
-
-      // 1. Check merchant_requests
-      const { data: requests } = await supabase
-        .from('merchant_requests')
-        .select('*')
-        .or(`${uidQuery}${emailQuery}`)
-        .maybeSingle();
-
-      if (requests) {
-        if (requests.status === 'approved' || requests.status === 'active' || requests.status === 'APPROVED') {
-          isApproved = true;
-          isPending = false;
-          localStorage.setItem('zalo_user_role', 'MERCHANT');
-          localStorage.setItem('zalo_merchant_status', 'approved');
-          if (requests.store_name || requests.storeName) {
-            localStorage.setItem('zalo_active_store', requests.store_name || requests.storeName);
-            sessionStorage.setItem('merchant_store_name', requests.store_name || requests.storeName);
-          }
-        } else if (requests.status === 'pending' || requests.status === 'PENDING') {
-          if (!isApproved) isPending = true;
+      // First resolve numeric users.id if we have supabase_uid or email
+      let numericUserId = null;
+      try {
+        let uQuery = supabase.from('users').select('id, email, supabase_uid');
+        if (user.id && user.id !== 'guest') {
+          uQuery = uQuery.or(`supabase_uid.eq.${user.id},email.eq.${user.email}`);
+        } else if (user.email) {
+          uQuery = uQuery.eq('email', user.email);
         }
-      }
-
-      // 2. Check profiles
-      const profQuery = user.id ? `id.eq.${user.id}` : `email.eq.${user.email}`;
-      const { data: prof } = await supabase
-        .from('profiles')
-        .select('*')
-        .or(`${profQuery}${emailQuery}`)
-        .maybeSingle();
-
-      if (prof) {
-        if (prof.role === 'merchant' || prof.role === 'MERCHANT' || prof.status === 'approved' || prof.status === 'APPROVED' || prof.status === 'active') {
-          isApproved = true;
-          isPending = false;
-          localStorage.setItem('zalo_user_role', 'MERCHANT');
-          localStorage.setItem('zalo_merchant_status', 'approved');
-          if (prof.store_name || prof.storeName || prof.name) {
-            localStorage.setItem('zalo_active_store', prof.store_name || prof.storeName || prof.name);
-            sessionStorage.setItem('merchant_store_name', prof.store_name || prof.storeName || prof.name);
-          }
+        const { data: uData } = await uQuery.maybeSingle();
+        if (uData && uData.id) {
+          numericUserId = parseInt(uData.id);
         }
+      } catch(e) {}
+
+      // 1. Check stores table directly by merchant_id (INT) or name
+      let storeQuery = supabase.from('stores').select('*');
+      if (numericUserId) {
+        storeQuery = storeQuery.or(`merchant_id.eq.${numericUserId},name.ilike.%${user.email.split('@')[0]}%`);
+      } else if (user.email) {
+        storeQuery = storeQuery.ilike('name', `%${user.email.split('@')[0]}%`);
       }
-
-      // 3. Check stores table
-      const storeMatchQuery = user.id ? `merchant_id.eq.${user.id},merchant_email.eq.${user.email}` : `merchant_email.eq.${user.email}`;
-      const { data: storeRow } = await supabase
-        .from('stores')
-        .select('*')
-        .or(`${storeMatchQuery}${emailQuery}`)
-        .maybeSingle();
-
+      
+      const { data: storeRow } = await storeQuery.maybeSingle();
       if (storeRow) {
-        if (storeRow.status === 'approved' || storeRow.status === 'active' || storeRow.is_verified || storeRow.status !== 'rejected') {
+        if (storeRow.status === 'APPROVED' || storeRow.status === 'approved' || storeRow.status === 'active' || storeRow.is_verified) {
           isApproved = true;
           isPending = false;
           localStorage.setItem('zalo_user_role', 'MERCHANT');
@@ -1741,6 +1711,53 @@ async function syncMerchantRequestStatus(user) {
           if (storeRow.name || storeRow.store_name) {
             localStorage.setItem('zalo_active_store', storeRow.name || storeRow.store_name);
             sessionStorage.setItem('merchant_store_name', storeRow.name || storeRow.store_name);
+          }
+        }
+      }
+
+      // 2. Check profiles
+      if (!isApproved) {
+        const profQuery = user.id && user.id !== 'guest' ? `id.eq.${user.id}` : `email.eq.${user.email}`;
+        const { data: prof } = await supabase
+          .from('profiles')
+          .select('*')
+          .or(profQuery)
+          .maybeSingle();
+
+        if (prof) {
+          if (prof.role === 'merchant' || prof.role === 'MERCHANT' || prof.status === 'approved' || prof.status === 'APPROVED' || prof.status === 'active') {
+            isApproved = true;
+            isPending = false;
+            localStorage.setItem('zalo_user_role', 'MERCHANT');
+            localStorage.setItem('zalo_merchant_status', 'approved');
+            if (prof.store_name || prof.storeName || prof.name) {
+              localStorage.setItem('zalo_active_store', prof.store_name || prof.storeName || prof.name);
+              sessionStorage.setItem('merchant_store_name', prof.store_name || prof.storeName || prof.name);
+            }
+          }
+        }
+      }
+
+      // 3. Check merchant_requests
+      if (!isApproved) {
+        const { data: requests } = await supabase
+          .from('merchant_requests')
+          .select('*')
+          .or(user.email ? `email.eq.${user.email}` : `user_id.eq.${user.id}`)
+          .maybeSingle();
+
+        if (requests) {
+          if (requests.status === 'approved' || requests.status === 'active' || requests.status === 'APPROVED') {
+            isApproved = true;
+            isPending = false;
+            localStorage.setItem('zalo_user_role', 'MERCHANT');
+            localStorage.setItem('zalo_merchant_status', 'approved');
+            if (requests.store_name || requests.storeName) {
+              localStorage.setItem('zalo_active_store', requests.store_name || requests.storeName);
+              sessionStorage.setItem('merchant_store_name', requests.store_name || requests.storeName);
+            }
+          } else if (requests.status === 'pending' || requests.status === 'PENDING') {
+            isPending = true;
           }
         }
       }
