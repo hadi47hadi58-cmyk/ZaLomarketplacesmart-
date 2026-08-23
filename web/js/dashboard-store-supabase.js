@@ -188,16 +188,32 @@ export async function uploadFileToSupabase(file, folder = 'media') {
 export async function addStoryToSupabase(storyData) {
     if (!supabase || !storyData) return false;
     try {
+        const storeName = storyData.author || storyData.store_name || storyData.name || 'متجر معتمد';
+        
+        // 1. Ensure/get store record to obtain store_id
+        let storeRecord = await upsertStoreToSupabase({
+            name: storeName,
+            wilaya: storyData.wilaya,
+            phone: storyData.phone,
+            merchant_id: storyData.merchant_id || storyData.user_id,
+            logo: storyData.logo || storyData.logo_url || 'assets/icon-192.svg'
+        });
+
+        const storeIdInt = (storeRecord && storeRecord.id && !isNaN(parseInt(storeRecord.id)))
+            ? parseInt(storeRecord.id)
+            : (storyData.store_id && !isNaN(parseInt(storyData.store_id)) ? parseInt(storyData.store_id) : null);
+
         const payload = {
-            store_name: storyData.author || storyData.store_name || storyData.name,
-            author_name: storyData.author || storyData.store_name || storyData.name,
-            author: storyData.author || storyData.store_name || storyData.name,
+            store_id: storeIdInt,
+            store_name: storeName,
+            author_name: storeName,
+            author: storeName,
             wilaya: storyData.wilaya || '58 - المنيعة',
             phone: storyData.phone || '0698694010',
             title: storyData.caption || storyData.title || 'عرض خاص',
             description: storyData.caption || storyData.title || 'عرض خاص',
             caption: storyData.caption || storyData.title || 'عرض خاص',
-            image_url: storyData.image_url || storyData.image || 'images/wilaya-thumb.jpg',
+            image_url: storyData.image_url || storyData.image || 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=500',
             video_url: storyData.video_url || storyData.video || null,
             is_video: !!storyData.is_video,
             price: String(storyData.price || '0'),
@@ -209,16 +225,11 @@ export async function addStoryToSupabase(storyData) {
         const { data, error } = await supabase.from('market_posts').insert([payload]);
         if (error) {
             console.warn("Error inserting story into market_posts:", error);
-        }
-        
-        // Also register store
-        if (payload.store_name) {
-            upsertStoreToSupabase({
-                name: payload.store_name,
-                wilaya: payload.wilaya,
-                phone: payload.phone,
-                logo: storyData.logo || 'assets/icon-192.svg'
-            });
+            const fallbackPayload = { ...payload };
+            delete fallbackPayload.store_id;
+            await supabase.from('market_posts').insert([fallbackPayload]);
+        } else {
+            console.log("Successfully added story to market_posts with store_id:", storeIdInt);
         }
         return true;
     } catch (e) {
