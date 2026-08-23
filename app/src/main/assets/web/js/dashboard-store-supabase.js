@@ -6,14 +6,13 @@ export async function upsertStoreToSupabase(storeData) {
         const storeName = storeData.name || storeData.storeName || storeData.store_name || 'متجر معتمد';
         const payload = {
             name: storeName,
-            store_name: storeName,
             wilaya: storeData.wilaya || '58 - المنيعة',
-            baladiya: storeData.commune || storeData.baladiya || '',
+            commune: storeData.commune || storeData.baladiya || 'المركز',
             category: storeData.category || 'عام',
             phone: storeData.phone || '0698694010',
             logo_url: storeData.logoImg || storeData.logo || storeData.logo_url || 'assets/icon-192.svg',
-            banner_url: storeData.coverImg || storeData.coverImage || storeData.banner_url || 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=500',
-            status: 'active',
+            banner_url: storeData.coverImg || storeData.coverImage || storeData.banner_url || 'assets/icon-192.svg',
+            status: 'APPROVED',
             is_official: true,
             is_verified: true,
             updated_at: new Date().toISOString()

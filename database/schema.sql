@@ -979,4 +979,54 @@ END$$;
 -- 5. فهرس الأمان (هذا السطر آمن وسيعمل)
 CREATE INDEX IF NOT EXISTS idx_users_supabase_uid ON public.users (supabase_uid);
 
+-- 6. ترقية أعمدة الصور في المتاجر والمنتجات لتتسع للصور بجودة عالية (TEXT)
+ALTER TABLE public.products ALTER COLUMN image_url TYPE TEXT;
+ALTER TABLE public.products ADD COLUMN IF NOT EXISTS images TEXT[];
+
+ALTER TABLE public.stores ADD COLUMN IF NOT EXISTS logo_url TEXT;
+ALTER TABLE public.stores ADD COLUMN IF NOT EXISTS banner_url TEXT;
+ALTER TABLE public.stores ADD COLUMN IF NOT EXISTS is_official BOOLEAN DEFAULT TRUE;
+ALTER TABLE public.stores ADD COLUMN IF NOT EXISTS is_verified BOOLEAN DEFAULT TRUE;
+
+-- 7. إنشاء جدول المنشورات والقصص الحية (market_posts) لحفظ البث والقصص سحابياً
+CREATE TABLE IF NOT EXISTS public.market_posts (
+    id SERIAL PRIMARY KEY,
+    store_id INT REFERENCES public.stores(id) ON DELETE CASCADE,
+    store_name VARCHAR(200),
+    author_name VARCHAR(200),
+    author VARCHAR(200),
+    title VARCHAR(255),
+    caption TEXT,
+    description TEXT,
+    image_url TEXT,
+    video_url TEXT,
+    is_video BOOLEAN DEFAULT FALSE,
+    price VARCHAR(50),
+    wilaya VARCHAR(100),
+    phone VARCHAR(50),
+    category VARCHAR(100),
+    status VARCHAR(50) DEFAULT 'active',
+    post_type VARCHAR(50) DEFAULT 'story',
+    likes INT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+ALTER TABLE public.market_posts ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "market_posts_read_policy" ON public.market_posts;
+CREATE POLICY "market_posts_read_policy" ON public.market_posts FOR SELECT USING (TRUE);
+
+DROP POLICY IF EXISTS "market_posts_insert_policy" ON public.market_posts;
+CREATE POLICY "market_posts_insert_policy" ON public.market_posts FOR INSERT WITH CHECK (TRUE);
+
+DROP POLICY IF EXISTS "stores_insert_policy" ON public.stores;
+CREATE POLICY "stores_insert_policy" ON public.stores FOR INSERT WITH CHECK (TRUE);
+
+DROP POLICY IF EXISTS "stores_update_policy" ON public.stores;
+CREATE POLICY "stores_update_policy" ON public.stores FOR UPDATE USING (TRUE);
+
+GRANT ALL ON public.market_posts TO anon, authenticated, service_role;
+GRANT ALL ON public.stores TO anon, authenticated, service_role;
+GRANT ALL ON public.products TO anon, authenticated, service_role;
+
+
 
