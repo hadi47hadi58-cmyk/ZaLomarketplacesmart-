@@ -559,6 +559,7 @@
                                             } catch(dbSyncErr) {
                                                 console.warn("Direct image sync to stores DB exception:", dbSyncErr);
                                             }
+                                        }
                                     }
                                 }, 'image/jpeg', 0.75);
                             }
