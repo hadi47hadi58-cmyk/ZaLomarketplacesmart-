@@ -367,7 +367,105 @@
             renderMerchantOrders();
             initMerchantQR();
             renderMerchantFinancialReports();
+
+            // Cloud-First: Fetch permanent store profile directly from Supabase (Facebook-like persistence)
+            fetchAndApplyCloudStoreProfile();
         };
+
+        async function fetchAndApplyCloudStoreProfile() {
+            try {
+                const sb = window.supabaseClient || window.supabase || (typeof supabase !== 'undefined' ? supabase : null);
+                if (!sb || !sb.from) return;
+
+                let storeRecord = null;
+
+                // 1. Try to fetch by authenticated user session
+                try {
+                    const { data: { session } } = await sb.auth.getSession();
+                    if (session && session.user) {
+                        const userUid = session.user.id;
+                        const userEmail = session.user.email;
+
+                        // Find numeric user ID
+                        const { data: uData } = await sb.from('users').select('id').or(`supabase_uid.eq.${userUid},email.eq.${userEmail}`).maybeSingle();
+                        const numericUserId = uData ? uData.id : null;
+
+                        if (numericUserId) {
+                            const { data: sByMerchant } = await sb.from('stores').select('*').eq('merchant_id', numericUserId).order('updated_at', { ascending: false }).limit(1);
+                            if (sByMerchant && sByMerchant.length > 0) storeRecord = sByMerchant[0];
+                        }
+                    }
+                } catch(authErr) {}
+
+                // 2. Fallback to active store name or ID if not resolved by session
+                if (!storeRecord) {
+                    const activeStoreName = localStorage.getItem('zalo_active_store') || sessionStorage.getItem('reg_storeName');
+                    if (activeStoreName && activeStoreName !== 'متجر ZaLo') {
+                        const { data: sByName } = await sb.from('stores').select('*').ilike('name', activeStoreName).limit(1);
+                        if (sByName && sByName.length > 0) storeRecord = sByName[0];
+                    }
+                }
+
+                // If found in Supabase, update UI and LocalStorage permanently
+                if (storeRecord) {
+                    const storeName = storeRecord.name || storeRecord.store_name;
+                    const phone = storeRecord.phone || '';
+                    const wilaya = storeRecord.wilaya || '58 - المنيعة';
+                    const commune = storeRecord.baladiya || storeRecord.commune || '';
+                    const logo = storeRecord.logo_url || storeRecord.logo;
+                    const banner = storeRecord.banner_url || storeRecord.cover_url;
+                    const category = storeRecord.category || '';
+
+                    const inputName = document.getElementById('settings-store-name');
+                    if (inputName && storeName) inputName.value = storeName;
+                    const inputPhone = document.getElementById('settings-phone');
+                    if (inputPhone && phone) inputPhone.value = phone;
+                    const inputWilaya = document.getElementById('settings-wilaya');
+                    if (inputWilaya && wilaya) inputWilaya.value = wilaya;
+                    const inputCommune = document.getElementById('settings-commune');
+                    if (inputCommune && commune) inputCommune.value = commune;
+
+                    if (logo) {
+                        const logoPrev = document.getElementById('logo-preview');
+                        if (logoPrev) logoPrev.src = logo;
+                        const profImg = document.getElementById('profile-store-image');
+                        if (profImg) profImg.src = logo;
+                        const sidebarLogo = document.getElementById('sidebar-store-logo-preview');
+                        if (sidebarLogo) sidebarLogo.src = logo;
+                    }
+
+                    if (banner) {
+                        const coverPrev = document.getElementById('cover-preview');
+                        if (coverPrev) coverPrev.src = banner;
+                    }
+
+                    const profileName = document.getElementById('profile-store-name');
+                    if (profileName && storeName) profileName.innerText = storeName;
+
+                    const profileWilaya = document.getElementById('profile-store-wilaya');
+                    if (profileWilaya && wilaya) profileWilaya.innerText = "المركز الاقتصادي: " + wilaya + (commune ? (" - " + commune) : "");
+
+                    const sidebarName = document.getElementById('sidebar-user-name');
+                    if (sidebarName && storeName) sidebarName.innerText = storeName;
+
+                    // Sync local cache
+                    let settings = getDB("merchant_store_settings", DEFAULT_MERCHANT_SETTINGS);
+                    if (storeName) settings.storeName = storeName;
+                    if (phone) settings.phone = phone;
+                    if (wilaya) settings.wilaya = wilaya;
+                    if (commune) settings.commune = commune;
+                    if (logo) settings.logoImg = logo;
+                    if (banner) settings.coverImg = banner;
+                    if (category) settings.category = category;
+                    setDB("merchant_store_settings", settings);
+
+                    if (storeName) localStorage.setItem('zalo_active_store', storeName);
+                    if (storeRecord.id) localStorage.setItem('zalo_current_store_id', String(storeRecord.id));
+                }
+            } catch(e) {
+                console.warn("Cloud store profile sync notice:", e);
+            }
+        }
 
         // Live image previews with canvas compression & Cloud Storage CDN upload
         function previewImage(input, previewId) {
