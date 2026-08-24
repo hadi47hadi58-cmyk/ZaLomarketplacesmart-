@@ -532,7 +532,33 @@
                                             }
                                             setDB("merchant_store_settings", settings);
                                             console.log("Store image uploaded to Supabase Storage CDN:", cdnUrl);
-                                        }
+
+                                            // CRITICAL: Update the stores table immediately with the new CDN URL (Facebook-like instant persistence)
+                                            try {
+                                                const storeUpdate = { updated_at: new Date().toISOString() };
+                                                if (previewId === 'logo-preview') {
+                                                    storeUpdate.logo_url = cdnUrl;
+                                                    storeUpdate.logo = cdnUrl;
+                                                } else {
+                                                    storeUpdate.banner_url = cdnUrl;
+                                                    storeUpdate.cover_url = cdnUrl;
+                                                }
+                                                
+                                                const sName = settings.storeName || localStorage.getItem('zalo_active_store') || sessionStorage.getItem('reg_storeName');
+                                                const sId = localStorage.getItem('zalo_current_store_id');
+                                                
+                                                if (window.supabaseClient && window.supabaseClient.from) {
+                                                    (async () => {
+                                                        if (sId && !isNaN(parseInt(sId))) {
+                                                            await window.supabaseClient.from('stores').update(storeUpdate).eq('id', parseInt(sId));
+                                                        } else if (sName && sName !== 'متجر ZaLo') {
+                                                            await window.supabaseClient.from('stores').update(storeUpdate).ilike('name', sName);
+                                                        }
+                                                    })();
+                                                }
+                                            } catch(dbSyncErr) {
+                                                console.warn("Direct image sync to stores DB exception:", dbSyncErr);
+                                            }
                                     }
                                 }, 'image/jpeg', 0.75);
                             }
