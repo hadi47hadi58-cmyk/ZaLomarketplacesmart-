@@ -630,9 +630,18 @@
                     const userUid = localStorage.getItem('zalo_uid') || localStorage.getItem('user_uid');
                     if (userUid) payload.owner_id = userUid;
 
-                    sb.from('stores').upsert(payload, { onConflict: 'name' }).then().catch(() => {
-                        sb.from('stores').insert([payload]).then().catch(() => {});
-                    });
+                    (async () => {
+                        try {
+                            const { data: existing } = await sb.from('stores').select('id').ilike('name', settings.storeName).limit(1);
+                            if (existing && existing.length > 0) {
+                                await sb.from('stores').update(payload).eq('id', existing[0].id);
+                            } else {
+                                await sb.from('stores').insert([payload]);
+                            }
+                        } catch(e) {
+                            console.warn("Store sync fallback:", e);
+                        }
+                    })();
                 }
             } catch(err) {
                 console.warn('Supabase store update:', err);

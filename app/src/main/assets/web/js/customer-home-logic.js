@@ -2039,39 +2039,6 @@ async function loadProducts() {
   let currentStories = [];
 
   try {
-    const storiesData = await fetchLiveStories();
-    if (storiesData && storiesData.length > 0) {
-      currentStories = storiesData.map(rp => {
-        const cap = rp.caption || rp.description || rp.title || rp.content || '';
-        const author = rp.author || rp.store_name || rp.author_name || 'ZaLo merchant';
-        return {
-          id: String(rp.id),
-          author: author,
-          store_name: author,
-          name: author,
-          storeId: rp.store_id || rp.user_id || ('store_' + encodeURIComponent(author)),
-          userId: rp.user_id || 'merchant',
-          wilaya: rp.wilaya || '58 - المنيعة',
-          category: rp.category || 'عام',
-          subcategory: rp.subcategory || 'تخصص عام',
-          price: rp.price || '0',
-          quantity: rp.quantity || '1',
-          caption: cap,
-          title: rp.title || cap,
-          phone: rp.phone || '0698694010',
-          image: rp.image_url || rp.image || 'images/wilaya-thumb.jpg',
-          logo: rp.logo_url || rp.logo || rp.store_logo || 'assets/icon-192.svg',
-          likes: rp.likes || 1,
-          time: 'منذ قليل',
-          created_at: rp.created_at || new Date().toISOString()
-        };
-      });
-      localStorage.setItem('zalo_live_stories', JSON.stringify(currentStories));
-      window.liveStoriesList = currentStories;
-    } else {
-      currentStories = JSON.parse(localStorage.getItem('zalo_live_stories') || '[]');
-    }
-
     const storesData = await fetchStoresDirectory();
     if (storesData && storesData.length > 0) {
       officialStores = storesData.map(rs => {
@@ -2084,14 +2051,61 @@ async function loadProducts() {
           category: rs.category || 'عام',
           phone: rs.phone || '0698694010',
           logo: rs.logo_url || 'assets/icon-192.svg',
-          coverImage: rs.banner_url || 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=500',
+          logo_url: rs.logo_url,
+          coverImage: rs.banner_url || rs.cover_url || 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=500',
+          banner_url: rs.banner_url,
           isOfficial: true,
           status: rs.status || 'active'
         };
       });
       localStorage.setItem('zalo_official_stores', JSON.stringify(officialStores));
+      window.officialStores = officialStores;
     } else {
       officialStores = JSON.parse(localStorage.getItem('zalo_official_stores') || '[]');
+      window.officialStores = officialStores;
+    }
+
+    const storiesData = await fetchLiveStories();
+    if (storiesData && storiesData.length > 0) {
+      currentStories = storiesData.map(rp => {
+        const cap = rp.caption || rp.description || rp.title || rp.content || '';
+        const author = rp.author || rp.store_name || rp.author_name || 'ZaLo merchant';
+        
+        // Match store to get real logo & banner
+        const matchedStore = officialStores.find(s => 
+          (rp.store_id && String(s.id) === String(rp.store_id)) ||
+          (s.name && s.name.trim().toLowerCase() === author.trim().toLowerCase())
+        );
+        const resolvedLogo = rp.logo_url || rp.logo || (matchedStore ? (matchedStore.logo || matchedStore.logo_url) : null) || 'assets/icon-192.svg';
+        const resolvedCover = (matchedStore ? (matchedStore.coverImage || matchedStore.banner_url) : null) || rp.image_url || rp.image;
+
+        return {
+          id: String(rp.id),
+          author: author,
+          store_name: author,
+          name: author,
+          storeId: rp.store_id || (matchedStore ? matchedStore.id : null) || rp.user_id || ('store_' + encodeURIComponent(author)),
+          userId: rp.user_id || 'merchant',
+          wilaya: rp.wilaya || (matchedStore ? matchedStore.wilaya : '58 - المنيعة'),
+          category: rp.category || (matchedStore ? matchedStore.category : 'عام'),
+          subcategory: rp.subcategory || 'تخصص عام',
+          price: rp.price || '0',
+          quantity: rp.quantity || '1',
+          caption: cap,
+          title: rp.title || cap,
+          phone: rp.phone || (matchedStore ? matchedStore.phone : '0698694010'),
+          image: rp.image_url || rp.image || 'images/wilaya-thumb.jpg',
+          logo: resolvedLogo,
+          coverImage: resolvedCover,
+          likes: rp.likes || 1,
+          time: 'منذ قليل',
+          created_at: rp.created_at || new Date().toISOString()
+        };
+      });
+      localStorage.setItem('zalo_live_stories', JSON.stringify(currentStories));
+      window.liveStoriesList = currentStories;
+    } else {
+      currentStories = JSON.parse(localStorage.getItem('zalo_live_stories') || '[]');
     }
 
     const prodsData = await fetchProducts();
@@ -5516,7 +5530,7 @@ window.openStoreView = async function(storeId, storeName) {
       const { data: sbStore } = await Promise.race([fetchPromise, timeoutPromise]);
       if (sbStore) {
         storeLogo = sbStore.logo_url || sbStore.logo || storeLogo;
-        storeCover = sbStore.cover_url || sbStore.cover || storeCover;
+        storeCover = sbStore.banner_url || sbStore.cover_url || sbStore.cover || storeCover;
         storeWilaya = sbStore.wilaya || storeWilaya;
       }
     }
