@@ -13,8 +13,6 @@ window.getMergedStoriesList = function() {
   
   stories = (stories || []).filter(st => {
     if (!st || !st.id) return false;
-    let text = (st.caption || st.title || st.author || st.store_name || st.id || '').toLowerCase();
-    if (text.includes('store_zalo_all') || text.includes('zalo all service')) return false;
     return true;
   });
 
@@ -80,7 +78,44 @@ window.renderStoresDirectory = async function() {
   
   const storesMap = new Map();
 
-  // 1. Fetch live from Supabase stores table (only approved / active stores)
+  // Helper to ingest store records into map
+  const ingestStore = (s) => {
+    if (!s) return;
+    const sStatus = String(s.status || '').toUpperCase();
+    if (sStatus === 'REJECTED' || sStatus === 'DELETED') return;
+
+    const sName = (s.name || s.store_name || s.storeName || '').trim();
+    if (!sName) return;
+
+    const sId = String(s.id || ('store_' + encodeURIComponent(sName)));
+    const existing = storesMap.get(sId) || storesMap.get(sName);
+
+    const logo = s.logo_url || s.logo || (existing ? existing.logo : null) || 'assets/icon-192.svg';
+    const banner = s.banner_url || s.cover_url || s.coverImage || (existing ? existing.banner : null) || 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=500';
+    const wilaya = s.wilaya || (existing ? existing.wilaya : '58 - المنيعة');
+    const phone = s.phone || (existing ? existing.phone : '0698694010');
+
+    storesMap.set(sId, {
+      id: sId,
+      name: sName,
+      wilaya: wilaya,
+      phone: phone,
+      logo: logo,
+      banner: banner,
+      productCount: existing ? existing.productCount : 0
+    });
+  };
+
+  // 1. Initial preload from window/local caches for instant display
+  if (window.officialStores && Array.isArray(window.officialStores)) {
+    window.officialStores.forEach(ingestStore);
+  }
+  try {
+    const cached = JSON.parse(localStorage.getItem('zalo_official_stores') || '[]');
+    if (Array.isArray(cached)) cached.forEach(ingestStore);
+  } catch(e) {}
+
+  // 2. Fetch live from Supabase stores table
   try {
     const sb = window.supabase || window.supabaseClient;
     if (sb && sb.from) {
@@ -89,31 +124,30 @@ window.renderStoresDirectory = async function() {
         .order('wilaya', { ascending: true });
         
       if (!error && dbStores && Array.isArray(dbStores)) {
-        dbStores.forEach(s => {
-          const sStatus = String(s.status || '').toUpperCase();
-          // Only show approved or active stores
-          if (sStatus !== 'APPROVED' && sStatus !== 'ACTIVE') return;
-
-          const sName = (s.name || s.store_name || '').trim();
-          if (sName && !sName.toLowerCase().includes('zalo all service')) {
-            const sId = String(s.id);
-            storesMap.set(sId, {
-              id: sId,
-              name: sName,
-              wilaya: s.wilaya || '58 - المنيعة',
-              phone: s.phone || '',
-              logo: s.logo_url || s.logo || 'assets/icon-192.svg',
-              productCount: 0
-            });
-          }
-        });
+        dbStores.forEach(ingestStore);
       }
     }
   } catch(e) {
     console.warn("Direct Supabase fetch for directory:", e);
   }
 
-  // 2. Count products for approved stores
+  // 3. Ingest stores from live stories to guarantee new stores appear immediately
+  const stories = window.getMergedStoriesList ? window.getMergedStoriesList() : [];
+  stories.forEach(st => {
+    const sName = st.author || st.store_name || st.name;
+    if (sName) {
+      ingestStore({
+        id: st.store_id || st.storeId || ('store_' + encodeURIComponent(sName)),
+        name: sName,
+        wilaya: st.wilaya,
+        phone: st.phone,
+        logo_url: st.logo,
+        banner_url: st.coverImage
+      });
+    }
+  });
+
+  // 4. Count products for stores
   let allProds = window.allSources || [];
   if (typeof state !== 'undefined' && state?.loadedProducts && state.loadedProducts.length) {
     allProds = state.loadedProducts;
@@ -122,8 +156,17 @@ window.renderStoresDirectory = async function() {
   allProds.forEach(p => {
     if (p.deleted === true || p.status === 'deleted') return;
     const sId = String(p.storeId || p.store_id || '');
+    const sName = (p.store || p.storeName || p.author || '').trim();
     if (storesMap.has(sId)) {
       storesMap.get(sId).productCount++;
+    } else if (sName) {
+      // Find by name
+      for (const [key, storeObj] of storesMap.entries()) {
+        if (storeObj.name.trim().toLowerCase() === sName.toLowerCase()) {
+          storeObj.productCount++;
+          break;
+        }
+      }
     }
   });
 
@@ -147,30 +190,30 @@ window.renderStoresDirectory = async function() {
 
   let html = '';
   stores.forEach(store => {
-    const initial = (store.name || 'M').charAt(0).toUpperCase();
     const strWilaya = String(store.wilaya || '58 - المنيعة');
     const matchW = strWilaya.match(/\d+/);
     const wilayaNum = matchW ? matchW[0] : '';
     const wilayaName = strWilaya.replace(/^\d+\s*-\s*/, '');
     const safeStoreId = String(store.id || '').replace(/'/g, "\\'");
     const safeStoreName = String(store.name || '').replace(/'/g, "\\'");
+    const logoSrc = store.logo || 'assets/icon-192.svg';
     
     html += `
       <div onclick="if(typeof window.openStoreView==='function'){ window.openStoreView('${safeStoreId}', '${safeStoreName}'); } else { window.showToast('جاري فتح صفحة المتجر...'); }" style="display: flex; align-items: center; justify-content: space-between; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 12px 16px; cursor: pointer; transition: all 0.2s; box-shadow: 0 2px 6px rgba(0,0,0,0.03); margin-bottom: 8px;" onmouseover="this.style.background='#f8fafc'; this.style.borderColor='#38bdf8';" onmouseout="this.style.background='#ffffff'; this.style.borderColor='#e2e8f0';">
         <div style="display: flex; align-items: center; gap: 12px;">
-          <div style="width: 44px; height: 44px; border-radius: 14px; background: linear-gradient(135deg, #0284c7, #0369a1); color: white; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 900; box-shadow: 0 4px 10px rgba(2, 132, 199, 0.25);">
-            ${initial}
+          <div style="width: 48px; height: 48px; border-radius: 14px; background: #f8fafc; border: 1.5px solid #e2e8f0; overflow: hidden; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+            <img src="${logoSrc}" alt="${safeStoreName}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.onerror=null; this.src='assets/icon-192.svg';">
           </div>
           <div>
             <div style="display: flex; align-items: center; gap: 6px;">
               <h4 style="font-size: 14px; font-weight: 900; color: #0f172a; margin: 0;">${store.name}</h4>
-              <i class="fa-solid fa-circle-check" style="color: #0284c7; font-size: 12px;" title="متجر معتمد"></i>
+              <i class="fa-solid fa-circle-check" style="color: #0284c7; font-size: 13px;" title="متجر معتمد"></i>
             </div>
-            <div style="display: flex; align-items: center; gap: 8px; margin-top: 4px;">
-              <span style="font-size: 11px; color: #64748b; font-weight: 700; background: #f1f5f9; padding: 2px 8px; border-radius: 10px; display: flex; align-items: center; gap: 4px;">
-                <i class="fa-solid fa-location-dot" style="color: #ef4444;"></i> ولاية ${wilayaName} ${wilayaNum ? '('+wilayaNum+')' : ''}
+            <div style="display: flex; align-items: center; gap: 8px; margin-top: 5px; flex-wrap: wrap;">
+              <span style="font-size: 11px; color: #475569; font-weight: 700; background: #f1f5f9; padding: 2px 8px; border-radius: 8px; display: flex; align-items: center; gap: 4px;">
+                <i class="fa-solid fa-location-dot" style="color: #ef4444; font-size: 10px;"></i> ولاية ${wilayaName} ${wilayaNum ? '('+wilayaNum+')' : ''}
               </span>
-              <span style="font-size: 10.5px; color: #059669; font-weight: 800; background: #ecfdf5; padding: 2px 8px; border-radius: 10px;">${store.productCount > 0 ? store.productCount + ' منتجات' : 'متجر نشط'}</span>
+              <span style="font-size: 10.5px; color: #0284c7; font-weight: 800; background: #f0f9ff; border: 1px solid #bae6fd; padding: 2px 8px; border-radius: 8px;">${store.productCount > 0 ? store.productCount + ' منتجات' : 'متجر نشط'}</span>
             </div>
           </div>
         </div>
