@@ -512,56 +512,33 @@
                             }
                             setDB("merchant_store_settings", settings);
 
-                            // Direct Cloud Storage CDN Upload
-                            if (window.supabaseClient && window.supabaseClient.storage) {
+                            // Enterprise Cloud Storage Upload & Sync
+                            const bucket = (previewId === 'logo-preview') ? 'logos' : 'banners';
+                            const column = (previewId === 'logo-preview') ? 'logo_url' : 'banner_url';
+                            const sId = localStorage.getItem('zalo_current_store_id');
+
+                            if (window.uploadAndSyncMedia) {
                                 canvas.toBlob(async (blob) => {
                                     if (!blob) return;
-                                    const filePath = `stores/${Date.now()}_${Math.random().toString(36).substring(7)}.jpg`;
-                                    const { data, error } = await window.supabaseClient.storage
-                                        .from('stores')
-                                        .upload(filePath, blob, { contentType: 'image/jpeg', upsert: true });
-                                    if (!error && data) {
-                                        const { data: pubData } = window.supabaseClient.storage.from('stores').getPublicUrl(filePath);
-                                        if (pubData && pubData.publicUrl) {
-                                            const cdnUrl = pubData.publicUrl;
-                                            if (prevEl) prevEl.src = cdnUrl;
-                                            if (previewId === 'logo-preview') {
-                                                settings.logoImg = cdnUrl;
-                                            } else {
-                                                settings.coverImg = cdnUrl;
-                                            }
-                                            setDB("merchant_store_settings", settings);
-                                            console.log("Store image uploaded to Supabase Storage CDN:", cdnUrl);
-
-                                            // CRITICAL: Update the stores table immediately with the new CDN URL (Facebook-like instant persistence)
-                                            try {
-                                                const storeUpdate = { updated_at: new Date().toISOString() };
-                                                if (previewId === 'logo-preview') {
-                                                    storeUpdate.logo_url = cdnUrl;
-                                                    storeUpdate.logo = cdnUrl;
-                                                } else {
-                                                    storeUpdate.banner_url = cdnUrl;
-                                                    storeUpdate.cover_url = cdnUrl;
-                                                }
-                                                
-                                                const sName = settings.storeName || localStorage.getItem('zalo_active_store') || sessionStorage.getItem('reg_storeName');
-                                                const sId = localStorage.getItem('zalo_current_store_id');
-                                                
-                                                if (window.supabaseClient && window.supabaseClient.from) {
-                                                    (async () => {
-                                                        if (sId && !isNaN(parseInt(sId))) {
-                                                            await window.supabaseClient.from('stores').update(storeUpdate).eq('id', parseInt(sId));
-                                                        } else if (sName && sName !== 'متجر ZaLo') {
-                                                            await window.supabaseClient.from('stores').update(storeUpdate).ilike('name', sName);
-                                                        }
-                                                    })();
-                                                }
-                                            } catch(dbSyncErr) {
-                                                console.warn("Direct image sync to stores DB exception:", dbSyncErr);
-                                            }
+                                    const storeFile = new File([blob], `store_${Date.now()}.jpg`, { type: 'image/jpeg' });
+                                    const cdnUrl = await window.uploadAndSyncMedia(storeFile, bucket, 'stores', column, sId ? parseInt(sId) : null);
+                                    if (cdnUrl) {
+                                        if (prevEl) prevEl.src = cdnUrl;
+                                        if (previewId === 'logo-preview') {
+                                            settings.logoImg = cdnUrl;
+                                            settings.logo = cdnUrl;
+                                            const pLogo = document.getElementById('profile-store-image');
+                                            if (pLogo) pLogo.src = cdnUrl;
+                                            const sidebarLogo = document.getElementById('sidebar-store-logo-preview');
+                                            if (sidebarLogo) sidebarLogo.src = cdnUrl;
+                                        } else {
+                                            settings.coverImg = cdnUrl;
+                                            settings.banner_url = cdnUrl;
                                         }
+                                        setDB("merchant_store_settings", settings);
+                                        console.log(`✅ Uploaded & synced ${bucket}:`, cdnUrl);
                                     }
-                                }, 'image/jpeg', 0.75);
+                                }, 'image/jpeg', 0.85);
                             }
                         } catch(err) {
                             console.warn("Store image compression/upload note:", err);
@@ -573,7 +550,7 @@
             }
         }
 
-        // Preview multi angle product images
+        // Preview multi angle product images with Supabase products bucket upload
         window.uploadedAnglesPreview = [];
         window.uploadedProductImage = null;
         let uploadedAnglesPreview = [];
@@ -586,10 +563,10 @@
                 
                 files.forEach((file) => {
                     const reader = new FileReader();
-                    reader.onload = function(e) {
+                    reader.onload = async function(e) {
                         const raw = e.target.result;
                         const img = new Image();
-                        img.onload = function() {
+                        img.onload = async function() {
                             const canvas = document.createElement('canvas');
                             const maxDim = 800;
                             let w = img.width, h = img.height;
@@ -603,15 +580,29 @@
                             ctx.drawImage(img, 0, 0, w, h);
                             const compressed = canvas.toDataURL('image/jpeg', 0.85);
                             
-                            window.uploadedAnglesPreview.push(compressed);
-                            uploadedAnglesPreview.push(compressed);
-                            window.uploadedProductImage = compressed;
+                            let finalImage = compressed;
+                            if (window.uploadAndSyncMedia) {
+                                try {
+                                    const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.85));
+                                    if (blob) {
+                                        const prodFile = new File([blob], file.name || `product_${Date.now()}.jpg`, { type: 'image/jpeg' });
+                                        const cdnUrl = await window.uploadAndSyncMedia(prodFile, 'products', null, null, null);
+                                        if (cdnUrl) finalImage = cdnUrl;
+                                    }
+                                } catch(uploadErr) {
+                                    console.warn("Product image storage upload warning:", uploadErr);
+                                }
+                            }
+                            
+                            window.uploadedAnglesPreview.push(finalImage);
+                            uploadedAnglesPreview.push(finalImage);
+                            window.uploadedProductImage = finalImage;
                             
                             loadedCount++;
                             if (loadedCount === files.length) {
                                 const lbl = document.getElementById('angles-upload-lbl');
                                 if (lbl) {
-                                    lbl.innerText = `تم رفع وتجهيز (${files.length}) صور بنجاح ✓`;
+                                    lbl.innerText = `تم رفع وتجهيز (${files.length}) صور سحابياً بنجاح ✓`;
                                     lbl.className = "text-emerald-500 font-bold";
                                 }
                                 const prevBox = document.getElementById('angles-preview');
