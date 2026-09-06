@@ -1,4 +1,4 @@
-<!-- ZaLo Marketplace Smart Sync Update: 2026-07-16 -->
+<!-- ZaLo Marketplace Smart Sync Update: 2026-09-06 -->
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -11,6 +11,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/dist/umd/supabase.js"></script>
 <script src="js/categories.js"></script>
 <script src="js/indexed-db-cache.js"></script>
+<link rel="stylesheet" href="css/style.css">
 <link rel="stylesheet" href="css/customer-home.css">
 <script src="js/customer-home-ui.js"></script>
 <script>
@@ -238,21 +239,21 @@
 
     <div class="sm-sec" id="sm-sec-ops">العمليات والطلبات</div>
     <div class="smi" onclick="closeSide(); switchTab('home')" role="button" tabindex="0" aria-label="التحويل للصفحة الرئيسية واستكشاف السوق">
-      <span class="si" style="color:var(--brand-green)"><i class="fa-solid fa-house"></i></span>
+      <span class="si" style="color:var(--brand-primary)"><i class="fa-solid fa-house"></i></span>
       <div>
         <div class="sn" id="sm-home-sn">الرئيسية وتصفح السوق</div>
         <div class="sd" id="sm-home-sd">استكشاف المنتجات والعروض النشطة</div>
       </div>
     </div>
     <div class="smi" onclick="closeSide(); switchTab('orders')" role="button" tabindex="0" aria-label="طلباتي وتتبع الشحنات الفوري">
-      <span class="si" style="color:var(--brand-green)"><i class="fa-solid fa-truck-ramp-box"></i></span>
+      <span class="si" style="color:var(--brand-primary)"><i class="fa-solid fa-truck-ramp-box"></i></span>
       <div>
         <div class="sn" id="sm-orders-sn">طلباتي وتتبع الشحنات</div>
         <div class="sd" id="sm-orders-sd">فواتير الشراء، حالة الطلب، وتتبع خط سير الموزع المباشر</div>
       </div>
     </div>
     <div class="smi" onclick="closeSide(); openNotificationsModal()" role="button" tabindex="0" aria-label="فتح مركز التنبيهات والإشعارات الفورية">
-      <span class="si" style="color:var(--brand-green)"><i class="fa-solid fa-bell"></i></span>
+      <span class="si" style="color:var(--brand-primary)"><i class="fa-solid fa-bell"></i></span>
       <div>
         <div class="sn" id="sm-notif-sn">مركز التنبيهات الفورية</div>
         <div class="sd" id="sm-notif-sd">متابعة إشعارات فواتيرك وعملياتك</div>
@@ -285,7 +286,7 @@
 
     <div class="sm-sec" id="sm-sec-support">الدعم والمعلومات</div>
     <div class="smi" onclick="closeSide(); alert('ZaLo Market هي منصة جزائرية تربط المتاجر المحلية بزبائنهم وتوفر خدمات التوصيل الفوري في 69 ولاية كاملة.')" role="button" tabindex="0" aria-label="معلومات عن منصة ZaLo">
-      <span class="si" style="color:var(--sky-blue)"><i class="fa-solid fa-circle-info"></i></span>
+      <span class="si" style="color:var(--brand-primary)"><i class="fa-solid fa-circle-info"></i></span>
       <div>
         <div class="sn" id="sm-about-sn">من نحن</div>
         <div class="sd" id="sm-about-sd">تعرف على قصة ورؤية منصة ZaLo</div>
@@ -298,7 +299,7 @@
 
     <div class="sm-sec" id="sm-sec-account">الإعدادات والحساب</div>
     <div class="smi" id="drawer-login-item" onclick="closeSide(); window.location.href='customer-login.html'" role="button" tabindex="0" aria-label="الانتقال لصفحة تسجيل الدخول">
-      <span class="si" style="color:var(--brand-green)"><i class="fa-solid fa-right-to-bracket"></i></span>
+      <span class="si" style="color:var(--brand-primary)"><i class="fa-solid fa-right-to-bracket"></i></span>
       <div>
         <div class="sn" id="sm-login-sn">تسجيل الدخول</div>
         <div class="sd" id="sm-login-sd">إدارة حسابك ومتابعة طلباتك المحفوظة</div>
@@ -307,25 +308,25 @@
 
     <!-- Language & Accessibility Section -->
     <div class="sm-sec" id="sm-sec-lang-access">اللغة وإمكانية الوصول</div>
-    <div class="smi" style="background: rgba(2, 132, 199, 0.05); border-radius: 12px; margin: 4px 10px; padding: 10px 14px;" role="region" aria-label="إعدادات تغيير لغة التطبيق إلى الإنجليزية أو العربية">
-      <span class="si" style="color:var(--sky-blue)"><i class="fa-solid fa-language"></i></span>
+    <div class="smi" style="background: rgba(18, 99, 43, 0.05); border-radius: 12px; margin: 4px 10px; padding: 10px 14px;" role="region" aria-label="إعدادات تغيير لغة التطبيق إلى الإنجليزية أو العربية">
+      <span class="si" style="color:var(--brand-primary)"><i class="fa-solid fa-language"></i></span>
       <div style="flex:1;">
         <div class="sn" id="lbl-lang-title">لغة التطبيق / Language</div>
         <div class="sd" id="lbl-lang-desc">العربية (الأساسية) | English</div>
       </div>
       <div style="display: flex; gap: 4px;">
-        <button id="btn-lang-ar" onclick="setAppLanguage('ar')" aria-label="تفعيل اللغة العربية بالكامل" style="padding: 5px 9px; font-size: 11px; font-weight: 800; border-radius: 8px; border: 1.5px solid var(--brand-green); background: var(--brand-green); color: white; cursor: pointer;">عربي</button>
+        <button id="btn-lang-ar" onclick="setAppLanguage('ar')" aria-label="تفعيل اللغة العربية بالكامل" style="padding: 5px 9px; font-size: 11px; font-weight: 800; border-radius: 8px; border: 1.5px solid var(--brand-primary); background: var(--brand-primary); color: white; cursor: pointer;">عربي</button>
         <button id="btn-lang-en" onclick="setAppLanguage('en')" aria-label="Switch interface language to English" style="padding: 5px 9px; font-size: 11px; font-weight: 800; border-radius: 8px; border: 1.5px solid #cbd5e1; background: #ffffff; color: var(--navy); cursor: pointer;">EN</button>
       </div>
     </div>
 
     <div class="smi" style="background: rgba(16, 185, 129, 0.05); border-radius: 12px; margin: 4px 10px; padding: 10px 14px;" role="region" aria-label="مساعد القارئ الصوتي الناطق بذوي الهمم">
-      <span class="si" style="color:var(--brand-green)"><i class="fa-solid fa-universal-access"></i></span>
+      <span class="si" style="color:var(--brand-primary)"><i class="fa-solid fa-universal-access"></i></span>
       <div style="flex:1;">
         <div class="sn" id="lbl-access-title">مساعد القارئ الصوتي</div>
         <div class="sd" id="lbl-access-desc">نطق عناصر الواجهة لذوي الهمم</div>
       </div>
-      <button id="btn-tts-toggle" onclick="toggleVoiceAccessibility()" aria-label="مفتاح تشغيل أو إيقاف القارئ الصوتي" style="padding: 5px 10px; font-size: 11px; font-weight: 800; border-radius: 20px; border: 1.5px solid var(--brand-green); background: #ecfdf5; color: var(--brand-green); cursor: pointer; display: flex; align-items: center; gap: 4px;">
+      <button id="btn-tts-toggle" onclick="toggleVoiceAccessibility()" aria-label="مفتاح تشغيل أو إيقاف القارئ الصوتي" style="padding: 5px 10px; font-size: 11px; font-weight: 800; border-radius: 20px; border: 1.5px solid var(--brand-primary); background: #ecfdf5; color: var(--brand-primary); cursor: pointer; display: flex; align-items: center; gap: 4px;">
         <i class="fa-solid fa-volume-high"></i> <span id="tts-btn-text">معطل 🔇</span>
       </button>
     </div>
@@ -361,7 +362,7 @@
 
     <!-- Main Segment Switcher Bar (Direct & Simple Toggle) -->
     <div style="margin: 12px 16px 14px 16px; background: #e2e8f0; padding: 4px; border-radius: 16px; display: grid; grid-template-columns: 1.15fr 1fr; gap: 6px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.04);">
-      <button id="home-view-toggle-stories" onclick="switchHomeFeedView('stories')" style="border: none; padding: 10px 14px; border-radius: 12px; font-family: 'Cairo', sans-serif; font-size: 12.5px; font-weight: 900; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s; background: linear-gradient(135deg, #0284c7, #0369a1); color: #ffffff; box-shadow: 0 2px 10px rgba(2,132,199,0.3);">
+      <button id="home-view-toggle-stories" onclick="switchHomeFeedView('stories')" style="border: none; padding: 10px 14px; border-radius: 12px; font-family: 'Cairo', sans-serif; font-size: 12.5px; font-weight: 900; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s; background: linear-gradient(135deg, #12632b, #07220d); color: #ffffff; box-shadow: 0 2px 10px rgba(18,99,43,0.3);">
         <span class="live-badge-dot" style="position: relative; width: 9px; height: 9px; display: inline-block; top: 0; right: 0; background: #ef4444; border-radius: 50%; border: 2px solid #fff; animation: pulseLive 1.5s infinite;"></span>
         <span>⚡ العروض والقصص</span>
       </button>
@@ -374,12 +375,12 @@
     <!-- VIEW 1: LIVE STORIES & OFFERS FEED (Zero Modals, Direct Scrolling - Default) -->
     <div id="home-live-stories-section" style="display: block; padding: 0 16px 100px 16px;">
       <!-- Stories Circles Section moved here -->
-      <div class="stories-section-wrap" style="margin: 0 0 14px 0; border-radius: 20px; box-shadow: 0 4px 15px rgba(2,132,199,0.12); border: 2px solid #38bdf8; background: #ffffff; padding: 12px 14px;">
+      <div class="stories-section-wrap" style="margin: 0 0 14px 0; border-radius: 20px; box-shadow: 0 4px 15px rgba(18,99,43,0.12); border: 2px solid var(--brand-gold); background: #ffffff; padding: 12px 14px;">
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; padding: 0 4px;">
-          <span style="font-size: 13px; font-weight: 900; color: #0284c7; display: flex; align-items: center; gap: 6px;">
+          <span style="font-size: 13px; font-weight: 900; color: #12632b; display: flex; align-items: center; gap: 6px;">
             <i class="fa-solid fa-circle-play" style="color: #ef4444; font-size: 14px;"></i> قصص وبث مباشر المتاجر 🌟
           </span>
-          <button onclick="window.renderInlineLiveStoriesFeed(); window.renderHomeStories();" style="font-size: 11px; font-weight: 800; color: #0284c7; background: #e0f2fe; border: none; padding: 4px 10px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; gap: 4px;">
+          <button onclick="window.renderInlineLiveStoriesFeed(); window.renderHomeStories();" style="font-size: 11px; font-weight: 800; color: #12632b; background: #e6f4ea; border: none; padding: 4px 10px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; gap: 4px;">
             <i class="fa-solid fa-arrows-rotate"></i> تحديث
           </button>
         </div>
@@ -391,7 +392,7 @@
       <div style="font-size: 14.5px; font-weight: 900; color: #0f172a; margin: 8px 0 14px; display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid #f1f5f9; padding-bottom: 10px;">
         <span style="display: flex; align-items: center; gap: 8px;">
           <span class="live-badge-dot" style="position: relative; width: 10px; height: 10px; display: inline-block;"></span>
-          <span style="color: #0284c7;">عروض ومنشورات المتاجر الحية 🇩🇿:</span>
+          <span style="color: #12632b;">عروض ومنشورات المتاجر الحية 🇩🇿:</span>
         </span>
       </div>
 
@@ -449,7 +450,7 @@
         <!-- Wilaya Active Header -->
         <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid #f1f5f9; padding-bottom: 12px; margin-bottom: 14px;">
           <div style="display: flex; align-items: center; gap: 8px;">
-            <div style="width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, #0284c7, #0369a1); color: white; display: flex; align-items: center; justify-content: center; font-size: 16px;">
+            <div style="width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, #12632b, #07220d); color: white; display: flex; align-items: center; justify-content: center; font-size: 16px;">
               <i class="fa-solid fa-map-location-dot"></i>
             </div>
             <div>
@@ -457,7 +458,7 @@
               <span id="hub-wilaya-subtitle" style="font-size: 11px; color: #64748b; font-weight: 700;">التخصصات والفروع والمتاجر المعتمدة</span>
             </div>
           </div>
-          <button onclick="window.openBusinessHubWithWilayaSelector()" style="background: #f0f9ff; border: 1px solid #bae6fd; color: #0284c7; border-radius: 10px; padding: 6px 12px; font-family: 'Cairo', sans-serif; font-size: 11px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 4px;">
+          <button onclick="window.openBusinessHubWithWilayaSelector()" style="background: #f0fdf4; border: 1px solid #bfe3c8; color: #12632b; border-radius: 10px; padding: 6px 12px; font-family: 'Cairo', sans-serif; font-size: 11px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 4px;">
             <i class="fa-solid fa-arrows-rotate"></i> تغيير الولاية
           </button>
         </div>
@@ -465,7 +466,7 @@
         <!-- Section 1: Categories & Branches in this Wilaya -->
         <div style="margin-bottom: 16px;">
           <div style="font-size: 12.5px; font-weight: 900; color: #0f172a; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between;">
-            <span style="display: flex; align-items: center; gap: 6px;"><i class="fa-solid fa-layer-group" style="color: #0284c7;"></i> التخصصات والفروع بالولاية:</span>
+            <span style="display: flex; align-items: center; gap: 6px;"><i class="fa-solid fa-layer-group" style="color: #12632b;"></i> التخصصات والفروع بالولاية:</span>
             <span style="font-size: 10px; color: #64748b; font-weight: 700;">(انقر لتصفية السلع)</span>
           </div>
           <div id="hub-categories-scroll" style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; scrollbar-width: none;">
@@ -486,8 +487,8 @@
         <!-- Section 3: Verified Stores in this Wilaya -->
         <div>
           <div style="font-size: 12.5px; font-weight: 900; color: #0f172a; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between;">
-            <span style="display: flex; align-items: center; gap: 6px;"><i class="fa-solid fa-store" style="color: #0ea5e9;"></i> المتاجر المعتمدة في الولاية:</span>
-            <span id="hub-stores-count" style="font-size: 10.5px; background: #e0f2fe; color: #0284c7; padding: 2px 8px; border-radius: 10px; font-weight: 800;">4 متاجر</span>
+            <span style="display: flex; align-items: center; gap: 6px;"><i class="fa-solid fa-store" style="color: #12632b;"></i> المتاجر المعتمدة في الولاية:</span>
+            <span id="hub-stores-count" style="font-size: 10.5px; background: #e6f4ea; color: #12632b; padding: 2px 8px; border-radius: 10px; font-weight: 800;">4 متاجر</span>
           </div>
           <div id="hub-stores-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
             <!-- Loaded dynamically -->
@@ -505,7 +506,7 @@
         <span style="font-weight: 800; font-size: 15px; color: var(--navy); display: flex; align-items: center; gap: 8px;">
           <i class="fa-solid fa-folder-tree" style="color: var(--metallic-gold);"></i> تصفح حسب التخصصات والأقسام
         </span>
-        <span style="font-size: 11px; background: #e0f2fe; color: #0284c7; padding: 4px 10px; border-radius: 20px; font-weight: 700;">9 تخصصات رئيسية</span>
+        <span style="font-size: 11px; background: #e6f4ea; color: #12632b; padding: 4px 10px; border-radius: 20px; font-weight: 700;">9 تخصصات رئيسية</span>
       </div>
       <div style="padding: 16px; display: flex; flex-direction: column; gap: 12px;" id="cats-main-cards-container">
         <!-- Dynamic main categories -->
@@ -524,7 +525,7 @@
       </div>
       <div style="margin-bottom: 16px;">
         <div style="font-size: 11.5px; font-weight: 800; color: var(--navy); margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
-          <i class="fa-solid fa-code-branch" style="color: #0ea5e9;"></i> الفروع والتخصصات الفرعية:
+          <i class="fa-solid fa-code-branch" style="color: #12632b;"></i> الفروع والتخصصات الفرعية:
         </div>
         <div id="cat-detail-subs-pills" style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; scrollbar-width: none;">
           <!-- Dynamic subcategory pills -->
@@ -661,7 +662,7 @@
 
     <!-- Store Navigation -->
     <div style="margin-top: 40px; border-bottom: 1px solid #f1f5f9; display: flex; padding: 0 16px; gap: 20px;">
-      <button class="store-nav-btn active" style="padding: 10px 0; border-bottom: 3px solid var(--sky); color: var(--sky); font-weight: 800; background:none; border-top:none; border-left:none; border-right:none; cursor:pointer;">المنتجات</button>
+      <button class="store-nav-btn active" style="padding: 10px 0; border-bottom: 3px solid var(--brand-primary); color: var(--brand-primary); font-weight: 800; background:none; border-top:none; border-left:none; border-right:none; cursor:pointer;">المنتجات</button>
       <button class="store-nav-btn" style="padding: 10px 0; border-bottom: 3px solid transparent; color: #64748b; font-weight: 800; background:none; border-top:none; border-left:none; border-right:none; cursor:pointer;">حول المتجر</button>
     </div>
 
@@ -762,7 +763,7 @@
             <textarea id="description" class="form-control" rows="3" placeholder="اكتب نبذة عن نوع السلع التي توفرها للزبائن..." style="resize:none;" required></textarea>
           </div>
 
-          <button type="submit" class="btn-p" style="background:var(--brand-green); height:46px;">
+          <button type="submit" class="btn-p" style="background:var(--brand-primary); height:46px;">
             <i class="fa-solid fa-paper-plane"></i> إرسال طلب الشراكة للإدارة
           </button>
         </form>
@@ -822,7 +823,7 @@
         <!-- Top Controls on Banner -->
         <div style="position:absolute; top:12px; left:12px; right:12px; display:flex; justify-content:space-between; align-items:center; z-index:5;">
           <button onclick="visitStoreProfileFromModal()" style="background:rgba(255,255,255,0.9); color:var(--navy); border:none; padding:6px 14px; border-radius:20px; font-size:11px; font-weight:800; display:flex; align-items:center; gap:6px; cursor:pointer; box-shadow:0 3px 10px rgba(0,0,0,0.2);">
-            <i class="fa-solid fa-store" style="color:#0284c7;"></i> زيارة صفحة المتجر
+            <i class="fa-solid fa-store" style="color:#12632b;"></i> زيارة صفحة المتجر
           </button>
           <button class="modal-close" onclick="document.getElementById('productModal').style.display='none'" style="background:rgba(0,0,0,0.6); color:white; border-radius:50%; width:32px; height:32px; display:flex; align-items:center; justify-content:center; border:none; cursor:pointer; font-size:14px;">✕</button>
         </div>
@@ -837,10 +838,10 @@
         <div style="flex:1; padding-bottom:2px;">
           <div style="display:flex; align-items:center; gap:6px;">
             <h4 id="pd-store-name" style="font-size:16px; font-weight:900; color:var(--navy); margin:0;">اسم المتجر الرئيسي</h4>
-            <span id="pd-verified-badge" style="color:#0284c7; font-size:14px; display:none;" title="متجر رسمي معتمد"><i class="fa-solid fa-circle-check"></i></span>
+            <span id="pd-verified-badge" style="color:#12632b; font-size:14px; display:none;" title="متجر رسمي معتمد"><i class="fa-solid fa-circle-check"></i></span>
           </div>
           <div style="display:flex; flex-wrap:wrap; gap:6px; margin-top:5px; font-size:10.5px;">
-            <span id="pd-wilaya-tag" style="background:#e0f2fe; padding:2px 8px; border-radius:6px; font-weight:800; color:#0369a1;"><i class="fa-solid fa-location-dot"></i> ولاية: الجزائر</span>
+            <span id="pd-wilaya-tag" style="background:#e6f4ea; padding:2px 8px; border-radius:6px; font-weight:800; color:#14532d;"><i class="fa-solid fa-location-dot"></i> ولاية: الجزائر</span>
             <span id="pd-category-tag" style="background:#f1f5f9; padding:2px 8px; border-radius:6px; font-weight:700; color:#475569;"><i class="fa-solid fa-tags"></i> الصنف: عام</span>
             <span id="pd-subcategory-tag" style="background:#fef3c7; padding:2px 8px; border-radius:6px; font-weight:700; color:#b45309;"><i class="fa-solid fa-code-branch"></i> الفرع: التخصص الفرعي</span>
           </div>
@@ -885,7 +886,7 @@
         <!-- Quantity Selector with Clean Controls -->
         <div style="display:flex; justify-content:space-between; align-items:center; background:#ffffff; border:1.5px solid #e2e8f0; padding:10px 14px; border-radius:14px; box-shadow:0 2px 6px rgba(0,0,0,0.02);">
           <span style="font-weight:800; font-size:13px; color:var(--navy); display:flex; align-items:center; gap:6px;">
-            <i class="fa-solid fa-calculator" style="color:#0284c7;"></i> الكمية المطلوبة:
+            <i class="fa-solid fa-calculator" style="color:#12632b;"></i> الكمية المطلوبة:
           </span>
           <div style="display:flex; align-items:center; gap:12px;">
             <button onclick="chQty(-1)" style="width:36px; height:36px; border-radius:10px; border:1.5px solid #cbd5e1; background:#f8fafc; cursor:pointer; font-weight:bold; font-size:16px; display:flex; align-items:center; justify-content:center; color:var(--navy); transition:all 0.15s;">-</button>
@@ -977,7 +978,7 @@
   <!-- MODAL: CREATE INSTANT STORY / LIVE POST (Facebook Stories Style) -->
   <div class="modal-overlay" id="createStoryModal" onclick="if(event.target===this) this.style.display='none'">
     <div class="modal-content" style="max-width:440px; width:95%; border-radius:22px; overflow:hidden; background:#ffffff; box-shadow:0 20px 40px rgba(0,0,0,0.25);">
-      <div class="modal-header" style="background:linear-gradient(135deg, #0284c7, #0369a1); color:white; padding:16px 18px; display:flex; justify-content:space-between; align-items:center;">
+      <div class="modal-header" style="background:linear-gradient(135deg, #12632b, #07220d); color:white; padding:16px 18px; display:flex; justify-content:space-between; align-items:center;">
         <span style="font-size:14px; font-weight:900; display:flex; align-items:center; gap:8px;">
           <i class="fa-solid fa-camera" style="color:#fef08a;"></i> نشر صورة أو عرض لحظي في المنصة
         </span>
@@ -985,15 +986,15 @@
       </div>
 
       <div class="modal-body" style="padding:18px; display:flex; flex-direction:column; gap:12px; text-align:right;">
-        <div style="background:#f0f9ff; border:1px solid #bae6fd; border-radius:12px; padding:10px 12px; font-size:11px; color:#0369a1; line-height:1.5; font-weight:700;">
+        <div style="background:#f0fdf4; border:1px solid #bfe3c8; border-radius:12px; padding:10px 12px; font-size:11px; color:#14532d; line-height:1.5; font-weight:700;">
           💡 يظهر هذا المنشور/العرض اللحظي فوراً لجميع الزبائن في الـ 69 ولاية وفي لوحة إدارة المنصة مباشرة!
         </div>
 
         <div class="form-group">
           <label style="font-size:11.5px; font-weight:800; color:var(--navy); margin-bottom:4px; display:block;">صورة العرض أو السلعة *</label>
-          <div onclick="document.getElementById('storyImageFileInput').click()" style="width:100%; height:140px; border:2px dashed #38bdf8; border-radius:14px; background:#f8fafc; display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer; overflow:hidden; position:relative;" id="story-image-preview-box">
-            <i class="fa-solid fa-cloud-arrow-up" style="font-size:28px; color:#0284c7; margin-bottom:6px;"></i>
-            <span style="font-size:11.5px; font-weight:800; color:#0369a1;">اضغط لاختيار أو التقاط صورة</span>
+          <div onclick="document.getElementById('storyImageFileInput').click()" style="width:100%; height:140px; border:2px dashed var(--brand-gold); border-radius:14px; background:#f8fafc; display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer; overflow:hidden; position:relative;" id="story-image-preview-box">
+            <i class="fa-solid fa-cloud-arrow-up" style="font-size:28px; color:#12632b; margin-bottom:6px;"></i>
+            <span style="font-size:11.5px; font-weight:800; color:#14532d;">اضغط لاختيار أو التقاط صورة</span>
             <span style="font-size:9.5px; color:var(--gray); margin-top:2px;">(JPEG, PNG, WebP)</span>
           </div>
           <input type="file" id="storyImageFileInput" accept="image/*" style="display:none;" onchange="handleStoryImageUpload(this)">
@@ -1048,7 +1049,7 @@
           <textarea id="story-caption-input" rows="2" placeholder="اكتب وصفاً للسلعة أو العرض..." style="width:100%; border:1.5px solid #cbd5e1; border-radius:10px; padding:8px 10px; font-size:12px; font-weight:700; resize:none; font-family:'Cairo'; color:#0f172a; background:#ffffff; user-select:text; -webkit-user-select:text;"></textarea>
         </div>
 
-        <button id="publish-story-btn" onclick="publishLiveStoryPost()" style="width:100%; height:46px; background:linear-gradient(135deg, #0284c7, #0369a1); color:white; border:none; border-radius:12px; font-weight:900; font-size:13.5px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 4px 14px rgba(2,132,199,0.35);">
+        <button id="publish-story-btn" onclick="publishLiveStoryPost()" style="width:100%; height:46px; background:linear-gradient(135deg, #12632b, #07220d); color:white; border:none; border-radius:12px; font-weight:900; font-size:13.5px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 4px 14px rgba(18,99,43,0.35);">
           <i class="fa-solid fa-paper-plane"></i> نشر العرض اللحظي فوراً 🚀
         </button>
       </div>
@@ -1062,17 +1063,17 @@
       <!-- Top Progress Bar & Store Header -->
       <div style="position:absolute; top:0; left:0; right:0; padding:14px 16px; background:linear-gradient(to bottom, rgba(0,0,0,0.85) 0%, transparent 100%); z-index:10; display:flex; flex-direction:column; gap:8px;">
         <div style="width:100%; height:3px; background:rgba(255,255,255,0.3); border-radius:3px; overflow:hidden;">
-          <div id="story-progress-fill" style="width:100%; height:100%; background:#38bdf8;"></div>
+          <div id="story-progress-fill" style="width:100%; height:100%; background:var(--brand-gold);"></div>
         </div>
 
           <div style="display:flex; justify-content:space-between; align-items:center;">
             <div style="display:flex; align-items:center; gap:10px; cursor:pointer;" onclick="window.openStoreFromCurrentStory()">
-              <img id="sv-avatar" src="assets/icon-192.svg" style="width:38px; height:38px; border-radius:50%; border:2px solid #38bdf8; object-fit:cover;">
+              <img id="sv-avatar" src="assets/icon-192.svg" style="width:38px; height:38px; border-radius:50%; border:2px solid var(--brand-gold); object-fit:cover;">
               <div>
-                <div id="sv-author" style="font-size:13px; font-weight:900; color:#ffffff; display:flex; align-items:center; gap:5px;">متجر ZaLo <i class="fa-solid fa-arrow-left" style="font-size:10px; color:#38bdf8;"></i></div>
+                <div id="sv-author" style="font-size:13px; font-weight:900; color:#ffffff; display:flex; align-items:center; gap:5px;">متجر ZaLo <i class="fa-solid fa-arrow-left" style="font-size:10px; color:var(--brand-gold);"></i></div>
                 <div style="font-size:10px; color:#94a3b8; display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin-top:2px;">
                   <span id="sv-wilaya"><i class="fa-solid fa-location-dot"></i> الجزائر</span> • 
-                  <span id="sv-category" style="background:rgba(255,255,255,0.18); padding:1px 6px; border-radius:6px; color:#bae6fd; font-size:9.5px; font-weight:800;">عام</span> •
+                  <span id="sv-category" style="background:rgba(255,255,255,0.18); padding:1px 6px; border-radius:6px; color:#d4af37; font-size:9.5px; font-weight:800;">عام</span> •
                   <span id="sv-time">الآن</span>
                 </div>
               </div>
@@ -1097,7 +1098,7 @@
           <a id="sv-whatsapp-btn" href="#" target="_blank" style="height:44px; background:linear-gradient(135deg, #25D366, #128C7E); color:white; border-radius:12px; font-weight:900; font-size:11.5px; text-decoration:none; display:flex; align-items:center; justify-content:center; gap:4px; box-shadow:0 4px 12px rgba(37,211,102,0.35);">
             <i class="fa-brands fa-whatsapp" style="font-size:15px;"></i> واتساب
           </a>
-          <button onclick="window.quickOrderCurrentStory()" style="height:44px; background:linear-gradient(135deg, #0284c7, #0369a1); color:white; border:none; border-radius:12px; font-weight:900; font-size:11.5px; display:flex; align-items:center; justify-content:center; gap:4px; box-shadow:0 4px 12px rgba(2,132,199,0.35); cursor:pointer;">
+          <button onclick="window.quickOrderCurrentStory()" style="height:44px; background:linear-gradient(135deg, #12632b, #07220d); color:white; border:none; border-radius:12px; font-weight:900; font-size:11.5px; display:flex; align-items:center; justify-content:center; gap:4px; box-shadow:0 4px 12px rgba(18,99,43,0.35); cursor:pointer;">
             <i class="fa-solid fa-bolt-lightning" style="color:#fef08a;"></i> طلب مباشر
           </button>
           <button onclick="window.addStoryToCart()" style="height:44px; background:var(--brand-gold, #D4AF37); color:var(--navy); border:none; border-radius:12px; font-weight:900; font-size:11.5px; display:flex; align-items:center; justify-content:center; gap:4px; box-shadow:0 4px 12px rgba(212,175,55,0.25); cursor:pointer;">
@@ -1118,7 +1119,7 @@
     <div class="modal-content" style="max-width:520px; width:95%; max-height:88vh; border-radius:24px; overflow:hidden; background:#f8fafc; display:flex; flex-direction:column; box-shadow:0 25px 60px rgba(0,0,0,0.35);">
       
       <!-- Feed Modal Header -->
-      <div class="modal-header" style="background:linear-gradient(135deg, #0284c7, #0369a1); color:white; padding:15px 18px; display:flex; justify-content:space-between; align-items:center; flex-shrink:0;">
+      <div class="modal-header" style="background:linear-gradient(135deg, #12632b, #07220d); color:white; padding:15px 18px; display:flex; justify-content:space-between; align-items:center; flex-shrink:0;">
         <span style="font-size:14px; font-weight:900; display:flex; align-items:center; gap:8px;">
           <span style="display:inline-block; width:10px; height:10px; background:#22c55e; border-radius:50%; box-shadow:0 0 0 3px rgba(34,197,94,0.4);"></span>
           العروض والقصص اللحظية المباشرة 🇩🇿
@@ -1269,7 +1270,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f1f5f9; padding-bottom: 12px; margin-bottom: 16px;">
             <button onclick="document.getElementById('topStoresModal').style.display='none'" style="background: #f1f5f9; border: none; width: 32px; height: 32px; border-radius: 50%; font-weight: bold; cursor: pointer;">✕</button>
             <h3 style="font-size: 16px; font-weight: 900; color: #0f172a; display: flex; align-items: center; gap: 8px; margin: 0;">
-                <i class="fa-solid fa-award" style="color: #0284c7;"></i> المتاجر الأكثر مبيعا للمنتجات 🌟
+                <i class="fa-solid fa-award" style="color: #12632b;"></i> المتاجر الأكثر مبيعا للمنتجات 🌟
             </h3>
         </div>
         <div id="top-stores-list" style="display: flex; flex-direction: column; gap: 12px;">
@@ -1288,7 +1289,7 @@ window.openTopStoresModal = function() {
         { name: "متجر الأمانة للإلكترونيات والأجهزة", wilaya: "الجزائر العاصمة", sales: "1,420 طلب", rating: "4.9 ⭐", img: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=150" },
         { name: "سوق الجزائر المركزي للملابس", wilaya: "وهران", sales: "1,180 طلب", rating: "4.8 ⭐", img: "https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=150" },
         { name: "مؤسسة الهلال لقطع الغيار والمعدات", wilaya: "قسنطينة", sales: "950 طلب", rating: "4.7 ⭐", img: "https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=150" },
-        { name: "متجر العاصمة للسلع المنزلية", wilaya: "البليدة", sales: "890 طلب", rating: "4.8 ⭐", img: "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=150" },
+        { name: "متجر العاصمة للسلع المنزلية", wilاية: "البليدة", sales: "890 طلب", rating: "4.8 ⭐", img: "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=150" },
     ];
 
     container.innerHTML = topStores.map(s => `
@@ -1300,7 +1301,7 @@ window.openTopStoresModal = function() {
                     <div style="font-size: 11px; color: #64748b; font-weight: 700;">📍 ${s.wilaya} • ${s.sales}</div>
                 </div>
             </div>
-            <div style="background: #e0f2fe; color: #0284c7; padding: 6px 12px; border-radius: 10px; font-size: 12px; font-weight: 900;">
+            <div style="background: #e6f4ea; color: #12632b; padding: 6px 12px; border-radius: 10px; font-size: 12px; font-weight: 900;">
                 ${s.rating}
             </div>
         </div>
@@ -1350,14 +1351,14 @@ window.openTopStoresModal = function() {
     </div>
 
     <!-- Submit Review Button -->
-    <button onclick="window.submitRatingReview()" style="width: 100%; height: 44px; background: linear-gradient(135deg, #0284c7, #0369a1); color: white; border: none; border-radius: 14px; font-family: 'Cairo', sans-serif; font-size: 13px; font-weight: 900; cursor: pointer; box-shadow: 0 4px 12px rgba(2,132,199,0.3); display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 18px;">
+    <button onclick="window.submitRatingReview()" style="width: 100%; height: 44px; background: linear-gradient(135deg, #12632b, #07220d); color: white; border: none; border-radius: 14px; font-family: 'Cairo', sans-serif; font-size: 13px; font-weight: 900; cursor: pointer; box-shadow: 0 4px 12px rgba(18,99,43,0.3); display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 18px;">
       <i class="fa-solid fa-check-circle"></i> إرسال واعتماد التقييم
     </button>
 
     <!-- Past Reviews List -->
     <div style="border-top: 2px solid #f1f5f9; padding-top: 14px;">
       <div style="font-size: 12.5px; font-weight: 900; color: #0f172a; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
-        <i class="fa-solid fa-comments" style="color: #0ea5e9;"></i> آراء الزبائن المعتمدة
+        <i class="fa-solid fa-comments" style="color: #12632b;"></i> آراء الزبائن المعتمدة
       </div>
       <div id="rating-modal-reviews-list">
         <!-- Loaded dynamically -->
@@ -1375,7 +1376,7 @@ window.openTopStoresModal = function() {
     <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f1f5f9; padding-bottom: 12px; margin-bottom: 16px;">
       <button onclick="window.closeShareModal()" style="background: #f1f5f9; border: none; width: 34px; height: 34px; border-radius: 50%; font-weight: bold; cursor: pointer; color: #64748b; display: flex; align-items: center; justify-content: center;">✕</button>
       <h3 style="font-size: 16px; font-weight: 900; color: #0f172a; display: flex; align-items: center; gap: 8px; margin: 0;">
-        <i class="fa-solid fa-share-nodes" style="color: #0284c7;"></i> نشر ومشاركة العرض 🔄
+        <i class="fa-solid fa-share-nodes" style="color: #12632b;"></i> نشر ومشاركة العرض 🔄
       </h3>
     </div>
 
@@ -1415,8 +1416,8 @@ window.openTopStoresModal = function() {
       </button>
 
       <!-- Telegram -->
-      <button onclick="window.shareToApp('telegram')" style="height: 52px; background: #f0f9ff; border: 1px solid #e0f2fe; border-radius: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; cursor: pointer; font-family: 'Cairo', sans-serif; font-size: 11px; font-weight: 900; color: #075985;">
-        <i class="fa-brands fa-telegram" style="font-size: 18px; color: #0284c7;"></i>
+      <button onclick="window.shareToApp('telegram')" style="height: 52px; background: #f0fdf4; border: 1px solid #bfe3c8; border-radius: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; cursor: pointer; font-family: 'Cairo', sans-serif; font-size: 11px; font-weight: 900; color: #14532d;">
+        <i class="fa-brands fa-telegram" style="font-size: 18px; color: #12632b;"></i>
         <span>تلغرام</span>
       </button>
 
@@ -1437,7 +1438,7 @@ window.openTopStoresModal = function() {
     <!-- Direct Copy Link Bar -->
     <div style="background: #f1f5f9; border-radius: 14px; padding: 6px 8px; display: flex; align-items: center; gap: 6px;">
       <input type="text" id="share-modal-link-input" readonly style="flex: 1; border: none; background: transparent; font-size: 11px; font-family: monospace; color: #475569; outline: none; direction: ltr; padding: 4px;">
-      <button onclick="window.copyShareLink()" style="background: #0284c7; color: white; border: none; border-radius: 10px; padding: 8px 14px; font-family: 'Cairo', sans-serif; font-size: 11.5px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 4px;">
+      <button onclick="window.copyShareLink()" style="background: #12632b; color: white; border: none; border-radius: 10px; padding: 8px 14px; font-family: 'Cairo', sans-serif; font-size: 11.5px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 4px;">
         <i class="fa-solid fa-copy"></i> نسخ
       </button>
     </div>
