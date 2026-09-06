@@ -1,10 +1,26 @@
-/* ZaLo Marketplace Smart Sync Update: 2026-07-16 */
-/* ZaLo Marketplace Smart Custom Stylesheet */
+/* ZaLo Marketplace Smart — Unified Stylesheet */
+/* Design tokens fixed: 2026-09-06 — brand identity corrected to Emerald Green + Gold */
 
 :root {
-    --brand-green: #0ea5e9; /* Sky Blue replaces green */
-    --brand-green-hover: #0284c7; /* Darker Sky Blue */
-    --brand-gold: #d4af37;  /* Gold */
+    /* Primary brand color: Emerald Green (matches official logo) */
+    --brand-primary: #12632b;
+    --brand-primary-dark: #07220d;
+    --brand-primary-hover: #1F6B3A;
+    --brand-primary-tint: rgba(18, 99, 43, 0.08);
+    --brand-primary-tint-border: rgba(18, 99, 43, 0.25);
+
+    /* Accent brand color: Gold (matches official logo) */
+    --brand-gold: #d4af37;
+    --brand-gold-hover: #c9a227;
+    --brand-gold-tint: rgba(212, 175, 55, 0.15);
+
+    /* Neutrals */
+    --text-primary: #0f172a;
+    --text-muted: #64748b;
+    --bg-page: #f8fafc;
+    --bg-card: #ffffff;
+    --border-subtle: #e2e8f0;
+    --border: #cbd5e1;
 }
 
 /* Base resets & horizontal scroll prevention */
@@ -82,12 +98,12 @@ button,
 
 /* Default button styling with green branding colors */
 button:not(.btn-s):not(.btn-o):not(.btn-wa):not(.btn-r) {
-    background: var(--brand-green, #1a5c2a) !important;
+    background: var(--brand-primary) !important;
     color: #ffffff !important;
 }
 
 button:not(.btn-s):not(.btn-o):not(.btn-wa):not(.btn-r):hover {
-    background: var(--brand-green-hover, #237a38) !important;
+    background: var(--brand-primary-hover) !important;
 }
 
 button:active {
@@ -121,7 +137,7 @@ textarea,
 
 /* Form inputs styling */
 input, select, textarea {
-    border: 1px solid var(--border, #cbd5e1);
+    border: 1px solid var(--border);
     padding: 10px;
     font-family: 'Cairo', sans-serif;
     box-sizing: border-box;
@@ -130,27 +146,27 @@ input, select, textarea {
 
 input:focus, select:focus, textarea:focus {
     outline: none;
-    border-color: var(--brand-green, #1a5c2a) !important;
-    box-shadow: 0 0 0 3px rgba(26, 92, 42, 0.15) !important;
+    border-color: var(--brand-primary) !important;
+    box-shadow: 0 0 0 3px var(--brand-primary-tint) !important;
 }
 
 /* --- Unified Gold Border Header & Back Button System --- */
 .header-back-button {
-    background: rgba(26, 92, 42, 0.18) !important; /* Elegant light green background tint */
-    border: 2px solid var(--brand-gold, var(--gold, #d4af37)) !important; /* Golden Border */
+    background: var(--brand-primary-tint) !important;
+    border: 2px solid var(--brand-gold) !important; /* Golden Border */
     border-radius: 24px !important;
     padding: 6px 20px !important;
     font-family: 'Cairo', sans-serif !important;
     font-size: 13.5px !important;
     font-weight: 800 !important;
-    color: var(--brand-gold, var(--gold, #d4af37)) !important;
+    color: var(--brand-gold) !important;
     cursor: pointer;
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
     gap: 8px !important;
-    box-shadow: 0 3px 12px rgba(212, 175, 55, 0.2) !important;
+    box-shadow: 0 3px 12px var(--brand-gold-tint) !important;
     outline: none !important;
     text-decoration: none !important;
     width: auto !important; /* Avoid 100% width rule override */
@@ -159,14 +175,14 @@ input:focus, select:focus, textarea:focus {
 
 .header-back-button:hover, 
 .header-back-button:active {
-    background: rgba(212, 175, 55, 0.15) !important; /* Accent gold glow on action */
+    background: var(--brand-gold-tint) !important; /* Accent gold glow on action */
     transform: scale(0.97);
     box-shadow: 0 4px 16px rgba(212, 175, 55, 0.3) !important;
 }
 
 .topbar-standardized {
-    background: var(--brand-green, var(--g1, #1a5c2a)) !important;
-    border-bottom: 2px solid var(--brand-gold, var(--gold, #d4af37)) !important;
+    background: var(--brand-primary) !important;
+    border-bottom: 2px solid var(--brand-gold) !important;
     height: 56px !important;
     display: flex !important;
     align-items: center !important;
@@ -202,13 +218,13 @@ input:focus, select:focus, textarea:focus {
 /* --- ZaLo Unified Brand Overrides for Dashboard & Catalog Pages --- */
 .zalo-branded-body {
     font-family: 'Cairo', sans-serif !important;
-    background-color: #f8fafc !important; /* Elegant light slate/cream background */
-    color: #0f172a !important; /* Dark text for high readability */
+    background-color: var(--bg-page) !important;
+    color: var(--text-primary) !important;
 }
 
 .zalo-branded-header {
-    background-color: #ffffff !important;
-    border-bottom: 2px solid var(--brand-gold, #d4af37) !important;
+    background-color: var(--bg-card) !important;
+    border-bottom: 2px solid var(--brand-gold) !important;
     backdrop-filter: blur(12px) !important;
 }
 
@@ -217,9 +233,9 @@ input:focus, select:focus, textarea:focus {
 .bg-\[\#0f1c36\]\/50, 
 .bg-\[\#0f1c36\]\/40, 
 .bg-\[\#0f1c36\]\/30 {
-    background-color: #ffffff !important;
-    border-color: rgba(212, 175, 55, 0.25) !important;
-    color: #0f172a !important;
+    background-color: var(--bg-card) !important;
+    border-color: var(--brand-gold-tint) !important;
+    color: var(--text-primary) !important;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03) !important;
 }
 
@@ -228,15 +244,15 @@ input:focus, select:focus, textarea:focus {
 .bg-slate-900\/60, 
 .bg-slate-950,
 .bg-slate-950\/40 {
-    background-color: #ffffff !important;
+    background-color: var(--bg-card) !important;
     border-color: rgba(212, 175, 55, 0.15) !important;
-    color: #0f172a !important;
+    color: var(--text-primary) !important;
 }
 
 .border-slate-700\/50, 
 .border-slate-800, 
 .border-white\/10 {
-    border-color: #e2e8f0 !important;
+    border-color: var(--border-subtle) !important;
 }
 
 .text-\[\#D4AF37\],
@@ -244,26 +260,23 @@ input:focus, select:focus, textarea:focus {
 .text-emerald-400, 
 .text-amber-500,
 .text-zalo-gold {
-    color: var(--brand-gold, #d4af37) !important;
+    color: var(--brand-gold) !important;
 }
 
 .bg-emerald-500\/10, 
 .bg-amber-500\/10,
 .bg-sky-400\/10 {
-    background-color: rgba(14, 165, 233, 0.08) !important; /* Sky Blue light background tint */
-    border-color: rgba(14, 165, 233, 0.25) !important;
+    background-color: var(--brand-primary-tint) !important;
+    border-color: var(--brand-primary-tint-border) !important;
 }
 
 /* Form input styling overrides */
 input, select, textarea {
-    background-color: #ffffff !important;
-    border: 1px solid rgba(212, 175, 55, 0.3) !important;
-    color: #0f172a !important;
+    background-color: var(--bg-card) !important;
+    border: 1px solid var(--brand-gold-tint) !important;
+    color: var(--text-primary) !important;
 }
 input:focus, select:focus, textarea:focus {
-    border-color: var(--brand-green, #0ea5e9) !important;
-    box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15) !important;
+    border-color: var(--brand-primary) !important;
+    box-shadow: 0 0 0 3px var(--brand-primary-tint) !important;
 }
-
-
-
