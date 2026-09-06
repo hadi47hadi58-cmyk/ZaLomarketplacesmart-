@@ -1,15 +1,15 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192">
   <defs>
-    <linearGradient id="skyBg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#0ea5e9" />
-      <stop offset="100%" stop-color="#0284c7" />
+    <linearGradient id="brandBg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#12632b" />
+      <stop offset="100%" stop-color="#07220d" />
     </linearGradient>
     <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
       <feDropShadow dx="0" dy="4" stdDeviation="3" flood-color="#000000" flood-opacity="0.25"/>
     </filter>
   </defs>
-  <!-- Sky Blue Background -->
-  <rect width="192" height="192" rx="42" fill="url(#skyBg)"/>
+  <!-- Brand Emerald Green Background -->
+  <rect width="192" height="192" rx="42" fill="url(#brandBg)"/>
   
   <!-- Outer Gold Dotted Border -->
   <rect x="8" y="8" width="176" height="176" rx="34" fill="none" stroke="#d4af37" stroke-width="2.5" opacity="0.8" stroke-dasharray="6 3"/>
