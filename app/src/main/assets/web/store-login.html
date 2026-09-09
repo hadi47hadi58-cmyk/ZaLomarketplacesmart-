@@ -1,4 +1,4 @@
-<!-- ZaLo Marketplace Smart Sync Update: 2026-09-07 -->
+<!-- ZaLo Marketplace Smart Sync Update: 2026-09-09 -->
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -510,12 +510,23 @@
         sessionStorage.setItem('user_logged_in', 'true');
 
         try {
-          // 1. Fetch store from Supabase stores table
-          const { data: store } = await supabaseClient
-            .from('stores')
-            .select('*')
-            .or(`merchant_id.eq.${userId},merchant_email.eq.${userEmail},email.eq.${userEmail}`)
+          // 1. Resolve the numeric users.id from the Supabase Auth UUID first
+          //    (same pattern as fetchAndApplyCloudStoreProfile() in store-legacy.js),
+          //    then look up the store by that numeric merchant_id. Querying
+          //    stores.merchant_id directly with the UUID/email never matched anything.
+          const { data: uData } = await supabaseClient
+            .from('users')
+            .select('id')
+            .or(`supabase_uid.eq.${userId},email.eq.${userEmail}`)
             .maybeSingle();
+
+          const { data: store } = uData
+            ? await supabaseClient
+                .from('stores')
+                .select('*')
+                .eq('merchant_id', uData.id)
+                .maybeSingle()
+            : { data: null };
 
           if (store) {
             localStorage.setItem('zalo_current_store_id', store.id);
