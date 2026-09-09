@@ -1,4 +1,4 @@
-<!-- ZaLo Marketplace Smart Sync Update: 2026-07-16 -->
+<!-- ZaLo Marketplace Smart Sync Update: 2026-09-07 -->
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -6,17 +6,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>بوابة التاجر - ZaLo</title>
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#1a5c2a">
+  <meta name="theme-color" content="#12632b">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="#1a5c2a">
+  <meta name="apple-mobile-web-app-status-bar-style" content="#12632b">
   <link class="apple-touch-icon" href="assets/icon-192.svg">
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Great+Vibes&display=swap" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <style>
     :root {
-      --green: #0ea5e9; /* Sky Blue replaces green */
-      --green-light: #0284c7;
-      --green-dark: #0369a1;
+      --green: #12632b;
+      --green-light: #1F6B3A;
+      --green-dark: #07220d;
       --gold: #d4af37;
       --gold2: #dfb134;
       --bg: #fcfbfa; /* Light elegant cream background */
@@ -51,7 +51,7 @@
       content: '';
       position: fixed; inset: 0;
       background:
-        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(14,165,233,0.1) 0%, transparent 60%),
+        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(18,99,43,0.1) 0%, transparent 60%),
         radial-gradient(ellipse 60% 40% at 80% 100%, rgba(212,175,55,0.05) 0%, transparent 50%);
       pointer-events: none;
       z-index: 1;
@@ -77,14 +77,14 @@
       border: 2px dashed var(--gold);
       border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
-      background: rgba(26,92,42,0.2);
+      background: rgba(18,99,43,0.2);
     }
     .logo-inner {
       width: 76px; height: 76px;
       background: var(--green);
       border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 8px 24px rgba(26,92,42,0.4);
+      box-shadow: 0 8px 24px rgba(18,99,43,0.4);
     }
     .logo-inner img {
       width: 46px; height: 46px;
@@ -141,7 +141,7 @@
     }
     .form-input:focus {
       outline: none; border-color: var(--green);
-      box-shadow: 0 0 10px rgba(14,165,233,0.15);
+      box-shadow: 0 0 10px rgba(18,99,43,0.15);
       background: #ffffff;
     }
 
@@ -160,7 +160,7 @@
       border: 1px solid var(--gold);
       color: #fff; font-family: inherit; font-size: 13px; font-weight: 800;
       padding: 10px; border-radius: 10px; cursor: pointer;
-      box-shadow: 0 8px 24px rgba(26,92,42,0.25);
+      box-shadow: 0 8px 24px rgba(18,99,43,0.25);
       transition: all 0.25s ease;
       display: flex; align-items: center; justify-content: center; gap: 8px;
     }
@@ -181,9 +181,9 @@
     }
 
     .success-msg {
-      background: rgba(45, 140, 60, 0.1);
-      border: 1px solid rgba(45, 140, 60, 0.2);
-      color: #9cdcb0; padding: 10px; border-radius: 12px;
+      background: rgba(18, 99, 43, 0.1);
+      border: 1px solid rgba(18, 99, 43, 0.2);
+      color: #14532d; padding: 10px; border-radius: 12px;
       font-size: 12px; margin-bottom: 16px; text-align: center;
       display: none;
     }
@@ -233,7 +233,7 @@
       gap: 6px;
     }
     .tab-btn.active {
-      background: rgba(14, 165, 233, 0.1) !important;
+      background: rgba(18, 99, 43, 0.1) !important;
       color: var(--green) !important;
     }
   
@@ -327,7 +327,7 @@
         <div class="input-wrapper" style="position: relative; display: flex; align-items: center;">
           <i class="fa-solid fa-shield-halved input-icon"></i>
           <input type="text" id="otpCode" class="form-input" placeholder="أدخل رمز التحقق" maxlength="6" inputmode="numeric" style="padding-left: 90px; font-weight: 800; font-size: 9px;">
-          <button type="button" id="sendOtpInlineBtn" style="position: absolute; left: 8px; top: 50%; transform: translateY(-50%); background: rgba(14, 165, 233, 0.08); border: 1.5px solid rgba(14, 165, 233, 0.2); color: var(--green); font-family: 'Cairo', sans-serif; font-size: 9px; font-weight: 800; padding: 3px 8px; border-radius: 20px; cursor: pointer; transition: all 0.25s; z-index: 10; display: flex; align-items: center; gap: 4px; white-space: nowrap;">
+          <button type="button" id="sendOtpInlineBtn" style="position: absolute; left: 8px; top: 50%; transform: translateY(-50%); background: rgba(18, 99, 43, 0.08); border: 1.5px solid rgba(18, 99, 43, 0.2); color: var(--green); font-family: 'Cairo', sans-serif; font-size: 9px; font-weight: 800; padding: 3px 8px; border-radius: 20px; cursor: pointer; transition: all 0.25s; z-index: 10; display: flex; align-items: center; gap: 4px; white-space: nowrap;">
             أرسل الرمز 📨
           </button>
         </div>
@@ -340,7 +340,7 @@
       <!-- Privacy Policy Agreement -->
       <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 15px; font-family: 'Cairo', sans-serif; font-size: 9px; color: var(--text2); direction: rtl;">
         <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; user-select: none;">
-          <input type="checkbox" checked required style="accent-color: #22c55e; width: 16px; height: 16px; cursor: pointer; border-radius: 4px;">
+          <input type="checkbox" checked required style="accent-color: #12632b; width: 16px; height: 16px; cursor: pointer; border-radius: 4px;">
           <span>بالمتابعة، فإنك توافق على <a href="privacy.html" target="_blank" style="color: var(--green); text-decoration: underline; font-weight: bold;">سياسة الخصوصية</a> و <a href="terms.html" target="_blank" style="color: var(--green); text-decoration: underline; font-weight: bold;">الشروط والأحكام</a></span>
         </label>
       </div>
@@ -431,8 +431,8 @@
         if (sendOtpInlineBtn) {
           sendOtpInlineBtn.disabled = true;
           sendOtpInlineBtn.style.background = '#f0fdf4';
-          sendOtpInlineBtn.style.borderColor = '#bbf7d0';
-          sendOtpInlineBtn.style.color = '#16a34a';
+          sendOtpInlineBtn.style.borderColor = '#bfe3c8';
+          sendOtpInlineBtn.style.color = '#12632b';
           sendOtpInlineBtn.innerHTML = `تم الإرسال (${countdownVal}ث)`;
         }
         
@@ -452,8 +452,8 @@
       function resetOtpInlineBtn() {
         if (sendOtpInlineBtn) {
           sendOtpInlineBtn.disabled = false;
-          sendOtpInlineBtn.style.background = 'rgba(14, 165, 233, 0.08)';
-          sendOtpInlineBtn.style.borderColor = 'rgba(14, 165, 233, 0.2)';
+          sendOtpInlineBtn.style.background = 'rgba(18, 99, 43, 0.08)';
+          sendOtpInlineBtn.style.borderColor = 'rgba(18, 99, 43, 0.2)';
           sendOtpInlineBtn.style.color = 'var(--green)';
           sendOtpInlineBtn.innerHTML = 'إعادة إرسال 🔁';
         }
@@ -497,19 +497,6 @@
       if (sendOtpInlineBtn) {
         sendOtpInlineBtn.addEventListener('click', handleSendOtp);
       }
-
-      async function checkActiveSession() {
-        try {
-          const { data: { session } } = await supabaseClient.auth.getSession();
-          if (session && session.user) {
-            showSuccess('لديك جلسة نشطة بالفعل. جاري التوجيه...');
-            await window.handleUserRedirect();
-          }
-        } catch (e) {
-          console.warn("[Login] Session check failed:", e);
-        }
-      }
-      checkActiveSession();
 
       async function syncMerchantSession(userId, userEmail, token) {
         localStorage.setItem('zalo_session_jwt', token || ('token-' + Date.now()));
@@ -574,6 +561,51 @@
           console.warn("Could not sync remote merchant profile:", e);
         }
       }
+
+      // === FIX (2026-09-07): Google OAuth callback handler ===
+      // When the user signs in via Google, Supabase redirects back to this exact
+      // page (store-login.html) with #access_token=... in the URL hash. Previously
+      // nothing handled this return trip, so the merchant session was never synced
+      // and the user was never redirected to dashboard-store.html — they appeared
+      // to be "sent back to login" even though authentication had succeeded.
+      async function handleGoogleOAuthReturn() {
+        if (!window.location.hash.includes('access_token=')) return;
+
+        showSuccess('✅ تم التحقق من حساب Google، جاري إكمال تسجيل الدخول...');
+
+        // supabase-js needs a brief moment to parse the URL hash into a live session
+        let session = null;
+        for (let i = 0; i < 15; i++) {
+          const { data } = await supabaseClient.auth.getSession();
+          session = data && data.session;
+          if (session && session.user) break;
+          await new Promise(r => setTimeout(r, 300));
+        }
+
+        if (session && session.user) {
+          await syncMerchantSession(session.user.id, session.user.email, session.access_token);
+          showSuccess('✨ تم تسجيل الدخول بنجاح عبر Google! جاري التوجيه...');
+          setTimeout(() => window.location.replace('dashboard-store.html'), 500);
+        } else {
+          showError('تعذر إكمال تسجيل الدخول عبر Google. يرجى المحاولة مرة أخرى.');
+        }
+      }
+      handleGoogleOAuthReturn();
+
+      async function checkActiveSession() {
+        try {
+          if (window.location.hash.includes('access_token=')) return; // handled above
+          const { data: { session } } = await supabaseClient.auth.getSession();
+          if (session && session.user) {
+            showSuccess('لديك جلسة نشطة بالفعل. جاري التوجيه...');
+            await syncMerchantSession(session.user.id, session.user.email, session.access_token);
+            window.location.replace('dashboard-store.html');
+          }
+        } catch (e) {
+          console.warn("[Login] Session check failed:", e);
+        }
+      }
+      checkActiveSession();
 
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -642,7 +674,7 @@
               options: { redirectTo: window.location.origin + window.location.pathname, queryParams: { prompt: 'select_account' } }
             });
             if (error) throw error;
-            // Redirection happens automatically.
+            // Redirection happens automatically; handleGoogleOAuthReturn() picks up the return trip.
           }
         } catch (err) {
           showError(err.message || 'حدث خطأ في Google');
