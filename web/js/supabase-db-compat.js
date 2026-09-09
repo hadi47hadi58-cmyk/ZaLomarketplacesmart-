@@ -1,10 +1,20 @@
 import sessionManagerInstance from './session-manager.js';
-// ZaLo Marketplace Smart Sync Update: 2026-07-16
+// ZaLo Marketplace Smart Sync Update: 2026-09-09
 // ZaLo Smart Marketplace - Supabase & NestJS Unified Compatibility Layer
 // This file acts as a drop-in compatibility replacement module,
 // routing all operations completely and cleanly through Supabase AND our NestJS + PostgreSQL Backend.
 
 import { supabase } from './supabase-config.js';
+
+// === FIX (2026-09-09): Expose the Supabase client globally ===
+// This client was previously only available as an ES module export, so any
+// script that checks window.supabaseClient / window.supabase (session-manager.js,
+// store-login.html's Google OAuth handler, etc.) always saw `undefined` and
+// silently fell through to local-storage-only checks. That is the root cause
+// of the merchant/admin login redirect loop: the real Supabase session was
+// never reachable outside this module's own import scope.
+window.supabaseClient = supabase;
+window.supabase = supabase;
 
 const telemetry = {
     log: () => {},
@@ -1318,4 +1328,3 @@ window.triggerBiometricAuth = function() {
         window.onBiometricAuthFallback();
     }
 };
-
