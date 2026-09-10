@@ -1,4 +1,4 @@
-// ZaLo Marketplace Smart Sync Update: 2026-07-27
+// ZaLo Marketplace Smart Sync Update: 2026-09-09
 /**
  * ZaLo Smart Algerian Multivendor Marketplace
  * نظام إدارة الجلسات الذكي والتوجيه التلقائي الآمن - Smart Session Manager
@@ -33,13 +33,20 @@ export class SessionManager {
     const adminSession = sessionStorage.getItem('admin_logged_in_session');
     const path = window.location.pathname;
 
-    if (path.includes('dashboard-admin.html') && (adminSession === 'true' || localRole === 'ADMIN' || localRole === 'SUPER_ADMIN' || localToken || localEmail)) {
+    // FIX (2026-09-09): normalize role casing before comparing. Different parts of
+    // the codebase write the role with different casing (e.g. syncMerchantSession
+    // in store-login.html sets zalo_role='MERCHANT' but zalo_user_role='merchant'),
+    // so a strict === comparison could silently fail depending on which write path
+    // last touched the value.
+    const normalizedRole = (localRole || '').toUpperCase();
+
+    if (path.includes('dashboard-admin.html') && (adminSession === 'true' || normalizedRole === 'ADMIN' || normalizedRole === 'SUPER_ADMIN' || localToken || localEmail)) {
       return true;
     }
-    if (path.includes('dashboard-store.html') && (localRole === 'MERCHANT' || localToken || localEmail)) {
+    if (path.includes('dashboard-store.html') && (normalizedRole === 'MERCHANT' || localToken || localEmail)) {
       return true;
     }
-    if (path.includes('dashboard-manager.html') && (localRole === 'MANAGER' || localRole === 'TEAM' || localToken || localEmail)) {
+    if (path.includes('dashboard-manager.html') && (normalizedRole === 'MANAGER' || normalizedRole === 'TEAM' || localToken || localEmail)) {
       return true;
     }
     if (localToken && (localRole || localEmail)) {
