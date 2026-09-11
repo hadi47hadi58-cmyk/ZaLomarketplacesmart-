@@ -87,6 +87,15 @@ jobs:
           MAPS_API_KEY: ${{ secrets.MAPS_API_KEY || 'dummy-maps-key' }}
         run: ./gradlew assembleDebug || gradle assembleDebug
 
+      - name: Upload Debug APK as Artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: zalo-debug-apk
+          path: app/build/outputs/apk/debug/*.apk
+          retention-days: 14
+          if-no-files-found: warn
+
       - name: Debug Secret Availability
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
@@ -121,7 +130,7 @@ jobs:
             echo "| 🧪 اختبارات Unit & Robolectric | 🔴 فشلت (Failed) | يرجى مراجعة سجلات الـ Unit Tests لمعرفة تفاصيل الخطأ. |" >> $GITHUB_STEP_SUMMARY
           fi
           
-          echo "| 📦 بناء تطبيق الأندرويد (APK) | 🟢 تم البناء بنجاح | تم إنتاج ملف APK صالح للاختبار اليدوي. |" >> $GITHUB_STEP_SUMMARY
+          echo "| 📦 بناء تطبيق الأندرويد (APK) | 🟢 تم البناء بنجاح | تم إنتاج ملف APK صالح للاختبار اليدوي، ورُفع كـ Artifact قابل للتحميل من صفحة هذا التشغيل. |" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "📅 **تاريخ التشغيل**: $(date -u)" >> $GITHUB_STEP_SUMMARY
           echo "👤 **المشغل**: ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
