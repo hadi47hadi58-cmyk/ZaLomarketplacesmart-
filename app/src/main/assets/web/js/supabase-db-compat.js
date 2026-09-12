@@ -1,5 +1,5 @@
 import sessionManagerInstance from './session-manager.js';
-// ZaLo Marketplace Smart Sync Update: 2026-09-09
+// ZaLo Marketplace Smart Sync Update: 2026-09-11
 // ZaLo Smart Marketplace - Supabase & NestJS Unified Compatibility Layer
 // This file acts as a drop-in compatibility replacement module,
 // routing all operations completely and cleanly through Supabase AND our NestJS + PostgreSQL Backend.
@@ -51,20 +51,29 @@ window.handleUserRedirect = async function(providedSession = null) {
     
     // 2. فحص فوري لرتبة المستخدم بناءً على جدول المستخدمين
     let role = null;
-    
+
+    // === FIX (2026-09-11): resolve by supabase_uid OR email ===
+    // Previously this only matched users.supabase_uid — accounts whose row wasn't
+    // fully linked yet (or reached via the new unified email-OTP login) fell through
+    // to the default guess below. Matching by email too makes role resolution
+    // reliable for every login path (password, OTP, Google), not just the one
+    // that originally created the users row.
+    let resolvedNumericUserId = null;
+
     // 3. محاولة جلب الدور من جدول public.users مع إمكانية التكرار في حال تأخر الاستجابة
     let retries = 4;
     while (retries > 0 && !role) {
         try {
-            // محاولة القراءة من جدول المستخدمين الرئيسي (public.users) المرتبط عبر supabase_uid
+            // محاولة القراءة من جدول المستخدمين الرئيسي (public.users) عبر supabase_uid أو البريد
             const { data: dbUser, error: dbError } = await supabase
                 .from('users')
-                .select('role')
-                .eq('supabase_uid', user.id)
+                .select('id, role')
+                .or(`supabase_uid.eq.${user.id},email.eq.${email}`)
                 .maybeSingle();
 
             if (dbUser && dbUser.role) {
                 role = dbUser.role.toUpperCase();
+                resolvedNumericUserId = dbUser.id;
                 console.log(`[Role Routing] تم جلب الدور بنجاح من جدول المستخدمين الرئيسي: ${role}`);
                 break;
             }
@@ -100,6 +109,53 @@ window.handleUserRedirect = async function(providedSession = null) {
         else if (currentPath.includes("staff-login") || currentPath.includes("dashboard-manager")) { role = "MANAGER"; }
         else { role = "CUSTOMER"; }
         console.log("[Role Routing] تعذر حل الرتبة من قاعدة البيانات. الدور الافتراضي: " + role);
+    }
+
+    // === NEW (2026-09-11): Sync merchant store settings regardless of entry path ===
+    // Mirrors the resolution logic from syncMerchantSession() in store-login.html
+    // (resolve numeric users.id from the auth UUID/email first, since
+    // stores.merchant_id is numeric — never the UUID), so dashboard-store.html has
+    // what it needs whether the merchant logged in via the unified login.html,
+    // store-login.html, or native Google sign-in.
+    if (role === 'MERCHANT') {
+        try {
+            let numericId = resolvedNumericUserId;
+            if (!numericId) {
+                const { data: uData } = await supabase
+                    .from('users')
+                    .select('id')
+                    .or(`supabase_uid.eq.${user.id},email.eq.${email}`)
+                    .maybeSingle();
+                numericId = uData ? uData.id : null;
+            }
+
+            if (numericId) {
+                const { data: store } = await supabase
+                    .from('stores')
+                    .select('*')
+                    .eq('merchant_id', numericId)
+                    .maybeSingle();
+
+                if (store) {
+                    localStorage.setItem('zalo_current_store_id', store.id);
+                    localStorage.setItem('zalo_store_id', store.id);
+                    localStorage.setItem('zalo_active_store', store.name || 'متجر معتمد');
+                    localStorage.setItem('zalo_merchant_store_settings', JSON.stringify({
+                        id: store.id,
+                        storeName: store.name || 'متجرك المعتمد',
+                        phone: store.phone || '',
+                        wilaya: store.wilaya || 'الجزائر',
+                        commune: store.commune || store.baladiya || '',
+                        category: store.category || 'عام',
+                        logoImg: store.logo_url || 'assets/icon-192.svg',
+                        coverImg: store.banner_url || 'assets/icon-192.svg'
+                    }));
+                    console.log("[Role Routing] تمت مزامنة بيانات المتجر بنجاح:", store.name);
+                }
+            }
+        } catch (e) {
+            console.warn("[Role Routing] تعذّرت مزامنة بيانات المتجر:", e);
+        }
     }
 
     // 4. حفظ الدور بأمان في التخزين المحلي لتسهيل استخدامه في الواجهة الأمامية
