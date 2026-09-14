@@ -1,5 +1,5 @@
 import sessionManagerInstance from './session-manager.js';
-// ZaLo Marketplace Smart Sync Update: 2026-09-11
+// ZaLo Marketplace Smart Sync Update: 2026-09-12
 // ZaLo Smart Marketplace - Supabase & NestJS Unified Compatibility Layer
 // This file acts as a drop-in compatibility replacement module,
 // routing all operations completely and cleanly through Supabase AND our NestJS + PostgreSQL Backend.
@@ -1190,27 +1190,26 @@ export function onSnapshot(ref, callback, errCallback) {
 }
 
 // --- Biometric Authentication Bridge & Interactive Simulation ---
-window.onBiometricAuthSuccess = function() {
+// === FIX (2026-09-12): removed two real bugs ===
+// 1) `currentPath` was referenced but never declared anywhere in this function
+//    (ReferenceError on every real invocation — this code had never actually run).
+// 2) `window.triggerEmergencyBypass()` is not defined ANYWHERE in this project
+//    (web/ or app/) — calling it would throw a TypeError immediately after.
+//    It was a dead mock-auth code path, not a real, working bypass.
+// A genuine Supabase session already exists at this point (the user already
+// passed password/OTP/Google auth before being asked to confirm via fingerprint),
+// so we simply re-run the standard, real role-based redirect — no separate
+// bypass path is needed or safe to keep.
+window.onBiometricAuthSuccess = async function() {
     console.log("[Biometric Auth] Success callback triggered.");
     const successDiv = document.getElementById('successMsg') || document.getElementById('success-message');
     if (successDiv) {
         successDiv.textContent = '✨ تم التحقق من البصمة بنجاح! جاري الدخول السلس...';
         successDiv.style.display = 'block';
     }
-    
-    // Determine the role based on the current page to route appropriately
-    
-    let targetRole = 'ADMIN'; // Default to admin for general manager
-    if (currentPath.includes('store-login') || currentPath.includes('dashboard-store')) {
-        targetRole = 'MERCHANT';
-    } else if (currentPath.includes('staff-login') || currentPath.includes('dashboard-manager')) {
-        targetRole = 'STAFF';
-    } else if (currentPath.includes('customer-login') || currentPath.includes('customer-home')) {
-        targetRole = 'CUSTOMER';
-    }
-    
-    setTimeout(() => {
-        window.triggerEmergencyBypass(targetRole);
+
+    setTimeout(async () => {
+        await window.handleUserRedirect();
     }, 800);
 };
 
