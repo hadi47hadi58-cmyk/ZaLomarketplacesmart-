@@ -1,4 +1,4 @@
-// ZaLo Marketplace Smart Sync Update: 2026-09-09
+// ZaLo Marketplace Smart Sync Update: 2026-09-19
 /**
  * ZaLo Smart Algerian Multivendor Marketplace
  * نظام إدارة الجلسات الذكي والتوجيه التلقائي الآمن - Smart Session Manager
@@ -109,7 +109,7 @@ export class SessionManager {
 
   async handleAutoRedirection() {
     const path = window.location.pathname;
-    const isGuestPage = path.includes('-login.html') || path.includes('register');
+    const isGuestPage = path.includes('-login.html') || path.includes('login.html') || path.includes('register');
     const isProtectedPage = path.includes('dashboard');
 
     if (isProtectedPage) {
@@ -150,6 +150,10 @@ export class SessionManager {
     }
   }
 
+  // === FIX (2026-09-19): always send to the single unified login.html ===
+  // Previously this picked one of four separate old login pages by path
+  // (customer/admin/store/staff-login.html) — all four now just redirect
+  // to login.html anyway, so we skip the extra hop and target it directly.
   async logoutAndRedirect() {
     try {
       if (window.supabaseClient && window.supabaseClient.auth) {
@@ -162,13 +166,8 @@ export class SessionManager {
     } catch(e){}
 
     const currentPath = window.location.pathname;
-    let targetLogin = 'customer-login.html';
-    if (currentPath.includes('dashboard-admin')) targetLogin = 'admin-login.html';
-    else if (currentPath.includes('dashboard-store')) targetLogin = 'store-login.html';
-    else if (currentPath.includes('dashboard-manager')) targetLogin = 'staff-login.html';
-
-    if (!currentPath.includes('-login.html')) {
-      window.location.replace(targetLogin);
+    if (!currentPath.includes('login.html')) {
+      window.location.replace('login.html');
     }
   }
 }
