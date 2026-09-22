@@ -1,4 +1,4 @@
-<!-- ZaLo Marketplace Smart Sync Update: 2026-09-11 -->
+<!-- ZaLo Marketplace Smart Sync Update: 2026-09-20 -->
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -36,28 +36,17 @@
     }
     .wrapper { width: 100%; max-width: 320px; max-height: 96vh; overflow-y: auto; padding: 14px; animation: fadeUp 0.4s ease-out; }
     @keyframes fadeUp { from { opacity:0; transform: translateY(20px);} to {opacity:1; transform: translateY(0);} }
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     .logo-area { text-align: center; margin-bottom: 6px; display: flex; flex-direction: column; align-items: center; cursor: pointer; }
-    .card { background: var(--card); border: 1.5px solid var(--border); border-radius: 16px; padding: 18px 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.04); margin-top: 8px; }
-    .card-title { font-size: 14px; font-weight: 900; color: var(--text); margin-bottom: 16px; text-align: center; }
-    .form-group { margin-bottom: 14px; text-align: right; }
-    .form-label { display: block; font-size: 12px; font-weight: 700; color: var(--gold2); margin-bottom: 4px; }
-    .input-wrapper { position: relative; }
-    .input-icon { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: var(--text2); font-size: 12px; }
-    .form-input { width: 100%; background: #ffffff; border: 1.5px solid var(--border); border-radius: 10px; padding: 11px 36px 11px 12px; color: var(--text); font-family: inherit; font-size: 13px; text-align: right; transition: all .2s; }
-    .form-input:focus { outline: none; border-color: var(--green); box-shadow: 0 0 0 3px rgba(31,138,76,0.1); }
-    .toggle-pass { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text2); cursor: pointer; font-size: 12px; padding: 4px; }
-    .submit-btn { width: 100%; background: #ffffff; border: 2px solid var(--green); color: var(--green); font-family: inherit; font-size: 13.5px; font-weight: 800; padding: 11px; border-radius: 10px; cursor: pointer; transition: all .2s; display:flex; align-items:center; justify-content:center; gap:8px; }
-    .submit-btn:hover { background: rgba(31,138,76,0.08); }
-    .submit-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+    .card { background: var(--card); border: 1.5px solid var(--border); border-radius: 16px; padding: 22px 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.04); margin-top: 10px; }
+    .card-title { font-size: 15px; font-weight: 900; color: var(--text); margin-bottom: 6px; text-align: center; }
+    .card-subtitle { font-size: 11.5px; color: var(--text2); text-align: center; margin-bottom: 22px; line-height: 1.6; }
     .error-msg, .success-msg { padding: 10px; border-radius: 10px; font-size: 12px; margin-bottom: 14px; text-align: center; display: none; }
     .error-msg { background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2); color: var(--red); }
     .success-msg { background: rgba(31,138,76,0.08); border: 1px solid rgba(31,138,76,0.2); color: var(--green-dark); }
-    .login-tabs { display: flex; background: rgba(148,163,184,0.08); border: 1.5px solid var(--border); border-radius: 10px; padding: 4px; margin-bottom: 14px; gap: 4px; }
-    .tab-btn { flex: 1; background: transparent; border: none; padding: 8px; border-radius: 8px; font-family: 'Cairo', sans-serif; font-size: 12.5px; font-weight: 800; color: var(--text2); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
-    .tab-btn.active { background: rgba(31,138,76,0.1) !important; color: var(--green) !important; }
-    .register-link { text-align: center; margin-top: 14px; font-size: 11px; color: var(--text2); }
-    .register-link a { color: var(--gold2); font-weight: 800; text-decoration: none; }
+    .google-btn { width:100%; padding:14px; background:white; border:2px solid var(--green); border-radius:12px; font-family:'Cairo',sans-serif; font-weight:800; font-size:13.5px; color: var(--green); cursor:pointer; display:flex; align-items:center; justify-content:center; gap:10px; transition: all .2s; }
+    .google-btn:hover { background: rgba(31,138,76,0.08); }
+    .google-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .register-link { text-align: center; margin-top: 18px; font-size: 11px; color: var(--text2); }
   </style>
 </head>
 <body>
@@ -87,79 +76,32 @@
 
   <div class="card">
     <h2 class="card-title">🔐 تسجيل الدخول</h2>
+    <p class="card-subtitle">دخول فوري وآمن بحساب Google، بدون كلمات مرور</p>
 
     <div id="errorMsg" class="error-msg"></div>
     <div id="successMsg" class="success-msg"></div>
 
-    <!-- Loading overlay while the initial session check runs, to avoid a "flash" of the login form -->
-    <div id="sessionCheckOverlay" style="display:flex; flex-direction:column; align-items:center; gap:10px; padding: 24px 0;">
+    <!-- Loading overlay while the initial session check runs -->
+    <div id="sessionCheckOverlay" style="display:flex; flex-direction:column; align-items:center; gap:10px; padding: 20px 0;">
       <i class="fa-solid fa-spinner fa-spin" style="font-size: 22px; color: var(--green);"></i>
       <span style="font-size:12px; font-weight:700; color: var(--text2);">جاري التحقق من جلستك...</span>
     </div>
 
     <div id="loginFormWrap" style="display:none;">
-      <form id="loginForm">
-        <div class="form-group">
-          <label class="form-label">البريد الإلكتروني ✉️</label>
-          <div class="input-wrapper">
-            <i class="fa-solid fa-envelope input-icon"></i>
-            <input type="email" id="email" class="form-input" placeholder="example@domain.com" required autocomplete="email">
-          </div>
-        </div>
-
-        <div class="login-tabs">
-          <button type="button" class="tab-btn active" id="modeOtpBtn"><i class="fa-solid fa-envelope"></i> رمز التحقق</button>
-          <button type="button" class="tab-btn" id="modePassBtn"><i class="fa-solid fa-lock"></i> كلمة المرور</button>
-        </div>
-
-        <div class="form-group" id="passGroup" style="display: none; animation: fadeIn 0.3s ease-out;">
-          <label class="form-label">كلمة المرور 🔑</label>
-          <div class="input-wrapper">
-            <i class="fa-solid fa-lock input-icon"></i>
-            <input type="password" id="password" class="form-input" placeholder="أدخل كلمة المرور">
-            <i class="fa-solid fa-eye toggle-pass" id="togglePass"></i>
-          </div>
-        </div>
-
-        <div class="form-group" id="otpGroup" style="animation: fadeIn 0.3s ease-out;">
-          <label class="form-label" id="otpLabel">رمز التحقق 🛡️</label>
-          <div class="input-wrapper" style="display:flex; align-items:center;">
-            <i class="fa-solid fa-shield-halved input-icon"></i>
-            <input type="text" id="otpCode" class="form-input" placeholder="أدخل رمز التحقق" maxlength="6" inputmode="numeric" style="padding-left: 90px; font-weight: 800;">
-            <button type="button" id="sendOtpInlineBtn" style="position:absolute; left:8px; top:50%; transform:translateY(-50%); background: rgba(31,138,76,0.08); border:1.5px solid rgba(31,138,76,0.2); color: var(--green); font-family:'Cairo',sans-serif; font-size:9px; font-weight:800; padding:3px 8px; border-radius:20px; cursor:pointer; white-space:nowrap;">أرسل الرمز 📨</button>
-          </div>
-        </div>
-
-        <button type="submit" class="submit-btn" id="loginBtn">تسجيل الدخول 🚀</button>
-
-        <div style="display:flex; align-items:center; justify-content:center; gap:8px; margin-top:14px; font-size:9px; color: var(--text2); direction: rtl;">
-          <label style="display:flex; align-items:center; gap:6px; cursor:pointer; user-select:none;">
-            <input type="checkbox" checked required style="accent-color:#1F8A4C; width:16px; height:16px; cursor:pointer;">
-            <span>بالمتابعة، فإنك توافق على <a href="privacy.html" target="_blank" style="color:var(--green); text-decoration:underline; font-weight:bold;">سياسة الخصوصية</a> و <a href="terms.html" target="_blank" style="color:var(--green); text-decoration:underline; font-weight:bold;">الشروط والأحكام</a></span>
-          </label>
-        </div>
-      </form>
-
-      <div style="margin: 14px 0 10px; display:flex; align-items:center; justify-content:center;">
-        <div style="height:1px; background: var(--border); flex:1;"></div>
-        <span style="margin:0 10px; color: var(--text2); font-size:12px; font-weight:700;">أو الدخول عبر</span>
-        <div style="height:1px; background: var(--border); flex:1;"></div>
-      </div>
-      <button type="button" id="googleLoginBtn" style="width:100%; padding:12px; background:white; border:2px solid #e2e8f0; border-radius:12px; font-family:'Cairo',sans-serif; font-weight:800; font-size:12px; color:#1e293b; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;">
-        <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" style="width:16px; height:16px;">
+      <button type="button" id="googleLoginBtn" class="google-btn">
+        <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" style="width:18px; height:18px;">
         المتابعة بحساب Google
       </button>
 
-      <div class="register-link" style="display:flex; justify-content:space-between; align-items:center;">
-        <a href="forgot-password.html" style="color: var(--text2); font-weight:700; text-decoration: underline;">نسيت كلمة المرور؟</a>
-        <a href="register.html">إنشاء حساب جديد</a>
+      <div class="register-link">
+        <a href="customer-home.html" style="color: var(--text2); text-decoration:underline;">تخطي والتسوق كزائر 🎁</a>
       </div>
-      <div style="text-align:center; margin-top:10px;">
-        <a href="customer-home.html" style="font-size:11px; color: var(--text2); text-decoration:underline;">تخطي والتسوق كزائر 🎁</a>
+      <div class="register-link" style="margin-top:8px;">
+        <a href="register-step1.html" style="color: var(--gold2); font-weight:800; text-decoration:none;">💼 هل تملك متجراً؟ سجّل كتاجر شريك</a>
       </div>
-      <div style="text-align:center; margin-top:6px;">
-        <a href="register-step1.html" style="font-size:11px; color: var(--gold2); font-weight:800; text-decoration:none;">💼 هل تملك متجراً؟ سجّل كتاجر شريك</a>
-      </div>
+      <p style="font-size:9px; color: var(--text2); text-align:center; margin-top:16px; line-height:1.6;">
+        بالمتابعة، فإنك توافق على <a href="privacy.html" target="_blank" style="color:var(--green); font-weight:bold;">سياسة الخصوصية</a> و <a href="terms.html" target="_blank" style="color:var(--green); font-weight:bold;">الشروط والأحكام</a>
+      </p>
     </div>
   </div>
 </div>
@@ -171,31 +113,17 @@
 
       const overlay = document.getElementById('sessionCheckOverlay');
       const formWrap = document.getElementById('loginFormWrap');
-      const form = document.getElementById('loginForm');
       const errorDiv = document.getElementById('errorMsg');
       const successDiv = document.getElementById('successMsg');
-      const loginBtn = document.getElementById('loginBtn');
-      const sendOtpInlineBtn = document.getElementById('sendOtpInlineBtn');
-      const modeOtpBtn = document.getElementById('modeOtpBtn');
-      const modePassBtn = document.getElementById('modePassBtn');
-      const otpGroup = document.getElementById('otpGroup');
-      const passGroup = document.getElementById('passGroup');
-      const togglePass = document.getElementById('togglePass');
+      const googleLoginBtn = document.getElementById('googleLoginBtn');
 
-      let currentMode = 'otp';
-      let otpSent = false;
-
-      function showForm() {
-        overlay.style.display = 'none';
-        formWrap.style.display = 'block';
-      }
+      function showForm() { overlay.style.display = 'none'; formWrap.style.display = 'block'; }
       function showError(msg) { errorDiv.textContent = msg; errorDiv.style.display = 'block'; }
       function showSuccess(msg) { successDiv.textContent = msg; successDiv.style.display = 'block'; }
 
-      // === Unified redirect after ANY successful sign-in ===
       // Reuses the shared window.handleUserRedirect() (defined in supabase-db-compat.js)
       // so role resolution (customer/merchant/admin/manager) is identical no matter
-      // which login page or method was used — this is the single source of truth.
+      // which page or method reached login — single source of truth.
       async function completeLogin(session) {
         showSuccess('✨ تم تسجيل الدخول بنجاح! جاري تحديد وجهتك...');
         if (window.handleUserRedirect) {
@@ -205,21 +133,22 @@
         }
       }
 
-      // === Initial session check (awaited, no premature redirect flash) ===
+      // Initial session check (awaited, no premature redirect flash)
       try {
         const { data: { session } } = await supabaseClient.auth.getSession();
         if (session && session.user) {
           showSuccess('لديك جلسة نشطة بالفعل. جاري التوجيه...');
           await completeLogin(session);
-          return; // Stop here; navigation is underway
+          return;
         }
       } catch (e) {
         console.warn('[Login] Initial session check failed:', e);
       }
       showForm();
 
-      // === Handle Google OAuth return trip (web browser flow only; the native
-      // Android path calls window.onGoogleIdTokenReceived directly instead) ===
+      // Handle Google OAuth return trip (web browser flow only; the native
+      // Android path calls window.onGoogleIdTokenReceived directly instead,
+      // via handleGoogleLogin() below).
       if (window.location.hash.includes('access_token=')) {
         showSuccess('✅ تم التحقق من حساب Google، جاري إكمال تسجيل الدخول...');
         let session = null;
@@ -233,83 +162,33 @@
         showError('تعذر إكمال تسجيل الدخول عبر Google. يرجى المحاولة مرة أخرى.');
       }
 
-      modeOtpBtn.addEventListener('click', () => {
-        currentMode = 'otp';
-        modeOtpBtn.classList.add('active'); modePassBtn.classList.remove('active');
-        otpGroup.style.display = 'block'; passGroup.style.display = 'none';
-      });
-      modePassBtn.addEventListener('click', () => {
-        currentMode = 'password';
-        modeOtpBtn.classList.remove('active'); modePassBtn.classList.add('active');
-        otpGroup.style.display = 'none'; passGroup.style.display = 'block';
-      });
-      togglePass.addEventListener('click', () => {
-        const p = document.getElementById('password');
-        p.type = p.type === 'password' ? 'text' : 'password';
-        togglePass.className = p.type === 'password' ? 'fa-solid fa-eye toggle-pass' : 'fa-solid fa-eye-slash toggle-pass';
-      });
-
-      const googleLoginBtn = document.getElementById('googleLoginBtn');
-      googleLoginBtn.addEventListener('click', () => window.handleGoogleLogin());
-
-      // === Real Supabase email OTP (magic code) — not a custom mock, so the
-      // resulting session always has a genuine supabase_uid, keeping role
-      // resolution in handleUserRedirect() reliable for every login path. ===
-      async function handleSendOtp() {
-        const email = document.getElementById('email').value.trim();
-        if (!email || !email.includes('@')) { showError('يرجى إدخال بريد إلكتروني صحيح أولاً ✉️'); return; }
-        sendOtpInlineBtn.disabled = true;
-        sendOtpInlineBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
-        errorDiv.style.display = 'none'; successDiv.style.display = 'none';
+      // === FIX (2026-09-20): handleGoogleLogin was missing entirely from this
+      // page (only ever existed in the old store-login.html), so the button did
+      // nothing. Defined here directly: native Android path uses the Google SDK
+      // account chooser via AndroidInterface (result comes back through
+      // window.onGoogleIdTokenReceived in supabase-db-compat.js); the web/browser
+      // fallback uses a normal Supabase OAuth redirect, handled by the
+      // access_token hash check above on return. ===
+      window.handleGoogleLogin = async function() {
         try {
-          const { error } = await supabaseClient.auth.signInWithOtp({ email, options: { shouldCreateUser: true } });
-          if (error) throw error;
-          otpSent = true;
-          showSuccess('📥 تم إرسال رمز التحقق إلى بريدك بنجاح!');
-          document.getElementById('otpCode').focus();
+          googleLoginBtn.disabled = true;
+          showSuccess('جاري بدء تسجيل الدخول الآمن عبر Google...');
+          if (window.AndroidInterface && typeof window.AndroidInterface.requestGoogleSignIn === 'function') {
+            window.AndroidInterface.requestGoogleSignIn();
+          } else {
+            const { error } = await supabaseClient.auth.signInWithOAuth({
+              provider: 'google',
+              options: { redirectTo: window.location.origin + window.location.pathname, queryParams: { prompt: 'select_account' } }
+            });
+            if (error) throw error;
+          }
         } catch (err) {
-          showError(err.message || 'فشل إرسال رمز التحقق.');
-        } finally {
-          sendOtpInlineBtn.disabled = false;
-          sendOtpInlineBtn.innerHTML = 'إعادة إرسال 🔁';
+          showError(err.message || 'حدث خطأ في تسجيل الدخول عبر Google');
+          googleLoginBtn.disabled = false;
         }
-      }
-      sendOtpInlineBtn.addEventListener('click', handleSendOtp);
+      };
 
-      form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        errorDiv.style.display = 'none'; successDiv.style.display = 'none';
-        const email = document.getElementById('email').value.trim();
-
-        if (currentMode === 'otp') {
-          if (!otpSent) { await handleSendOtp(); return; }
-          const code = document.getElementById('otpCode').value.trim();
-          if (!code || code.length < 4) { showError('يرجى إدخال رمز التحقق 🔢'); return; }
-          loginBtn.disabled = true;
-          loginBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري التحقق...';
-          try {
-            const { data, error } = await supabaseClient.auth.verifyOtp({ email, token: code, type: 'email' });
-            if (error) throw error;
-            await completeLogin(data.session);
-          } catch (err) {
-            showError(err.message || 'رمز التحقق غير صحيح ❌');
-            loginBtn.disabled = false; loginBtn.innerHTML = 'تسجيل الدخول 🚀';
-          }
-        } else {
-          const password = document.getElementById('password').value.trim();
-          if (!password) { showError('يرجى إدخال كلمة المرور 🔑'); return; }
-          loginBtn.disabled = true;
-          loginBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري تسجيل الدخول...';
-          try {
-            const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
-            if (error) throw error;
-            await completeLogin(data.session);
-          } catch (err) {
-            showError(err.message || 'فشل تسجيل الدخول ❌');
-            loginBtn.disabled = false; loginBtn.innerHTML = 'تسجيل الدخول 🚀';
-          }
-        }
-      });
+      googleLoginBtn.addEventListener('click', () => window.handleGoogleLogin());
     } catch (e) {
       console.error('Initialization failed:', e);
       document.getElementById('sessionCheckOverlay').style.display = 'none';
