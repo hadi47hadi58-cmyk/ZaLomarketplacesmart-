@@ -1,4 +1,4 @@
-<!-- ZaLo Marketplace Smart Sync Update: 2026-09-20 -->
+<!-- ZaLo Marketplace Smart Sync Update: 2026-09-22 -->
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -36,17 +36,29 @@
     }
     .wrapper { width: 100%; max-width: 320px; max-height: 96vh; overflow-y: auto; padding: 14px; animation: fadeUp 0.4s ease-out; }
     @keyframes fadeUp { from { opacity:0; transform: translateY(20px);} to {opacity:1; transform: translateY(0);} }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     .logo-area { text-align: center; margin-bottom: 6px; display: flex; flex-direction: column; align-items: center; cursor: pointer; }
-    .card { background: var(--card); border: 1.5px solid var(--border); border-radius: 16px; padding: 22px 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.04); margin-top: 10px; }
+    .card { background: var(--card); border: 1.5px solid var(--border); border-radius: 16px; padding: 20px 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.04); margin-top: 10px; }
     .card-title { font-size: 15px; font-weight: 900; color: var(--text); margin-bottom: 6px; text-align: center; }
-    .card-subtitle { font-size: 11.5px; color: var(--text2); text-align: center; margin-bottom: 22px; line-height: 1.6; }
+    .card-subtitle { font-size: 11.5px; color: var(--text2); text-align: center; margin-bottom: 18px; line-height: 1.6; }
     .error-msg, .success-msg { padding: 10px; border-radius: 10px; font-size: 12px; margin-bottom: 14px; text-align: center; display: none; }
     .error-msg { background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2); color: var(--red); }
     .success-msg { background: rgba(31,138,76,0.08); border: 1px solid rgba(31,138,76,0.2); color: var(--green-dark); }
-    .google-btn { width:100%; padding:14px; background:white; border:2px solid var(--green); border-radius:12px; font-family:'Cairo',sans-serif; font-weight:800; font-size:13.5px; color: var(--green); cursor:pointer; display:flex; align-items:center; justify-content:center; gap:10px; transition: all .2s; }
+    .google-btn { width:100%; padding:13px; background:white; border:2px solid var(--green); border-radius:12px; font-family:'Cairo',sans-serif; font-weight:800; font-size:13px; color: var(--green); cursor:pointer; display:flex; align-items:center; justify-content:center; gap:10px; transition: all .2s; }
     .google-btn:hover { background: rgba(31,138,76,0.08); }
-    .google-btn:disabled { opacity: 0.6; cursor: not-allowed; }
-    .register-link { text-align: center; margin-top: 18px; font-size: 11px; color: var(--text2); }
+    .google-btn:disabled, .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .divider { margin: 16px 0; display:flex; align-items:center; justify-content:center; }
+    .divider .line { height:1px; background: var(--border); flex:1; }
+    .divider span { margin:0 10px; color: var(--text2); font-size:12px; font-weight:700; }
+    .form-group { margin-bottom: 14px; text-align: right; }
+    .form-label { display: block; font-size: 12px; font-weight: 700; color: var(--gold2); margin-bottom: 4px; }
+    .input-wrapper { position: relative; }
+    .input-icon { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: var(--text2); font-size: 12px; }
+    .form-input { width: 100%; background: #ffffff; border: 1.5px solid var(--border); border-radius: 10px; padding: 11px 36px 11px 12px; color: var(--text); font-family: inherit; font-size: 13px; text-align: right; transition: all .2s; }
+    .form-input:focus { outline: none; border-color: var(--green); box-shadow: 0 0 0 3px rgba(31,138,76,0.1); }
+    .submit-btn { width: 100%; background: #ffffff; border: 2px solid var(--green); color: var(--green); font-family: inherit; font-size: 13.5px; font-weight: 800; padding: 11px; border-radius: 10px; cursor: pointer; transition: all .2s; display:flex; align-items:center; justify-content:center; gap:8px; }
+    .submit-btn:hover { background: rgba(31,138,76,0.08); }
+    .register-link { text-align: center; margin-top: 16px; font-size: 11px; color: var(--text2); }
   </style>
 </head>
 <body>
@@ -76,7 +88,7 @@
 
   <div class="card">
     <h2 class="card-title">🔐 تسجيل الدخول</h2>
-    <p class="card-subtitle">دخول فوري وآمن بحساب Google، بدون كلمات مرور</p>
+    <p class="card-subtitle">بدون كلمات مرور — عبر Google أو رمز تحقق للبريد</p>
 
     <div id="errorMsg" class="error-msg"></div>
     <div id="successMsg" class="success-msg"></div>
@@ -92,6 +104,29 @@
         <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" style="width:18px; height:18px;">
         المتابعة بحساب Google
       </button>
+
+      <div class="divider"><div class="line"></div><span>أو عبر البريد الإلكتروني</span><div class="line"></div></div>
+
+      <form id="loginForm">
+        <div class="form-group">
+          <label class="form-label">البريد الإلكتروني ✉️</label>
+          <div class="input-wrapper">
+            <i class="fa-solid fa-envelope input-icon"></i>
+            <input type="email" id="email" class="form-input" placeholder="example@domain.com" required autocomplete="email">
+          </div>
+        </div>
+
+        <div class="form-group" id="otpGroup" style="animation: fadeIn 0.3s ease-out;">
+          <label class="form-label" id="otpLabel">رمز التحقق 🛡️</label>
+          <div class="input-wrapper" style="display:flex; align-items:center;">
+            <i class="fa-solid fa-shield-halved input-icon"></i>
+            <input type="text" id="otpCode" class="form-input" placeholder="أدخل رمز التحقق" maxlength="6" inputmode="numeric" style="padding-left: 90px; font-weight: 800;">
+            <button type="button" id="sendOtpInlineBtn" style="position:absolute; left:8px; top:50%; transform:translateY(-50%); background: rgba(31,138,76,0.08); border:1.5px solid rgba(31,138,76,0.2); color: var(--green); font-family:'Cairo',sans-serif; font-size:9px; font-weight:800; padding:3px 8px; border-radius:20px; cursor:pointer; white-space:nowrap;">أرسل الرمز 📨</button>
+          </div>
+        </div>
+
+        <button type="submit" class="submit-btn" id="loginBtn">تسجيل الدخول 🚀</button>
+      </form>
 
       <div class="register-link">
         <a href="customer-home.html" style="color: var(--text2); text-decoration:underline;">تخطي والتسوق كزائر 🎁</a>
@@ -113,9 +148,14 @@
 
       const overlay = document.getElementById('sessionCheckOverlay');
       const formWrap = document.getElementById('loginFormWrap');
+      const form = document.getElementById('loginForm');
       const errorDiv = document.getElementById('errorMsg');
       const successDiv = document.getElementById('successMsg');
+      const loginBtn = document.getElementById('loginBtn');
+      const sendOtpInlineBtn = document.getElementById('sendOtpInlineBtn');
       const googleLoginBtn = document.getElementById('googleLoginBtn');
+
+      let otpSent = false;
 
       function showForm() { overlay.style.display = 'none'; formWrap.style.display = 'block'; }
       function showError(msg) { errorDiv.textContent = msg; errorDiv.style.display = 'block'; }
@@ -162,13 +202,6 @@
         showError('تعذر إكمال تسجيل الدخول عبر Google. يرجى المحاولة مرة أخرى.');
       }
 
-      // === FIX (2026-09-20): handleGoogleLogin was missing entirely from this
-      // page (only ever existed in the old store-login.html), so the button did
-      // nothing. Defined here directly: native Android path uses the Google SDK
-      // account chooser via AndroidInterface (result comes back through
-      // window.onGoogleIdTokenReceived in supabase-db-compat.js); the web/browser
-      // fallback uses a normal Supabase OAuth redirect, handled by the
-      // access_token hash check above on return. ===
       window.handleGoogleLogin = async function() {
         try {
           googleLoginBtn.disabled = true;
@@ -187,8 +220,51 @@
           googleLoginBtn.disabled = false;
         }
       };
-
       googleLoginBtn.addEventListener('click', () => window.handleGoogleLogin());
+
+      // Real Supabase email OTP (magic code) — the resulting session always has
+      // a genuine supabase_uid, keeping role resolution in handleUserRedirect()
+      // reliable.
+      async function handleSendOtp() {
+        const email = document.getElementById('email').value.trim();
+        if (!email || !email.includes('@')) { showError('يرجى إدخال بريد إلكتروني صحيح أولاً ✉️'); return; }
+        sendOtpInlineBtn.disabled = true;
+        sendOtpInlineBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+        errorDiv.style.display = 'none'; successDiv.style.display = 'none';
+        try {
+          const { error } = await supabaseClient.auth.signInWithOtp({ email, options: { shouldCreateUser: true } });
+          if (error) throw error;
+          otpSent = true;
+          showSuccess('📥 تم إرسال رمز التحقق إلى بريدك بنجاح!');
+          document.getElementById('otpCode').focus();
+        } catch (err) {
+          showError(err.message || 'فشل إرسال رمز التحقق.');
+        } finally {
+          sendOtpInlineBtn.disabled = false;
+          sendOtpInlineBtn.innerHTML = 'إعادة إرسال 🔁';
+        }
+      }
+      sendOtpInlineBtn.addEventListener('click', handleSendOtp);
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        errorDiv.style.display = 'none'; successDiv.style.display = 'none';
+        const email = document.getElementById('email').value.trim();
+
+        if (!otpSent) { await handleSendOtp(); return; }
+        const code = document.getElementById('otpCode').value.trim();
+        if (!code || code.length < 4) { showError('يرجى إدخال رمز التحقق 🔢'); return; }
+        loginBtn.disabled = true;
+        loginBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري التحقق...';
+        try {
+          const { data, error } = await supabaseClient.auth.verifyOtp({ email, token: code, type: 'email' });
+          if (error) throw error;
+          await completeLogin(data.session);
+        } catch (err) {
+          showError(err.message || 'رمز التحقق غير صحيح ❌');
+          loginBtn.disabled = false; loginBtn.innerHTML = 'تسجيل الدخول 🚀';
+        }
+      });
     } catch (e) {
       console.error('Initialization failed:', e);
       document.getElementById('sessionCheckOverlay').style.display = 'none';
