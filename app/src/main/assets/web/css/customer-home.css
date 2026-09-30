@@ -1,13 +1,20 @@
-
 * { margin: 0; padding: 0; box-sizing: border-box; } :root {
-  --brand-green: #0ea5e9; /* Sky Blue replaces green */
+  /* === FIX (2026-09-29): this file had its OWN separate, un-fixed copy of the
+     "sky blue disguised as green" bug from style.css — --brand-green and
+     --premium-green were both #0ea5e9 (sky blue), and the page background was
+     a pale blue tint. Corrected to the real brand green/gold here too, and
+     --navy (used everywhere as heading text AND as dark header/modal
+     backgrounds) moved from a blue-navy hue to a neutral dark slate so large
+     dark surfaces read as premium neutral chrome rather than a second,
+     unofficial "blue brand color". === */
+  --brand-green: #1F8A4C;
   --brand-gold: #d4af37;
-  --g1: #0ea5e9;
-  --g2: #0284c7;
-  --g3: #0369a1;
+  --g1: #1F8A4C;
+  --g2: #17703D;
+  --g3: #125C32;
   --gold: #d4af37;
   --gold2: #dfb134;
-  --bg: #f0f9ff; /* Very light sky blue background */
+  --bg: #f8fafc; /* neutral light background, not blue-tinted */
   --white: #ffffff;
   --text: #0f172a;
   --gray: #64748b;
@@ -15,9 +22,9 @@
   --red: #ef4444;
 
   /* Premium theme extensions */
-  --navy: #0c4a6e; /* Deep ocean blue */
+  --navy: #0f172a; /* neutral dark slate — used for headings AND dark chrome; no blue */
   --metallic-gold: #d4af37;
-  --premium-green: #0ea5e9;
+  --premium-green: #1F8A4C;
   --premium-card-bg: #ffffff;
   --premium-text-dark: #0f172a;
   --premium-text-muted: #64748b;
@@ -81,7 +88,8 @@
   transition: all 0.2s;
 }
 .baladiya-item:active, .category-item-new:active {
-  background: #f0f9ff;
+  background: var(--g1)10; /* handled below with explicit rgba for reliability */
+  background: rgba(31, 138, 76, 0.08);
   border-color: var(--g1);
 }
 
@@ -94,7 +102,7 @@
 .store-cover {
   width: 100%;
   height: 220px;
-  background: linear-gradient(135deg, #0f172a, #1e293b);
+  background: linear-gradient(135deg, #1e293b, #0f172a);
   position: relative;
   overflow: hidden;
 }
@@ -199,8 +207,8 @@
   height: 64px;
   border-radius: 50%;
   padding: 2.5px;
-  background: linear-gradient(135deg, #0284c7, #38bdf8, #d4af37);
-  box-shadow: 0 3px 10px rgba(2, 132, 199, 0.25);
+  background: linear-gradient(135deg, #12632b, #1F8A4C, #d4af37);
+  box-shadow: 0 3px 10px rgba(18, 99, 43, 0.25);
   position: relative;
   transition: transform 0.2s;
 }
@@ -478,7 +486,7 @@ body { margin: 0; padding: 0;
 }
 
 .sm-hd {
-  background: linear-gradient(135deg, var(--navy) 0%, #1a3c5a 100%);
+  background: linear-gradient(135deg, var(--navy) 0%, #1e293b 100%);
   padding: 24px 16px;
   color: white;
   position: relative;
@@ -628,7 +636,7 @@ body { margin: 0; padding: 0;
 
 /* Promotional Banner */
 .banner-mockup {
-  background: linear-gradient(135deg, var(--navy) 0%, #15324b 50%, var(--navy) 100%) !important;
+  background: linear-gradient(135deg, var(--navy) 0%, #1e293b 50%, var(--navy) 100%) !important;
   border: 2px solid var(--metallic-gold) !important;
   border-radius: 12px !important;
   margin: 16px !important;
@@ -1000,12 +1008,15 @@ body { margin: 0; padding: 0;
   width: fit-content;
 }
 .badge-pending { background: rgba(212, 175, 55, 0.15); color: #b58900; }
-.badge-processing { background: rgba(59, 130, 246, 0.15); color: #2563eb; }
+/* FIX (2026-09-29): "processing" no longer uses blue — the design system
+   deliberately keeps informational states neutral slate, not blue, so a
+   status color never gets read as a second, unofficial brand hue. */
+.badge-processing { background: rgba(71, 85, 105, 0.1); color: #475569; }
 .badge-shipping { background: rgba(16, 185, 129, 0.15); color: #059669; }
 .badge-delivered { background: rgba(34, 197, 94, 0.15); color: #16a34a; }
 
 .driver-tracker-card {
-  background: linear-gradient(135deg, #102a43, #0b1d30);
+  background: linear-gradient(135deg, #1e293b, #0f172a);
   border: 2px solid var(--metallic-gold);
   border-radius: 16px;
   padding: 16px;
@@ -1409,7 +1420,7 @@ body { margin: 0; padding: 0;
   width: 85px;
   height: 85px;
   border-radius: 50%;
-  border: 3px solid #0c4a6e;
+  border: 3px solid var(--navy);
   overflow: hidden;
   box-shadow: 0 4px 10px rgba(0,0,0,0.1);
   background: #fff;
@@ -1479,9 +1490,9 @@ body { margin: 0; padding: 0;
   transform: scale(0.95);
 }
 .wilaya-card-square.active-state {
-  border-color: #0ea5e9 !important;
-  background: rgba(14, 165, 233, 0.08) !important;
-  box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.3) !important;
+  border-color: #1F8A4C !important;
+  background: rgba(31, 138, 76, 0.08) !important;
+  box-shadow: 0 0 0 2px rgba(31, 138, 76, 0.3) !important;
 }
 .wilaya-card-square.active-state .wilaya-thumb-square {
   background: linear-gradient(135deg, var(--brand-gold), #eab308) !important;
@@ -1492,9 +1503,9 @@ body { margin: 0; padding: 0;
   height: 58px !important;
   border-radius: 50% !important;
   overflow: hidden !important;
-  background: linear-gradient(135deg, #0ea5e9, #0284c7) !important;
+  background: linear-gradient(135deg, #1F8A4C, #12632b) !important;
   position: relative !important;
-  border: 2px solid rgba(14, 165, 233, 0.3) !important;
+  border: 2px solid rgba(31, 138, 76, 0.3) !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
