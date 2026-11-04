@@ -1,4 +1,4 @@
-// ZaLo Marketplace Smart Sync Update: 2026-09-19
+// ZaLo Marketplace Smart Sync Update: 2026-10-20
 /**
  * ZaLo Smart Algerian Multivendor Marketplace
  * نظام إدارة الجلسات الذكي والتوجيه التلقائي الآمن - Smart Session Manager
@@ -179,5 +179,14 @@ document.addEventListener('DOMContentLoaded', async () => {
       await window.sessionManagerInstance.handleAutoRedirection();
   }
 });
+
+// Real-time in-app notifications (Supabase Realtime). Loaded lazily and
+// failure-safe: if the module is missing or throws, nothing else is affected.
+// Skipped on login/register pages, where there is no signed-in user yet.
+if (!/login|register/.test(window.location.pathname)) {
+  import('./notifications-realtime.js').catch((e) => {
+    console.warn('[SessionManager] notifications module not loaded:', e);
+  });
+}
 
 export default window.sessionManagerInstance;
